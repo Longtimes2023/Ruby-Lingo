@@ -22,11 +22,23 @@
  *   nằm trên trời, giày nằm trên cỏ; (b) cỡ phụ kiện tính bằng **`em`**, con của ô vuông 200×200
  *   (mà `font-size` của nó ĐỔI THEO BẬC), nên phụ kiện phóng to cùng con vật.
  *
- * ⚠️⚠️ Ô VUÔNG 200×200 LÀ CỐ ĐỊNH, VÀ ĐÓ LÀ ĐIỀU KIỆN ĐỂ MỌI TOẠ ĐỘ `%` ĐÚNG.
- *   Neo phụ kiện là `left-[36%] top-[10%]` — phần trăm của KHUNG CHỨA. Nếu khung co giãn theo bề
- *   rộng màn hình, mũ vẫn nằm đúng theo tỉ lệ, nhưng CỠ phụ kiện (`em`) thì không, vì `em` ăn
- *   theo `font-size` chứ không theo bề rộng. Kết hợp lại: trên màn hẹp, mũ to quá; trên màn rộng,
- *   mũ bé quá. Một khung cố định khiến tỉ lệ `%` và cỡ `em` luôn khớp nhau ở mọi thiết bị.
+ * ⚠️⚠️ NEO PHỤ KIỆN TÍNH THEO **HỘP `1em` CỦA CON VẬT**, KHÔNG theo khung 200×200 — ĐỌC KỸ.
+ *
+ *   Bản đầu tiên neo phụ kiện theo `%` của KHUNG 200×200. Sai, và sai theo HAI đường:
+ *     ① Con vật là một `<span>` INLINE trong `<div>` thường ⇒ nó trôi về GÓC TRÊN-TRÁI. Đo trên
+ *        trình duyệt thật: tâm con vật ở **28,8% / 31,3%** thay vì 50% / 50%. Mọi phụ kiện canh
+ *        giữa KHUNG, không canh giữa CON VẬT ⇒ mũ lơ lửng cạnh tai, kính nằm ngang MÁ chứ không
+ *        trên mắt, khăn rơi dưới cằm. Đã sửa bằng `flex items-center justify-center`.
+ *     ② Kể cả sau khi căn giữa, `%`-của-khung vẫn sai khi con vật LỚN LÊN: `font-size` đổi
+ *        (84 → 104 → 124px) nên con vật chiếm 42% → 52% → 62% chiều cao khung, trong khi các con
+ *        số `%` đứng yên. Mũ đúng ở bậc `baby` sẽ tụt xuống ngang mắt ở bậc `super`.
+ *
+ *   Nay con vật sống trong một HỘP `1em × 1em` (chính là ô chữ của nó), và MỌI phụ kiện neo theo
+ *   hộp đó. Cỡ phụ kiện vốn đã tính bằng `em` (⇒ theo `font-size`), nên neo bằng `%`-của-hộp-`1em`
+ *   khiến **vị trí và kích cỡ cùng lớn lên với con vật** — không cần một bảng tra nào theo bậc.
+ *
+ * ⚠️ Khung 200×200 vẫn CỐ ĐỊNH, và vẫn cần: nó cho con vật một khoảng thở đủ rộng và giữ cho
+ *   `1em` ổn định ở mọi bề rộng màn hình.
  *
  * ⚠️ MỌI VỊ TRÍ ĐẾN TỪ DỮ LIỆU (`shop-items.json` → `slot`), KHÔNG TỪ MỘT BẢNG TRA TRONG TỆP NÀY.
  *   Tệp này chỉ trả lời "vị trí `head` nằm ở đâu trên khung vẽ" — câu hỏi THỊ GIÁC. Còn "mũ thuộc
@@ -108,25 +120,33 @@ const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
 };
 
 /**
- * Vị trí của từng lớp phụ kiện, tính theo `%` của ô vuông 200×200.
+ * Vị trí của từng lớp phụ kiện, tính theo `%` của **HỘP `1em` CỦA CON VẬT** (không phải khung).
  *
- * ⭐ MỌI VỊ TRÍ DÙNG `left-1/2 -translate-x-1/2` để tự căn giữa, TRỪ `back`: áo choàng / cánh /
+ * ⭐ VÌ SAO NEO THEO HỘP `1em`: cỡ phụ kiện tính bằng `em`, và `em` ăn theo `font-size` — mà
+ *   `font-size` ĐỔI THEO BẬC (84 / 104 / 124px). Neo theo khung thì vị trí đứng yên trong khi con
+ *   vật lớn dần ⇒ mũ đúng ở `baby` sẽ tụt xuống ngang mắt ở `super`. Neo theo hộp `1em` khiến vị
+ *   trí và kích cỡ cùng lớn lên, nên **một bảng số dùng được cho cả ba bậc**.
+ *
+ * ⚠️ MỌI VỊ TRÍ DÙNG `left-1/2 -translate-x-1/2` để tự căn giữa, TRỪ `back`: áo choàng / cánh /
  *   ba lô nằm LỆCH VỀ MỘT BÊN, vì chúng vẽ SAU con vật trong DOM (⇒ nằm trên) — để chính giữa thì
  *   chúng che mất mặt bạn ấy.
  *
- * ⚠️ Nhiều món cùng một vị trí ⇒ chúng nằm trong CÙNG một `<span class="absolute flex gap-0.5">`
- *    và tự xếp cạnh nhau. Đây là toạ độ của CẢ NHÓM, không phải của từng món — nhờ vậy không bao
- *    giờ có món nào bị bỏ rơi ngoài khung (bỏ món của bé = lấy đồ của bé, luật cấm số một).
+ * ⚠️ Một `<span>` cho MỖI VỊ TRÍ (không phải mỗi món): nhiều món cùng vị trí thì `flex gap-0.5`
+ *    tự xếp cạnh nhau — giữ nguyên cơ chế cũ, và KHÔNG BAO GIỜ bỏ món nào của bé.
+ *
+ * ⚠️ Vài giá trị ÂM (`top-[-10%]`, `left-[-15%]`) là CỐ Ý: mũ phải nhô LÊN TRÊN đỉnh đầu, ba lô
+ *    phải thò RA NGOÀI sườn trái. Hộp `1em` là ô chữ của con vật, không phải một cái hộp phải
+ *    nhốt mọi thứ vào trong.
  */
 const ACCESSORY_ANCHOR: Record<AccessorySlot, string> = {
-  back: 'left-[2%] top-[28%]',
-  feet: 'bottom-[4%] left-1/2 -translate-x-1/2',
-  head: 'top-[10%] left-1/2 -translate-x-1/2',
-  neck: 'top-[66%] left-1/2 -translate-x-1/2',
-  face: 'top-[40%] left-1/2 -translate-x-1/2',
+  back: 'left-[-15%] top-[34%]',
+  feet: 'left-1/2 top-[88%] -translate-x-1/2',
+  head: 'left-1/2 top-[-10%] -translate-x-1/2',
+  neck: 'left-1/2 top-[65%] -translate-x-1/2',
+  face: 'left-1/2 top-[28%] -translate-x-1/2',
 };
 
-/** Cỡ từng lớp, theo `em` của ô vuông (⇒ ăn theo bậc tiến hoá). Mũ to hơn kính, giày nhỏ hơn. */
+/** Cỡ từng lớp, theo `em` của hộp con vật (⇒ ăn theo bậc tiến hoá). Mũ to hơn kính, giày nhỏ hơn. */
 const ACCESSORY_TEXT_SIZE: Record<AccessorySlot, string> = {
   back: 'text-[0.33em]',
   feet: 'text-[0.25em]',
@@ -285,24 +305,17 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
         <SceneryRow items={scenery.get('sky')} className="bg-pet-sky px-3 pt-2 pb-1" />
 
         {/*
-          Ô VUÔNG CỐ ĐỊNH 200×200. Cỡ cố định là có chủ ý: neo phụ kiện tính theo `%` của ô này,
-          còn cỡ phụ kiện tính theo `em` (⇒ theo `font-size` của ô). Hai đơn vị khác nhau chỉ khớp
-          nhau khi ô có một kích thước xác định — xem ghi chú đầu tệp.
+          KHUNG CỐ ĐỊNH 200×200 — khoảng thở cho con vật, và giữ `1em` ổn định ở mọi bề rộng.
+          Bên trong nó là HỘP `1em × 1em` của con vật, và đó mới là hệ toạ độ của phụ kiện.
 
           ⚠️⚠️ `flex items-center justify-center` LÀ BẮT BUỘC — KHÔNG ĐƯỢC GỠ.
-            Mọi phụ kiện neo bằng `left-1/2 -translate-x-1/2` / `top-[…%]`, tức là canh giữa Ô.
-            Nếu con vật KHÔNG được canh giữa Ô thì hai hệ toạ độ lệch nhau và mọi món đồ rơi sai
-            chỗ — đúng lời chủ dự án: *"các icon đeo vô con pet cũng khá là thô, lung tung"*.
-
-            Đo trên trình duyệt thật (Playwright/Chromium) khi ô chỉ là `<div>` thường: con vật
-            là một `<span>` INLINE, nên nó trôi về GÓC TRÊN-TRÁI — tâm con vật ở **28,8% / 31,3%**
-            thay vì 50% / 50%. Hệ quả đo được: mũ lệch phải ~40px (lơ lửng cạnh tai), kính nằm
-            ngang MÁ chứ không trên mắt, khăn rơi dưới cằm, giày cách xa chân. Tiêm
-            `display:flex; align-items:center; justify-content:center` vào ô (chỉ sửa DOM sống)
-            đưa tâm con vật về **50% / 50%** và mọi món rơi đúng người ngay lập tức.
-
-            ⚠️ `relative` trên con vật vẫn cần: nó giữ con vật trong ngữ cảnh xếp lớp của ô để
-               `z-[2]` có hiệu lực (trên `back`, dưới `feet/head/neck/face`).
+            Con vật là một `<span>` INLINE. Trong một `<div>` thường nó trôi về GÓC TRÊN-TRÁI —
+            đo trên trình duyệt thật (Playwright/Chromium): tâm con vật ở **28,8% / 31,3%** thay vì
+            50% / 50%. Hệ quả đo được: mũ lơ lửng cạnh tai, kính nằm ngang MÁ chứ không trên mắt,
+            khăn rơi dưới cằm, giày cách xa chân — đúng lời chủ dự án: *"các icon đeo vô con pet
+            cũng khá là thô, lung tung"*. Tiêm `display:flex; align-items:center; justify-content:
+            center` vào ô (chỉ sửa DOM sống) đưa tâm con vật về **50% / 50%** và mọi món rơi đúng
+            người ngay lập tức.
         */}
         <div
           className={cn(
@@ -310,33 +323,52 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
             STAGE_TEXT_SIZE[evolutionStage],
           )}
         >
-          {/* Bóng ellipse dưới chân — NEO thị giác, cho con vật một mặt đất để đứng lên. */}
-          <span
-            aria-hidden="true"
-            className="absolute bottom-[6%] left-1/2 z-0 h-[10px] w-[90px] -translate-x-1/2 rounded-pill bg-pet-shadow"
-          />
+          {/*
+            HỘP `1em × 1em` — CHÍNH LÀ Ô CHỮ CỦA CON VẬT, và là HỆ TOẠ ĐỘ DUY NHẤT của phụ kiện.
+            `1em` = `font-size` của khung cha (84 / 104 / 124px theo bậc), nên hộp này lớn lên cùng
+            con vật; neo `%`-của-hộp + cỡ `em` vì thế cùng lớn lên, và MỘT bảng số dùng được cho
+            cả ba bậc — xem ghi chú ở `ACCESSORY_ANCHOR`.
 
-          {/* Phụ kiện ĐEO SAU LƯNG (áo choàng / cánh / ba lô) — vẽ trước con vật. */}
-          <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" />
-
-          {/* Con vật. Cỡ = `font-size` của ô (84/104/124px), emoji thừa hưởng. */}
-          <span aria-hidden="true" className={cn('relative leading-none', PET_Z)}>
-            {petIcon}
-          </span>
-
-          {/* Phụ kiện ĐEO TRƯỚC NGƯỜI (giày, mũ, khăn, kính). */}
-          <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" />
-
-          {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. `animate-pulse` đã bị tắt sẵn dưới
-              `prefers-reduced-motion` (xem `tokens.css`) — không cần xử lý riêng ở đây. */}
-          {isSuper && (
+            ⚠️ Không đặt `overflow: hidden` ở đây: mũ phải nhô lên trên đỉnh đầu và ba lô phải thò
+               ra ngoài sườn (cả hai đều có toạ độ ÂM).
+          */}
+          <div className="relative flex size-[1em] items-center justify-center">
+            {/*
+              Bóng ellipse dưới chân — NEO thị giác, cho con vật một mặt đất để đứng lên.
+              Cỡ tính bằng `em` (không phải px) để bóng lớn lên cùng con vật: một cái bóng 90px cố
+              định dưới một con `super` 124px trông như một vết bẩn rời rạc.
+            */}
             <span
               aria-hidden="true"
-              className="absolute right-[8%] top-[8%] animate-pulse text-[28px] leading-none"
-            >
-              ✨
+              className="absolute bottom-[2%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
+            />
+
+            {/* Phụ kiện ĐEO SAU LƯNG (áo choàng / cánh / ba lô) — vẽ trước con vật. */}
+            <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" />
+
+            {/*
+              Con vật. Cỡ = `font-size` của khung cha (84/104/124px), emoji thừa hưởng.
+              ⚠️ `relative` cần thiết: nó giữ con vật trong ngữ cảnh xếp lớp của hộp để `z-[2]` có
+                 hiệu lực (trên `back`, dưới `feet/head/neck/face`).
+            */}
+            <span aria-hidden="true" className={cn('relative leading-none', PET_Z)}>
+              {petIcon}
             </span>
-          )}
+
+            {/* Phụ kiện ĐEO TRƯỚC NGƯỜI (giày, mũ, khăn, kính). */}
+            <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" />
+
+            {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
+                `animate-pulse` đã bị tắt sẵn dưới `prefers-reduced-motion` (xem `tokens.css`). */}
+            {isSuper && (
+              <span
+                aria-hidden="true"
+                className="absolute right-[2%] top-[-4%] animate-pulse text-[0.34em] leading-none"
+              >
+                ✨
+              </span>
+            )}
+          </div>
         </div>
 
         {/* DẢI 2 — ĐẤT / CỎ. */}
