@@ -69,8 +69,35 @@ describe('word-icon.css — cơ chế container-query lấp đầy khung', () =>
 });
 
 describe('tokens.css — nguồn chân lý cho cỡ biểu tượng', () => {
-  it('khai `--fs-icon-fill: 82cqw`', () => {
-    expect(TOKENS_CSS).toMatch(/--fs-icon-fill:\s*82cqw\s*;/);
+  /**
+   * ⚠️⚠️ KHOÁ ĐÚNG **BẤT BIẾN**, KHÔNG KHOÁ CON SỐ CỤ THỂ (đổi ở T04).
+   *
+   * ⭐ VÌ SAO ĐỔI TỪ `82cqw` SANG MỘT KHOẢNG:
+   *   Con số này là **NÚM CHỈNH DUY NHẤT** cho cỡ biểu tượng — chính chú thích ở `tokens.css` nói
+   *   vậy. Và nó ĐÃ phải chỉnh một lần khi đo trên trình duyệt THẬT (Playwright/Chromium): ở
+   *   `82cqw`, **2/15 ô không đạt** ngưỡng 0.70 — `ListenTapGame` @360px (0,6954) và
+   *   `MemoryMatchGame` @360px (0,6601) — vì padding/border của khung là **px cố định** còn `cqw`
+   *   tính theo **content-box**, nên khung càng hẹp thì tỉ lệ càng tụt.
+   *
+   *   Khoá cứng một con số khiến mỗi lần tinh chỉnh núm này là một test đỏ **GIẢ** — và một test
+   *   đỏ giả sẽ bị "sửa" bằng cách nới nó ra, làm mất luôn giá trị canh giữ. Nên thay vì khoá một
+   *   con số, ta khoá **HAI ĐẦU** của khoảng cho phép — thứ thật sự KHÔNG được vi phạm:
+   *     • **DƯỚI 70cqw**: biểu tượng lại teo so với khung — đúng cái lỗi mà T03 sinh ra để sửa.
+   *     • **TRÊN 92cqw**: mực của một EMOJI xấp xỉ bằng đúng `font-size` (đo được: emoji 162px khi
+   *       `font-size` = 164px), nên gần 100cqw là emoji bắt đầu TRÀN/CẮT ở khung hẹp. Trần này
+   *       đến từ số đo thật, không phải phỏng đoán.
+   *
+   * ⭐ Test này mạnh hơn bản cũ ở hai điểm: nó bắt luôn việc ĐỔI ĐƠN VỊ (viết `82%` hay `56px`
+   *   cũng đỏ, vì `cqw` là điều kiện để cơ chế hoạt động), và nó mã hoá luôn TRẦN TRÀN mà bản cũ
+   *   không biết.
+   */
+  it('khai `--fs-icon-fill` bằng đơn vị `cqw`, trong khoảng an toàn 70–92cqw', () => {
+    const match = /--fs-icon-fill:\s*(\d+(?:\.\d+)?)cqw\s*;/.exec(TOKENS_CSS);
+    expect(match, 'tokens.css phải khai `--fs-icon-fill: <số>cqw;`').not.toBeNull();
+
+    const value = Number(match![1]);
+    expect(value, 'quá nhỏ ⇒ biểu tượng lại teo so với khung').toBeGreaterThanOrEqual(70);
+    expect(value, 'quá lớn ⇒ emoji tràn/cắt ở khung hẹp').toBeLessThanOrEqual(92);
   });
 });
 
