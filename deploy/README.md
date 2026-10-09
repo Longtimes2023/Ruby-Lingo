@@ -74,9 +74,13 @@ ls -1 server/db/migrations/*.sql | wc -l                              # 10
 
 ```bash
 cp .env.example .env
-# điền: SUBDOMAIN · DOMAIN_NAME · SESSION_SECRET · COOKIE_SECURE=true · PUBLIC_ORIGIN
+# điền ĐÚNG 4 biến: SUBDOMAIN · DOMAIN_NAME · TRAEFIK_CERTRESOLVER · SESSION_SECRET
 node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"   # SESSION_SECRET
 ```
+
+⚠️ `TRAEFIK_CERTRESOLVER` là **chỗ dễ sai nhất của cả quá trình deploy** — xem mục 1.
+Các biến còn lại (`NODE_ENV`, `COOKIE_SECURE`, `PUBLIC_ORIGIN`, `LOG_LEVEL`, `HOST`, `PORT`,
+`DB_PATH`) **không** cần khai cho production: `docker-compose.yml` ghi đè hết (khối `environment`).
 
 Chi tiết từng biến: mục 1.
 
@@ -146,10 +150,39 @@ trong đó chốt đáng giá nhất là **mọi nguồn `COPY` của `Dockerfil
 ```
 SUBDOMAIN=rubylingo                    # dùng cho Host(...) của Traefik
 DOMAIN_NAME=example.com                # tên miền GỐC, KHÔNG kèm subdomain
+TRAEFIK_CERTRESOLVER=<tên THẬT>        # ⚠️⚠️ xem khối ngay dưới — KHÔNG phải 'mytlschallenge'
 SESSION_SECRET=<chuỗi ngẫu nhiên ≥32 ký tự>
-COOKIE_SECURE=true
-PUBLIC_ORIGIN=https://rubylingo.example.com    # ⚠️ KHÔNG có dấu "/" ở cuối
 ```
+
+> ⚠️ `COOKIE_SECURE`, `PUBLIC_ORIGIN`, `NODE_ENV`, `LOG_LEVEL` **không** cần điền: `docker-compose.yml`
+> ghim chúng trong khối `environment`, và `environment` thắng `env_file`. `PUBLIC_ORIGIN` được compose
+> tự dựng từ `SUBDOMAIN` + `DOMAIN_NAME` (nên nó luôn khớp `Host(...)` — lệch một ký tự là mọi request
+> GHI trả 403, lỗi S5).
+
+### ⚠️⚠️ `TRAEFIK_CERTRESOLVER` — chỗ dễ sai nhất, và nó hỏng IM LẶNG
+
+Đây **không** phải biến của RubyLingo. Nó là **khoá** trong `certificatesResolvers.<TÊN>` của cấu
+hình **TĨNH** Traefik đã có sẵn trên VPS bạn. Giá trị mẫu `mytlschallenge` là tên **ví dụ trong tài
+liệu Traefik**, gần như chắc chắn không phải tên của bạn.
+
+**Tìm tên thật trên VPS:**
+
+```bash
+docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers
+# hoặc mở traefik.yml / command: của service traefik, tìm --certificatesresolvers.<TÊN>.
+```
+
+**Vì sao điền sai lại nguy hiểm:** một tên SAI vẫn tạo ra router **HỢP LỆ** — `docker compose config`
+xanh, container chạy, `/api/health` trả `ok`. Traefik chỉ **lặng lẽ không xin được chứng chỉ**. Hệ quả:
+
+| Triệu chứng người dùng thấy | Thực tế |
+|---|---|
+| Trình duyệt báo lỗi chứng chỉ | Traefik không có cert để phục vụ |
+| Site coi như chết (kể cả `http://`) | router HTTP đá sang HTTPS — mà HTTPS không dựng được |
+| `deploy.sh` bước 5 đỏ: *"Traefik không tới được app"* | **chỉ sai chỗ cần sửa** — người trực sẽ đi kiểm cổng 3000, mạng `traefik_network`, nhãn `loadbalancer.server.port`… trong khi lỗi nằm ở tên resolver |
+
+Vì vậy `docker-compose.yml` dùng `${TRAEFIK_CERTRESOLVER:?…}`: **trống hay thiếu đều làm
+`docker compose up` dừng ngay** kèm đúng tên biến cần điền — biến lỗi im lặng thành lỗi ở bước 1.
 
 Sinh `SESSION_SECRET`:
 
@@ -170,11 +203,15 @@ Script **build → up → 5 bước kiểm** và **chỉ báo thành công khi c
 
 | Bước | Kiểm gì | Chặn lỗi |
 |---|---|---|
-| 1 | `docker compose config` + soi giá trị đã thay thế | biến rỗng ⇒ `Host(.)` 404 / `https://.` 403 (A) |
+| 1 | `docker compose config` + soi giá trị đã thay thế + **in tên `certresolver`** | biến rỗng ⇒ `Host(.)` 404 / `https://.` 403 (A) · tên resolver sai ⇒ HTTPS chết mà không dấu vết |
 | 2 | chờ app sẵn sàng, rồi số migration trong image == nguồn | image thiếu `.sql` ⇒ schema rỗng (S3/C) |
 | 3 | `./data/rubylingo.db` có thật trên host | DB ghi ngoài volume ⇒ mất khi thay container (S1) |
 | 4 | `/api/health`: `migrationsApplied` == số tệp migration | DB chưa migrate mà health vẫn "ok" (S3) |
-| 5 | poll `https://<tên miền>/api/health` tới 200 | crash-loop ⇒ 502 vĩnh viễn (B) |
+| 5 | poll `https://<tên miền>/api/health` tới 200 | crash-loop ⇒ 502 vĩnh viễn (B) · chứng chỉ sai tên resolver |
+
+> ⚠️ **Bước 5 đỏ thì kiểm CHỨNG CHỈ TRƯỚC TIÊN** — `curl -vI https://<tên miền>/`. Lỗi chứng chỉ ⇒
+> `TRAEFIK_CERTRESOLVER` sai tên (xem §1). Nó không để lại dấu vết nào trong log app, và thông báo
+> đỏ *"Traefik không tới được app"* sẽ khiến bạn đi kiểm cổng/mạng — tức **sai chỗ cần sửa**.
 
 > ⚠️ Đừng "sửa" lỗi 502 bằng cách thêm `ports:` vào compose — cổng 3000 **không** được lộ ra
 > Internet; Traefik là cửa duy nhất.

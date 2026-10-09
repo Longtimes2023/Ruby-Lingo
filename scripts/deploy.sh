@@ -60,9 +60,15 @@
 #     (`/app/data/rubylingo.db`) và `volumes` còn `./data:/app/data`.
 #   • Bước 4 đỏ (migrationsApplied): `docker compose logs --tail=200 rubylingo`; nếu thấy
 #     "Không thể chuẩn bị cơ sở dữ liệu" thì migration đã ném lúc khởi động.
-#   • Bước 5 đỏ (URL công khai): `docker compose ps` (container có chạy?), `docker compose logs
-#     --tail=200 rubylingo`, rồi kiểm Traefik: `traefik.docker.network` phải là mạng CHUNG, và
-#     nhãn `…services.rubylingo.loadbalancer.server.port=3000` phải còn (thiếu ⇒ 502).
+#   • Bước 5 đỏ (URL công khai) — KIỂM THEO ĐÚNG THỨ TỰ NÀY:
+#       1) CHỨNG CHỈ TRƯỚC TIÊN. `curl -vI https://<host>/` xem lỗi TLS, hoặc mở bằng trình duyệt.
+#          Lỗi chứng chỉ ⇒ `TRAEFIK_CERTRESOLVER` trong `.env` SAI TÊN. Đây là nguyên nhân ĐẦU TIÊN
+#          cần loại trừ vì nó KHÔNG để lại dấu vết nào trong log app — và vì thông báo đỏ ở dưới
+#          ("Traefik không tới được app") sẽ khiến bạn đi kiểm cổng/mạng, tức SAI CHỖ.
+#          Bước 1 đã in tên resolver ra; đối chiếu với `--certificatesresolvers.<TÊN>` của Traefik.
+#       2) `docker compose ps` (container có chạy?), `docker compose logs --tail=200 rubylingo`.
+#       3) Kiểm Traefik: `traefik.docker.network` phải là mạng CHUNG, và nhãn
+#          `…services.rubylingo.loadbalancer.server.port=3000` phải còn (thiếu ⇒ 502).
 #     ⚠️ ĐỪNG "sửa" bằng cách thêm `ports:` vào compose — cổng 3000 KHÔNG được lộ ra Internet.
 #
 #   Dừng khẩn: `docker compose down` (DỮ LIỆU VẪN AN TOÀN ở `./data/` trên host — miễn bước 3 xanh).
@@ -159,6 +165,28 @@ PUBLIC_HOST="$(printf '%s\n' "$COMPOSE_CONFIG" | grep -oE 'Host\([^)]+\)' | head
   || fail "1" "không suy được 'Host(...)' từ 'docker compose config' (xem lại nhãn Traefik)"
 PUBLIC_URL="https://${PUBLIC_HOST}"
 ok "cấu hình hợp lệ, URL công khai sẽ kiểm: ${PUBLIC_URL}"
+
+# ⚠️⚠️ `certresolver` — BIẾN DUY NHẤT CỦA TỆP NÀY PHỤ THUỘC TRAEFIK CỦA NGƯỜI DÙNG.
+#    Vì sao phải IN RA chứ không im lặng đi tiếp: một tên resolver SAI vẫn tạo ra router HỢP LỆ
+#    (compose xanh, container chạy, health xanh). Traefik chỉ LẶNG LẼ không xin được chứng chỉ ⇒
+#    HTTPS chết, mà router HTTP lại đá sang HTTPS ⇒ site coi như chết. Khi đó bước 5 đỏ với thông
+#    báo "Traefik không tới được app" — CHỈ SAI CHỖ CẦN SỬA (người trực sẽ đi kiểm cổng 3000, mạng,
+#    nhãn loadbalancer). In tên ra đây để nó ĐỐI CHIẾU ĐƯỢC với Traefik của mình ngay từ bước 1.
+CERTRESOLVER="$(printf '%s\n' "$COMPOSE_CONFIG" | grep -oE 'tls\.certresolver=[^[:space:]]+' | head -n1 | cut -d= -f2)"
+[ -n "$CERTRESOLVER" ] \
+  || fail "1" "không đọc được 'tls.certresolver' từ 'docker compose config' — thiếu nhãn đó thì Traefik KHÔNG xin được chứng chỉ (HTTPS chết dù mọi thứ khác đều xanh)"
+if [ "$CERTRESOLVER" = "mytlschallenge" ]; then
+  warn "certresolver = '${CERTRESOLVER}' — đây là tên VÍ DỤ trong tài liệu Traefik, KHÔNG phải tên của bạn."
+  printf '     Hãy CHẮC CHẮN nó khớp --certificatesresolvers.<TÊN> của Traefik trên VPS, nếu không\n'
+  printf '     HTTPS sẽ KHÔNG có chứng chỉ (và vì router HTTP đá sang HTTPS nên site coi như chết).\n'
+  # Dòng dưới dùng NHÁY KÉP cho chuỗi vì bản thân nó CHỨA nháy đơn — dễ đọc hơn nhiều so với
+  # lối thoát '"'"' (đã kiểm: hai dạng in ra GIỐNG HỆT nhau từng ký tự). `\\\\n` để printf in ra
+  # đúng hai ký tự `\` + `n` như người dùng cần gõ.
+  printf "     Kiểm:  docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\\\\n' | grep -i certresolvers\n"
+  printf '     Chi tiết: deploy/README.md §1.\n'
+else
+  ok "certresolver: ${CERTRESOLVER} (phải khớp Traefik của bạn — xem deploy/README.md §1)"
+fi
 
 # =============================================================================
 # BUILD + UP

@@ -98,6 +98,32 @@ jobs:
           done
           [ "$thieu" -eq 0 ] || exit 1
 
+      # ⚠️⚠️ CHỐT "BIẾN BẮT BUỘC TRONG `.env.example`" — cùng họ với chốt TỆP ở trên, nhưng cho BIẾN.
+      #   Bốn biến này là thứ `.env` trên VPS PHẢI có. `docker-compose.yml` dùng `${TÊN:?}` nên thiếu
+      #   là `docker compose up` chết ngay — nhưng nếu ai đó XOÁ dòng khỏi `.env.example` thì người
+      #   vận hành không còn biết phải điền gì, và lỗi sẽ hiện ra ở dạng khó hiểu TRÊN VPS — nơi đắt
+      #   nhất để sửa. Chốt ở đây để nó lộ ra ngay ở PR.
+      #
+      #   ⚠️ VÌ SAO ĐÒI `^TÊN=` (GÁN THỰC SỰ) chứ không chỉ "tên có xuất hiện": một dòng bị COMMENT
+      #      (`# SUBDOMAIN=`) vẫn CHỨA tên nhưng `.env` KHÔNG nạp nó ⇒ chốt kiểu "có xuất hiện" sẽ
+      #      báo xanh trong khi VPS vẫn chết. Đã kiểm cả hai chiều: `.env.example` thật ⇒ 4/4 xanh;
+      #      bản giả có `# SUBDOMAIN=` ⇒ ĐỎ đúng biến đó.
+      #
+      #   ⚠️ `SESSION_SECRET` nằm trong danh sách vì nó PHẢI được đổi giá trị khi deploy — không phải
+      #      vì compose cần nó có mặt (compose đọc nó từ `.env`, và `${SESSION_SECRET:?}` đã bắt).
+      - name: Chốt — biến bắt buộc trong `.env.example`
+        run: |
+          thieu=0
+          for v in SUBDOMAIN DOMAIN_NAME TRAEFIK_CERTRESOLVER SESSION_SECRET; do
+            if grep -qE "^${v}=" .env.example; then
+              echo "  ✓ $v"
+            else
+              echo "::error file=.env.example::$v thiếu dòng gán '^${v}=' trong .env.example — người vận hành VPS sẽ không biết phải điền gì. LƯU Ý: dòng bị COMMENT KHÔNG được tính."
+              thieu=1
+            fi
+          done
+          [ "$thieu" -eq 0 ] || exit 1
+
       - name: Cài Node 20 (có cache npm)
         uses: actions/setup-node@v4
         with:
