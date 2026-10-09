@@ -66,6 +66,25 @@ describe('word-icon.css — cơ chế container-query lấp đầy khung', () =>
     expect(WORD_ICON_CSS).toMatch(/\.wi-fill\s*\{[^}]*display:\s*flex/);
     expect(WORD_ICON_CSS).toMatch(/line-height:\s*1\s*;/);
   });
+
+  /**
+   * ⚠️⚠️ `overflow-x` PHẢI LÀ `clip`, KHÔNG ĐƯỢC LÀ `hidden` — VÀ ĐÂY LÀ MỘT CÁI BẪY CSS THẬT.
+   *
+   *   Bề rộng DÒNG của một emoji lớn hơn mực một chút. Đo trên trình duyệt thật ở `listen-tap`
+   *   @768px với khung chứa emoji: dòng vượt khung **~7px** ⇒ sinh thanh cuộn ngang, dù MỰC vẫn
+   *   nằm gọn. `overflow-x: clip` chặn đúng trục đó mà không đụng chiều dọc.
+   *
+   *   `overflow-x: hidden` cũng "chặn ngang" — nhưng theo luật CSS, `hidden` KHÔNG đi cặp được với
+   *   `overflow-y: visible`: trình duyệt tự đổi `overflow-y` thành `auto` ⇒ ô mọc thanh cuộn DỌC.
+   *   Đó là lý do phải khoá đúng từ khoá `clip`, và khoá luôn sự VẮNG MẶT của `hidden`.
+   */
+  it('`.wi-fill` chặn tràn ngang bằng `overflow-x: clip` (KHÔNG dùng `hidden`)', () => {
+    const fillBlock = /\.wi-fill\s*\{[\s\S]*?\}/.exec(WORD_ICON_CSS)?.[0] ?? '';
+    expect(fillBlock, 'không tìm thấy khối .wi-fill').not.toBe('');
+    expect(fillBlock).toMatch(/overflow-x:\s*clip\s*;/);
+    // `hidden` ở trục ngang sẽ kéo `overflow-y` thành `auto` ⇒ thanh cuộn dọc trong ô của bé.
+    expect(fillBlock).not.toMatch(/overflow-x:\s*hidden\s*;/);
+  });
 });
 
 describe('tokens.css — nguồn chân lý cho cỡ biểu tượng', () => {

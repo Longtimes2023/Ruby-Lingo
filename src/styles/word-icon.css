@@ -3,7 +3,9 @@
    Xem docs/ux-20261009/THIET-KE.md §B.2.
 
    .wi-frame = khung chứa (nút/ô) — mở "container" để đo BỀ RỘNG khung.
-   .wi-fill  = lớp bọc biểu tượng — cỡ = 82% bề rộng khung, cho CẢ ảnh LẪN emoji.
+   .wi-fill  = lớp bọc biểu tượng — cỡ = `--fs-icon-fill` (88cqw) bề rộng khung, cho CẢ ảnh
+               LẪN emoji. Con số nằm ở `tokens.css` (núm chỉnh duy nhất) — xem chú thích ở đó
+               để biết vì sao là 88 chứ không phải 82.
 
    ⚠️⚠️ VÌ SAO KHÔNG DÙNG `width/height: 100%` TRÊN <img>:
      Emoji KHÔNG co theo width/height, chỉ co theo `font-size`. Dùng width/height cho <img>
@@ -33,6 +35,26 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
+  /**
+   * ⚠️⚠️ `overflow-x: clip` — CHẶN TRÀN NGANG CỦA NHÁNH EMOJI (thêm sau khi ĐO trên trình duyệt
+   *    thật, không phải phòng xa cho vui).
+   *
+   *   Mực của một emoji xấp xỉ bằng đúng `font-size`, nhưng BỀ RỘNG DÒNG (line box advance) thì
+   *   LỚN HƠN mực một chút. Đo được ở `listen-tap` @768px khi khung chứa EMOJI:
+   *     • bề rộng dòng vượt khung **~7px** ⇒ sinh thanh cuộn ngang trong ô;
+   *     • nhưng MỰC thì vẫn nằm gọn trong khung (hai đầu đều âm) ⇒ **không cắt mất hình**.
+   *   Ở `82cqw` hiện tượng này chưa xuất hiện; nâng lên `88cqw` thì nó thành CÓ THỂ xảy ra.
+   *
+   *   ⭐ VÌ SAO `clip` CHỨ KHÔNG PHẢI `hidden`:
+   *     `overflow-x: hidden` buộc `overflow-y` thành `auto` (theo luật CSS: `hidden` không đi
+   *     cặp được với `visible`) ⇒ ô có thể mọc thanh cuộn DỌC. `clip` cho phép đi cặp với
+   *     `overflow-y: visible`, nên chỉ chặn đúng trục ngang và không đụng gì tới chiều dọc.
+   *
+   *   ⚠️ Cắt ở đây là AN TOÀN vì `clip` cắt tại mép content-box, mà mực emoji nằm TRONG mép đó.
+   *     Nếu một ngày mực emoji thật sự rộng hơn khung (tức `--fs-icon-fill` bị đẩy quá cao) thì
+   *     dòng này sẽ CẮT mất hình — lúc đó phải hạ `--fs-icon-fill`, không phải gỡ dòng này.
+   */
+  overflow-x: clip;
   /* ⚠️⚠️ DỰ PHÒNG CHO TRÌNH DUYỆT KHÔNG HIỂU ĐƠN VỊ CONTAINER QUERY — ĐỌC KỸ TRƯỚC KHI "SỬA":
      Thiết kế đầu tiên ghi dự phòng là `1em` với lý do "bằng hành vi cũ". ĐIỀU ĐÓ SAI: vì ta
      đã GỠ các lớp `text-[56px]`/`text-[64px]`/`text-[68px]`/`text-[44px]`/`text-[80px]` khỏi
