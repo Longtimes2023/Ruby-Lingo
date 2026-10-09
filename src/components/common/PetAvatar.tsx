@@ -288,8 +288,28 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
           Ô VUÔNG CỐ ĐỊNH 200×200. Cỡ cố định là có chủ ý: neo phụ kiện tính theo `%` của ô này,
           còn cỡ phụ kiện tính theo `em` (⇒ theo `font-size` của ô). Hai đơn vị khác nhau chỉ khớp
           nhau khi ô có một kích thước xác định — xem ghi chú đầu tệp.
+
+          ⚠️⚠️ `flex items-center justify-center` LÀ BẮT BUỘC — KHÔNG ĐƯỢC GỠ.
+            Mọi phụ kiện neo bằng `left-1/2 -translate-x-1/2` / `top-[…%]`, tức là canh giữa Ô.
+            Nếu con vật KHÔNG được canh giữa Ô thì hai hệ toạ độ lệch nhau và mọi món đồ rơi sai
+            chỗ — đúng lời chủ dự án: *"các icon đeo vô con pet cũng khá là thô, lung tung"*.
+
+            Đo trên trình duyệt thật (Playwright/Chromium) khi ô chỉ là `<div>` thường: con vật
+            là một `<span>` INLINE, nên nó trôi về GÓC TRÊN-TRÁI — tâm con vật ở **28,8% / 31,3%**
+            thay vì 50% / 50%. Hệ quả đo được: mũ lệch phải ~40px (lơ lửng cạnh tai), kính nằm
+            ngang MÁ chứ không trên mắt, khăn rơi dưới cằm, giày cách xa chân. Tiêm
+            `display:flex; align-items:center; justify-content:center` vào ô (chỉ sửa DOM sống)
+            đưa tâm con vật về **50% / 50%** và mọi món rơi đúng người ngay lập tức.
+
+            ⚠️ `relative` trên con vật vẫn cần: nó giữ con vật trong ngữ cảnh xếp lớp của ô để
+               `z-[2]` có hiệu lực (trên `back`, dưới `feet/head/neck/face`).
         */}
-        <div className={cn('relative mx-auto size-[200px] shrink-0', STAGE_TEXT_SIZE[evolutionStage])}>
+        <div
+          className={cn(
+            'relative mx-auto flex size-[200px] shrink-0 items-center justify-center',
+            STAGE_TEXT_SIZE[evolutionStage],
+          )}
+        >
           {/* Bóng ellipse dưới chân — NEO thị giác, cho con vật một mặt đất để đứng lên. */}
           <span
             aria-hidden="true"
