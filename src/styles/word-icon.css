@@ -1,0 +1,50 @@
+/* ==========================================================================
+   RubyLingo — Để biểu tượng từ vựng LẤP ĐẦY khung, không ăn theo cỡ chữ emoji.
+   Xem docs/ux-20261009/THIET-KE.md §B.2.
+
+   .wi-frame = khung chứa (nút/ô) — mở "container" để đo BỀ RỘNG khung.
+   .wi-fill  = lớp bọc biểu tượng — cỡ = 82% bề rộng khung, cho CẢ ảnh LẪN emoji.
+
+   ⚠️⚠️ VÌ SAO KHÔNG DÙNG `width/height: 100%` TRÊN <img>:
+     Emoji KHÔNG co theo width/height, chỉ co theo `font-size`. Dùng width/height cho <img>
+     thì nhánh ảnh to ra còn nhánh emoji đứng nguyên ⇒ hai nhánh lệch cỡ, phá đúng yêu cầu
+     "hai nhánh trông tương đương". `font-size` là thứ DUY NHẤT tác động tới cả hai.
+
+   ⚠️⚠️ VÌ SAO PHẢI ĐẶT `container-type` TRÊN KHUNG (không phải trên .wi-fill):
+     `1cqw` = 1% bề rộng của phần tử GẦN NHẤT có `container-type`. Nếu đặt `container-type`
+     lên chính `.wi-fill` thì nó tự đo chính nó (vòng lặp vô nghĩa) và cỡ sụp về 0.
+     Khung chứa mới là thứ có bề rộng đáng để quy chiếu.
+
+   ⚠️⚠️ `inline-size` (KHÔNG phải `size`):
+     `container-type: size` đòi khung có CHIỀU CAO xác định. Thẻ flashcard cao theo nội dung
+     ⇒ đặt `size` sẽ làm chiều cao sập về 0. `inline-size` chỉ cần bề rộng xác định (mọi khung
+     của ta đều có: `aspect-square` / `aspect-[4/5]` / `w-full` / `size-[132px]`) và KHÔNG đụng
+     chiều cao.
+   ========================================================================== */
+
+.wi-frame {
+  /* inline-size (KHÔNG phải size): chỉ cần bề rộng xác định; 'size' sẽ sập chiều cao
+     của thẻ flashcard (cao theo nội dung). */
+  container-type: inline-size;
+}
+
+.wi-fill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  /* ⚠️⚠️ DỰ PHÒNG CHO TRÌNH DUYỆT KHÔNG HIỂU ĐƠN VỊ CONTAINER QUERY — ĐỌC KỸ TRƯỚC KHI "SỬA":
+     Thiết kế đầu tiên ghi dự phòng là `1em` với lý do "bằng hành vi cũ". ĐIỀU ĐÓ SAI: vì ta
+     đã GỠ các lớp `text-[56px]`/`text-[64px]`/`text-[68px]`/`text-[44px]`/`text-[80px]` khỏi
+     5 chỗ gọi, nên `1em` lúc đó = cỡ chữ THỪA HƯỞNG của nút (~16px) ⇒ biểu tượng nhỏ hơn CẢ
+     hiện tại trên đúng những máy yếu nhất (trình duyệt cũ). Không được để vậy.
+     Nên dự phòng là một cỡ TUYỆT ĐỐI hợp lý (≈ 56px — đúng cỡ đang dùng ở Nghe & Chạm, là chỗ
+     quan trọng nhất). Vẫn ≤ khung nên KHÔNG tràn, KHÔNG vỡ layout. */
+  font-size: 3.5rem;
+}
+
+@supports (font-size: 1cqw) {
+  .wi-fill {
+    font-size: var(--fs-icon-fill);
+  }
+}

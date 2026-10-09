@@ -236,14 +236,16 @@ export function WordPictureGame({ exercise, words, engine }: GameComponentProps)
                     disabled={isMatched}
                     aria-label={t('game.pictureOf', { word: word.en })}
                     className={cn(
-                      'relative flex aspect-square w-full items-center justify-center rounded-kid border-4',
+                      // `wi-frame` mở "container" để biểu tượng bên trong đo được BỀ RỘNG ô (T03).
+                      'wi-frame relative flex aspect-square w-full items-center justify-center rounded-kid border-4',
                       'bg-surface transition-transform duration-kid select-none active:translate-y-[2px]',
                       isMatched && 'border-success bg-success-soft',
                       isSelected && 'border-brand bg-brand-soft scale-[1.03]',
                       !isMatched && !isSelected && 'border-line hoverable:border-brand',
                     )}
                   >
-                    <span aria-hidden="true" className="text-[44px] leading-none">
+                    {/* `wi-fill`: cỡ biểu tượng = 82% bề rộng ô — xem §B.2. */}
+                    <span aria-hidden="true" className="wi-fill">
                       <WordIcon wordId={word.id} fallback={word.icon} />
                     </span>
                     {isMatched && (

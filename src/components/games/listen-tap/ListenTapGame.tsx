@@ -184,7 +184,8 @@ export function ListenTapGame({ exercise, words, engine }: GameComponentProps) {
                 onClick={() => choose(option)}
                 aria-label={option.en}
                 className={cn(
-                  'flex aspect-square w-full flex-col items-center justify-center gap-1',
+                  // `wi-frame` mở "container" để biểu tượng bên trong đo được BỀ RỘNG ô (T03).
+                  'wi-frame flex aspect-square w-full flex-col items-center justify-center gap-1',
                   'rounded-kid border-4 bg-surface p-2 transition-transform duration-kid',
                   'select-none active:translate-y-[2px]',
                   isRevealed && 'border-success bg-success-soft',
@@ -194,7 +195,8 @@ export function ListenTapGame({ exercise, words, engine }: GameComponentProps) {
                   !isRevealed && !isWrong && !isHinted && 'border-line hoverable:border-brand',
                 )}
               >
-                <span aria-hidden="true" className="text-[56px] leading-none sm:text-[64px]">
+                {/* `wi-fill`: cỡ biểu tượng = 82% bề rộng ô (cả ảnh lẫn emoji) — xem §B.2. */}
+                <span aria-hidden="true" className="wi-fill">
                   <WordIcon wordId={option.id} fallback={option.icon} />
                 </span>
                 {/*

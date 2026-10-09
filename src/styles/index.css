@@ -1,7 +1,10 @@
 /* ⚠️ `fonts.css` PHẢI đứng trước `tokens.css`: mọi `@import` phải nằm trên cùng,
-   nếu chèn sau sẽ bị CSS bỏ qua im lặng và font không bao giờ được nạp. */
+   nếu chèn sau sẽ bị CSS bỏ qua im lặng và font không bao giờ được nạp.
+   ⚠️ `word-icon.css` (T03) cũng PHẢI ở đây — cùng lý do: mọi `@import` phải đứng TRƯỚC
+   `@tailwind base`, nếu không trình duyệt bỏ qua im lặng và `.wi-frame`/`.wi-fill` biến mất. */
 @import './fonts.css';
 @import './tokens.css';
+@import './word-icon.css';
 
 @tailwind base;
 @tailwind components;

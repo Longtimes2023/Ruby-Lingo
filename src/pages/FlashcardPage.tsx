@@ -329,9 +329,17 @@ export function FlashcardPage() {
           🔊
         </span>
 
-        <span aria-hidden="true" className="text-[80px] leading-none">
-          <WordIcon wordId={word.id} fallback={word.icon} />
-        </span>
+        {/*
+          ⚠️ KHUNG `.wi-frame` BỌC RIÊNG biểu tượng (T03), KHÔNG đặt lên cả tấm thẻ:
+            thẻ cao theo NỘI DUNG nên không có bề rộng "cố định" để container-query quy chiếu,
+            và `container-type: size` sẽ sập chiều cao. Khung vuông 200px này mới là thứ có bề
+            rộng xác định — `wi-fill` bên trong = 82% bề rộng khung cho CẢ ảnh lẫn emoji.
+        */}
+        <div className="wi-frame mx-auto aspect-square w-full max-w-[200px]">
+          <span aria-hidden="true" className="wi-fill">
+            <WordIcon wordId={word.id} fallback={word.icon} />
+          </span>
+        </div>
 
         {/* Từ tiếng Anh — to nhất trên màn hình, đây là thứ bé cần nhớ. */}
         <p className="text-kid-3xl font-bold leading-tight text-ink">{word.en}</p>

@@ -151,7 +151,8 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
                 className={cn(
                   // `aspect-[4/5]`: thẻ đủ cao cho từ dài ("crocodile") xuống dòng gọn, mà vẫn thấp
                   // hơn thẻ vuông nên bàn ít phải cuộn hơn.
-                  'flex aspect-[4/5] w-full items-center justify-center rounded-kid border-4 p-1.5',
+                  // `wi-frame` (T03): mở "container" để biểu tượng thẻ HÌNH đo được BỀ RỘNG thẻ.
+                  'wi-frame flex aspect-[4/5] w-full items-center justify-center rounded-kid border-4 p-1.5',
                   'text-center transition-transform duration-kid select-none active:translate-y-[2px]',
                   isMatched && 'border-success bg-success-soft',
                   isPendingPair && 'border-warn bg-warn-soft',
@@ -163,17 +164,17 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
                     aria-hidden="true"
                     className={cn(
                       'break-words',
-                      card.kind === 'icon'
-                        ? 'text-[38px] leading-none'
-                        : 'text-kid-xs font-bold uppercase tracking-wide',
+                      // Thẻ HÌNH dùng `wi-fill` (cỡ = 82% bề rộng thẻ, cho cả ảnh lẫn emoji);
+                      // thẻ CHỮ giữ cỡ chữ nhãn — xem §B.2.
+                      card.kind === 'icon' ? 'wi-fill' : 'text-kid-xs font-bold uppercase tracking-wide',
                       isMatched ? 'text-success' : 'text-ink',
                     )}
                   >
                     {card.kind === 'icon' ? (
                       /*
                         Thẻ HÌNH: có thể là hình vẽ tay (chủ đề `my-body`) hoặc emoji. `WordIcon`
-                        quyết định, còn `card.face` là emoji dự phòng. Cỡ ăn theo `text-[38px]` ở
-                        lớp cha nên không phải truyền cỡ riêng.
+                        quyết định, còn `card.face` là emoji dự phòng. Cỡ do `.wi-fill` quyết
+                        định theo bề rộng thẻ nên không phải truyền cỡ riêng.
                       */
                       <WordIcon wordId={card.wordId} fallback={card.face} />
                     ) : (

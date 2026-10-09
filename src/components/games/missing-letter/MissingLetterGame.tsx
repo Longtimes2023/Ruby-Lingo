@@ -158,11 +158,13 @@ export function MissingLetterGame({ exercise, words, engine }: GameComponentProp
       {config.showImageHint ? (
         <div
           className={cn(
-            'mx-auto flex size-[132px] items-center justify-center rounded-kid border-4',
+            // `wi-frame` (T03): mở "container" để biểu tượng bên trong đo được BỀ RỘNG ô.
+            'wi-frame mx-auto flex size-[132px] items-center justify-center rounded-kid border-4',
             solved ? 'border-success bg-success-soft' : 'border-line bg-surface-raised',
           )}
         >
-          <span aria-hidden="true" className="text-[68px] leading-none">
+          {/* `wi-fill`: cỡ biểu tượng = 82% bề rộng ô — xem §B.2. */}
+          <span aria-hidden="true" className="wi-fill">
             <WordIcon wordId={target.id} fallback={target.icon} />
           </span>
         </div>

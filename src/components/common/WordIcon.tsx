@@ -10,10 +10,19 @@
  * ⚠️ CHỈ dùng cho chỗ cần HÌNH. Chỗ cần CHỮ (mặt chữ tiếng Anh của thẻ ghi nhớ, nhãn
  *    từ trong câu hỏi…) thì tuyệt đối không dùng: nó sẽ trả về ảnh ở nơi đang cần chữ.
  *
- * CỠ DO PHẦN TỬ CHA QUYẾT ĐỊNH: emoji ăn theo `font-size`; `<img>` ở đây dùng
- * `h-[1em] w-[1em]` nên cũng ăn theo đúng `font-size` đó. Nhờ vậy 5 điểm gọi giữ nguyên
- * class cỡ chữ sẵn có (`text-[80px]`, `text-[56px] sm:text-[64px]`, `text-[44px]`…),
- * không phải truyền thêm prop và không phải sửa gì cho màn hình nhỏ.
+ * ⭐ CỠ DO LỚP BỌC `.wi-fill` QUYẾT ĐỊNH — THEO BỀ RỘNG KHUNG, KHÔNG THEO CỠ CHỮ "THƯỜNG".
+ *   Trước đây 5 chỗ gọi tự đặt `text-[80px]`/`text-[56px]`… và `<img h-[1em] w-[1em]>` ăn theo
+ *   đúng `font-size` đó. Nhưng cỡ chữ ấy vốn chỉnh cho EMOJI, trong khi khung chứa lớn hơn 3–8
+ *   lần ⇒ ảnh teo tí xíu so với khung (đúng lỗi chủ dự án báo).
+ *
+ *   Nay cả 5 chỗ gọi bọc biểu tượng trong `<span class="wi-fill">` (và khung trong `.wi-frame`
+ *   — xem `src/styles/word-icon.css`, §B.2 của THIET-KE). `.wi-fill` đặt `font-size` theo đơn vị
+ *   container-query (`--fs-icon-fill = 82cqw` = 82% bề rộng khung) nên CẢ `<img>` (vẫn `1em`)
+ *   LẪN emoji đều = 82% bề rộng khung ⇒ hai nhánh tương đương, và không còn phụ thuộc cỡ chữ
+ *   của nút. Vì vậy KHÔNG chỗ gọi nào truyền cỡ qua prop nữa.
+ *
+ * ⚠️ Component này KHÔNG đổi logic: vẫn trả emoji khi từ chưa có ảnh, vẫn `h-[1em] w-[1em]
+ *    object-contain`. Chỉ khác là `1em` nay do `.wi-fill` quyết định.
  */
 
 import { wordAssetUrlOrNull } from '../../data/index.js';
@@ -24,7 +33,7 @@ export interface WordIconProps {
   wordId: string;
   /** Emoji dùng khi từ CHƯA có ảnh (`Word.icon`). */
   fallback: string;
-  /** Class thêm, hiếm khi cần — cỡ đã ăn theo `font-size` của cha. */
+  /** Class thêm, hiếm khi cần — cỡ đã do lớp bọc `.wi-fill` quyết định theo bề rộng khung. */
   className?: string;
 }
 
