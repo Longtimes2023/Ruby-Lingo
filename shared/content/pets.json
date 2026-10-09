@@ -1,0 +1,11 @@
+{
+  "note": "Danh mục thú cưng bé chọn. Emoji 1 codepoint, phổ thông (iPhone+Android). KHÔNG lấy lại emoji của 5 linh vật dẫn đường / 8 avatar / 30 vật phẩm cửa hàng. Bậc 3 dùng emoji thứ ba nếu có (Heo → 🐗), còn lại dùng lại emoji bậc 2 + ✨ (CSS). Riêng Khỉ dùng 🐵 làm iconBaby TRÙNG CÓ CHỦ Ý với linh vật dẫn đường Momo hiện tại: bé đang dùng trên VPS phải thấy con mình KHÔNG đổi hình khi bản này lên.",
+  "pets": [
+    { "id": "monkey", "name_vi": "Khỉ Momo",  "name_en": "Monkey", "iconBaby": "🐵", "iconAdult": "🐒", "iconSuper": "🐒", "phase": "mvp" },
+    { "id": "cat",    "name_vi": "Mèo Miu",   "name_en": "Cat",    "iconBaby": "🐱", "iconAdult": "🐈", "iconSuper": "🐈", "phase": "mvp" },
+    { "id": "dog",    "name_vi": "Cún Bông",  "name_en": "Dog",    "iconBaby": "🐶", "iconAdult": "🐕", "iconSuper": "🐕", "phase": "mvp" },
+    { "id": "tiger",  "name_vi": "Hổ Vằn",    "name_en": "Tiger",  "iconBaby": "🐯", "iconAdult": "🐅", "iconSuper": "🐅", "phase": "mvp" },
+    { "id": "pig",    "name_vi": "Heo Ỉn",    "name_en": "Pig",    "iconBaby": "🐷", "iconAdult": "🐖", "iconSuper": "🐗", "phase": "mvp" },
+    { "id": "dragon", "name_vi": "Rồng Long", "name_en": "Dragon", "iconBaby": "🐲", "iconAdult": "🐉", "iconSuper": "🐉", "phase": "mvp" }
+  ]
+}

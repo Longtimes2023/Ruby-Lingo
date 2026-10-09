@@ -74,9 +74,8 @@
     }
   ],
   "evolutionStages": [
-    { "stage": "egg", "name_vi": "Trứng", "icon": "🥚", "wordsRequired": 0 },
-    { "stage": "baby", "name_vi": "Nhóc con", "icon": "🐣", "wordsRequired": 20 },
-    { "stage": "adult", "name_vi": "Trưởng thành", "icon": "🐵", "wordsRequired": 80 },
-    { "stage": "super", "name_vi": "Siêu cấp", "icon": "✨", "wordsRequired": 200 }
+    { "stage": "baby", "name_vi": "Nhóc con", "icon": "🐣", "wordsRequired": 0 },
+    { "stage": "adult", "name_vi": "Trưởng thành", "icon": "🐵", "wordsRequired": 40 },
+    { "stage": "super", "name_vi": "Siêu cấp", "icon": "✨", "wordsRequired": 120 }
   ]
 }

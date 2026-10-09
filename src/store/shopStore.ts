@@ -1,8 +1,9 @@
 /**
- * RubyLingo — `shopStore`: điều phối ba hành động tiêu tiền ở cửa hàng (T063).
+ * RubyLingo — `shopStore`: điều phối các hành động ở cửa hàng & nhà thú cưng (T063 · T04).
  *
- * Ba hành động: **mua** một vật phẩm, **cho ăn** một món đã sở hữu, **mặc / bỏ ra** một phụ kiện.
- * Cả ba dùng chung một hình dạng: chặn cú chạm thứ hai → gọi mạng → ghi NGAY dữ liệu server vừa
+ * Ba hành động tiêu tiền: **mua** một vật phẩm, **cho ăn** một món đã sở hữu, **mặc / bỏ ra** một
+ * phụ kiện. Cộng thêm **đổi bạn đồng hành** (T04) — MIỄN PHÍ, xem khối ghi chú riêng bên dưới.
+ * Cả bốn dùng chung một hình dạng: chặn cú chạm thứ hai → gọi mạng → ghi NGAY dữ liệu server vừa
  * trả về → nạp lại ảnh chụp đầy đủ.
  *
  * ⭐ VÌ SAO TRẠNG THÁI NÀY NẰM TRONG STORE, KHÔNG PHẢI `useState` CỦA TRANG:
@@ -39,7 +40,7 @@
 import { create } from 'zustand';
 
 import type { RewardSnapshot } from '@shared/types/reward.js';
-import { buyItem, feedPet, setEquipped } from '../services/ShopService.js';
+import { buyItem, choosePet as choosePetService, feedPet, setEquipped } from '../services/ShopService.js';
 import { useRewardStore } from './rewardStore.js';
 
 /**
@@ -74,6 +75,15 @@ interface ShopState {
   feeding: Record<string, boolean>;
   /** `itemId` → đang có một yêu cầu MẶC / BỎ RA chạy. */
   equipping: Record<string, boolean>;
+  /**
+   * Đang có một yêu cầu ĐỔI BẠN ĐỒNG HÀNH chạy.
+   *
+   * ⚠️ LÀ MỘT `boolean`, KHÔNG PHẢI MAP THEO `itemId` (khác `buying`/`feeding`/`equipping`).
+   *   Bé chỉ có MỘT con thú cưng, và màn chọn chỉ gửi được một yêu cầu tại một thời điểm — không
+   *   có khoá nào để phân biệt. Một map ở đây sẽ là một hình dạng thừa, và chỗ đọc sẽ phải đoán
+   *   khoá nào để tra.
+   */
+  choosing: boolean;
   /** Kết quả của hành động gần nhất; `null` = không có gì để hiện. */
   lastNotice: ShopNotice | null;
   /**
@@ -88,6 +98,14 @@ interface ShopState {
   feed: (childId: string, itemId: string) => Promise<void>;
   /** Bé bấm "Dùng ngay" / "Bỏ ra". `equipped` là TRẠNG THÁI ĐÍCH, không phải lệnh đảo. */
   equip: (childId: string, itemId: string, equipped: boolean) => Promise<void>;
+  /**
+   * Bé bấm "Chọn bạn này!" ở màn chọn con (T04). **MIỄN PHÍ, không đụng ví.** Không bao giờ ném.
+   *
+   * ⚠️ KHÔNG ĐẶT `lastNotice` SAU KHI XONG — cùng lý do như `equip`: kết quả nhìn thấy được của
+   *    việc đổi con CHÍNH LÀ con vật đổi hình trên màn nhà. Một câu "Bé đã đổi bạn đồng hành!"
+   *    là nói lại điều bé vừa tự tay làm.
+   */
+  choosePet: (childId: string, petType: string) => Promise<void>;
   /** Đóng thông báo (sau khi bé đã xem xong). */
   dismissNotice: () => void;
   /** Xoá sạch (đăng xuất, hoặc bố mẹ đổi sang bé khác). */
@@ -98,11 +116,15 @@ interface ShopState {
 type FlagKey = 'buying' | 'feeding' | 'equipping';
 
 /** Trạng thái rỗng — cũng là trạng thái trong lúc chờ. */
-function emptyState(): Omit<ShopState, 'buy' | 'feed' | 'equip' | 'dismissNotice' | 'reset'> {
+function emptyState(): Omit<
+  ShopState,
+  'buy' | 'feed' | 'equip' | 'choosePet' | 'dismissNotice' | 'reset'
+> {
   return {
     buying: {},
     feeding: {},
     equipping: {},
+    choosing: false,
     lastNotice: null,
     error: null,
   };
@@ -187,6 +209,28 @@ export const useShopStore = create<ShopState>((set, get) => {
 
     set({ error: null });
     setFlag(key, itemId, true);
+
+    return () => useRewardStore.getState().childId === childId;
+  };
+
+  /**
+   * Cổng vào của `choosePet` — CÙNG HAI ĐIỀU KIỆN NHƯ `enter()`, nhưng không có `itemId`.
+   *
+   * ⚠️ KHÔNG DÙNG LẠI ĐƯỢC `enter()`: nó khoá cờ theo `itemId`, mà đổi con không có `itemId`
+   *    (chỉ có MỘT con thú cưng). Sao chép đúng hai điều kiện ở đây thay vì bẻ `enter()` cho vừa:
+   *      • ví của bé này CHƯA nạp (`rewardStore.childId !== childId`) ⇒ KHÔNG gọi mạng — cùng lý do
+   *        như `enter()`: có thể là bố mẹ VỪA đổi bé, và gọi mạng lúc đó là ghi dữ liệu của bé này
+   *        lên màn hình đang hiện dữ liệu của bé kia.
+   *      • đang `choosing` ⇒ bỏ qua cú chạm thứ hai (nút xác nhận đã mờ, nhưng cờ là lớp chặn thật).
+   *
+   * Trả về hàm "bé còn là bé này không?" — phải đọc LẠI ở mỗi lần gọi, không chụp sẵn trước `await`.
+   */
+  const enterOnce = (childId: string): (() => boolean) | null => {
+    if (useRewardStore.getState().childId !== childId) return null;
+    if (get().choosing) return null;
+
+    set({ error: null });
+    set({ choosing: true });
 
     return () => useRewardStore.getState().childId === childId;
   };
@@ -280,6 +324,33 @@ export const useShopStore = create<ShopState>((set, get) => {
         set({ error: error instanceof Error ? error.message : String(error) });
       } finally {
         setFlag('equipping', itemId, false);
+      }
+    },
+
+    choosePet: async (childId, petType) => {
+      const stillSameChild = enterOnce(childId);
+      if (!stillSameChild) return;
+
+      try {
+        const pet = await choosePetService(childId, petType);
+        if (!stillSameChild()) return;
+
+        /**
+         * ⭐ KHÔNG ĐẶT `lastNotice` Ở ĐÂY — cùng lý do như `equip`: kết quả nhìn thấy được của
+         *   việc đổi con CHÍNH LÀ con vật đổi hình trên màn nhà. Thêm một câu nữa là nói lại điều
+         *   bé vừa tự tay làm.
+         *
+         * ⚠️ Ghi TRỌN `pet` mà server vừa trả (không phải `{ petType }`): phản hồi là `readPet`,
+         *    nên nó mang cả `evolutionStage`/`happiness`/`equippedItemIds` đã được server tính —
+         *    ghi thẳng vào cache để con vật đổi hình NGAY, rồi `reload()` cho mọi trường đuổi kịp.
+         */
+        useRewardStore.getState().applyServerSnapshot(childId, { pet });
+        useRewardStore.getState().reload(childId);
+      } catch (error) {
+        if (!stillSameChild()) return;
+        set({ error: error instanceof Error ? error.message : String(error) });
+      } finally {
+        set({ choosing: false });
       }
     },
 

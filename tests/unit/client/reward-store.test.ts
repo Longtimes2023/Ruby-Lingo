@@ -67,7 +67,9 @@ function snapshot(overrides: Partial<RewardSnapshot> = {}): RewardSnapshot {
     xp: { childId: CHILD, xp: 140, level: 1, updatedAt: NOW },
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 3,
       equippedItemIds: [],

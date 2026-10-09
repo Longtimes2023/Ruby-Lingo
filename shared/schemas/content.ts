@@ -363,10 +363,27 @@ export const xpLevelsFileSchema = z.object({
       }),
     )
     .min(2),
+  /**
+   * Ba giai đoạn tiến hoá của linh vật — theo TỔNG SỐ TỪ ĐÃ HỌC.
+   *
+   * ⚠️⚠️ ĐÃ BỎ BẬC `'egg'` (T04) — TRƯỚC ĐÂY CÓ 4 BẬC `egg/baby/adult/super`.
+   *   VÌ SAO: một quả trứng 🥚 không phải "con thú cưng" — nó là một trạng thái CHỜ. Nhưng DB cũ
+   *   (`003_progress.sql`) ghi `evolution_stage = 'egg'` cho MỌI bé, và `PetAvatar` vẽ quả trứng
+   *   cho tới khi bé học đủ từ. Kết hợp với T04 (bé CHỌN con mình muốn ngay từ đầu), giữ `egg`
+   *   nghĩa là bé vừa chọn "Rồng" xong lại thấy một quả trứng 🥚 vô danh — chọn con mà không thấy
+   *   con. Nên bậc đầu tiên nay là `'baby'` (bé mới chọn ra một con non).
+   *
+   * ⚠️ PHẢI KHỚP `EvolutionStage` trong `shared/types/reward.ts` — cùng một nguồn sự thật.
+   *    Để lệch (ví dụ giữ `'egg'` ở đây) thì `xp-levels.json` cũ sẽ bị `validate:content` TỪ CHỐI
+   *    ngay, dù mã đã hiểu bộ bậc mới.
+   *
+   * ⚠️ `.min(2)` vẫn giữ: cần ít nhất 2 bậc để có một ngưỡng tiến hoá. Luật "bậc sau đòi nhiều
+   *    từ hơn bậc trước" (V15) nằm ở `scripts/validate-content.ts`, không lặp lại ở đây.
+   */
   evolutionStages: z
     .array(
       z.object({
-        stage: z.enum(['egg', 'baby', 'adult', 'super']),
+        stage: z.enum(['baby', 'adult', 'super']),
         name_vi: z.string().min(1),
         icon: z.string().min(1),
         wordsRequired: z.number().int().min(0),
@@ -523,6 +540,62 @@ export const stickersFileSchema = z.object({
     }),
   ),
 });
+
+/**
+ * Một thú cưng bé có thể chọn làm bạn đồng hành (T04).
+ *
+ * ⚠️ BA TRƯỜNG EMOJI, KHÔNG PHẢI MỘT: mỗi con phải có hình RIÊNG cho từng giai đoạn tiến hoá
+ *   (`baby`/`adult`/`super`). Nếu chỉ có một emoji, mọi con sẽ "lớn lên" y hệt nhau và việc bé
+ *   chọn con gì trở nên vô nghĩa — hình dáng linh vật đổi theo TỔNG SỐ TỪ ĐÃ HỌC, và đó là toàn
+ *   bộ phần thưởng thị giác của tiến trình học.
+ *
+ * ⚠️ KHÔNG có trường `slot`/`price`/`currency`: thú cưng KHÔNG mua bằng tiền và KHÔNG chiếm vị
+ *   trí phụ kiện. Đổi bạn đồng hành là MIỄN PHÍ (xem `choosePetRequestSchema`).
+ *
+ * ⚠️ `phase` giống mọi danh mục khác: cho phép ra mắt theo từng giai đoạn mà không phải xoá dữ
+ *   liệu. MVP chỉ có các con `'mvp'`; `'p1'`/`'p2'` là chỗ đã dành sẵn cho các con sau này.
+ */
+const petSchema = z.object({
+  id: z.string().min(2),
+  name_vi: z.string().min(1),
+  name_en: z.string().min(1),
+  /** Emoji giai đoạn `baby` — con non bé vừa chọn. */
+  iconBaby: z.string().min(1),
+  /** Emoji giai đoạn `adult` — trưởng thành. */
+  iconAdult: z.string().min(1),
+  /** Emoji giai đoạn `super` — siêu cấp (đỉnh tiến hoá). */
+  iconSuper: z.string().min(1),
+  phase: z.enum(['mvp', 'p1', 'p2']),
+});
+
+/**
+ * Danh mục thú cưng — `shared/content/pets.json`.
+ *
+ * ⚠️⚠️ `.superRefine` CHẶN TRÙNG `id` — VÀ ĐÂY LÀ CHỐT CHẶN QUAN TRỌNG NHẤT CỦA CẢ DANH MỤC.
+ *   `id` là khoá tra cứu: `pet_state.pet_type` (DB) và `RewardService.choosePet` đều so với nó.
+ *   Hai mục cùng `id` sẽ khiến bảng tra (`shared/content/pets.ts`) im lặng giữ mục SAU — nghĩa là
+ *   con nào hiện ra phụ thuộc THỨ TỰ DÒNG trong file JSON, và chỉ đổi hành vi khi ai đó sắp xếp
+ *   lại file. Kiểm ở đây biến lỗi đó thành một lần nạp module THẤT BẠI, ồn ào — thay vì một con
+ *   thú cưng biến mất trong im lặng.
+ */
+export const petsFileSchema = z
+  .object({
+    note: z.string().optional(),
+    pets: z.array(petSchema).min(1),
+  })
+  .superRefine((file, ctx) => {
+    const seen = new Set<string>();
+    file.pets.forEach((pet, i) => {
+      if (seen.has(pet.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['pets', i, 'id'],
+          message: `Trùng id thú cưng "${pet.id}" — id là khoá tra cứu, hai mục cùng id thì con nào hiện ra tuỳ thứ tự dòng trong file`,
+        });
+      }
+      seen.add(pet.id);
+    });
+  });
 
 // =============================================================================
 // Chỉ mục nội dung (sinh tự động — KHÔNG sửa tay)

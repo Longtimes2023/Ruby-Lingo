@@ -193,9 +193,16 @@ export class ChildService {
 
       // `happiness` khởi tạo 3 (không phải 1 hay 5): linh vật mới nhận nuôi ở trạng thái
       // vui vẻ trung tính, để việc cho ăn lần đầu thấy được thay đổi rõ rệt.
+      //
+      // ⚠️ `pet_type = NULL` (T04): bé MỚI CHƯA chọn con đồng hành. NULL ở đây là TÍN HIỆU, không
+      //    phải "thiếu dữ liệu" — server trả về cờ `petChosen = false` để màn nhà thú cưng mời bé
+      //    chọn. Cho tới lúc bé chọn, `RewardService.readPet` phân giải NULL về Momo 🐵 (mặc định),
+      //    nên bé vẫn thấy một con có thật ngay từ giây đầu.
+      // ⚠️ `evolution_stage = 'baby'` (không còn 'egg'): bậc 0 nay là con non. Migration `011`
+      //    đã bỏ 'egg' khỏi CHECK — ghi 'egg' ở đây sẽ bị DB TỪ CHỐI ngay.
       db.prepare(
-        `INSERT INTO pet_state (child_id, evolution_stage, happiness, equipped_item_ids, last_fed_at, updated_at)
-         VALUES (?, 'egg', 3, '[]', NULL, ?)`,
+        `INSERT INTO pet_state (child_id, pet_type, evolution_stage, happiness, equipped_item_ids, last_fed_at, updated_at)
+         VALUES (?, NULL, 'baby', 3, '[]', NULL, ?)`,
       ).run(childId, now);
 
       db.prepare(

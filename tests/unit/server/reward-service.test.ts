@@ -106,7 +106,7 @@ describe('RewardService', () => {
 
   // ===========================================================================
   describe('getSnapshot — đọc trạng thái', () => {
-    it('bé mới toanh: ví 0/0, cấp 1, trứng, ❤️ 3, túi rỗng', async () => {
+    it('bé mới toanh: ví 0/0, cấp 1, nhóc con (chưa chọn), ❤️ 3, túi rỗng', async () => {
       const parentId = await makeParent('bo@example.com');
       const childId = makeChild(parentId);
 
@@ -115,7 +115,14 @@ describe('RewardService', () => {
       expect(snap.childId).toBe(childId);
       expect(snap.wallet).toMatchObject({ stars: 0, acorns: 0 });
       expect(snap.xp).toMatchObject({ xp: 0, level: 1 });
-      expect(snap.pet).toMatchObject({ evolutionStage: 'egg', wordsLearned: 0, happiness: 3, lastFedAt: null });
+      expect(snap.pet).toMatchObject({
+        evolutionStage: 'baby',
+        wordsLearned: 0,
+        happiness: 3,
+        lastFedAt: null,
+        petType: 'monkey',
+        petChosen: false,
+      });
       expect(snap.inventory).toEqual([]);
       expect(snap.badges).toEqual([]);
       expect(snap.stickers).toEqual([]);

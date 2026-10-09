@@ -63,7 +63,9 @@ function snap(overrides: Partial<RewardSnapshot> = {}): RewardSnapshot {
     xp: { childId: CHILD, xp: 0, level: 1, updatedAt: NOW },
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 3,
       equippedItemIds: [],
@@ -177,15 +179,18 @@ describe('ExplorerProfilePage — huy hiệu', () => {
 
 describe('ExplorerProfilePage — tiến hoá linh vật', () => {
   it('⚠️ thanh + "còn N từ nữa" đi theo `snapshot.pet.wordsLearned` (số SERVER trả)', () => {
-    // egg → baby: lấy mốc từ DỮ LIỆU, không chép số vào test.
-    const egg = stageDefinition('egg');
+    // baby → adult: lấy mốc từ DỮ LIỆU, không chép số vào test. Bậc đầu nay là 'baby' (bé đã
+    // chọn con), KHÔNG còn 'egg' — xem `shared/types/reward.ts`.
     const baby = stageDefinition('baby');
-    const wordsLearned = Math.floor(baby.wordsRequired / 2); // đang ở giữa hai giai đoạn
+    const adult = stageDefinition('adult');
+    const wordsLearned = Math.floor(adult.wordsRequired / 2); // đang ở giữa hai giai đoạn
 
     seed({
       pet: {
         childId: CHILD,
-        evolutionStage: egg.stage,
+        evolutionStage: baby.stage,
+        petType: 'monkey',
+        petChosen: true,
         wordsLearned,
         happiness: 3,
         equippedItemIds: [],
@@ -195,18 +200,18 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
     });
     render(<ExplorerProfilePage />);
 
-    const petRegion = screen.getByRole('region', { name: 'Momo lớn lên' });
+    const petRegion = screen.getByRole('region', { name: 'Khỉ Momo lớn lên' });
     // Giai đoạn hiện tại (theo ID server trả) + đích kế tiếp.
-    expect(within(petRegion).getByText(egg.name_vi)).toBeInTheDocument();
     expect(within(petRegion).getByText(baby.name_vi)).toBeInTheDocument();
+    expect(within(petRegion).getByText(adult.name_vi)).toBeInTheDocument();
 
     // Thanh mang ĐÚNG con số server trả; mẫu số là khoảng cách giữa hai giai đoạn.
-    const span = baby.wordsRequired - egg.wordsRequired;
-    const intoStage = wordsLearned - egg.wordsRequired;
+    const span = adult.wordsRequired - baby.wordsRequired;
+    const intoStage = wordsLearned - baby.wordsRequired;
     const bar = within(petRegion).getByRole('progressbar');
     expect(bar).toHaveAttribute('aria-valuenow', String(intoStage));
     expect(bar).toHaveAttribute('aria-valuemax', String(span));
-    expect(bar.getAttribute('aria-valuetext')).toContain(String(baby.wordsRequired - wordsLearned));
+    expect(bar.getAttribute('aria-valuetext')).toContain(String(adult.wordsRequired - wordsLearned));
 
     /*
       ⚠️ BỀ RỘNG của div fill BÊN TRONG — thứ bé NHÌN THẤY, khác hẳn `aria-*` (ngữ nghĩa).
@@ -218,7 +223,7 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
 
     // Câu "còn N từ nữa" hiện ra (chuỗi ở `pet.nextStage`).
     expect(
-      within(petRegion).getByText(`Còn ${baby.wordsRequired - wordsLearned} từ nữa để lớn hơn`),
+      within(petRegion).getByText(`Còn ${adult.wordsRequired - wordsLearned} từ nữa để lớn hơn`),
     ).toBeInTheDocument();
   });
 
@@ -228,6 +233,8 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
       pet: {
         childId: CHILD,
         evolutionStage: last.stage,
+        petType: 'monkey',
+        petChosen: true,
         wordsLearned: last.wordsRequired + 42,
         happiness: 3,
         equippedItemIds: [],
@@ -237,7 +244,7 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
     });
     render(<ExplorerProfilePage />);
 
-    const petRegion = screen.getByRole('region', { name: 'Momo lớn lên' });
+    const petRegion = screen.getByRole('region', { name: 'Khỉ Momo lớn lên' });
     expect(within(petRegion).getByText('Bạn ấy đã lớn nhất rồi!')).toBeInTheDocument();
     expect(within(petRegion).queryByText(/nữa để lớn hơn/)).not.toBeInTheDocument();
 
@@ -271,6 +278,8 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
       pet: {
         childId: CHILD,
         evolutionStage: last.stage,
+        petType: 'monkey',
+        petChosen: true,
         wordsLearned: last.wordsRequired,
         happiness: 3,
         equippedItemIds: [],
@@ -280,7 +289,7 @@ describe('ExplorerProfilePage — tiến hoá linh vật', () => {
     });
     render(<ExplorerProfilePage />);
 
-    const petRegion = screen.getByRole('region', { name: 'Momo lớn lên' });
+    const petRegion = screen.getByRole('region', { name: 'Khỉ Momo lớn lên' });
     const bar = within(petRegion).getByRole('progressbar');
     const fill = bar.firstElementChild as HTMLElement;
     expect(fill.style.width).toBe('100%');

@@ -41,6 +41,7 @@ import { LoginPage } from './pages/auth/LoginPage.js';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage.js';
 import { SignupPage } from './pages/auth/SignupPage.js';
 import { ParentGatePage } from './pages/parent/ParentGatePage.js';
+import { ChoosePetPage } from './pages/pet/ChoosePetPage.js';
 import { PetHousePage } from './pages/pet/PetHousePage.js';
 import { ExplorerProfilePage } from './pages/profile/ExplorerProfilePage.js';
 import { QuestsPage } from './pages/quests/QuestsPage.js';
@@ -130,6 +131,13 @@ export function AppRoutes() {
                `AppShell` (`useRewardsLifecycle`) — không nạp lại ở đây.
           */}
           <Route path="/pet" element={<PetHousePage />} />
+
+          {/*
+            Chọn bạn đồng hành (T04) — `/pet/chon` nằm NGAY SAU `/pet` vì nó là một bước con của
+            nhà thú cưng: `PetHousePage` tự mở màn này khi bé chưa từng chọn con, và nút "Đổi bạn
+            đồng hành" ở đó dẫn tới đây. Cùng nhóm `RequireChild` + `AppShell` nên có thanh trên/dưới.
+          */}
+          <Route path="/pet/chon" element={<ChoosePetPage />} />
 
           {/*
             Hồ sơ nhà thám hiểm (M13) — thanh XP, tiến hoá linh vật, huy hiệu, thành tích (T071).

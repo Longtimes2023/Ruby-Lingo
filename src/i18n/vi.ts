@@ -191,7 +191,13 @@ export const vi = {
   },
 
   pet: {
-    /** Tên linh vật. Một chỗ duy nhất để đổi tên bạn ấy trong toàn bộ giao diện. */
+    /**
+     * ⚠️ TÊN LINH VẬT DẪN ĐƯỜNG — GIỮ LẠI, NHƯNG KHÔNG CÒN LÀ TÊN CON CỦA BÉ.
+     *   Từ T04, tên con bé đi cùng lấy từ DỮ LIỆU (`shared/content/pets.json` → `petNameVi`), vì
+     *   bé CHỌN được con mình muốn ("Mèo Miu", "Rồng Long"…). Khoá này chỉ còn cho linh vật dẫn
+     *   đường cố định (Momo 🐵) ở những chỗ chưa gắn với con bé đã chọn. KHÔNG dùng nó thay cho
+     *   tên con của bé — làm vậy là hai nguồn sự thật cho cùng một cái tên, và chúng sẽ lệch nhau.
+     */
     name: 'Momo',
     title: 'Nhà thú cưng',
     feed: 'Cho ăn',
@@ -206,6 +212,26 @@ export const vi = {
     sceneWearing: '{{pet}} đang dùng: {{items}}',
     sceneScenery: 'Quanh nhà có {{items}}',
     sceneBare: '{{pet}} đang chơi trong nhà',
+
+    // --- Màn "Chọn bạn đồng hành" (T04) ----------------------------------
+    /** Tiêu đề màn chọn con. Nói thẳng bé đang làm gì. */
+    chooseTitle: 'Chọn bạn đồng hành',
+    /** Lời mời ở đầu màn — một câu rủ rê, không nhắc "phải"/"cần". */
+    chooseIntro: 'Bé muốn đi cùng bạn nào?',
+    /** Nhãn nút xác nhận (nút chính, ≥88px). */
+    chooseConfirm: 'Chọn bạn này!',
+    /**
+     * Nút "Để sau" — bé được phép KHÔNG chọn ngay. Ghi cờ vào `sessionStorage` để không hỏi lại
+     * trong phiên này (xem `ChoosePetPage`).
+     */
+    chooseLater: 'Để sau',
+    /** Nút ở nhà thú cưng để mở lại màn chọn (đổi con đã chọn). */
+    changeCompanion: 'Đổi bạn đồng hành',
+    /** Nhãn đọc của lưới sáu thẻ — nói rõ đây là gì, không để bé khiếm thị nghe sáu cái tên trơ. */
+    chooseGridLabel: 'Các bạn đồng hành để bé chọn',
+    /** Không đọc được danh sách/linh vật (mạng chậm). Bé không làm gì sai — câu trung tính. */
+    chooseLoadErrorTitle: 'Chưa mở được các bạn đồng hành',
+    chooseLoadErrorHint: 'Có vẻ mạng đang chậm. Bé thử lại nhé!',
   },
 
   /**
@@ -221,8 +247,9 @@ export const vi = {
     /** Tiêu đề khối thanh XP — nói rõ đây là CẤP của bé, tách khỏi khối lớn lên của linh vật. */
     xpSection: 'Cấp nhà thám hiểm',
     /**
-     * Tiêu đề khối tiến hoá linh vật. Có `{{pet}}` để câu tự nhiên ("Momo lớn lên") — tên linh
-     * vật lấy từ `pet.name`, không chép lại ở đây (một chỗ đổi tên, cả app đổi theo).
+     * Tiêu đề khối tiến hoá linh vật. Có `{{pet}}` để câu tự nhiên ("Khỉ Momo lớn lên").
+     * ⚠️ Từ T04, tên linh vật do `ExplorerProfilePage` truyền vào bằng `petNameVi(petType)` —
+     *    tên con BÉ ĐÃ CHỌN, lấy từ `shared/content/pets.json`. KHÔNG chép tên vào đây.
      */
     petSection: '{{pet}} lớn lên',
     /**
@@ -601,7 +628,12 @@ export const vi = {
     nickname: 'Biệt danh của bé',
     nicknameHint: 'Chỉ cần biệt danh thôi — không cần tên thật',
     age: 'Bé bao nhiêu tuổi?',
-    avatar: 'Chọn bạn đồng hành cho bé',
+    /**
+     * ⚠️ ĐỔI TỪ "Chọn bạn đồng hành cho bé" (T04). Nhãn cũ TRÙNG NGHĨA với việc chọn THÚ CƯNG
+     *    (màn `/pet/chon`), mà đây là chọn ẢNH ĐẠI DIỆN của bé. Hai thứ khác hẳn nhau bị gọi cùng
+     *    một tên thì bé (và phụ huynh) không biết mình đang chọn cái gì.
+     */
+    avatar: 'Ảnh đại diện của bé',
     privacyNote: 'RubyLingo KHÔNG lưu ảnh, tên thật hay ngày sinh của bé.',
     switchChild: 'Đổi hồ sơ bé',
     addChild: 'Thêm bé',

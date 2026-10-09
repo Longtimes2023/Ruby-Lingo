@@ -19,6 +19,7 @@ import type {
 import type {
   EquipmentResult,
   FeedResult,
+  PetState,
   PurchaseResult,
   QuestWithProgress,
   RewardSnapshot,
@@ -258,6 +259,28 @@ export interface FeedPetRequest {
 }
 
 export type FeedPetResponse = FeedResult;
+
+/**
+ * `POST /api/children/:id/pet/type` (T04) — bé chọn / đổi con thú cưng đồng hành.
+ *
+ * ⚠️ BODY CHỈ CÓ `petType`, **KHÔNG CÓ GIÁ** — đổi bạn đồng hành là MIỄN PHÍ (xem ghi chú ở
+ *    `shared/schemas/reward.ts`). Server tự tra danh mục (`shared/content/pets.json`) để kiểm
+ *    `petType` có thật; client KHÔNG được tự quyết con nào hợp lệ. Một trường giá do client gửi
+ *    sẽ bị `choosePetRequestSchema` cắt bỏ hoàn toàn.
+ */
+export interface ChoosePetRequest {
+  petType: string;
+}
+
+/**
+ * `POST /api/children/:id/pet/type` (T04) — bé chọn/đổi con thú cưng đồng hành.
+ *
+ * Trả về ĐÚNG `PetState` — cùng hình dạng với `pet` trong `RewardSnapshot` và trong
+ * `FeedPetResponse`. Lý do: sau khi đổi con, thứ client cần vẽ lại là linh vật trên màn nhà
+ * (`PetAvatar`). Trả cùng một kiểu nghĩa là client thay `pet` trong cache bằng phản hồi này mà
+ * không phải viết một hàm chuyển đổi riêng — và không có cơ hội để hai hình dạng lệch nhau.
+ */
+export type ChoosePetResponse = PetState;
 
 export interface PetDto {
   pet: RewardSnapshot['pet'];

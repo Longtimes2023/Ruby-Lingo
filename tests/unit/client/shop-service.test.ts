@@ -64,7 +64,9 @@ function feed(): FeedResult {
   return {
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 4,
       equippedItemIds: [],
@@ -185,7 +187,9 @@ describe('setEquipped — chuyển tiếp thẳng', () => {
       inventory: [],
       pet: {
         childId: CHILD,
-        evolutionStage: 'egg' as const,
+        evolutionStage: 'baby' as const,
+        petType: 'monkey',
+        petChosen: true,
         wordsLearned: 0,
         happiness: 3,
         equippedItemIds: [HAT],
@@ -207,7 +211,9 @@ describe('setEquipped — chuyển tiếp thẳng', () => {
       inventory: [],
       pet: {
         childId: CHILD,
-        evolutionStage: 'egg',
+        evolutionStage: 'baby',
+        petType: 'monkey',
+        petChosen: true,
         wordsLearned: 0,
         happiness: 3,
         equippedItemIds: [],

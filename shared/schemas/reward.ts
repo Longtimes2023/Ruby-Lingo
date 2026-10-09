@@ -66,3 +66,36 @@ export const equipItemRequestSchema = z.object({
 });
 
 export type EquipItemRequestInput = z.infer<typeof equipItemRequestSchema>;
+
+/**
+ * `POST /api/children/:id/pet/type` — bé CHỌN (hoặc ĐỔI) con thú cưng đồng hành.
+ *
+ * ⚠️⚠️ Ở ĐÂY **KHÔNG CÓ GIÁ**, VÀ ĐÓ LÀ CHỦ Ý: đổi bạn đồng hành là **MIỄN PHÍ**, luôn luôn.
+ *   Khác với `buyItemRequestSchema` (server tự tra giá trong `shop-items.json`), thao tác này
+ *   KHÔNG trừ ⭐/🌰 nào cả. Bé chọn con gì cũng được, đổi bao nhiêu lần cũng được — không mất
+ *   tiền, không mất vật phẩm, không mất tiến độ từ. Đây là hệ quả trực tiếp của triết lý "KHÔNG
+ *   BAO GIỜ MẮNG ĐỨA TRẺ": bắt bé trả tiền để đổi bạn, hoặc phạt bé vì đổi ý, là biến một lựa
+ *   chọn vui thành một giao dịch có rủi ro.
+ *
+ *   Vì KHÔNG có giá nên cũng KHÔNG có gì để client nói dối: server chỉ cần biết bé muốn con nào.
+ *   Toàn bộ "đúng/sai" nằm ở việc `petType` có nằm trong `shared/content/pets.json` hay không —
+ *   server kiểm bằng `isPetId()` (`RewardService.choosePet`), không tin lời client.
+ *
+ * ⚠️ CŨNG KHÔNG CÓ `childId`: định danh bé đi theo ĐƯỜNG DẪN (`:id`), đúng luật ở
+ *    `server/lib/params.ts` (cùng lý do như `equipItemRequestSchema` ngay trên). Body chỉ mang
+ *    đúng một sự thật: "bé muốn con nào".
+ *
+ * ⚠️ `.trim().min(1).max(40)`: cắt khoảng trắng đầu/cuối, chặn chuỗi rỗng, và chặn chuỗi dài vô
+ *    lý (id thú cưng là khoá tra cứu ngắn; 40 ký tự là rộng rãi so với các id hiện có). `max` ở
+ *    đây là chặn ở tầng dữ liệu — id KHÔNG tồn tại vẫn bị `choosePet` từ chối bằng
+ *    `VALIDATION_FAILED` kèm `fields.petType`.
+ */
+export const choosePetRequestSchema = z.object({
+  petType: z
+    .string({ required_error: 'Thiếu con thú cưng bé muốn chọn', invalid_type_error: 'Con thú cưng phải là một mã chữ' })
+    .trim()
+    .min(1, 'Thiếu con thú cưng bé muốn chọn')
+    .max(40, 'Mã thú cưng quá dài'),
+});
+
+export type ChoosePetRequestInput = z.infer<typeof choosePetRequestSchema>;

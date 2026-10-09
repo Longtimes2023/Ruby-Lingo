@@ -1,5 +1,5 @@
 /**
- * RubyLingo — `ShopService` (phía CLIENT): mua vật phẩm, cho ăn, mặc / bỏ ra.
+ * RubyLingo — `ShopService` (phía CLIENT): mua vật phẩm, cho ăn, mặc / bỏ ra, đổi bạn đồng hành.
  *
  * ⭐ NHIỆM VỤ DUY NHẤT, VÀ VÌ SAO NÓ ĐÁNG TỒN TẠI THÀNH MỘT TỆP RIÊNG:
  *   Gói `INSUFFICIENT_FUNDS` (HTTP 409) lại thành một **trạng thái bình thường**, không phải
@@ -35,7 +35,7 @@
  *   ghi chú đầu tệp đó.
  */
 
-import type { EquipmentResult, FeedResult, PurchaseResult } from '@shared/types/reward.js';
+import type { EquipmentResult, FeedResult, PetState, PurchaseResult } from '@shared/types/reward.js';
 import { ApiClientError } from '../api/client.js';
 import { rewardsApi } from '../api/endpoints.js';
 
@@ -101,4 +101,21 @@ export function setEquipped(
   equipped: boolean,
 ): Promise<EquipmentResult> {
   return rewardsApi.equip(childId, itemId, { equipped });
+}
+
+/**
+ * Bé CHỌN / ĐỔI con thú cưng đồng hành (T04). Trả về `PetState` nguyên vẹn.
+ *
+ * ⚠️ KHÔNG BẮT LỖI, KHÔNG PHÂN LOẠI — VÀ ĐÓ LÀ CHỦ Ý, KHÁC HẲN `buyItem`.
+ *   Ở đây **KHÔNG có nhánh 409 nào để dịch**: đổi bạn đồng hành là MIỄN PHÍ, không có giao dịch
+ *   tiền, nên không tồn tại một kết quả "bình thường" nào mà server trả về dưới dạng lỗi. Thứ duy
+ *   nhất có thể ném ra là lỗi thật (`VALIDATION_FAILED` khi id lạ, hoặc lỗi mạng). Nuốt lỗi ở đây
+ *   (bắt `Error` chung chung) sẽ biến "mất mạng" thành "đã đổi con xong" — bé thấy màn chọn đóng
+ *   lại, con vật KHÔNG đổi, và không ai biết vì sao.
+ *
+ * ⚠️ KHÔNG gửi giá lên server — và không được gửi. `rewardsApi.choosePet` chỉ đẩy `{ petType }`;
+ *    server tự tra danh mục để kiểm id hợp lệ (xem ghi chú đầu `shared/content/pets.ts`).
+ */
+export function choosePet(childId: string, petType: string): Promise<PetState> {
+  return rewardsApi.choosePet(childId, { petType });
 }

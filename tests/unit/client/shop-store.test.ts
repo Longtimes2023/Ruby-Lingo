@@ -75,7 +75,9 @@ function snapshot(overrides: Partial<RewardSnapshot> = {}): RewardSnapshot {
     xp: { childId: CHILD, xp: 140, level: 1, updatedAt: NOW },
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 3,
       equippedItemIds: [],
@@ -117,7 +119,9 @@ function feedResult(happiness: number, overrides: Partial<FeedResult> = {}): Fee
   return {
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness,
       equippedItemIds: [],
@@ -144,7 +148,9 @@ function equipResult(equipped: boolean): EquipmentResult {
     ],
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg',
+      evolutionStage: 'baby',
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 3,
       equippedItemIds: equipped ? [HAT] : [],

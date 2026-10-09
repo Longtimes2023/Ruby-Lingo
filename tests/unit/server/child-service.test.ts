@@ -100,7 +100,15 @@ describe('ChildService', () => {
       // cấu hình khác nhau tuỳ theo đường tạo hồ sơ.
       expect(wallet).toMatchObject({ stars: 0, acorns: 0 });
       expect(xp).toMatchObject({ xp: 0, level: 1 });
-      expect(pet).toMatchObject({ evolution_stage: 'egg', happiness: 3 });
+      expect(pet).toMatchObject({
+        // ⚠️ `'baby'`, KHÔNG phải `'egg'` (T04): bậc 0 nay là con non. Migration `011` đã siết
+        //    CHECK của `evolution_stage` ⇒ ghi `'egg'` sẽ bị DB TỪ CHỐI.
+        evolution_stage: 'baby',
+        // ⭐ NULL = bé CHƯA chọn con đồng hành. Đây là TÍN HIỆU (màn nhà sẽ mời bé chọn), không
+        //   phải dữ liệu thiếu — `ChildService.createChild` cố ý để trống cột này.
+        pet_type: null,
+        happiness: 3,
+      });
       expect(streak).toMatchObject({ current_streak: 0, milestones_claimed: '[]' });
       expect(settings).toMatchObject({ sound_enabled: 1, speech_rate: 0.8 });
     });

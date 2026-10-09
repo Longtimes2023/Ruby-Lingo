@@ -86,13 +86,16 @@ import type { Db } from '../db/connection.js';
 import { getDb, transaction } from '../db/connection.js';
 import { getEvolutionStage, getLevelForXp } from '../../shared/content/levels.js';
 import { getShopItem, happinessGainOf, isEquippable, isStackable } from '../../shared/content/shop.js';
+import { DEFAULT_PET_ID, isPetId } from '../../shared/content/pets.js';
 import { HAPPINESS_DEFAULT, computeHappiness } from '../../shared/pet-happiness.js';
 import {
   buyItemRequestSchema,
+  choosePetRequestSchema,
   equipItemRequestSchema,
   feedPetRequestSchema,
 } from '../../shared/schemas/reward.js';
 import { daysBetweenDateKeys, localDateKey, nowIso } from '../lib/time.js';
+import { logger } from '../lib/logger.js';
 import { errors } from '../plugins/errors.js';
 import { childService } from './ChildService.js';
 import type { ChildService } from './ChildService.js';
@@ -169,6 +172,14 @@ interface XpRow {
  */
 interface PetRow {
   child_id: string;
+  /**
+   * Con thú cưng bé chọn (T04) — cột TEXT nullable, KHÔNG có CHECK enum (danh mục nằm ở
+   * `shared/content/pets.json`). `null` = bé chưa chọn (màn nhà sẽ mời chọn).
+   *
+   * ⚠️ KHÁC `evolution_stage`: cột này LÀ nguồn sự thật (không suy ra được từ đâu khác), nên nó
+   *    ĐƯỢC `SELECT` và ĐƯỢC đọc — xem `readPet`.
+   */
+  pet_type: string | null;
   /**
    * ⚠️ KHÔNG có `evolution_stage` ở đây, và đó là chủ ý (T066): cột vẫn tồn tại trong schema
    *    nhưng KHÔNG được đọc nữa — tiến hoá suy ra từ `word_progress`. Khai nó vào kiểu này là
@@ -341,7 +352,7 @@ export class RewardService {
      */
     const row = db
       .prepare(
-        `SELECT child_id, happiness, last_fed_at, updated_at
+        `SELECT child_id, pet_type, happiness, last_fed_at, updated_at
            FROM pet_state WHERE child_id = ?`,
       )
       .get(childId) as PetRow | undefined;
@@ -362,6 +373,37 @@ export class RewardService {
     const wordsLearned = this.countLearnedWords(db, childId);
     const evolutionStage = this.evaluateEvolution(wordsLearned);
 
+    /**
+     * ⭐ CON THÚ CƯNG — PHÂN GIẢI Ở TẦNG ĐỌC, ĐÚNG KHUÔN MẪU CỦA `equippedItemIds`/`evolutionStage`.
+     *
+     *   ⚠️ KHÁC `evolution_stage`: `pet_type` LÀ nguồn sự thật (không suy ra được từ đâu khác —
+     *      bé chọn con gì thì chỉ cột này biết), nên nó ĐƯỢC `SELECT`. Cái KHÔNG được đọc là
+     *      `evolution_stage`, vì tiến hoá đã suy từ `word_progress` (xem ghi chú ở đầu phương thức).
+     *
+     *   ⚠️⚠️ HAI GIÁ TRỊ, HAI CÂU HỎI KHÁC NHAU — ĐỪNG GỘP:
+     *     • `petType`  = "vẽ con gì"        → LUÔN có giá trị, đã phân giải về `DEFAULT_PET_ID`.
+     *     • `petChosen`= "bé đã chọn chưa"  → `false` khi cột là NULL.
+     *   Gộp chúng (ví dụ client suy "chưa chọn" từ `petType === 'monkey'`) là SAI: một bé thật sự
+     *   chọn con Khỉ cũng có `petType === 'monkey'`, và bé đó sẽ bị mời chọn lại mãi mãi.
+     *
+     *   ⚠️ VÌ SAO PHÂN GIẢI Ở SERVER (thay vì trả `null` cho client tự quyết):
+     *     `pet_state.pet_type` có thể là NULL (bé cũ chưa từng chọn) hoặc một id KHÔNG còn trong
+     *     `pets.json` (bản deploy khác, con vừa bị xoá, DB phục hồi từ sao lưu). Nếu trả nguyên
+     *     giá trị thô, MỌI màn vẽ linh vật phải có một nhánh "chưa biết con gì" — và nhánh đó là
+     *     nhánh bị bỏ quên khi thêm màn mới. Phân giải ở đây khiến client vẽ `petType` VÔ ĐIỀU
+     *     KIỆN: bé luôn thấy một con có thật, kể cả khi dữ liệu dưới DB đã mục.
+     *
+     *   ⚠️ Id lạ ⇒ GHI LOG nhưng KHÔNG NÉM: `getPetDefinition` (`shared/content/pets.ts`) là hàm
+     *      không-ném, cố ý — xem ghi chú ở đó. Ném tại đây nghĩa là màn của bé trắng vì một con
+     *      thú cưng không còn tồn tại, tức hỏng một thứ phụ mà kéo cả app xuống.
+     */
+    const rawPetType = row?.pet_type ?? null;
+    const petChosen = rawPetType !== null;
+    const petType = petChosen && isPetId(rawPetType) ? rawPetType : DEFAULT_PET_ID;
+    if (petChosen && !isPetId(rawPetType)) {
+      logger.warn({ childId, petType: rawPetType }, 'pet_type lạ — dùng mặc định Momo');
+    }
+
     if (!row) {
       return {
         childId,
@@ -371,6 +413,15 @@ export class RewardService {
         equippedItemIds,
         lastFedAt: null,
         updatedAt: nowIso(),
+        /**
+         * ⚠️ NHÁNH "KHÔNG CÓ HÀNG" VẪN PHẢI TRẢ ĐỦ HAI TRƯỜNG NÀY — `PetState` không cho phép
+         *    thiếu. Một hàng `pet_state` không tồn tại (phục hồi từ sao lưu cũ, DB sửa tay) nghĩa
+         *    là bé CHƯA từng chọn con ⇒ `petChosen: false`, và `petType` vẫn là mặc định Momo để
+         *    bé thấy một con ngay từ giây đầu. Cùng lý do như `equippedItemIds`/`evolutionStage`
+         *    được suy NGOÀI nhánh `if (!row)` ở trên.
+         */
+        petType: DEFAULT_PET_ID,
+        petChosen: false,
       };
     }
     return {
@@ -387,6 +438,9 @@ export class RewardService {
       equippedItemIds,
       lastFedAt: row.last_fed_at,
       updatedAt: row.updated_at,
+      /** Xem khối ghi chú ở đầu phương thức: `petType` đã phân giải, `petChosen` là câu hỏi khác. */
+      petType,
+      petChosen,
     };
   }
 
@@ -621,6 +675,67 @@ export class RewardService {
         item,
         wallet: this.readWallet(db, childId),
       };
+    });
+  }
+
+  /**
+   * Bé CHỌN (hoặc ĐỔI) con thú cưng đồng hành (T04).
+   *
+   * ⚠️⚠️ MIỄN PHÍ · KHÔNG GIỚI HẠN SỐ LẦN · **KHÔNG ĐỤNG** VÍ ⭐🌰, TÚI ĐỒ, HAY ❤️.
+   *
+   *   Đổi bạn đồng hành là ĐỔI HÌNH, không phải một giao dịch. `choosePetRequestSchema` cố ý
+   *   KHÔNG có trường giá (xem ghi chú ở `shared/schemas/reward.ts`), nên ở đây không có gì để
+   *   trừ — và đó là hệ quả trực tiếp của luật "không lấy gì của bé mà không đổi lại được gì".
+   *   Bắt bé trả tiền để đổi bạn, hoặc phạt bé vì đổi ý, là biến một lựa chọn vui thành một
+   *   giao dịch có rủi ro — với một đứa trẻ 7 tuổi.
+   *
+   *   ⭐ ĐỒ ĐÃ MUA VẪN THUỘC VỀ BÉ, KHÔNG THUỘC VỀ CON VẬT. `inventory` và `equipped_item_ids`
+   *     đều gắn với `child_id`. Nếu phụ kiện thuộc về con thú cưng, đổi con sẽ là "lấy mất đồ
+   *     của bé" — đúng thứ bị cấm. Vì vậy phương thức này KHÔNG được đụng vào hai bảng đó, và
+   *     `pet-choose.test.ts` khoá điều đó lại bằng cách chụp ví/túi/❤️ trước và sau.
+   *
+   *   ⚠️ CÓ GHI `updated_at`, VÀ ĐÓ LÀ CHỦ Ý — cùng chỗ với `touchPetFedInTx`/`setPetHappinessInTx`.
+   *      `updated_at` là mốc "hàng của con vật vừa được ghi", và `daysAwayFromApp` lấy mốc MUỘN
+   *      HƠN giữa nó và ngày bé học gần nhất. Nghĩa là: một bé quay lại app và CHỌN con mình
+   *      KHÔNG bị coi là "đã bỏ bê Momo" — bé vừa có mặt, và ❤️ không hao. Đây là cùng một luật
+   *      với "việc HỌC cũng tính là bé có mặt" (xem `daysAwayFromApp`), KHÔNG phải một lỗ hổng:
+   *      ❤️ vẫn không bao giờ vượt quá mức đã lưu trong cột `happiness`.
+   *
+   *   ⚠️ ID PHẢI CÓ THẬT TRONG DANH MỤC — kiểm Ở SERVER bằng `isPetId`, KHÔNG tin client.
+   *      "Có những con nào" là dữ liệu (`shared/content/pets.json`), nên một client cũ hoặc một
+   *      URL gõ sai có thể gửi id không tồn tại. Từ chối bằng `VALIDATION_FAILED` kèm
+   *      `fields.petType` để màn chọn tô đỏ đúng ô — thay vì lưu id lạ rồi để `readPet` phải
+   *      phân giải về mặc định: bé bấm "Rồng" mà nhận "Khỉ", và KHÔNG có lỗi nào nổi lên.
+   *
+   *   ⚠️ TRẢ VỀ `readPet` — TRẠNG THÁI NHÌN THẤY ĐƯỢC, KHÔNG PHẢI `input`.
+   *      Cùng khuôn mẫu như `feed`/`equip`: client thay thẳng `pet` trong cache bằng phản hồi
+   *      này. Trả `{ petType: input.petType }` sẽ bỏ mất `evolutionStage`/`happiness`/
+   *      `equippedItemIds` vừa được server tính, và mở đường cho hai hình dạng `PetState` lệch
+   *      nhau — đúng loại lỗi mà bất biến "server là trọng tài cuối" sinh ra để chặn.
+   */
+  choosePet(parentId: string, childId: string, rawInput: unknown): PetState {
+    // Parse ở tầng service, không chỉ ở route — xem ghi chú ở `ChildService`.
+    const { petType } = choosePetRequestSchema.parse(rawInput);
+    this.requireChild(parentId, childId);
+
+    if (!isPetId(petType)) {
+      throw errors.validation('Bạn đồng hành này không có trong danh sách', {
+        petType: 'Bé chọn lại bạn đồng hành nhé',
+      });
+    }
+
+    return transaction((db) => {
+      const at = nowIso();
+      // Tạo hàng nếu chưa có (bé tạo trước T04, hoặc hàng bị xoá tay). `INSERT OR IGNORE` nên
+      // câu này KHÔNG ghi đè `pet_type` đang có — quan trọng, vì `UPDATE` ngay dưới mới là thứ
+      // quyết định con nào.
+      this.ensurePetRow(db, childId, at);
+      db.prepare('UPDATE pet_state SET pet_type = ?, updated_at = ? WHERE child_id = ?').run(
+        petType,
+        at,
+        childId,
+      );
+      return this.readPet(db, childId);
     });
   }
 
@@ -1078,9 +1193,14 @@ export class RewardService {
 
   private ensurePetRow(db: Db, childId: string, at: string): void {
     db.prepare(
+      // ⚠️ `pet_type` = NULL (T04): hàng được tạo cho một bé CHƯA chọn con. NULL là TÍN HIỆU
+      //    "chưa chọn" (server trả `petChosen: false`), KHÔNG phải dữ liệu thiếu. `INSERT OR
+      //    IGNORE` nên gọi ở đây không bao giờ ghi đè con bé đã chọn.
+      // ⚠️ `evolution_stage` = 'baby' (không còn 'egg'): bậc 0 nay là con non. Migration `011`
+      //    đã siết CHECK — ghi 'egg' ở đây sẽ bị DB TỪ CHỐI ngay.
       `INSERT OR IGNORE INTO pet_state
-         (child_id, evolution_stage, happiness, equipped_item_ids, last_fed_at, updated_at)
-       VALUES (?, 'egg', 3, '[]', NULL, ?)`,
+         (child_id, pet_type, evolution_stage, happiness, equipped_item_ids, last_fed_at, updated_at)
+       VALUES (?, NULL, 'baby', 3, '[]', NULL, ?)`,
     ).run(childId, at);
   }
 

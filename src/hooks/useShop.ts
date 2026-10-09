@@ -35,12 +35,21 @@ export interface UseShopResult {
   feed: (itemId: string) => Promise<void>;
   /** Bé bấm "Dùng ngay" / "Bỏ ra". `equipped` là TRẠNG THÁI ĐÍCH, không phải lệnh đảo. */
   equip: (itemId: string, equipped: boolean) => Promise<void>;
+  /**
+   * Bé bấm "Chọn bạn này!" ở màn chọn con (T04). Nhận `petType`; không bao giờ ném.
+   *
+   * ⚠️ KHÔNG có bé nào đang chọn ⇒ trả `Promise.resolve()` (cùng khuôn mẫu `buy`/`feed`/`equip`):
+   *    chỗ gọi là một `onClick`, ném ở đó chỉ tạo ra một promise bị bỏ rơi mà không ai bắt.
+   */
+  choosePet: (petType: string) => Promise<void>;
   /** Món này đang gửi yêu cầu MUA? (để làm mờ nút + hiện vòng xoay). */
   isBuying: (itemId: string) => boolean;
   /** Món này đang gửi yêu cầu CHO ĂN? */
   isFeeding: (itemId: string) => boolean;
   /** Món này đang gửi yêu cầu MẶC / BỎ RA? */
   isEquipping: (itemId: string) => boolean;
+  /** Đang gửi yêu cầu ĐỔI BẠN ĐỒNG HÀNH? (để làm mờ nút xác nhận ở màn chọn con). */
+  isChoosing: boolean;
   /** Kết quả hành động gần nhất để ăn mừng / báo nhẹ; `null` = không có gì. */
   lastNotice: ShopNotice | null;
   /** Đóng thông báo. */
@@ -71,9 +80,11 @@ export function useShop(): UseShopResult {
   const buyInStore = useShopStore((s) => s.buy);
   const feedInStore = useShopStore((s) => s.feed);
   const equipInStore = useShopStore((s) => s.equip);
+  const choosePetInStore = useShopStore((s) => s.choosePet);
   const buying = useShopStore((s) => s.buying);
   const feeding = useShopStore((s) => s.feeding);
   const equipping = useShopStore((s) => s.equipping);
+  const choosing = useShopStore((s) => s.choosing);
   const lastNotice = useShopStore((s) => s.lastNotice);
   const dismissNotice = useShopStore((s) => s.dismissNotice);
   const error = useShopStore((s) => s.error);
@@ -98,6 +109,12 @@ export function useShop(): UseShopResult {
     [childId, equipInStore],
   );
 
+  const choosePet = useCallback(
+    (petType: string): Promise<void> =>
+      childId ? choosePetInStore(childId, petType) : Promise.resolve(),
+    [childId, choosePetInStore],
+  );
+
   const isBuying = useCallback((itemId: string) => Boolean(buying[itemId]), [buying]);
   const isFeeding = useCallback((itemId: string) => Boolean(feeding[itemId]), [feeding]);
   const isEquipping = useCallback((itemId: string) => Boolean(equipping[itemId]), [equipping]);
@@ -106,9 +123,11 @@ export function useShop(): UseShopResult {
     buy,
     feed,
     equip,
+    choosePet,
     isBuying,
     isFeeding,
     isEquipping,
+    isChoosing: choosing,
     lastNotice,
     dismissNotice,
     error,

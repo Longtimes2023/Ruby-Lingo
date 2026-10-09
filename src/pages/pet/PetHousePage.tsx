@@ -21,10 +21,12 @@
  *    nếu không thì mỗi lần rời màn rồi quay lại, thông báo bé đang đọc bị xoá sạch).
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
+import { petNameVi } from '@shared/content/pets.js';
 import type {
   CurrencyKind,
   InventoryItem,
@@ -42,6 +44,7 @@ import { ShopItemCard } from '../../components/common/ShopItemCard.js';
 import { useRewards } from '../../hooks/useRewards.js';
 import { useShop } from '../../hooks/useShop.js';
 import { cn } from '../../lib/cn.js';
+import { wasPetChooseSkipped } from '../../lib/petChooseSkip.js';
 import { useRewardStore } from '../../store/rewardStore.js';
 
 /** Thứ tự ba nhóm — đồ ăn trước, vì đó là việc bé làm được NGAY (mua rồi cho ăn luôn). */
@@ -88,6 +91,7 @@ function balanceOf(snapshot: RewardSnapshot, currency: CurrencyKind): number {
 
 export function PetHousePage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { childId, snapshot, isHydrated } = useRewards();
   const { buy, feed, equip, isBuying, isFeeding, isEquipping, lastNotice, dismissNotice } =
@@ -95,6 +99,28 @@ export function PetHousePage() {
   const reload = useRewardStore((s) => s.reload);
 
   const [tab, setTab] = useState<ShopItemCategory>('food');
+
+  /**
+   * Tự mở màn chọn con khi bé CHƯA từng chọn con (`!petChosen`) và chưa bấm "Để sau" trong phiên.
+   *
+   * ⚠️⚠️ HOOK PHẢI NẰM TRƯỚC MỌI `return` SỚM Ở DƯỚI. React không cho gọi hook có điều kiện, nên
+   *    `useNavigate()` và `useEffect` phải đứng TRÊN khối `if (!isHydrated)` — điều kiện thật nằm
+   *    BÊN TRONG effect. Đặt effect xuống dưới là vi phạm thứ tự hook và React sẽ ném lỗi.
+   *
+   * ⚠️ `replace: true`: nút Back của bé không được kẹt trong vòng `/pet` ⇄ `/pet/chon` — bấm Back
+   *    ở màn chọn phải về chỗ TRƯỚC khi vào nhà thú cưng, không phải nảy qua lại giữa hai màn.
+   *
+   * ⚠️ Cờ `sessionStorage` đọc TRONG effect (không phải lúc render) — đọc `sessionStorage` khi
+   *    render là một hiệu ứng phụ trong thân render (StrictMode chạy hai lần), và ở môi trường
+   *    không có `sessionStorage` nó ném ngay giữa render = màn trắng. `wasPetChooseSkipped()` đã
+   *    tự bọc `try`.
+   */
+  useEffect(() => {
+    if (!isHydrated || snapshot === null) return;
+    if (snapshot.pet.petChosen) return;
+    if (wasPetChooseSkipped()) return;
+    navigate('/pet/chon', { replace: true });
+  }, [isHydrated, snapshot, navigate]);
 
   const inventory = snapshot?.inventory ?? EMPTY_INVENTORY;
 
@@ -170,6 +196,15 @@ export function PetHousePage() {
   }
 
   /**
+   * Tên con bé ĐÃ CHỌN — tra từ DỮ LIỆU (`shared/content/pets.json` → `petNameVi`), KHÔNG từ i18n.
+   *
+   * ⚠️ Dùng CHUNG một biến cho cả tiêu đề phụ, nhãn `PetAvatar` lẫn hai câu thông báo bên dưới —
+   *    nếu mỗi chỗ tự gọi một hàm, chúng có thể lệch nhau đúng lúc bé vừa đổi con. Trước T04 chỗ
+   *    này là `t('pet.name')` = "Momo" cố định, nên bé chọn "Mèo Miu" mà nhãn vẫn nói "Momo".
+   */
+  const petName = petNameVi(snapshot.pet.petType);
+
+  /**
    * Câu hiện ra sau hành động gần nhất.
    *
    * ⚠️ `null` = KHÔNG NÓI GÌ, và đó là câu trả lời đúng cho hai trường hợp:
@@ -186,9 +221,9 @@ export function PetHousePage() {
   } else if (lastNotice?.kind === 'notEnough') {
     noticeText = t('shop.notEnough');
   } else if (lastNotice?.kind === 'fed') {
-    noticeText = t('shop.feedSuccess', { pet: t('pet.name') });
+    noticeText = t('shop.feedSuccess', { pet: petName });
   } else if (lastNotice?.kind === 'full') {
-    noticeText = t('shop.petFull', { pet: t('pet.name') });
+    noticeText = t('shop.petFull', { pet: petName });
   }
 
   const items = shopItemsByCategory(tab);
@@ -198,24 +233,39 @@ export function PetHousePage() {
       <header className="flex items-center gap-3">
         <div className="min-w-0">
           <h1 className="text-kid-xl text-ink">{t('pet.title')}</h1>
-          <p className="text-kid-sm text-ink-soft">{t('pet.name')}</p>
+          <p className="text-kid-sm text-ink-soft">{petName}</p>
         </div>
-        {/* ❤️ của Momo. `HeartMeter` tự kẹp sàn 1 — xem ghi chú đầu component đó. */}
+        {/* ❤️ của con vật. `HeartMeter` tự kẹp sàn 1 — xem ghi chú đầu component đó. */}
         <HeartMeter value={snapshot.pet.happiness} className="ml-auto shrink-0" />
       </header>
 
       {/*
-        Momo + bộ đồ đang mặc + cảnh quanh nhà (T065) + giai đoạn tiến hoá (T066). Nhãn đọc lên
-        nằm TRONG component (nó tự đọc danh mục để gọi tên từng món), nên chỗ gọi không phải biết
-        gì về phụ kiện.
+        Con bé đã chọn + bộ đồ đang mặc + cảnh quanh nhà (T065) + giai đoạn tiến hoá (T066). Nhãn
+        đọc lên nằm TRONG component (nó tự đọc danh mục để gọi tên từng món), nên chỗ gọi không
+        phải biết gì về phụ kiện.
 
-        ⚠️ Truyền ID giai đoạn mà SERVER trả, không truyền số từ: client không tự đếm từ.
+        ⚠️ Truyền ID con + ID giai đoạn mà SERVER trả, không truyền emoji hay số từ: client không
+           tự đếm từ và không tự quyết hình. Tên con cũng suy trong `PetAvatar` từ `petType`.
       */}
-      <PetAvatar
-        petName={t('pet.name')}
-        evolutionStage={snapshot.pet.evolutionStage}
-        items={equippedItems}
-      />
+      <div className="flex flex-col gap-2">
+        <PetAvatar
+          petType={snapshot.pet.petType}
+          evolutionStage={snapshot.pet.evolutionStage}
+          items={equippedItems}
+        />
+        {/*
+          Nút ĐỔI BẠN ĐỒNG HÀNH — ≥64px (`BigButton size="md"` ⇒ `min-h-touch`). Đổi con là MIỄN
+          PHÍ và không giới hạn số lần, nên nút này luôn bấm được (không mờ vì thiếu tiền).
+        */}
+        <BigButton
+          size="md"
+          variant="secondary"
+          icon="🐾"
+          onClick={() => navigate('/pet/chon')}
+        >
+          {t('pet.changeCompanion')}
+        </BigButton>
+      </div>
 
       {noticeText !== null && (
         <div className="flex items-center gap-3 rounded-card border-2 border-brand bg-brand-soft px-4 py-3">
@@ -270,7 +320,7 @@ export function PetHousePage() {
 
       {tab === 'food' && !ownsAnyFood && (
         <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-sm text-ink-soft">
-          {t('shop.noFoodYet', { pet: t('pet.name') })}
+          {t('shop.noFoodYet', { pet: petName })}
         </p>
       )}
 

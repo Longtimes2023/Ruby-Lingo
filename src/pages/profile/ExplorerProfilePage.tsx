@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 
 import { BADGES, badgesForPhase } from '@shared/content/badges.js';
 import { EVOLUTION_STAGES, stageDefinition } from '@shared/content/levels.js';
+import { petNameVi } from '@shared/content/pets.js';
 import { completedLessonIds, masteredWordIds } from '@shared/progress-merge.js';
 
 import { BadgeCard } from '../../components/common/BadgeCard.js';
@@ -174,7 +175,12 @@ export function ExplorerProfilePage() {
       {/* --- Tiến hoá linh vật (thanh tiến độ thứ hai, ĐỘC LẬP với XP) --------- */}
       <section aria-labelledby="profile-pet-heading" className="flex flex-col gap-2">
         <h2 id="profile-pet-heading" className="text-kid-lg text-ink">
-          {t('profile.petSection', { pet: t('pet.name') })}
+          {/*
+            ⚠️ Tên con BÉ ĐÃ CHỌN — tra từ DỮ LIỆU (`petNameVi`), KHÔNG từ i18n. Trước T04 chỗ
+            này là `t('pet.name')` = "Momo" cố định, nên bé chọn "Mèo Miu" mà tiêu đề vẫn nói
+            "Momo lớn lên" — hai nguồn sự thật cho cùng một cái tên, và chúng lệch nhau.
+          */}
+          {t('profile.petSection', { pet: petNameVi(snapshot.pet.petType) })}
         </h2>
 
         <div className="flex items-center gap-3">

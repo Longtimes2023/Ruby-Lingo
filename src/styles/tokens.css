@@ -241,15 +241,57 @@
   /* --- Cỡ biểu tượng từ vựng (T03) ------------------------------------
      ⭐ Cỡ của BIỂU TƯỢNG từ vựng tỉ lệ theo BỀ RỘNG KHUNG chứa (container query unit `cqw`),
        KHÔNG theo `font-size` dành cho emoji. Trước đây `<img h-[1em]>` ăn theo `font-size`
-       (vốn chỉnh cho emoji) trong khi khung lớn hơn 3–8 lần ⇒ ảnh teo tí xíu so với khung.
-       Nay `1cqw` = 1% bề rộng content-box của khung, nên CẢ ảnh lẫn emoji đều = 82% bề rộng
-       khung ⇒ hai nhánh trông tương đương, và không phụ thuộc cỡ chữ nữa.
+       (vốn chỉnh cho emoji) trong khi khung lớn hơn 3–8 lần ⇒ ảnh teo tí xíu so với khung
+       (đo được: chỉ chiếm 23% bề rộng khung ở game Nghe & Chạm).
      ⚠️ Đơn vị `cqw` chỉ PHÂN GIẢI TẠI CHỖ DÙNG — luôn nằm trong một khung có
        `container-type: inline-size` (xem `.wi-frame` ở `src/styles/word-icon.css`). Ở `:root`
        nó vô nghĩa nhưng vô hại, và KHÔNG ai dùng nó ngoài `.wi-fill`.
-     ⚠️ 82% để ảnh (có ~11% lề trong suốt quanh hình) đọc ra ~73% cạnh khung. Muốn to/nhỏ hơn
-       thì đổi ĐÚNG MỘT con số này. */
-  --fs-icon-fill: 82cqw;
+
+     ⭐⭐ 88cqw — KHÔNG PHẢI 82cqw, VÀ CON SỐ NÀY ĐẾN TỪ MỘT PHÉP ĐO THẬT (không phải cảm giác):
+       `1cqw` = 1% **content-box** của khung. Padding và border của khung là **px cố định**, nên
+       khi khung hẹp lại, phần px đó ăn mất một tỉ lệ LỚN HƠN của khung ⇒ tỉ lệ tụt xuống dù
+       `cqw` không đổi. Đo trên trình duyệt thật (Playwright/Chromium, 360/768/1366 px) với
+       82cqw cho 13/15 ô ĐẠT ngưỡng 0.70, nhưng **2 ô ở 360px KHÔNG đạt**:
+         • `MemoryMatchGame` @360: khung 102,66px − (border 4×2 + padding 6×2) = content 82,66px
+           ⇒ ảnh 67,78px ⇒ **0,6601** (ngưỡng chặn trên chính là ô này)
+         • `ListenTapGame` @360: khung 158,00px − (border 4×2 + padding 8×2) = content 134,00px
+           ⇒ ảnh 109,88px ⇒ **0,6954**
+       Cần `71,86/82,66 = 86,9cqw` mới vừa đủ ⇒ **88cqw** để có biên an toàn.
+
+     ⚠️⚠️ ĐỪNG NÂNG LÊN GẦN 100cqw. Mực của một EMOJI xấp xỉ bằng đúng `font-size` (đo được:
+       emoji 162px khi `font-size` = 164px), nên 88cqw ⇒ mực emoji ≈ 88% khung; tới ~100cqw là
+       emoji bắt đầu tràn/cắt ở khung hẹp. Trần thực dụng là khoảng 90cqw.
+     ⚠️ NHÁNH ẢNH vẫn nhỏ hơn nhánh emoji một chút (≈ mực 88% × 0,88 lề canvas ≈ 78% khung):
+       hình vẽ trong các tệp `.webp` 512×512 chỉ chiếm ~88% canvas (đo 201 tệp: trung vị 0,881;
+       30/201 tệp dưới 0,70 — thấp nhất là hươu cao cổ 0,465). Muốn hai nhánh cân bằng hơn nữa
+       thì phải CẮT LỀ TRONG SUỐT của chính các tệp ảnh — đó là việc NỘI DUNG, không phải việc
+       của con số này.
+
+     ⭐ Muốn to/nhỏ hơn thì đổi ĐÚNG MỘT con số này. */
+  --fs-icon-fill: 88cqw;
+
+  /* --- "Sân nhà" của khung thú cưng (T04) ------------------------------
+     ⭐ VÌ SAO CẦN BA DẢI MÀU THAY VÌ MỘT KHUNG TRẮNG:
+       Trước đây `PetAvatar` vẽ con vật giữa một khung phẳng, và phụ kiện "đeo lên người" trông
+       như những emoji rơi vãi — chủ dự án báo đúng: *"các icon đeo vô con pet cũng khá là thô,
+       lung tung"*. Một dải trời ở trên + một dải cỏ ở dưới cho mắt một ĐƯỜNG CHÂN TRỜI để đọc
+       vị trí: mũ nằm trên trời, giày nằm trên cỏ. Đó là thứ khiến phụ kiện trông "được đặt" chứ
+       không phải "bị rơi".
+     ⚠️ Hai màu này là màu NỀN NHẠT (không phải màu chữ) — chữ trên chúng là `text-ink` mực đậm,
+       nên tương phản vẫn đạt AA.
+     -------------------------------------------------------------------- */
+  --c-pet-sky: #dceffb;
+  --c-pet-ground: #dff0d0;
+
+  /* Bóng ellipse dưới chân thú cưng — NEO thị giác cho con vật trong ô 200×200.
+     ⚠️⚠️ PHẢI là `rgba()` SẴN ĐỘ MỜ, KHÔNG được dùng `bg-ink/10`: `--c-ink` là mã HEX, nên
+       `background-color: #2b1420/0.14` là CSS KHÔNG HỢP LỆ ⇒ trình duyệt bỏ qua cả khai báo ⇒
+       nền TRONG SUỐT, và không có cảnh báo nào. Đúng bẫy đã trả giá ở bảng màu `th`. */
+  --c-pet-shadow: rgba(43, 20, 32, 0.14);
+
+  /* Quầng sáng quanh khung thú cưng ở bậc "Siêu cấp" — dấu hiệu thị giác cho đỉnh tiến hoá.
+     Cùng họ vàng với `--c-star` để "siêu cấp" đọc ra là một PHẦN THƯỞNG, không phải một trạng thái. */
+  --sh-super: 0 0 0 3px rgba(245, 158, 11, 0.35);
 
   /* --- Bo góc / bóng / khoảng chạm ------------------------------------
      Bóng nay ngả nâu mận (thay vì ngả xanh đen): bóng xám trên nền hồng trông như vết bẩn,

@@ -62,8 +62,48 @@ export interface XpLevelDefinition {
 // Thú cưng
 // =============================================================================
 
-/** Giai đoạn tiến hoá — theo TỔNG SỐ TỪ ĐÃ HỌC, không mua được bằng tiền. */
-export type EvolutionStage = 'egg' | 'baby' | 'adult' | 'super';
+/**
+ * Giai đoạn tiến hoá — theo TỔNG SỐ TỪ ĐÃ HỌC, không mua được bằng tiền.
+ *
+ * ⚠️ BA BẬC, KHÔNG CÒN `'egg'` (T04). Bậc `'egg'` (🥚) đã bị bỏ: khi bé CHỌN con mình muốn ngay
+ *   từ đầu, giữ một quả trứng vô danh làm bậc 0 nghĩa là bé vừa chọn "Rồng" xong lại thấy 🥚 —
+ *   chọn con mà không thấy con. Nay bậc đầu là `'baby'` (con non bé vừa chọn). Bảng ngưỡng nằm ở
+ *   `shared/content/xp-levels.json` (`wordsRequired` 0 / 40 / 120).
+ *
+ * ⚠️ PHẢI KHỚP `xpLevelsFileSchema.evolutionStages[].stage` trong `shared/schemas/content.ts`.
+ */
+export type EvolutionStage = 'baby' | 'adult' | 'super';
+
+/**
+ * id thú cưng bé chọn — một CHUỖI, KHÔNG phải union các con cụ thể.
+ *
+ * ⭐ VÌ SAO KHÔNG PHẢI `'monkey' | 'cat' | 'dog' | ...`:
+ *   "Có những con nào" là DỮ LIỆU (`shared/content/pets.json`), không phải mã. Một union cứng
+ *   buộc mỗi lần thêm con mới phải deploy cả client lẫn server, và một bản deploy cũ sẽ coi con
+ *   mới là "lạ" — trong khi `pet_state.pet_type` là cột TEXT không có `CHECK` enum (xem migration
+ *   `011`). Server kiểm id hợp lệ bằng `isPetId()` (`shared/content/pets.ts`), tra từ danh mục.
+ */
+export type PetType = string;
+
+/**
+ * Một con thú cưng trong danh mục — định nghĩa TĨNH ở `shared/content/pets.json`.
+ *
+ * Dùng CHUNG: server cần `id` để kiểm/parse `pet_type`; client cần `name_vi` + 3 emoji để vẽ
+ * `PetAvatar` và màn chọn con. Một định nghĩa, hai người dùng.
+ */
+export interface PetDefinition {
+  id: string;
+  name_vi: string;
+  name_en: string;
+  /** Emoji giai đoạn `baby`. */
+  iconBaby: string;
+  /** Emoji giai đoạn `adult`. */
+  iconAdult: string;
+  /** Emoji giai đoạn `super`. */
+  iconSuper: string;
+  /** Giai đoạn ra mắt: 'mvp' | 'p1' | 'p2'. */
+  phase: 'mvp' | 'p1' | 'p2';
+}
 
 export interface EvolutionStageDefinition {
   stage: EvolutionStage;
@@ -76,6 +116,29 @@ export interface EvolutionStageDefinition {
 export interface PetState {
   childId: string;
   evolutionStage: EvolutionStage;
+  /**
+   * Con thú cưng của bé — ĐÃ PHÂN GIẢI, **KHÔNG BAO GIỜ null**.
+   *
+   * ⭐ VÌ SAO LUÔN CÓ GIÁ TRỊ (khác `petChosen` ngay dưới): server LUÔN trả về một con có thật.
+   *   `pet_state.pet_type` trong DB là nullable (bé cũ chưa từng chọn), nhưng nếu để client tự
+   *   quyết định "chưa chọn thì hiện gì", thì mọi màn vẽ Momo phải có một nhánh cho "chưa có con"
+   *   — và nhánh đó luôn là nhánh bị bỏ quên khi thêm màn mới (đúng loại lỗi im lặng dự án cấm).
+   *   Thay vào đó server phân giải NULL/lạ về `DEFAULT_PET_ID` (`'monkey'` — xem
+   *   `RewardService.readPet`), nên client vẽ `petType` VÔ ĐIỀU KIỆN.
+   *
+   *   Việc "bé đã chọn con chưa" là câu hỏi KHÁC, trả lời bằng `petChosen`.
+   */
+  petType: PetType;
+  /**
+   * Bé đã CHỌN con thú cưng của mình chưa — `true` khi và chỉ khi DB có `pet_type`.
+   *
+   * ⭐ VÌ SAO CẦN RIÊNG CỜ NÀY (không suy ra được từ `petType`): `petType` LUÔN có giá trị (đã
+   *   phân giải về mặc định), nên nó KHÔNG nói được bé đã chọn hay chưa. Nhưng nhà thú cưng cần
+   *   biết đúng điều đó để quyết định có MỞ MÀN CHỌN CON hay không: bé mới (`false`) phải được
+   *   mời chọn; bé đã chọn rồi (`true`) phải vào thẳng nhà. Suy từ `petType === DEFAULT_PET_ID`
+   *   là SAI — một bé thật sự chọn con Khỉ cũng có `petType === 'monkey'`.
+   */
+  petChosen: boolean;
   /**
    * Số TỪ ĐÃ HỌC của bé — CHÍNH con số server dùng để suy ra `evolutionStage` ngay trên.
    *

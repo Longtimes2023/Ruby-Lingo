@@ -157,6 +157,21 @@ export default {
         },
         line: 'var(--c-line)',
         /**
+         * "Sân nhà" của khung thú cưng (T04): dải trời ở trên, dải cỏ ở dưới, bóng dưới chân.
+         *
+         * ⚠️⚠️ KHÔNG ĐƯỢC ĐẶT TÊN KHOÁ LÀ `sky` — `sky` đã là một BẢNG MÀU MẶC ĐỊNH của Tailwind
+         *   (`sky-50` … `sky-950`). Ghi đè `sky` ở đây sẽ NUỐT cả thang đó, và mọi lớp `bg-sky-100`
+         *   đang dùng ở chỗ khác sẽ lặng lẽ đổi màu — hoặc không sinh CSS nữa. Tên có tiền tố
+         *   `pet-` vừa tránh trùng, vừa nói rõ ba màu này thuộc về một thành phần duy nhất.
+         *
+         * ⚠️ `pet-shadow` là `rgba()` sẵn độ mờ (xem `tokens.css`) ⇒ dùng trần `bg-pet-shadow`,
+         *   TUYỆT ĐỐI không viết `bg-pet-shadow/20`: hậu tố độ mờ trên một giá trị `rgba()` sinh
+         *   CSS không hợp lệ và nền thành trong suốt, không có cảnh báo.
+         */
+        'pet-sky': 'var(--c-pet-sky)',
+        'pet-ground': 'var(--c-pet-ground)',
+        'pet-shadow': 'var(--c-pet-shadow)',
+        /**
          * Lớp phủ mờ cho overlay. Đã bao gồm sẵn độ trong suốt nên dùng trần `bg-scrim`,
          * KHÔNG dùng `bg-scrim/50` — xem ghi chú trong `tokens.css`.
          */
@@ -188,6 +203,12 @@ export default {
         /** Quầng hồng dưới thẻ chủ đề — tạo nổi khối mà bóng xám không làm được. */
         brand: 'var(--sh-brand)',
         pop: 'var(--sh-pop)',
+        /**
+         * Quầng sáng quanh khung thú cưng ở bậc "Siêu cấp" (T04). Đây là dấu hiệu DUY NHẤT nói
+         * "con của bé đã tới đỉnh tiến hoá" ngoài hình dáng — và nó phải đọc được cả khi bé chưa
+         * nhận ra emoji đã đổi.
+         */
+        super: 'var(--sh-super)',
       },
       spacing: {
         // Vùng chạm tối thiểu cho bé: 64px (chính 88px)

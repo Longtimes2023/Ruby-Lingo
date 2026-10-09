@@ -183,7 +183,11 @@ export function getEvolutionStage(wordsLearned: number): EvolutionStageDefinitio
 }
 
 /**
- * Định nghĩa của MỘT giai đoạn theo id (`'egg'` … `'super'`).
+ * Định nghĩa của MỘT giai đoạn theo id (`'baby'` … `'super'`).
+ *
+ * ⚠️ BA bậc, KHÔNG còn `'egg'` (T04): bậc 0 nay là `'baby'` — xem `shared/types/reward.ts` và
+ *    migration `011_pet_type.sql`. Bé CHỌN con mình muốn ngay từ đầu, nên giữ một quả trứng 🥚 vô
+ *    danh làm bậc 0 nghĩa là bé vừa chọn "Rồng" xong lại thấy một quả trứng.
  *
  * ⭐ VÌ SAO CẦN, KHI ĐÃ CÓ `getEvolutionStage(wordsLearned)`:
  *   Server trả `pet.evolutionStage` dưới dạng **ID** (server là trọng tài — nó tự đếm từ, client

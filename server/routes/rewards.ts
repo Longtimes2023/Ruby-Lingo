@@ -1,12 +1,20 @@
 /**
  * RubyLingo — Routes THƯỞNG: `/api/children/:id/rewards`, `…/shop/buy`, `…/pet/feed`,
- *            `…/inventory/:itemId/equip` (T052 · T062).
+ *            `…/pet/type`, `…/inventory/:itemId/equip` (T052 · T062 · T04).
  *
- * ⭐ BỐN ENDPOINT, BỐN VIỆC KHÁC NHAU:
+ * ⭐ NĂM ENDPOINT, NĂM VIỆC KHÁC NHAU:
  *   `GET  /api/children/:id/rewards`                    — ảnh chụp ví ⭐🌰, XP, thú cưng, túi đồ
  *   `POST /api/children/:id/shop/buy`                   — mua một vật phẩm (trừ tiền, vào túi)
  *   `POST /api/children/:id/pet/feed`                   — cho thú cưng ăn món đã sở hữu (+❤️)
+ *   `POST /api/children/:id/pet/type`                   — bé CHỌN / ĐỔI con thú cưng đồng hành
  *   `POST /api/children/:id/inventory/:itemId/equip`    — mặc / bỏ ra một món đã sở hữu
+ *
+ * ⚠️ VÌ SAO `/pet/type` KHÔNG CÓ CỔNG PIN, DÙ NÓ LÀ MỘT `POST` GHI DỮ LIỆU (T04):
+ *    Cổng PIN (`requireParentGate`) bảo vệ những việc của NGƯỜI LỚN — báo cáo, đổi cài đặt, xoá
+ *    hồ sơ. Chọn bạn đồng hành là việc của BÉ, đúng nhóm với `/pet/feed` ngay trên: cả hai đều
+ *    là bé tương tác với con vật của mình. Bắt bé gọi bố mẹ nhập PIN mỗi lần muốn đổi con là
+ *    biến một trò vui thành một thủ tục — và trên thực tế bé sẽ học thuộc mã PIN, làm cổng đó
+ *    mất luôn ý nghĩa ở những chỗ thật sự cần nó.
  *
  * ⚠️ KHÔNG CÓ `routes/shop.ts` HAY `services/ShopService.ts`, DÙ KẾ HOẠCH GHI NHƯ VẬY (T062).
  *    Kế hoạch được viết trước khi T052 ra đời. T052 đã đặt phần "cửa hàng" vào chính file này
@@ -45,12 +53,14 @@ import type { FastifyInstance } from 'fastify';
 import type {
   ApiOk,
   BuyItemResponse,
+  ChoosePetResponse,
   EquipItemResponse,
   FeedPetResponse,
   RewardsGetResponse,
 } from '../../shared/types/api.js';
 import {
   buyItemRequestSchema,
+  choosePetRequestSchema,
   equipItemRequestSchema,
   feedPetRequestSchema,
 } from '../../shared/schemas/reward.js';
@@ -94,6 +104,31 @@ export async function rewardsRoutes(app: FastifyInstance): Promise<void> {
 
     const body: ApiOk<FeedPetResponse> = {
       data: rewardService.feed(authed.parent.id, childIdFromParams(req), input),
+    };
+    return reply.send(body);
+  });
+
+  // --- Chọn / đổi con thú cưng đồng hành -----------------------------------
+  /**
+   * ⚠️ BODY CHỈ CÓ `{petType}` — KHÔNG CÓ GIÁ, KHÔNG CÓ TIỀN.
+   *    Đổi bạn đồng hành là miễn phí và không giới hạn số lần; xem ghi chú đầu
+   *    `shared/schemas/reward.ts` và `RewardService.choosePet`. Một trường `price` do client gửi
+   *    sẽ bị Zod CẮT (schema không có nó) — và kể cả có thì `choosePet` cũng không đọc.
+   *
+   * ⚠️ `:id` LÀ NGUỒN DUY NHẤT NÓI TỚI BÉ NÀO — cùng luật như mọi route khác ở đây. Không có
+   *    `childId` trong body (xem `server/lib/params.ts`), nên không có đường nào để một phụ
+   *    huynh ghi vào hồ sơ của bé nhà khác bằng cách sửa payload.
+   *
+   * ⚠️ KHÔNG CỔNG PIN — xem ghi chú đầu tệp: đây là việc của BÉ, cùng nhóm với `/pet/feed`.
+   */
+  app.post('/api/children/:id/pet/type', { preHandler: requireParent }, async (req, reply) => {
+    const authed = req as AuthedRequest;
+    // Parse ở tầng route để lỗi trả về có `fields` chỉ rõ trường sai; service parse lại lần
+    // nữa để bảo vệ các đường gọi khác (test, script). Xem ghi chú ở `ChildService`.
+    const input = choosePetRequestSchema.parse(req.body);
+
+    const body: ApiOk<ChoosePetResponse> = {
+      data: rewardService.choosePet(authed.parent.id, childIdFromParams(req), input),
     };
     return reply.send(body);
   });

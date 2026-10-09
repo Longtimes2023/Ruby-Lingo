@@ -24,6 +24,7 @@ import { describe, expect, it } from 'vitest';
 import '@/i18n/index.js';
 import { PetAvatar } from '@/components/common/PetAvatar.js';
 import { EVOLUTION_STAGES, stageDefinition } from '@shared/content/levels.js';
+import { PET_DEFINITIONS, petEmojiFor } from '@shared/content/pets.js';
 import { accessorySlotOf, decorationSlotOf, getShopItem, SHOP_ITEMS } from '@shared/content/shop.js';
 import { shopItemsFileSchema } from '@shared/schemas/content.js';
 import type { EvolutionStage, ShopItem } from '@shared/types/reward.js';
@@ -36,12 +37,21 @@ function item(id: string): ShopItem {
 }
 
 /**
- * ⚠️ Mặc định `'adult'` (🐵) là CỐ Ý: các khẳng định cũ trong tệp này nói về "Momo" nói chung, và
- *    chúng phải tiếp tục kiểm đúng điều chúng định kiểm. Đổi mặc định sang `'egg'` sẽ làm chúng
- *    đỏ vì LÝ DO GIẢ (đang kiểm hình của một giai đoạn khác), đúng họ bẫy đã trả giá ở T061.
+ * ⚠️ Mặc định `'monkey'` × `'baby'` (🐵) là CỐ Ý: các khẳng định cũ trong tệp này nói về "Momo"
+ *    nói chung, và chúng phải tiếp tục kiểm đúng điều chúng định kiểm. `petEmojiFor('monkey',
+ *    'baby')` = 🐵 — ĐÚNG con linh vật dẫn đường Momo, nên câu "chưa có gì ⇒ vẫn có Momo" vẫn nói
+ *    đúng sự thật. Đổi mặc định sang một bậc khác sẽ làm chúng đỏ vì LÝ DO GIẢ (đang kiểm hình của
+ *    một giai đoạn khác), đúng họ bẫy đã trả giá ở T061.
+ *
+ * ⚠️ TÊN con nay do `PetAvatar` tự suy từ `petType` (`petNameVi`) — component KHÔNG còn nhận prop
+ *    `petName`. Với `monkey`, tên là "Khỉ Momo", nên các nhãn đọc lên trong tệp này dùng tên đó.
  */
-function renderAvatar(items: readonly ShopItem[] = [], stage: EvolutionStage = 'adult') {
-  return render(<PetAvatar petName="Momo" evolutionStage={stage} items={items} />);
+function renderAvatar(
+  items: readonly ShopItem[] = [],
+  stage: EvolutionStage = 'baby',
+  petType = 'monkey',
+) {
+  return render(<PetAvatar petType={petType} evolutionStage={stage} items={items} />);
 }
 
 // =============================================================================
@@ -167,12 +177,12 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
 
   it('chưa có gì ⇒ nói Momo đang chơi trong nhà', () => {
     renderAvatar();
-    expect(screen.getByRole('img')).toHaveAccessibleName('Momo đang chơi trong nhà');
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang chơi trong nhà');
   });
 
   it('có mặc ⇒ đọc tên từng món đang dùng', () => {
     renderAvatar([item('acc-hat'), item('acc-scarf')]);
-    expect(screen.getByRole('img')).toHaveAccessibleName('Momo đang dùng: Mũ, Khăn quàng');
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Mũ, Khăn quàng');
   });
 
   it('có trang trí ⇒ đọc tên từng món quanh nhà', () => {
@@ -183,7 +193,7 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
   it('cả hai ⇒ đọc cả hai vế', () => {
     renderAvatar([item('acc-hat'), item('dec-plant')]);
     expect(screen.getByRole('img')).toHaveAccessibleName(
-      'Momo đang dùng: Mũ. Quanh nhà có Chậu cây',
+      'Khỉ Momo đang dùng: Mũ. Quanh nhà có Chậu cây',
     );
   });
 
@@ -191,7 +201,7 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
     // Truyền mũ trước giày, nhưng `ACCESSORY_SLOTS` xếp "feet" trước "head".
     // Câu văn phải ổn định giữa các lần mua — cùng bộ đồ thì luôn cùng một câu.
     renderAvatar([item('acc-hat'), item('acc-shoes')]);
-    expect(screen.getByRole('img')).toHaveAccessibleName('Momo đang dùng: Giày, Mũ');
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Giày, Mũ');
   });
 
   it('mọi emoji bên trong đều aria-hidden (không bị đọc lặp)', () => {
@@ -204,19 +214,27 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
 // 4. Tiến hoá (T066)
 // =============================================================================
 
-describe('PetAvatar — tiến hoá (T066)', () => {
-  it('mỗi giai đoạn có hình riêng của nó', () => {
-    const expected: readonly (readonly [EvolutionStage, string])[] = [
-      ['egg', '🥚'],
-      ['baby', '🐣'],
-      ['adult', '🐵'],
-      ['super', '✨'],
-    ];
-    for (const [stage, icon] of expected) {
-      const { unmount } = renderAvatar([], stage);
-      expect(screen.getByText(icon), `giai đoạn ${stage}`).toBeInTheDocument();
-      unmount();
+describe('PetAvatar — tiến hoá (T066 · T04)', () => {
+  it('⭐ canh giữ DỮ LIỆU: MỌI con × MỌI bậc ⇒ đúng emoji khai trong `pets.json`', () => {
+    // Nếu ai đó sửa `pets.json` (hoặc `petEmojiFor`) mà lệch bậc, test này đỏ NGAY — thay vì để
+    // một bé nào đó thấy con mình "biến hình" sai. Chạy trên TOÀN BỘ danh mục, không chỉ một con.
+    for (const pet of PET_DEFINITIONS) {
+      for (const stage of EVOLUTION_STAGES) {
+        const { unmount } = renderAvatar([], stage.stage, pet.id);
+        expect(
+          screen.getByText(petEmojiFor(pet.id, stage.stage)),
+          `${pet.id} × ${stage.stage}`,
+        ).toBeInTheDocument();
+        unmount();
+      }
     }
+  });
+
+  it('bậc "super" có ✨ — dấu hiệu thị giác cho đỉnh tiến hoá', () => {
+    // ✨ là phần TRANG TRÍ do `PetAvatar` thêm, KHÔNG nằm trong `pets.json`. Nó phải hiện ở MỌI
+    // con khi đạt bậc cuối — kể cả con có `iconSuper` trùng `iconAdult` (Khỉ, Mèo, Cún…).
+    renderAvatar([], 'super');
+    expect(screen.getByText('✨')).toBeInTheDocument();
   });
 
   it('hiện TÊN giai đoạn bằng chữ thật (bé và phụ huynh đều đọc được)', () => {
@@ -225,9 +243,9 @@ describe('PetAvatar — tiến hoá (T066)', () => {
   });
 
   it('⭐ canh giữ DỮ LIỆU: MỌI giai đoạn trong `xp-levels.json` đều tra được', () => {
-    // Nếu ai đó thêm giai đoạn thứ năm vào JSON mà quên luồng tra cứu, `stageDefinition` sẽ ném
-    // ngay ở đây — thay vì để một bé nào đó gặp màn hình trắng.
-    expect(EVOLUTION_STAGES.length).toBeGreaterThanOrEqual(4);
+    // BA bậc (baby/adult/super) — `'egg'` đã bị bỏ ở T04 (xem `shared/types/reward.ts`). Nếu ai
+    // đó thêm giai đoạn thứ tư vào JSON mà quên luồng tra cứu, `stageDefinition` sẽ ném ngay ở đây.
+    expect(EVOLUTION_STAGES.length).toBeGreaterThanOrEqual(3);
     for (const definition of EVOLUTION_STAGES) {
       expect(stageDefinition(definition.stage).name_vi).toBe(definition.name_vi);
     }

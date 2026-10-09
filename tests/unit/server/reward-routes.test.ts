@@ -199,7 +199,15 @@ describe('API thưởng — tầng HTTP', () => {
       expect(snap.childId).toBe(childId);
       expect(snap.wallet).toMatchObject({ stars: 0, acorns: 0 });
       expect(snap.xp).toMatchObject({ xp: 0, level: 1 });
-      expect(snap.pet).toMatchObject({ evolutionStage: 'egg', happiness: 3 });
+      expect(snap.pet).toMatchObject({
+        evolutionStage: 'baby',
+        happiness: 3,
+        // ⭐ Bé mới toanh CHƯA chọn con (T04): `petType` đã phân giải về mặc định Momo 🐵 để bé
+        //   thấy một con có thật ngay giây đầu, còn `petChosen: false` là tín hiệu để màn nhà
+        //   thú cưng MỜI bé chọn. Hai giá trị này trả lời hai câu hỏi khác nhau — xem `readPet`.
+        petType: 'monkey',
+        petChosen: false,
+      });
       expect(snap.inventory).toEqual([]);
       expect(typeof snap.serverTime).toBe('string');
     });
@@ -219,7 +227,15 @@ describe('API thưởng — tầng HTTP', () => {
         headers: { cookie },
       });
       expect(res.statusCode).toBe(200);
-      expect((res.json() as { data: RewardSnapshot }).data.pet.evolutionStage).toBe('egg');
+      /**
+       * ⭐ HÀNG `pet_state` BỊ XOÁ ⇒ nhánh `!row` của `readPet` phải trả ĐỦ, không được ném.
+       *   Đây là ca thật (phục hồi từ sao lưu cũ, DB sửa tay): bé vẫn phải thấy một con vật và
+       *   vẫn phải được mời chọn, thay vì màn hình trắng vì một hàng không tồn tại.
+       */
+      const pet = (res.json() as { data: RewardSnapshot }).data.pet;
+      expect(pet.evolutionStage).toBe('baby');
+      expect(pet.petType).toBe('monkey');
+      expect(pet.petChosen).toBe(false);
 
       const row = getDb()
         .prepare('SELECT COUNT(*) AS n FROM pet_state WHERE child_id = ?')

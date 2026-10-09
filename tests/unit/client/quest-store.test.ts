@@ -101,7 +101,9 @@ function snapshot() {
     xp: { childId: CHILD, xp: 140, level: 1, updatedAt: NOW },
     pet: {
       childId: CHILD,
-      evolutionStage: 'egg' as const,
+      evolutionStage: 'baby' as const,
+      petType: 'monkey',
+      petChosen: true,
       wordsLearned: 0,
       happiness: 3,
       equippedItemIds: [],

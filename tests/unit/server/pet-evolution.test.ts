@@ -54,8 +54,12 @@ function seedChild(id = 'chi_na'): string {
      VALUES (?, 'par_1', 'Na', 7, 'rabbit', ?, ?)`,
   ).run(id, NOW, NOW);
   db.prepare(
+    // ⚠️ `'baby'`, KHÔNG phải `'egg'` (T04): bậc 0 nay là con non. Migration `011` đã siết
+    //    CHECK của `evolution_stage` — ghi `'egg'` ở đây sẽ bị DB TỪ CHỐI ngay.
+    // ⚠️ `pet_type` CỐ Ý không có trong danh sách cột: cột đó nullable, và đây là hàng của một
+    //    bé CHƯA chọn con — đúng trạng thái mà `ChildService.createChild` tạo ra.
     `INSERT INTO pet_state (child_id, evolution_stage, happiness, equipped_item_ids, last_fed_at, updated_at)
-     VALUES (?, 'egg', 3, '[]', NULL, ?)`,
+     VALUES (?, 'baby', 3, '[]', NULL, ?)`,
   ).run(id, NOW);
   db.prepare(
     `INSERT INTO streak_state (child_id, current_streak, longest_streak, last_active_date, milestones_claimed, updated_at)
@@ -129,9 +133,9 @@ function storedHappiness(childId: string): number {
 // =============================================================================
 
 describe('T066 — tiến hoá theo tổng từ đã học', () => {
-  it('chưa học từ nào ⇒ Trứng (egg)', () => {
+  it('chưa học từ nào ⇒ Nhóc con (baby) — bậc 0, KHÔNG còn Trứng (T04)', () => {
     const childId = seedChild();
-    expect(rewardService.readPet(db, childId).evolutionStage).toBe('egg');
+    expect(rewardService.readPet(db, childId).evolutionStage).toBe('baby');
   });
 
   /**
@@ -150,26 +154,26 @@ describe('T066 — tiến hoá theo tổng từ đã học', () => {
     const pet = rewardService.readPet(db, childId);
     expect(pet.wordsLearned).toBe(25);
     expect(pet.wordsLearned).toBe(rewardService.countLearnedWords(db, childId));
-    expect(pet.evolutionStage).toBe('baby'); // 25 ≥ mốc 20 của `baby` ⇒ thanh tiến độ khớp hình Momo
+    expect(pet.evolutionStage).toBe('baby'); // 25 < mốc 40 của `adult` ⇒ vẫn là Nhóc con, khớp hình con vật
   });
 
-  it('đủ 20 từ ⇒ Nhóc con; 19 từ vẫn là Trứng (biên dưới)', () => {
+  it('39 từ vẫn là Nhóc con; đủ 40 từ ⇒ Trưởng thành (biên dưới)', () => {
     const childId = seedChild();
-    learnWords(childId, 19);
-    expect(rewardService.readPet(db, childId).evolutionStage).toBe('egg');
-
-    // Từ thứ 20. ⚠️ KHÔNG gọi `learnWords(childId, 1)` ở đây: hàm đó luôn bắt đầu từ `w0`, mà
-    // khoá chính của `word_progress` là `(child_id, word_id)` ⇒ sẽ nổ UNIQUE constraint. Một từ
-    // ở giữa dải cũng không được, vì `w0..w18` đã chiếm hết.
-    learnWord(childId, 'starters.w19');
+    learnWords(childId, 39);
     expect(rewardService.readPet(db, childId).evolutionStage).toBe('baby');
+
+    // Từ thứ 40. ⚠️ KHÔNG gọi `learnWords(childId, 1)` ở đây: hàm đó luôn bắt đầu từ `w0`, mà
+    // khoá chính của `word_progress` là `(child_id, word_id)` ⇒ sẽ nổ UNIQUE constraint. Một từ
+    // ở giữa dải cũng không được, vì `w0..w38` đã chiếm hết.
+    learnWord(childId, 'starters.w39');
+    expect(rewardService.readPet(db, childId).evolutionStage).toBe('adult');
   });
 
-  it('80 từ ⇒ Trưởng thành; 200 từ ⇒ Siêu cấp', () => {
+  it('40 từ ⇒ Trưởng thành; 120 từ ⇒ Siêu cấp', () => {
     const childId = seedChild();
-    learnWords(childId, 80);
+    learnWords(childId, 40);
     expect(rewardService.readPet(db, childId).evolutionStage).toBe('adult');
-    learnWords(childId, 120, 1, 80);
+    learnWords(childId, 80, 1, 40);
     expect(rewardService.readPet(db, childId).evolutionStage).toBe('super');
   });
 
@@ -177,7 +181,7 @@ describe('T066 — tiến hoá theo tổng từ đã học', () => {
     const childId = seedChild();
     learnWords(childId, 300, 0);
     expect(rewardService.countLearnedWords(db, childId)).toBe(0);
-    expect(rewardService.readPet(db, childId).evolutionStage).toBe('egg');
+    expect(rewardService.readPet(db, childId).evolutionStage).toBe('baby');
   });
 
   it('⭐ KHÔNG mua được tiến hoá: ví đầy ⭐ cũng không đổi giai đoạn', () => {
@@ -185,7 +189,7 @@ describe('T066 — tiến hoá theo tổng từ đã học', () => {
     db.prepare(
       `INSERT INTO wallet (child_id, stars, acorns, updated_at) VALUES (?, 99999, 99999, ?)`,
     ).run(childId, NOW);
-    expect(rewardService.readPet(db, childId).evolutionStage).toBe('egg');
+    expect(rewardService.readPet(db, childId).evolutionStage).toBe('baby');
   });
 
   it('⚠️ cột `evolution_stage` là XÁC CHẾT: ghi rác vào cũng không ảnh hưởng', () => {
@@ -193,12 +197,15 @@ describe('T066 — tiến hoá theo tổng từ đã học', () => {
     // Đúng loại dữ liệu mà một bản cũ / một lần sửa tay để lại.
     db.prepare(`UPDATE pet_state SET evolution_stage = 'super' WHERE child_id = ?`).run(childId);
 
-    // Bé chưa học từ nào ⇒ vẫn phải là 'egg'. Nếu `readPet` đọc cột, test này đỏ ngay.
-    expect(rewardService.readPet(db, childId).evolutionStage).toBe('egg');
+    // Bé chưa học từ nào ⇒ vẫn phải là 'baby'. Nếu `readPet` đọc cột, test này đỏ ngay.
+    expect(rewardService.readPet(db, childId).evolutionStage).toBe('baby');
 
-    // Và ngược lại: cột nói 'egg' nhưng bé đã học 200 từ ⇒ vẫn phải là 'super'.
+    // Và ngược lại: cột nói 'baby' nhưng bé đã học 200 từ ⇒ vẫn phải là 'super'.
+    // ⚠️ Không còn ghi được `'egg'` vào cột này (migration `011` siết CHECK) — nhưng ý định của
+    //    phép kiểm không đổi: cột nói MỘT đằng, số từ đã học nói đằng khác, và `readPet` phải
+    //    theo số từ. `'baby'` là giá trị hợp lệ nên phép so vẫn là một phép so thật.
     learnWords(childId, 200);
-    db.prepare(`UPDATE pet_state SET evolution_stage = 'egg' WHERE child_id = ?`).run(childId);
+    db.prepare(`UPDATE pet_state SET evolution_stage = 'baby' WHERE child_id = ?`).run(childId);
     expect(rewardService.readPet(db, childId).evolutionStage).toBe('super');
   });
 

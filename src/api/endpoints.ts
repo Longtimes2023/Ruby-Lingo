@@ -15,6 +15,8 @@ import type {
   BuyItemResponse,
   ChangePasswordRequest,
   ChildProfileDto,
+  ChoosePetRequest,
+  ChoosePetResponse,
   ClaimQuestResponse,
   CreateChildRequest,
   EquipItemRequest,
@@ -214,6 +216,20 @@ export const rewardsApi = {
    */
   feed: (childId: string, body: FeedPetRequest): Promise<FeedPetResponse> =>
     api.post(`/children/${encodeURIComponent(childId)}/pet/feed`, body),
+
+  /**
+   * Bé CHỌN / ĐỔI con thú cưng đồng hành (T04). Body CHỈ có `{ petType }`.
+   *
+   * ⚠️ KHÔNG CÓ `price` TRONG BODY — và đó là quyết định thiết kế, không phải thiếu sót. Đổi bạn
+   *    đồng hành là MIỄN PHÍ (không trừ ⭐/🌰/đồ/❤️). Server tự tra danh mục
+   *    (`shared/content/pets.json`) để kiểm `petType` có thật; một trường giá do client gửi sẽ bị
+   *    `choosePetRequestSchema` cắt bỏ (schema không có nó).
+   *
+   * ⚠️ Trả về ĐÚNG `PetState` (cùng hình dạng với `feed`) — client thay thẳng `pet` trong cache
+   *    bằng phản hồi này để con vật đổi hình TỨC THÌ, không phải một hàm chuyển đổi riêng.
+   */
+  choosePet: (childId: string, body: ChoosePetRequest): Promise<ChoosePetResponse> =>
+    api.post(`/children/${encodeURIComponent(childId)}/pet/type`, body),
 
   /**
    * Mặc / bỏ ra một vật phẩm đã sở hữu.
