@@ -257,7 +257,14 @@ describe('ParentSettingsPage — hồ sơ các bé', () => {
     fireEvent.click(within(row).getByRole('button', { name: 'Đổi hồ sơ bé' }));
 
     expect(useSessionStore.getState().activeChildId).toBe('chi_b');
+    // Đổi bé KHÔNG ghi gì lên server (việc bình thường của bé) — không gọi PATCH/DELETE.
     expect(childrenUpdateMock).not.toHaveBeenCalled();
+    /*
+      ⚠️ Nhưng đổi bé CÓ nạp lại cài đặt của bé mới (một lượt ĐỌC `GET .../settings`). Chờ lượt đọc
+      đó xong để React không cập nhật state ngoài `act` — nếu không, vitest in cảnh báo "update ...
+      not wrapped in act(...)" (chỉ là tiếng ồn của môi trường test, nhưng làm loãng log CI).
+    */
+    await waitFor(() => expect(getMock).toHaveBeenCalledWith('chi_b'));
   });
 
   it('⚠️ sửa hồ sơ mà cổng đã đóng (403) ⇒ quay về cổng, không lộ lỗi', async () => {
@@ -337,5 +344,29 @@ describe('ParentSettingsPage — lối vào "Thêm bé"', () => {
     const childrenSection = document.getElementById('parent-children-title')?.closest('section');
     expect(childrenSection).not.toBeNull();
     expect(within(childrenSection as HTMLElement).getByRole('link', { name: /Thêm bé/ })).toBe(link);
+  });
+});
+
+// =============================================================================
+// Nhóm 6 — ⭐ VÙNG CHẠM của thanh trượt tốc độ đọc (L5 của T082)
+// =============================================================================
+
+describe('ParentSettingsPage — vùng chạm thanh trượt tốc độ đọc', () => {
+  it('⚠️ thanh trượt có lớp nâng chiều cao vùng chạm (min-h-touch), không để mặc định ~16px', async () => {
+    renderPage();
+    await waitReady();
+
+    /*
+      ⚠️ VÌ SAO KHẲNG ĐỊNH LỚP CSS (jsdom không chạy stylesheet nên không đo được `getComputedStyle`):
+      `<input type="range">` mặc định cao ~16px, và CHÍNH hộp của nó là vùng chạm ⇒ ngón tay phải
+      chạm trúng dải 16px mới kéo được (đo trên DOM thật ở T082: 292×16 / 384×16 — dưới cả WCAG 2.5.8
+      lẫn quy ước 56/64px của dự án). Test này khoá lại việc thanh trượt mang lớp `min-h-touch` — CÙNG
+      lớp mà mọi nút/công tắc trên trang dùng. Gỡ lớp đó đi là vùng chạm tụt về 16px và test này đỏ.
+    */
+    const slider = screen.getByRole('slider', { name: /Tốc độ đọc/ });
+    expect(slider).toHaveAttribute('type', 'range');
+    expect(slider).toHaveClass('min-h-touch');
+    // Vẫn phải trải hết bề ngang ô — nâng chiều cao không được làm hẹp thanh trượt.
+    expect(slider).toHaveClass('w-full');
   });
 });

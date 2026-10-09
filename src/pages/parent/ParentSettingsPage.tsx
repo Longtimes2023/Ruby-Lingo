@@ -268,7 +268,25 @@ export function ParentSettingsPage({ onGateClosed }: ParentSettingsPageProps) {
             value={settings.speechRate}
             onChange={(e) => saveSetting({ speechRate: Number(e.target.value) })}
             aria-label={t('parent.speechRate')}
-            className="w-full"
+            /*
+              ⚠️⚠️ VÙNG CHẠM — `min-h-touch`, KHÔNG để mặc định (lỗi a11y L5 của T082).
+
+              Mặc định, hộp của `<input type="range">` chỉ cao **~16px**, và CHÍNH hộp đó là vùng
+              chạm: ngón tay phải chạm trúng dải 16px mới kéo được. Đo trên DOM thật: **292×16** ở
+              360px và **384×16** ở màn rộng — dưới cả ngưỡng **24×24 của WCAG 2.5.8 (AA)** lẫn quy
+              ước **56/64px** của dự án.
+
+              `min-h-touch` là ĐÚNG lớp mà mọi nút và công tắc trên trang này đang dùng
+              (`--sp-touch`: 64px, 56px ở <480px) ⇒ vùng chạm của thanh trượt khớp với các ô còn lại,
+              và không có con số pixel nào bị ghim cứng trong component.
+
+              ⚠️ KHÔNG thể nới vùng chạm bằng một "lớp phủ trong suốt cao 56px": `<input>` là phần tử
+              thay thế nên trình duyệt KHÔNG dựng `::before`/`::after` trên nó, còn một lớp phủ THẬT
+              SỰ nhận sự kiện sẽ CHẶN chính thao tác kéo của thanh trượt (và phải tự dựng lại logic
+              kéo). Cách duy nhất đúng là nâng chiều cao hộp ⇒ hàng này cao thêm ~40px. Đó là cái giá
+              bắt buộc của một vùng chạm đạt chuẩn — không phải một thay đổi bố cục tuỳ ý.
+            */
+            className="min-h-touch w-full"
           />
         </label>
       </section>
