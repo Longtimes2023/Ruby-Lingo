@@ -105,17 +105,26 @@ services:
       #   Tên đó là KHOÁ trong `certificatesResolvers.<TÊN>` của cấu hình TĨNH Traefik — nằm ở
       #   `traefik.yml`/`traefik.toml`, hoặc (phổ biến nhất) ở `command:` của service `traefik`:
       #       --certificatesresolvers.<TÊN>.acme.email=…
-      #   Cách tìm nhanh trên VPS:  docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers
+      #   Cách tìm tên THẬT trên VPS:  ./scripts/find-certresolver.sh   (xem deploy/README.md §1)
       #
-      #   ⚠️ VÌ SAO ĐỂ NGUYÊN `mytlschallenge` LÀ SAI: đó là tên VÍ DỤ trong tài liệu Traefik, không
-      #      phải tên của bạn. Một tên SAI vẫn tạo ra router HỢP LỆ (compose xanh, container chạy,
-      #      health xanh) — Traefik chỉ LẶNG LẼ không xin được chứng chỉ. Hệ quả:
-      #        • trình duyệt báo lỗi chứng chỉ, và vì router HTTP đá sang HTTPS nên site coi như chết;
-      #        • `deploy.sh` bước 5 đỏ với thông báo "Traefik không tới được app" ⇒ người trực đi
-      #          kiểm cổng/mạng/nhãn loadbalancer — CHỈ SAI CHỖ CẦN SỬA.
-      #      Đây đúng là họ lỗi "hỏng im lặng" mà tệp này cố chặn, nên dùng `:?` để nó thành lỗi
-      #      NGAY LÚC `docker compose up`, kèm đúng tên biến cần điền.
-      - "traefik.http.routers.rubylingo.tls.certresolver=${TRAEFIK_CERTRESOLVER:?TRAEFIK_CERTRESOLVER chưa đặt trong .env — phải là TÊN certresolver của Traefik CỦA BẠN, KHÔNG phải 'mytlschallenge' (xem deploy/README.md §1)}"
+      #   ⚠️⚠️ ĐỪNG đoán. Tài liệu cũ chỉ dẫn một lệnh duy nhất —
+      #        docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers
+      #      — nhưng lệnh đó CHỈ đúng khi Traefik cấu hình bằng CỜ DÒNG LỆNH. Cấu hình TĨNH nằm trong
+      #      `traefik.yml` (rất phổ biến) thì nó **TRẢ VỀ RỖNG**, và người ta kết luận "chắc là
+      #      mytlschallenge" — tức là ĐOÁN. Đã xảy ra thật (2026-10-09) ⇒ nay có `find-certresolver.sh`
+      #      dò 4 nguồn và in nguyên văn đầu ra của từng phép dò.
+      #   ⚠️ Và `mytlschallenge` KHÔNG chắc chắn là tên sai: nó là tên trong rất nhiều hướng dẫn dựng
+      #      Traefik, nên nhiều bản Traefik THẬT dùng đúng tên đó. Đổi nó chỉ vì "tài liệu bảo thế" là
+      #      tự tay làm hỏng HTTPS.
+      #
+      #   Một tên SAI vẫn tạo ra router HỢP LỆ (compose xanh, container chạy, health xanh) — Traefik
+      #   chỉ LẶNG LẼ không xin được chứng chỉ. Hệ quả:
+      #     • trình duyệt báo lỗi chứng chỉ, và vì router HTTP đá sang HTTPS nên site coi như chết;
+      #     • `deploy.sh` bước 5 đỏ với thông báo "Traefik không tới được app" ⇒ người trực đi
+      #       kiểm cổng/mạng/nhãn loadbalancer — CHỈ SAI CHỖ CẦN SỬA.
+      #   ⇒ `:?` để thiếu/trống thành lỗi NGAY LÚC `docker compose up`, và `deploy.sh` bước 1 gọi
+      #     `find-certresolver.sh` để ĐỐI CHIẾU: tên KHÁC cấu hình Traefik ⇒ ĐỎ ngay tại bước 1.
+      - "traefik.http.routers.rubylingo.tls.certresolver=${TRAEFIK_CERTRESOLVER:?TRAEFIK_CERTRESOLVER chưa đặt trong .env — phải là TÊN certresolver của Traefik CỦA BẠN. Tìm bằng: ./scripts/find-certresolver.sh (xem deploy/README.md §1)}"
 
       # ⚠️⚠️ THIẾU NHÃN NÀY ⇒ 502: Traefik không biết cổng nào trong container (app nghe 3000,
       #    không phải 80). App vẫn "khoẻ" trong container, chỉ Traefik không tới được.

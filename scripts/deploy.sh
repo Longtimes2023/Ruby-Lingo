@@ -202,17 +202,60 @@ ok "cấu hình hợp lệ, URL công khai sẽ kiểm: ${PUBLIC_URL}"
 CERTRESOLVER="$(label_val 'tls\.certresolver')"
 [ -n "$CERTRESOLVER" ] \
   || fail "1" "không đọc được 'tls.certresolver' từ 'docker compose config' — thiếu nhãn đó thì Traefik KHÔNG xin được chứng chỉ (HTTPS chết dù mọi thứ khác đều xanh). Xem dòng THẬT bằng tay: docker compose config | grep -i certresolver"
-if [ "$CERTRESOLVER" = "mytlschallenge" ]; then
-  warn "certresolver = '${CERTRESOLVER}' — đây là tên VÍ DỤ trong tài liệu Traefik, KHÔNG phải tên của bạn."
-  printf '     Hãy CHẮC CHẮN nó khớp --certificatesresolvers.<TÊN> của Traefik trên VPS, nếu không\n'
-  printf '     HTTPS sẽ KHÔNG có chứng chỉ (và vì router HTTP đá sang HTTPS nên site coi như chết).\n'
-  # Dòng dưới dùng NHÁY KÉP cho chuỗi vì bản thân nó CHỨA nháy đơn — dễ đọc hơn nhiều so với
-  # lối thoát '"'"' (đã kiểm: hai dạng in ra GIỐNG HỆT nhau từng ký tự). `\\\\n` để printf in ra
-  # đúng hai ký tự `\` + `n` như người dùng cần gõ.
-  printf "     Kiểm:  docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\\\\n' | grep -i certresolvers\n"
-  printf '     Chi tiết: deploy/README.md §1.\n'
+
+# ---------------------------------------------------------------------------
+# ĐỐI CHIẾU TÊN RESOLVER VỚI CHÍNH TRAEFIK — thay cho việc ĐOÁN (2026-10-09)
+# ---------------------------------------------------------------------------
+# ⚠️⚠️ VÌ SAO PHẢI ĐỔI: bản trước chỉ CẢNH BÁO khi tên là `mytlschallenge`, kèm câu khẳng định
+#    "đây là tên VÍ DỤ trong tài liệu, KHÔNG phải tên của bạn". Câu đó SAI với ít nhất một người
+#    dùng thật: Traefik của anh ấy dùng đúng tên `mytlschallenge` (nó là tên trong RẤT NHIỀU hướng
+#    dẫn dựng Traefik v2/v3, nên nhiều bản cài thật mang tên đó). Một tài liệu khẳng định "giá trị
+#    của bạn là giả" sẽ đẩy người ta đi SỬA MỘT GIÁ TRỊ ĐANG ĐÚNG — hỏng nặng hơn là không nói gì.
+#
+# ⚠️ VÀ tài liệu cũ chỉ dẫn đúng MỘT cách tìm tên:
+#      docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers
+#    Trên VPS thật, lệnh đó TRẢ VỀ RỖNG (cấu hình TĨNH nằm trong traefik.yml, không phải cờ dòng
+#    lệnh) ⇒ người dùng kết luận "chắc là mytlschallenge" — tức là ĐOÁN.
+#
+# ⇒ Nay: GỌI `scripts/find-certresolver.sh` (đọc cấu hình TĨNH của Traefik: cờ dòng lệnh, biến môi
+#   trường, tệp trong container, tệp bind-mount trên host) và SO SÁNH. Ba kết cục:
+#     • KHỚP   ⇒ xanh, và nói rõ là ĐÃ đối chiếu (không còn là "phải khớp" chung chung).
+#     • KHÁC   ⇒ ĐỎ. Đây là bằng chứng DƯƠNG tính của lỗi "HTTPS chết im lặng" — thứ đáng đỏ nhất.
+#     • KHÔNG ĐỌC ĐƯỢC cấu hình Traefik ⇒ chỉ CẢNH BÁO, và nói thẳng là CHƯA kiểm chứng được.
+#       ⚠️ Cố ý KHÔNG đỏ ở đây: "không dò được" khác "dò ra sai". Đỏ oan là loại cảnh báo dạy người
+#       ta bỏ qua cảnh báo thật.
+RESOLVER_SCRIPT="scripts/find-certresolver.sh"
+if [ ! -f "$RESOLVER_SCRIPT" ]; then
+  warn "certresolver: ${CERTRESOLVER} (KHÔNG kiểm chứng được — thiếu ${RESOLVER_SCRIPT}; bản clone này quá cũ?)"
 else
-  ok "certresolver: ${CERTRESOLVER} (phải khớp Traefik của bạn — xem deploy/README.md §1)"
+  # ⚠️ `|| TR_RC=$?` chứ KHÔNG `|| true`: cần MÃ THOÁT để phân biệt "khớp / khác / không dò được".
+  #    Và phải có `||` thì phép gán mới không bị `set -e` giết khi script con trả khác 0 — đúng cái
+  #    bẫy đã làm chính tệp này chết im lặng ở bước 1.
+  TR_RC=0
+  TR_OUT="$(bash "$RESOLVER_SCRIPT" --quiet 2>/dev/null)" || TR_RC=$?
+  case "$TR_RC" in
+    0)
+      if [ "$TR_OUT" = "$CERTRESOLVER" ]; then
+        ok "certresolver: ${CERTRESOLVER} — ĐÃ ĐỐI CHIẾU với cấu hình Traefik trên máy này"
+      else
+        fail "1" "certresolver KHÔNG KHỚP: docker-compose.yml đang gửi '${CERTRESOLVER}' nhưng cấu hình Traefik trên máy này khai '${TR_OUT}' ⇒ Traefik SẼ KHÔNG xin được chứng chỉ (compose vẫn xanh, container vẫn chạy, health vẫn ok — chỉ HTTPS chết). Sửa .env: TRAEFIK_CERTRESOLVER=${TR_OUT} rồi chạy lại"
+      fi
+      ;;
+    4)
+      warn "certresolver: ${CERTRESOLVER} — Traefik có NHIỀU resolver, KHÔNG tự kết luận được:"
+      printf '%s\n' "$TR_OUT" | sed 's/^/       • /'
+      printf '     Hãy chắc chắn tên đang dùng là tên phục vụ TÊN MIỀN của bạn (deploy/README.md §1).\n'
+      ;;
+    3)
+      warn "certresolver: ${CERTRESOLVER} (CHƯA KIỂM CHỨNG ĐƯỢC — không đọc được cấu hình Traefik)"
+      printf '     Điều này KHÔNG có nghĩa tên đang sai. Nó có nghĩa script dò chưa tìm ra cấu hình\n'
+      printf '     TĨNH của Traefik trên máy này. Chạy bản đầy đủ để xem nó đã hỏi những gì:\n'
+      printf '         bash %s\n' "$RESOLVER_SCRIPT"
+      ;;
+    *)
+      warn "certresolver: ${CERTRESOLVER} (CHƯA KIỂM CHỨNG ĐƯỢC — ${RESOLVER_SCRIPT} thoát mã ${TR_RC})"
+      ;;
+  esac
 fi
 
 # =============================================================================

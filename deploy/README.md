@@ -192,7 +192,7 @@ trong đó chốt đáng giá nhất là **mọi nguồn `COPY` của `Dockerfil
 ```
 SUBDOMAIN=rubylingo                    # dùng cho Host(...) của Traefik
 DOMAIN_NAME=example.com                # tên miền GỐC, KHÔNG kèm subdomain
-TRAEFIK_CERTRESOLVER=<tên THẬT>        # ⚠️⚠️ xem khối ngay dưới — KHÔNG phải 'mytlschallenge'
+TRAEFIK_CERTRESOLVER=<tên THẬT>        # ⚠️⚠️ xem khối ngay dưới — PHẢI khớp Traefik CỦA BẠN
 SESSION_SECRET=<chuỗi ngẫu nhiên ≥32 ký tự>
 ```
 
@@ -204,15 +204,38 @@ SESSION_SECRET=<chuỗi ngẫu nhiên ≥32 ký tự>
 ### ⚠️⚠️ `TRAEFIK_CERTRESOLVER` — chỗ dễ sai nhất, và nó hỏng IM LẶNG
 
 Đây **không** phải biến của RubyLingo. Nó là **khoá** trong `certificatesResolvers.<TÊN>` của cấu
-hình **TĨNH** Traefik đã có sẵn trên VPS bạn. Giá trị mẫu `mytlschallenge` là tên **ví dụ trong tài
-liệu Traefik**, gần như chắc chắn không phải tên của bạn.
+hình **TĨNH** Traefik đã có sẵn trên VPS bạn.
 
-**Tìm tên thật trên VPS:**
+**Tìm tên thật — chạy trên VPS, ngay trong repo:**
 
 ```bash
-docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers
-# hoặc mở traefik.yml / command: của service traefik, tìm --certificatesresolvers.<TÊN>.
+./scripts/find-certresolver.sh          # báo cáo đầy đủ: đã hỏi gì, máy trả lời gì, kết luận
 ```
+
+Nó dò lần lượt: **cờ dòng lệnh** của container Traefik → **biến môi trường** → **tệp cấu hình trong
+container** (`--configFile=`, `/etc/traefik/traefik.yml|.yaml|.toml`) → **tệp cấu hình bind-mount
+trên host** → cuối cùng là nhãn `tls.certresolver` của các container khác (chỉ là **manh mối**, không
+phải bằng chứng). Kết quả in kèm **nguyên văn đầu ra của từng phép dò**, nên kể cả khi không tìm thấy
+gì, bạn vẫn biết nó đã hỏi những gì — thay vì một lệnh "không ra gì" rồi phải ngồi đoán.
+
+> ⚠️⚠️ **ĐỪNG dùng lệnh mà các bản tài liệu trước chỉ dẫn:**
+> `docker inspect traefik --format '{{json .Config.Cmd}}' | tr ',' '\n' | grep -i certresolvers`
+> Nó **chỉ** đúng khi Traefik cấu hình bằng **cờ dòng lệnh**. Nếu cấu hình TĨNH nằm trong
+> `traefik.yml` (rất phổ biến) thì lệnh đó **trả về RỖNG** — và người dùng kết luận "chắc là
+> mytlschallenge", tức là **đoán**. Đã xảy ra thật ngày 2026-10-09.
+
+> ⚠️ **`mytlschallenge` KHÔNG chắc chắn là tên sai.** Đó là tên xuất hiện trong rất nhiều hướng dẫn
+> dựng Traefik v2/v3, nên nhiều bản Traefik **thật** mang đúng tên đó. **Đừng đổi nó chỉ vì tài liệu
+> này từng khẳng định vậy** — hãy để `find-certresolver.sh` trả lời.
+
+**`deploy.sh` bước 1 tự đối chiếu** giá trị trong `.env` với cấu hình Traefik thật (gọi chính script
+trên), thay vì chỉ in ra rồi đi tiếp:
+
+| Kết quả đối chiếu | `deploy.sh` làm gì |
+|---|---|
+| **KHỚP** | xanh, và nói rõ là **đã** đối chiếu với Traefik trên máy này |
+| **KHÁC** | **ĐỎ ngay ở bước 1** — đây là bằng chứng dương tính của lỗi "HTTPS chết im lặng" |
+| không đọc được cấu hình Traefik | chỉ **cảnh báo** + chỉ cách chạy bản đầy đủ. Cố ý không đỏ: *"không dò được"* khác *"dò ra sai"*, và đỏ oan là loại cảnh báo dạy người ta bỏ qua cảnh báo thật |
 
 **Vì sao điền sai lại nguy hiểm:** một tên SAI vẫn tạo ra router **HỢP LỆ** — `docker compose config`
 xanh, container chạy, `/api/health` trả `ok`. Traefik chỉ **lặng lẽ không xin được chứng chỉ**. Hệ quả:
@@ -225,6 +248,8 @@ xanh, container chạy, `/api/health` trả `ok`. Traefik chỉ **lặng lẽ kh
 
 Vì vậy `docker-compose.yml` dùng `${TRAEFIK_CERTRESOLVER:?…}`: **trống hay thiếu đều làm
 `docker compose up` dừng ngay** kèm đúng tên biến cần điền — biến lỗi im lặng thành lỗi ở bước 1.
+Và nếu tên **có** điền nhưng **sai**, `deploy.sh` bước 1 sẽ đỏ (xem bảng trên) — không còn đường
+nào để một tên sai đi lọt tới bước 5.
 
 Sinh `SESSION_SECRET`:
 
