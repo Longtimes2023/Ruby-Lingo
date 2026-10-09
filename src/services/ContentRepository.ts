@@ -18,6 +18,7 @@ import {
 import { GLOBAL_SCENES, getGlobalScene as getGlobalSceneFromRegistry } from '../data/global-scenes.js';
 import { hashString, shuffleSeeded } from '../lib/random.js';
 import type {
+  DistractorMode,
   Exercise,
   GameType,
   GlobalSceneAsset,
@@ -29,8 +30,15 @@ import type {
   Word,
 } from '@shared/types/content.js';
 
-/** Cách chọn từ gây nhiễu. Khớp `config.distractorMode` trong JSON bài tập. */
-export type DistractorMode = 'same_theme' | 'cross_theme' | 'similar_sound';
+/**
+ * ⚠️ `DistractorMode` ĐƯỢC NHẬP TỪ `shared/types/content.ts` VÀ RE-EXPORT Ở ĐÂY — KHÔNG khai
+ *    lại. Bản trước có một union CHÉP TAY ngay tại tệp này, song song với bản trong `shared/`.
+ *    Hai bản chép tay cho cùng một thứ luôn lệch nhau: thêm một chế độ ở `shared/` mà quên chỗ
+ *    này thì `matchesMode` không hiểu chế độ đó, còn dữ liệu JSON thì đã hợp lệ (schema đọc bản
+ *    `shared/`) — game chạy với bàn chơi sai mà không cổng nào báo.
+ *    Re-export để `useContent.ts` và các test vẫn `import ... from ContentRepository` như trước.
+ */
+export type { DistractorMode };
 
 /**
  * Khả năng THẬT của trình duyệt đang chạy, ảnh hưởng tới việc CHỌN bài tập.
@@ -286,6 +294,15 @@ function matchesMode(
       return themeWordIds.has(word.id);
     case 'cross_theme':
       return !themeWordIds.has(word.id);
+    /**
+     * ⭐ NHIỄU LẤY TỪ CÙNG BÀI HỌC (T02) — chế độ mặc định cho game dạng hình.
+     *
+     *   Vì sao cần: một CHỦ ĐỀ có nhiều BÀI, và bé học từng bài một. `same_theme` gom nhiễu
+     *   theo cả chủ đề nên vẫn lẫn từ của BÀI KHÁC (bé chưa học) — đúng cái chủ dự án đã chê.
+     *   `Word.primaryLessonId` ĐÃ có sẵn nên chỉ cần so thẳng, KHÔNG đổi chữ ký hàm.
+     */
+    case 'same_lesson':
+      return word.primaryLessonId === target.primaryLessonId;
     case 'similar_sound': {
       // Cùng chữ cái đầu là dấu hiệu "nghe na ná" rõ nhất với bé mới học.
       const a = word.en.charAt(0).toLowerCase();

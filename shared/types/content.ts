@@ -231,8 +231,21 @@ export interface ThemeMapItem {
 /** Vị trí ô trống trong game Điền chữ cái. */
 export type HidePosition = 'any' | 'start' | 'middle' | 'end';
 
-/** Nguồn chọn từ gây nhiễu (distractor) trong game Nghe & Chạm. */
-export type DistractorMode = 'same_theme' | 'cross_theme' | 'similar_sound';
+/**
+ * Nguồn chọn từ gây nhiễu (distractor) trong game Nghe & Chạm.
+ *
+ * ⭐ `'same_lesson'` là chế độ MỚI (T02): nhiễu lấy từ CÙNG BÀI HỌC với đáp án
+ *   (`word.primaryLessonId === target.primaryLessonId`), thay vì từ cả chủ đề hay từ chủ đề khác.
+ *   Lý do: trong một chủ đề có nhiều BÀI; lấy nhiễu ở cấp chủ đề (`same_theme`) vẫn lẫn sang bài
+ *   bé CHƯA học (vd `at-the-zoo` có `z1` động vật lớn, `z2` vật nuôi, `z3` bò sát), và lấy từ
+ *   chủ đề khác (`cross_theme`) thì ra hẳn thứ không liên quan — đúng thứ chủ dự án đã chê
+ *   ("nhiễu phải lấy từ cùng bài học").
+ *
+ * ⚠️ `'cross_theme'` ĐƯỢC GIỮ LẠI trong union dù hiện chưa bài nào dùng (sau T02, chỉ còn
+ *    `at-the-zoo` có bài `listen_tap`, và cả 3 bài đều chuyển sang `same_lesson`). Giữ để chủ đề
+ *    khác về sau có thể chọn độ khó "nhiễu đến từ chủ đề khác". Xoá đi là tự bịt một lựa chọn.
+ */
+export type DistractorMode = 'same_theme' | 'cross_theme' | 'similar_sound' | 'same_lesson';
 
 export interface ListenTapConfig {
   kind: 'listen_tap';

@@ -107,7 +107,7 @@
       "gameType": "listen_tap",
       "wordIds": ["starters.elephant", "starters.giraffe", "starters.hippo", "starters.tiger", "starters.crocodile", "starters.monkey", "starters.snake"],
       "difficulty": 1,
-      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "cross_theme", "speechRate": 0.8 }
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
       "id": "at-the-zoo/z1/missing-letter",
@@ -141,7 +141,7 @@
       "gameType": "listen_tap",
       "wordIds": ["starters.dog", "starters.cow", "starters.horse", "starters.sheep", "starters.goat", "starters.duck", "starters.chicken"],
       "difficulty": 1,
-      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "cross_theme", "speechRate": 0.8 }
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
       "id": "at-the-zoo/z2/missing-letter",
@@ -175,7 +175,7 @@
       "gameType": "listen_tap",
       "wordIds": ["starters.frog", "starters.lizard", "starters.spider", "starters.mouse", "starters.bird", "starters.animal", "starters.tail"],
       "difficulty": 1,
-      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "cross_theme", "speechRate": 0.8 }
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
       "id": "at-the-zoo/z3/missing-letter",

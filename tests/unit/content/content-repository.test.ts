@@ -6,8 +6,8 @@
  * mà app báo SAI — bé mất niềm tin vào app và không chơi nữa. Đó là lỗi thật đã xảy ra
  * khi soạn nội dung (5 cặp trùng emoji trong cùng một chủ đề).
  *
- * Vì vậy test dưới đây KHÔNG kiểm vài ví dụ mẫu. Nó QUÉT TOÀN BỘ 275 từ × 3 chế độ
- * (825 lượt) và khẳng định các bất biến đúng cho MỌI lượt. Một ví dụ mẫu có thể may mắn
+ * Vì vậy test dưới đây KHÔNG kiểm vài ví dụ mẫu. Nó QUÉT TOÀN BỘ 275 từ × 4 chế độ
+ * (1100 lượt) và khẳng định các bất biến đúng cho MỌI lượt. Một ví dụ mẫu có thể may mắn
  * rơi vào từ "sạch"; quét toàn bộ thì không.
  */
 
@@ -25,7 +25,7 @@ import type { Exercise, GameType } from '@shared/types/content.js';
 const withSpeech: GameRuntime = { hasSpeechRecognition: true };
 const noSpeech: GameRuntime = { hasSpeechRecognition: false };
 
-const ALL_MODES: DistractorMode[] = ['same_theme', 'cross_theme', 'similar_sound'];
+const ALL_MODES: DistractorMode[] = ['same_theme', 'cross_theme', 'similar_sound', 'same_lesson'];
 
 describe('loadLevel — cache', () => {
   it('gọi hai lần cùng id ⇒ trả CÙNG một object (không đọc lại, không lập chỉ mục lại)', () => {
@@ -174,7 +174,7 @@ describe('tranh cảnh toàn cục', () => {
   });
 });
 
-describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 3 chế độ', () => {
+describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 4 chế độ', () => {
   const bundle = contentRepository.loadLevel('starters');
 
   it('quét toàn bộ: không lượt nào vi phạm điều kiện (1)/(2)/(3)', () => {
@@ -216,7 +216,8 @@ describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 3 chế 
     expect(violations).toEqual([]);
     // Chốt số lượt quét để test không bị "rỗng ruột" nếu nội dung biến mất.
     expect(calls).toBe(bundle.words.length * ALL_MODES.length);
-    expect(calls).toBeGreaterThan(800);
+    // 275 từ × 4 chế độ = 1100 (≥ 1100 vì nội dung chỉ được THÊM, không bớt).
+    expect(calls).toBeGreaterThanOrEqual(1100);
   });
 
   it('same_theme: mọi nhiễu đều nằm trong chủ đề gốc của từ đích', () => {
@@ -236,6 +237,24 @@ describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 3 chế 
       const inTheme = new Set(bundle.wordIdsByTheme.get(target.primaryThemeId) ?? []);
       for (const d of contentRepository.pickDistractors(target.id, 3, 'cross_theme')) {
         if (inTheme.has(d.id)) violations.push(`${target.id}: "${d.id}" lại thuộc chính ${target.primaryThemeId}`);
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  /**
+   * ⭐ T02 — nhiễu phải đến từ CÙNG BÀI HỌC. Đây là bất biến mà chủ dự án yêu cầu: bé học từng
+   *    bài một, nên nhiễu lấy từ bài khác (bé chưa học) là quá khó và sai ngữ cảnh.
+   */
+  it('same_lesson: mọi nhiễu đều thuộc ĐÚNG bài học của từ đích', () => {
+    const violations: string[] = [];
+    for (const target of bundle.words) {
+      for (const d of contentRepository.pickDistractors(target.id, 3, 'same_lesson')) {
+        if (d.primaryLessonId !== target.primaryLessonId) {
+          violations.push(
+            `${target.id} (${target.primaryLessonId}): nhiễu "${d.id}" thuộc ${d.primaryLessonId}`,
+          );
+        }
       }
     }
     expect(violations).toEqual([]);
@@ -306,5 +325,32 @@ describe('bàn chơi của game dạng hình phải ĐỦ ô', () => {
     }
 
     expect(shortfalls).toEqual([]);
+  });
+
+  /**
+   * ⭐ T02 — bằng chứng trực tiếp cho ca chủ dự án báo: bài "Động vật hoang dã to lớn"
+   *    (`at-the-zoo/z1`) không được có nhiễu là xe máy / mặt trăng / cái bàn (từ chủ đề khác)
+   *    hay ❌. Mọi nhiễu phải là con vật CÙNG BÀI.
+   */
+  it('at-the-zoo/z1/listen-tap: mọi nhiễu cùng bài, không lấy từ chủ đề khác', () => {
+    const exercise = contentRepository.getExercise('at-the-zoo/z1/listen-tap');
+    expect(exercise).not.toBeNull();
+    if (!exercise) return;
+    const cfg = exercise.config;
+    expect(cfg.kind).toBe('listen_tap');
+    if (cfg.kind !== 'listen_tap') return;
+
+    expect(cfg.distractorMode).toBe('same_lesson');
+
+    for (const wordId of exercise.wordIds) {
+      const picked = contentRepository.pickDistractors(wordId, cfg.optionCount - 1, cfg.distractorMode);
+      expect(picked.length, `từ "${wordId}" phải đủ ${cfg.optionCount - 1} nhiễu`).toBe(
+        cfg.optionCount - 1,
+      );
+      for (const d of picked) {
+        expect(d.primaryLessonId, `nhiễu "${d.id}" của "${wordId}" phải cùng bài`).toBe('at-the-zoo/z1');
+        expect(d.picturable).toBe(true);
+      }
+    }
   });
 });

@@ -130,7 +130,12 @@ const listenTapConfigSchema = z.object({
   kind: z.literal('listen_tap'),
   rounds: z.number().int().min(1).max(30),
   optionCount: z.number().int().min(2).max(6),
-  distractorMode: z.enum(['same_theme', 'cross_theme', 'similar_sound']),
+  /**
+   * ⚠️ PHẢI KHỚP `DistractorMode` trong `shared/types/content.ts` — cùng một nguồn sự thật.
+   *    Thiếu `'same_lesson'` ở đây thì dữ liệu `at-the-zoo` (đã chuyển sang chế độ đó ở T02) sẽ
+   *    bị `validate:content` TỪ CHỐI ngay, dù mã game đã hiểu chế độ mới.
+   */
+  distractorMode: z.enum(['same_theme', 'cross_theme', 'similar_sound', 'same_lesson']),
   speechRate: z.number().min(0.5).max(1.2),
 });
 
