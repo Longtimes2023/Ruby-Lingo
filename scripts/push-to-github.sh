@@ -303,16 +303,17 @@ fi
 # --- BƯỚC 9 — Bước tiếp theo -------------------------------------------------
 step "BƯỚC 9 — Việc tiếp theo"
 
-printf '    1) Trên VPS (MỘT LẦN):\n'
-printf '         # repo PUBLIC ⇒ dùng HTTPS, KHÔNG cần deploy key:\n'
-printf '         #   sudo git clone https://github.com/<user>/<repo>.git /srv/rubylingo\n'
+printf '    1) Trên VPS (MỘT LẦN) — ⚠️ KHÔNG dùng sudo cho git clone (deploy/README.md §0.1):\n'
+printf '         sudo mkdir -p /srv && sudo chown <ban>:<ban> /srv && cd /srv\n'
+printf '         # repo PUBLIC ⇒ HTTPS, KHÔNG cần deploy key:\n'
+printf '         #   git clone https://github.com/<user>/<repo>.git rubylingo\n'
 printf '         # repo PRIVATE ⇒ dùng URL SSH dưới đây + deploy key/PAT (deploy/README.md §5)\n'
-printf '         sudo git clone %s /srv/rubylingo\n' "$URL"
-printf '         cd /srv/rubylingo && cp .env.example .env && nano .env\n'
-printf '         sudo ./scripts/deploy.sh\n'
+printf '         git clone %s rubylingo\n' "$URL"
+printf '         cd rubylingo && cp .env.example .env && nano .env\n'
+printf '         ./scripts/deploy.sh        # thêm sudo nếu docker đòi — xem §0.1b\n'
 printf '    2) Mỗi lần cập nhật sau:  sửa ở máy dev → push → trên VPS chạy\n'
 printf '         ./scripts/update.sh\n'
 printf '    3) CHỈ khi repo PRIVATE mới cần deploy key/PAT — deploy/README.md §5.\n'
-printf '       ⚠️ sudo làm git dùng khoá SSH của ROOT, không phải của bạn.\n'
+printf '       ⚠️ sudo git clone ⇒ thư mục thuộc root ⇒ .env và git pull đều Permission denied.\n'
 
 printf '\n\033[32m\033[1m▶ XONG — mã nguồn đã ở GitHub, đã kiểm chứng bằng hash.\033[0m\n\n'

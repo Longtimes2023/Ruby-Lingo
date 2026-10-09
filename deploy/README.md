@@ -50,18 +50,52 @@ Kiểm tra trước khi đẩy thật (không đẩy gì): `DRY_RUN=1 ./scripts/
 ### 0.1. `git clone` — CHỈ MỘT LẦN
 
 ```bash
-sudo mkdir -p /srv && cd /srv
-# Repo PUBLIC  ⇒ HTTPS, KHÔNG cần khoá, KHÔNG cần deploy key:
-sudo git clone https://github.com/Longtimes2023/Ruby-Lingo.git rubylingo
-# Repo PRIVATE ⇒ đọc MỤC 5 TRƯỚC (deploy key / PAT), rồi dùng URL SSH:
-#   sudo git clone git@github.com:Longtimes2023/Ruby-Lingo.git rubylingo
+# Repo PUBLIC ⇒ HTTPS, KHÔNG cần khoá, KHÔNG cần deploy key.
+sudo mkdir -p /srv && sudo chown "$USER:$USER" /srv
+cd /srv
+git clone https://github.com/Longtimes2023/Ruby-Lingo.git rubylingo   # ⚠️ KHÔNG sudo
 cd rubylingo
 ```
+
+> ⚠️⚠️ **TUYỆT ĐỐI KHÔNG `sudo git clone`.** `sudo` tạo thư mục **và mọi tệp bên trong** thuộc
+> `root:root` ⇒ tài khoản thường chỉ ĐỌC được, không tạo được tệp. Lỗi hiện ra ở bước SAU, trông
+> chẳng liên quan gì tới clone, nên rất dễ đi tìm sai chỗ:
+>
+> ```text
+> $ cp .env.example .env
+> cp: cannot create regular file '.env': Permission denied
+> ```
+>
+> Chưa hết: `git pull` của `./scripts/update.sh` cũng sẽ hỏng, vì nó không ghi được vào `.git/`.
+> Nếu đã lỡ clone bằng `sudo`, chữa bằng **một** lệnh:
+>
+> ```bash
+> sudo chown -R "$USER:$USER" ~/Ruby-Lingo      # đổi thành đường dẫn repo của bạn
+> ls -ld ~/Ruby-Lingo                            # phải thấy '<bạn> <bạn>', không còn 'root root'
+> ```
 
 > ⚠️ **Trạng thái repo (public/private) quyết định cách clone — kiểm trước khi gõ lệnh.**
 > Trong repo có mã nguồn nhưng **không** có dữ liệu trẻ em và **không** có `.env` (xem 0.5),
 > nên để **public** là chấp nhận được. Nếu để **private** thì VPS phải có deploy key hoặc PAT
 > (mục 5) — và khi đó phải nhớ `sudo` làm git dùng khoá SSH của **root**, không phải của bạn.
+
+### 0.1b. Docker: tài khoản của bạn có cần `sudo` không?
+
+Trả lời câu này **trước** khi chạy deploy, vì nó quyết định bạn gõ `./scripts/deploy.sh` hay
+`sudo ./scripts/deploy.sh`:
+
+```bash
+docker info >/dev/null 2>&1 && echo "OK — không cần sudo" || echo "CẦN sudo (hoặc chưa vào nhóm docker)"
+```
+
+- **Không cần sudo** ⇒ gõ `./scripts/deploy.sh` như mọi lệnh khác. Gọn nhất.
+- **Cần sudo** ⇒ hai lựa chọn:
+  - `sudo ./scripts/deploy.sh` — nhanh, nhưng container chạy bằng `root` nên `./data` và
+    `./backups` sẽ thuộc `root` (xem mục 4). Chấp nhận được cho MVP.
+  - Thêm mình vào nhóm `docker`, rồi **đăng xuất và đăng nhập lại** — nhóm chỉ có hiệu lực ở
+    phiên mới, nên nếu thấy "vẫn phải sudo" thì thường là chưa thoát phiên:
+    `sudo usermod -aG docker "$USER"`
+
 
 
 Kiểm nhanh (đều phải xanh):
@@ -199,7 +233,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 ### Chạy deploy
 
 ```bash
-./scripts/deploy.sh
+./scripts/deploy.sh          # thêm 'sudo' nếu docker đòi — kiểm bằng §0.1b
 ```
 
 Script **build → up → 5 bước kiểm** và **chỉ báo thành công khi cả 5 bước xanh**:
