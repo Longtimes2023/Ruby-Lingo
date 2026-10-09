@@ -235,6 +235,43 @@ export const gameResultSubmissionSchema = z
 export type GameResultSubmissionInput = z.infer<typeof gameResultSubmissionSchema>;
 
 // =============================================================================
+// ĐỌC kết quả game đã chơi (T05) — kênh ĐỌC RIÊNG cho chip trò chơi
+// =============================================================================
+//
+// ⚠️⚠️ VÌ SAO LÀ MỘT KÊNH ĐỌC RIÊNG, KHÔNG NHÉT VÀO `progressSnapshotSchema`:
+//   Ảnh chụp tiến độ là KÊNH GHI hai chiều (`POST /progress/sync`). Nhét `gameResults` vào đó
+//   buộc client phải GỬI NGƯỢC LÊN một thứ nó KHÔNG sở hữu — phá thẳng nguyên tắc "server là
+//   trọng tài" (xem ghi chú cuối file và `shared/progress-merge.ts`). Nhưng bảng `game_result`
+//   ĐÃ nằm ở server; việc còn thiếu chỉ là MỞ MỘT ĐƯỜNG ĐỌC cho nó.
+//
+// ⚠️ `bestStars` LÀ `MAX(stars)` (không phải tổng, không phải sao của bài): "đã chơi bài tập
+//    này chưa + tốt nhất tới đâu". Một bài có nhiều GAME; lấy sao của BÀI tô cho từng game là
+//    nói dối (game chưa chơi cũng sáng sao). Ở tầng SQL, `stars` không bao giờ 0 với hàng có
+//    thật (ràng buộc `game-scoring`: tối thiểu 1 ★) nên tồn tại hàng ⇒ `bestStars ≥ 1`.
+
+/** Tổng hợp kết quả ĐÃ CHƠI của MỘT bài tập (gộp theo `exercise_id`). */
+export const gameResultSummarySchema = z.object({
+  exerciseId: contentIdSchema,
+  /** Sao CAO NHẤT từng đạt cho bài tập này. `0` chỉ có nghĩa "chưa từng chơi". */
+  bestStars: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+  bestScore: z.number().int().min(0).max(1_000_000),
+  attempts: z.number().int().min(1).max(1_000_000),
+  lastPlayedAt: isoUtcSchema,
+});
+
+/**
+ * Phản hồi của `GET /api/children/:id/game-results` — danh sách kết quả game của MỘT bé.
+ *
+ * Trần `MAX_RECORDS_PER_SYNC` để một bé chơi rất nhiều cũng không thể làm phồng phản hồi vô hạn
+ * (cùng lý do như các mảng khác trong file này).
+ */
+export const gameResultsResponseSchema = z.object({
+  childId: z.string().trim().min(1).max(64),
+  results: z.array(gameResultSummarySchema).max(MAX_RECORDS_PER_SYNC),
+  serverTime: isoUtcSchema,
+});
+
+// =============================================================================
 // Bản ghi trong ảnh chụp (client gửi lên khi đồng bộ hai chiều)
 // =============================================================================
 

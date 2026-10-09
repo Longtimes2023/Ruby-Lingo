@@ -238,6 +238,19 @@
   --fs-2xl: 42px; /* từ vựng trên flashcard */
   --fs-3xl: 56px; /* từ vựng lớn / con số */
 
+  /* --- Cỡ biểu tượng từ vựng (T03) ------------------------------------
+     ⭐ Cỡ của BIỂU TƯỢNG từ vựng tỉ lệ theo BỀ RỘNG KHUNG chứa (container query unit `cqw`),
+       KHÔNG theo `font-size` dành cho emoji. Trước đây `<img h-[1em]>` ăn theo `font-size`
+       (vốn chỉnh cho emoji) trong khi khung lớn hơn 3–8 lần ⇒ ảnh teo tí xíu so với khung.
+       Nay `1cqw` = 1% bề rộng content-box của khung, nên CẢ ảnh lẫn emoji đều = 82% bề rộng
+       khung ⇒ hai nhánh trông tương đương, và không phụ thuộc cỡ chữ nữa.
+     ⚠️ Đơn vị `cqw` chỉ PHÂN GIẢI TẠI CHỖ DÙNG — luôn nằm trong một khung có
+       `container-type: inline-size` (xem `.wi-frame` ở `src/styles/word-icon.css`). Ở `:root`
+       nó vô nghĩa nhưng vô hại, và KHÔNG ai dùng nó ngoài `.wi-fill`.
+     ⚠️ 82% để ảnh (có ~11% lề trong suốt quanh hình) đọc ra ~73% cạnh khung. Muốn to/nhỏ hơn
+       thì đổi ĐÚNG MỘT con số này. */
+  --fs-icon-fill: 82cqw;
+
   /* --- Bo góc / bóng / khoảng chạm ------------------------------------
      Bóng nay ngả nâu mận (thay vì ngả xanh đen): bóng xám trên nền hồng trông như vết bẩn,
      bóng cùng họ màu thì trông như bóng đổ thật.

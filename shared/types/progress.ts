@@ -244,3 +244,45 @@ export interface GameResultAward {
   /** Sticker vừa mở ở lượt này (T069). `null` khi bài không có sticker, hoặc sticker đã mở rồi. */
   stickerEarned: string | null;
 }
+
+// =============================================================================
+// Kết quả game ĐÃ CHƠI, gộp theo bài tập (T05) — nguồn dữ liệu cho chip trò chơi
+// =============================================================================
+
+/**
+ * Tổng hợp kết quả ĐÃ CHƠI của MỘT bài tập (`exerciseId`), do server gộp từ bảng `game_result`.
+ *
+ * ⭐ VÌ SAO CẦN, KHI ĐÃ CÓ `LessonProgress.starsBest`:
+ *   Một BÀI có nhiều GAME (5 trò MVP). `LessonProgress.starsBest` là sao của BÀI — dùng nó tô
+ *   cho TỪNG chip trò chơi là NÓI DỐI: một trò chưa từng chơi cũng sáng sao. Chip cần biết
+ *   "RIÊNG trò này đã chơi chưa", mà thông tin đó chỉ có ở cấp `exercise_id`.
+ *
+ * ⚠️ `bestStars` là `MAX(stars)` của MỌI lượt cho bài tập này, không phải sao của lượt gần nhất.
+ *    Thành tựu của bé KHÔNG BAO GIỜ giảm (xem `GameResultAward.bestStars`) — chip phải phản ánh
+ *    đúng điều đó.
+ */
+export interface GameResultSummary {
+  /** `exercise.id` — "{lessonId}/{game-slug}". */
+  exerciseId: string;
+  /** Sao CAO NHẤT từng đạt cho bài tập này. `0` chỉ xuất hiện khi chưa chơi (server không trả
+   *  hàng cho bài chưa chơi). */
+  bestStars: 0 | 1 | 2 | 3;
+  /** Điểm cao nhất từng đạt cho bài tập này. */
+  bestScore: number;
+  /** Số lượt đã chơi bài tập này. */
+  attempts: number;
+  /** Lượt chơi gần nhất (ISO UTC). */
+  lastPlayedAt: string;
+}
+
+/**
+ * Phản hồi của `GET /api/children/:id/game-results`.
+ *
+ * ⚠️ ĐÂY LÀ DỮ LIỆU CHỈ-ĐỌC. Client KHÔNG bao giờ gửi ngược nó lên (đó là lý do nó KHÔNG nằm
+ *    trong `ProgressSnapshot`) — xem ghi chú ở `shared/schemas/progress.ts`.
+ */
+export interface GameResultsResponse {
+  childId: string;
+  results: GameResultSummary[];
+  serverTime: string;
+}

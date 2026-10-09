@@ -9,6 +9,7 @@ import type {
   DailyStat,
   GameResultAward,
   GameResultSubmission,
+  GameResultsResponse,
   LessonProgress,
   ProgressEvent,
   ProgressSnapshot,
@@ -220,6 +221,14 @@ export interface MarkWordLearnedRequest {
 
 export type SubmitGameResultRequest = GameResultSubmission;
 export type SubmitGameResultResponse = GameResultAward;
+
+/**
+ * `GET /api/children/:id/game-results` (T05) — kết quả game ĐÃ CHƠI của một bé, gộp theo bài tập.
+ *
+ * ⭐ KÊNH ĐỌC RIÊNG, KHÔNG PHẢI KÊNH GHI: client chỉ ĐỌC để tô chip trò chơi ở màn chủ đề. Nó
+ *   KHÔNG bao giờ gửi ngược lên (đó là lý do nó không nằm trong `ProgressSnapshot`).
+ */
+export type GameResultsGetResponse = GameResultsResponse;
 
 export type RewardsGetResponse = RewardSnapshot;
 
