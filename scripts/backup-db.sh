@@ -32,7 +32,7 @@
 # -----------------------------------------------------------------------------
 #   ./scripts/backup-db.sh                        # backup + kiểm + dọn bản cũ
 #   RETENTION_DAYS=14 ./scripts/backup-db.sh      # giữ 14 ngày
-#   BACKUP_DIR=/srv/rubylingo-backups ./scripts/backup-db.sh
+#   BACKUP_DIR=~/rubylingo-backups ./scripts/backup-db.sh
 #   DOCKER_BIN=/usr/bin/docker ./scripts/backup-db.sh   # cho cron (PATH tối giản)
 #
 # ⚠️⚠️ ĐÃ KIỂM Ở MÁY DEV vs CHỈ CHẠY ĐƯỢC TRÊN VPS (máy dev không có Docker):

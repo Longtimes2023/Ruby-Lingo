@@ -30,8 +30,10 @@
 #   OUT=/tmp/rl.tar.gz ./scripts/pack-for-vps.sh  # chọn đường dẫn ra
 #
 #   Rồi trên máy VPS:
-#     mkdir -p /srv/rubylingo && tar -xzf rubylingo-src-*.tar.gz -C /srv/rubylingo
-#     cd /srv/rubylingo && cp .env.example .env   # rồi điền SUBDOMAIN/DOMAIN_NAME/SESSION_SECRET…
+#     mkdir -p ~/rubylingo && tar -xzf rubylingo-src-*.tar.gz -C ~/rubylingo
+#     cd ~/rubylingo && cp .env.example .env
+#     # rồi điền ĐÚNG 4 biến: SUBDOMAIN · DOMAIN_NAME · TRAEFIK_CERTRESOLVER · SESSION_SECRET
+#     # (deploy/README.md §1 — các biến khác do docker-compose.yml ghi đè, KHÔNG cần khai)
 #     ./scripts/deploy.sh
 # =============================================================================
 
@@ -108,7 +110,7 @@ step "Đóng gói"
 printf '  → %s\n' "$OUT"
 # ⚠️ CHUẨN HOÁ CHỦ SỞ HỮU — và một cái bẫy đã trả giá:
 #   Không có cờ này, gói mang UID/GID của Windows (`197609/197121` = mảnh SID). Trên VPS Linux,
-#   giải nén bằng `sudo` ⇒ `/srv/rubylingo` thuộc về một người dùng KHÔNG TỒN TẠI ⇒ `ls -l` hiện
+#   giải nén bằng `sudo` ⇒ thư mục repo thuộc về một người dùng KHÔNG TỒN TẠI ⇒ `ls -l` hiện
 #   số, và sau đó thao tác bằng người dùng thường sẽ bị "Permission denied" khó hiểu.
 #   ⚠️ `--owner=root --group=root` **BỊ BỎ QUA ÂM THẦM** trên tar của Windows (đã thử: vẫn ra
 #      197609/197121, KHÔNG có cảnh báo). CHỈ dạng SỐ hoạt động, và phải kèm `--numeric-owner`.
@@ -218,11 +220,11 @@ printf '   (%s — %s mục)\n\n' "$SIZE" "$COUNT"
 printf '   1) Từ máy này, chuyển lên VPS:\n'
 printf '        scp "%s" user@vps:/tmp/\n\n' "$(basename "$OUT")"
 printf '   2) Trên VPS, giải nén:\n'
-printf '        mkdir -p /srv/rubylingo && tar -xzf /tmp/%s -C /srv/rubylingo\n' "$(basename "$OUT")"
-printf '        cd /srv/rubylingo\n\n'
+printf '        mkdir -p ~/rubylingo && tar -xzf /tmp/%s -C ~/rubylingo\n' "$(basename "$OUT")"
+printf '        cd ~/rubylingo\n\n'
 printf '   3) Tạo .env TẠI VPS (không dùng .env của máy dev):\n'
 printf '        cp .env.example .env\n'
-printf '        # điền: SUBDOMAIN, DOMAIN_NAME, SESSION_SECRET, COOKIE_SECURE=true, PUBLIC_ORIGIN\n'
+printf '        # điền ĐÚNG 4 biến: SUBDOMAIN, DOMAIN_NAME, TRAEFIK_CERTRESOLVER, SESSION_SECRET\n'
 printf '        #   SESSION_SECRET sinh bằng:\n'
 printf '        #   node -e "console.log(require(\x27crypto\x27).randomBytes(48).toString(\x27base64url\x27))"\n\n'
 printf '   4) Deploy:\n'

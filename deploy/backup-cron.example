@@ -20,17 +20,22 @@
 SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/bin
 # Ghi log để còn biết đêm qua có chạy hay không. Đọc lại vài hôm đầu sau khi cài.
+#
+# ⚠️⚠️ ĐƯỜNG DẪN REPO — PHẢI SỬA CHO KHỚP VPS. Cron KHÔNG tự tìm repo: sai đường dẫn thì nó
+#   im lặng không chạy, và bạn chỉ biết vào đúng ngày cần phục hồi.
+#   `$HOME` do cron đặt = thư mục nhà của user, nên `$HOME/rubylingo` đúng khi repo nằm trong
+#   thư mục nhà. Repo ở chỗ khác (`/srv/rubylingo`, `/opt/…`) thì thay bằng đường dẫn TUYỆT ĐỐI.
 # 02:30 mỗi ngày. Đổi giờ cho lệch với các cron khác trên VPS.
-30 2 * * * /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+30 2 * * * $HOME/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
 
 # Nếu `docker` KHÔNG nằm trong PATH ở trên, thay dòng cuối bằng dạng này:
-# 30 2 * * * DOCKER_BIN=/usr/local/bin/docker /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+# 30 2 * * * DOCKER_BIN=/usr/local/bin/docker $HOME/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
 
 # Giữ 14 ngày thay vì 7:
-# 30 2 * * * RETENTION_DAYS=14 /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+# 30 2 * * * RETENTION_DAYS=14 $HOME/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
 
 # Đổi thư mục backup (rất khuyến khích: để ở Ổ/PHÂN VÙNG KHÁC với `./data`):
-# 30 2 * * * BACKUP_DIR=/srv/rubylingo-backups /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+# 30 2 * * * BACKUP_DIR=$HOME/rubylingo-backups $HOME/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
 
 # =============================================================================
 # ⚠️ BẢN SAO Ở CÙNG Ổ ĐĨA VỚI `./data` VẪN CÓ THỂ MẤT CÙNG NHAU

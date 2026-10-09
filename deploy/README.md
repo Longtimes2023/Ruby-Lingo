@@ -51,11 +51,16 @@ Kiểm tra trước khi đẩy thật (không đẩy gì): `DRY_RUN=1 ./scripts/
 
 ```bash
 # Repo PUBLIC ⇒ HTTPS, KHÔNG cần khoá, KHÔNG cần deploy key.
-sudo mkdir -p /srv && sudo chown "$USER:$USER" /srv
-cd /srv
+# Clone vào THƯ MỤC BẠN CHỌN — ví dụ dưới đây dùng thư mục nhà (~). Xem ghi chú ngay dưới.
+cd ~
 git clone https://github.com/Longtimes2023/Ruby-Lingo.git rubylingo   # ⚠️ KHÔNG sudo
 cd rubylingo
 ```
+
+> ✅ **Thư mục nào cũng chạy — KHÔNG có gì trong mã phụ thuộc vị trí.** `~/rubylingo`,
+> `/srv/rubylingo`, `/opt/rubylingo` đều y hệt nhau, vì `deploy.sh`, `update.sh` và `backup-db.sh`
+> tự suy gốc repo từ **vị trí của chính chúng** (`${BASH_SOURCE[0]}/..`), **không** hardcode đường
+> dẫn. Chỉ cần **nhớ đúng đường dẫn bạn chọn** cho dòng cron backup (mục 2).
 
 > ⚠️⚠️ **TUYỆT ĐỐI KHÔNG `sudo git clone`.** `sudo` tạo thư mục **và mọi tệp bên trong** thuộc
 > `root:root` ⇒ tài khoản thường chỉ ĐỌC được, không tạo được tệp. Lỗi hiện ra ở bước SAU, trông
@@ -167,7 +172,7 @@ phải kéo hàng trăm MB không dùng tới. Tệp vẫn nằm trên máy dev 
 ```bash
 ./scripts/pack-for-vps.sh                     # → ../rubylingo-src-<ISO-UTC>.tar.gz (~9 MB)
 scp ../rubylingo-src-*.tar.gz user@vps:/tmp/
-# trên VPS: tar -xzf … -C /srv/rubylingo   (rồi tự đối chiếu với commit đang chạy)
+# trên VPS: tar -xzf … -C ~/rubylingo      (rồi tự đối chiếu với commit đang chạy)
 ```
 
 Dùng khi: GitHub không truy cập được, hoặc cần dựng lại đúng một bản cũ mà không muốn `git pull`.
@@ -392,26 +397,27 @@ chủ đề. Bước 5 chỉ nói "DB mở được"; chỉ bước 6 mới nói
 > ⚠️ **Repo đang để PUBLIC ⇒ BỎ QUA CẢ MỤC NÀY.** Trên repo public, `git clone`/`git pull` qua
 > **HTTPS** không cần danh tính gì cả:
 > ```bash
-> sudo git clone https://github.com/<user>/<repo>.git /srv/rubylingo
+> git clone https://github.com/<user>/<repo>.git ~/rubylingo
 > ```
 > Chỉ đọc tiếp khi repo là **PRIVATE**.
 
 VPS phải chứng minh danh tính với GitHub mỗi lần `git fetch`/`pull`. Hai cách, **đều không cần
 nhúng mật khẩu tài khoản vào VPS**:
 
-### ⚠️⚠️ TRƯỚC KHI LÀM GÌ: `sudo` làm git dùng khoá SSH của **root**, KHÔNG phải của bạn
+### ⚠️⚠️ NẾU AI ĐÓ LỠ DÙNG `sudo git clone` — git sẽ dùng khoá SSH của **root**
 
-Mục 0.1 hướng dẫn `sudo git clone …`. `sudo` chạy git với tư cách **root** ⇒ git đọc
-`/root/.ssh/config` và `/root/.ssh/id_*`, **KHÔNG** đọc `~/.ssh/` của tài khoản thường. Nếu bạn tạo
-deploy key bằng tài khoản thường rồi `sudo git clone`, kết quả là:
+`sudo` chạy git với tư cách **root** ⇒ git đọc `/root/.ssh/config` và `/root/.ssh/id_*`, **KHÔNG**
+đọc `~/.ssh/` của tài khoản thường. Nếu bạn tạo deploy key bằng tài khoản thường rồi `sudo git
+clone`, kết quả là:
 
 ```text
 git@github.com: Permission denied (publickey).
 ```
 
 ⇒ Hoặc tạo khoá **bằng `sudo`** (khoá nằm ở `/root/.ssh/` — mọi lệnh `ssh-keygen`/`cat` dưới đây
-phải thêm `sudo`), hoặc **bỏ `sudo`** ở bước clone rồi `sudo chown -R "$USER" /srv/rubylingo`.
+phải thêm `sudo`), hoặc **bỏ `sudo`** ở bước clone rồi `sudo chown -R "$USER" ~/rubylingo`.
 Cách gọn nhất khi repo là **public**: dùng HTTPS và quên hẳn chuyện khoá.
+(§0.1 đã bỏ `sudo` khỏi lệnh clone chính vì hai lý do: quyền sở hữu tệp, và khoá SSH của root.)
 
 ### Cách A — Deploy key (khuyến nghị: quyền hẹp nhất, thu hồi được riêng)
 

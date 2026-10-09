@@ -304,7 +304,7 @@ fi
 step "BƯỚC 9 — Việc tiếp theo"
 
 printf '    1) Trên VPS (MỘT LẦN) — ⚠️ KHÔNG dùng sudo cho git clone (deploy/README.md §0.1):\n'
-printf '         sudo mkdir -p /srv && sudo chown <ban>:<ban> /srv && cd /srv\n'
+printf '         cd ~        # thư mục nào cũng được — mã không phụ thuộc vị trí\n'
 printf '         # repo PUBLIC ⇒ HTTPS, KHÔNG cần deploy key:\n'
 printf '         #   git clone https://github.com/<user>/<repo>.git rubylingo\n'
 printf '         # repo PRIVATE ⇒ dùng URL SSH dưới đây + deploy key/PAT (deploy/README.md §5)\n'
