@@ -112,6 +112,29 @@ env_val() {
     | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
 }
 
+# Trích giá trị của MỘT nhãn Traefik trong `$COMPOSE_CONFIG` (đọc từ stdin, in ra stdout).
+# Không thấy nhãn ⇒ in ra CHUỖI RỖNG (KHÔNG thoát, KHÔNG mã lỗi) để nơi gọi tự quyết định.
+#
+# ⚠️⚠️ VÌ SAO KHÔNG VIẾT THẲNG `VAR="$(… | grep -oE 'tls\.certresolver=…' | head -n1 | cut -d= -f2)"`
+#    (bẫy này ĐÃ TRẢ GIÁ thật, 2026-10-09 — người dùng chạy deploy trên VPS và script "dừng giữa
+#    chừng, không báo gì" ngay sau dòng `✓ cấu hình hợp lệ, URL công khai sẽ kiểm: …`):
+#    1) `docker compose config` **CHUẨN HOÁ `labels`**: dạng danh sách trong `docker-compose.yml`
+#       (`- "k=v"`) được in ra thành dạng MAP (`k: v`). Đầu ra THẬT dùng dấu `:`, KHÔNG phải `=`.
+#       Bám vào `=` ⇒ grep KHÔNG khớp — dù nhãn CÓ trong tệp và CÓ trong đầu ra.
+#    2) grep không khớp ⇒ CẢ pipeline trả 1. Dưới `set -o pipefail` + `set -e`, một phép GÁN
+#       `VAR="$(pipeline)"` bị coi là lệnh thất bại ⇒ **script thoát NGAY TẠI DÒNG ĐÓ, IM LẶNG**,
+#       và dòng `[ -n "$VAR" ] || fail …` ngay dưới trở thành **MÃ CHẾT**. Người dùng chỉ thấy
+#       script dừng giữa chừng — đúng cái bẫy mà khối comment ở BƯỚC 1 (dòng ~144) đã cảnh báo.
+#    3) `head -n1` có thể làm nhánh trước chết vì SIGPIPE (141) ⇒ pipefail lại lan tiếp ra ngoài.
+#    ⇒ Ba chốt: nhận CẢ `:` lẫn `=`, cắt nháy bao ngoài, và `|| true` NGAY TRONG lệnh thay thế.
+label_val() {
+  printf '%s\n' "$COMPOSE_CONFIG" \
+    | grep -oE "$1[[:space:]]*[:=][[:space:]]*[^[:space:]]+" \
+    | head -n1 \
+    | sed -E "s/^$1[[:space:]]*[:=][[:space:]]*//; s/^\"//; s/\"\$//; s/^'//; s/'\$//" \
+    || true
+}
+
 command -v docker >/dev/null 2>&1 || fail "0" "không tìm thấy lệnh 'docker' (script này phải chạy TRÊN VPS)"
 
 for f in Dockerfile docker-compose.yml; do
@@ -160,9 +183,13 @@ fi
 #    SUBDOMAIN=…` ở shell (không để trong `.env`) thì compose deploy ĐÚNG mà `env_val` trả RỖNG
 #    ⇒ script `fail "1"` ĐỎ OAN; hoặc nếu hai nguồn lệch nhau thì bước 5 sẽ POLL SAI URL.
 #    Lấy từ `config` là lấy đúng giá trị mà compose THẬT SỰ dùng — một nguồn, không thể lệch.
-PUBLIC_HOST="$(printf '%s\n' "$COMPOSE_CONFIG" | grep -oE 'Host\([^)]+\)' | head -n1 | sed -E 's/^Host\(//; s/\)$//' | tr -d '\140')"
-[ -n "$PUBLIC_HOST" ] && [ "$PUBLIC_HOST" != "." ] \
-  || fail "1" "không suy được 'Host(...)' từ 'docker compose config' (xem lại nhãn Traefik)"
+# ⚠️ `|| true` ở cuối là BẮT BUỘC, không phải cho đẹp: không khớp `Host(...)` ⇒ grep trả 1 ⇒
+#    `pipefail` + `set -e` giết script NGAY TẠI DÒNG NÀY và `fail` ở dòng dưới thành mã chết.
+#    (Cùng họ bẫy với `label_val` ở trên — xem khối giải thích dài tại đó.)
+PUBLIC_HOST="$(printf '%s\n' "$COMPOSE_CONFIG" | grep -oE 'Host\([^)]+\)' | head -n1 | sed -E 's/^Host\(//; s/\)$//' | tr -d '\140' || true)"
+if [ -z "$PUBLIC_HOST" ] || [ "$PUBLIC_HOST" = "." ]; then
+  fail "1" "không suy được 'Host(...)' từ 'docker compose config' (xem lại nhãn Traefik)"
+fi
 PUBLIC_URL="https://${PUBLIC_HOST}"
 ok "cấu hình hợp lệ, URL công khai sẽ kiểm: ${PUBLIC_URL}"
 
@@ -172,9 +199,9 @@ ok "cấu hình hợp lệ, URL công khai sẽ kiểm: ${PUBLIC_URL}"
 #    HTTPS chết, mà router HTTP lại đá sang HTTPS ⇒ site coi như chết. Khi đó bước 5 đỏ với thông
 #    báo "Traefik không tới được app" — CHỈ SAI CHỖ CẦN SỬA (người trực sẽ đi kiểm cổng 3000, mạng,
 #    nhãn loadbalancer). In tên ra đây để nó ĐỐI CHIẾU ĐƯỢC với Traefik của mình ngay từ bước 1.
-CERTRESOLVER="$(printf '%s\n' "$COMPOSE_CONFIG" | grep -oE 'tls\.certresolver=[^[:space:]]+' | head -n1 | cut -d= -f2)"
+CERTRESOLVER="$(label_val 'tls\.certresolver')"
 [ -n "$CERTRESOLVER" ] \
-  || fail "1" "không đọc được 'tls.certresolver' từ 'docker compose config' — thiếu nhãn đó thì Traefik KHÔNG xin được chứng chỉ (HTTPS chết dù mọi thứ khác đều xanh)"
+  || fail "1" "không đọc được 'tls.certresolver' từ 'docker compose config' — thiếu nhãn đó thì Traefik KHÔNG xin được chứng chỉ (HTTPS chết dù mọi thứ khác đều xanh). Xem dòng THẬT bằng tay: docker compose config | grep -i certresolver"
 if [ "$CERTRESOLVER" = "mytlschallenge" ]; then
   warn "certresolver = '${CERTRESOLVER}' — đây là tên VÍ DỤ trong tài liệu Traefik, KHÔNG phải tên của bạn."
   printf '     Hãy CHẮC CHẮN nó khớp --certificatesresolvers.<TÊN> của Traefik trên VPS, nếu không\n'
@@ -269,7 +296,10 @@ HEALTH_JSON="$(docker compose exec -T "$SERVICE" node -e \
   "fetch('http://127.0.0.1:3000/api/health').then(r=>r.text()).then(t=>process.stdout.write(t)).catch(e=>{process.stderr.write(String(e));process.exit(1)})" \
   2>/dev/null || true)"
 [ -n "$HEALTH_JSON" ] || fail "4" "/api/health không trả lời trong container (app chưa nghe cổng 3000?)"
-APPLIED="$(printf '%s' "$HEALTH_JSON" | grep -o '"migrationsApplied":[0-9]*' | head -n1 | cut -d: -f2)"
+# ⚠️ `|| true` + nhận cả khoảng trắng quanh dấu `:` (JSON.stringify không thêm, nhưng đừng bám vào
+#    chi tiết đó): không khớp ⇒ gán thất bại ⇒ `pipefail` + `set -e` giết script, và `fail` dưới
+#    thành mã chết. `tr -dc '0-9'` gom đúng con số bất kể dấu cách/quan hệ.
+APPLIED="$(printf '%s' "$HEALTH_JSON" | grep -oE '"migrationsApplied"[[:space:]]*:[[:space:]]*[0-9]+' | head -n1 | tr -dc '0-9' || true)"
 [ -n "$APPLIED" ] || fail "4" "phản hồi /api/health không có 'migrationsApplied' — phản hồi: ${HEALTH_JSON}"
 # ⚠️⚠️ PHÉP SO NÀY LÀ CẢ LÝ DO BƯỚC NÀY TỒN TẠI: `countAppliedMigrations()` NUỐT lỗi rồi trả 0,
 #      nên một DB chưa migrate vẫn trả `status: "ok"`. Chỉ ĐỌC VÀ SO mới phát hiện được.

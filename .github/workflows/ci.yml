@@ -4,8 +4,9 @@
 #
 # ⭐ VÌ SAO BA JOB TÁCH RỜI (không gộp làm một):
 #   • `ci`           — cổng kiểm của DỰ ÁN, y hệt `npm run ci` mà lập trình viên chạy ở máy
-#                      (typecheck + lint + validate:content + gen + test), CỘNG ba chốt hạ tầng
-#                      (bit thực thi, tệp bắt buộc, biến bắt buộc) và cổng kiểm tệp workflow.
+#                      (typecheck + lint + validate:content + gen + test), CỘNG bốn chốt hạ tầng
+#                      (bit thực thi, tệp bắt buộc, biến bắt buộc, TỰ KIỂM `deploy.sh`) và cổng
+#                      kiểm tệp workflow.
 #                      Đây là thứ chặn code sai.
 #   • `e2e`          — cổng kiểm ĐẦU-CUỐI: Chromium thật, HTTP thật, cookie thật, 3 viewport.
 #                      Đây là tầng DUY NHẤT chứng minh app chạy được, vì unit test chạy trên jsdom
@@ -88,12 +89,14 @@ jobs:
       #      Lý do: bài học trên áp dụng cho MỌI script người thật sẽ gõ trực tiếp, bất kể nó nằm ở
       #      đâu. Khi thêm script mới vào `docs/`, hãy thêm vào danh sách dưới ĐÂY, nếu không nó
       #      sẽ mất bit `x` một cách im lặng y hệt bốn script `.sh` năm nào.
+      #      (`scripts/tests/*.sh` đã được thêm sẵn khi tạo script tự kiểm — glob `scripts/*.sh`
+      #      KHÔNG đệ quy, nên thư mục con phải được liệt kê riêng.)
       #      `[ -e "$f" ] || continue` để mẫu không khớp cũng không làm đỏ oan (glob không khớp thì
       #      bash giữ nguyên chuỗi mẫu, và `test -x` trên chuỗi đó sẽ sai).
       - name: Kiểm bit thực thi của script
         run: |
           fail=0
-          for f in scripts/*.sh docs/qa-t082/*.mjs; do
+          for f in scripts/*.sh scripts/tests/*.sh docs/qa-t082/*.mjs; do
             [ -e "$f" ] || continue
             if [ -x "$f" ]; then
               echo "  ✓ $f"
@@ -154,6 +157,30 @@ jobs:
             fi
           done
           [ "$thieu" -eq 0 ] || exit 1
+
+      # ⚠️⚠️ TỰ KIỂM `scripts/deploy.sh` — CỔNG DUY NHẤT PHỦ ĐƯỢC LOẠI LỖI "SCRIPT THOÁT IM LẶNG".
+      #   Ngày 2026-10-09, người dùng chạy `./scripts/deploy.sh` trên VPS: script in ra tới dòng
+      #   `✓ cấu hình hợp lệ, URL công khai sẽ kiểm: https://…` rồi TRẢ VỀ DẤU NHẮC — không lỗi,
+      #   không gợi ý. Anh ấy tưởng script treo và phải đi hỏi.
+      #
+      #   Nguyên nhân: `set -euo pipefail` + phép GÁN `VAR="$(… | grep -oE 'X=…' | head -n1)"`.
+      #   `grep` không khớp ⇒ cả pipeline trả 1 ⇒ `set -e` coi phép gán là lệnh thất bại ⇒ **thoát
+      #   ngay tại dòng đó, im lặng**; dòng `[ -n "$VAR" ] || fail …` ngay dưới thành MÃ CHẾT.
+      #   Và `grep` không khớp vì `docker compose config` CHUẨN HOÁ `labels` sang dạng MAP (`k: v`,
+      #   dấu `:`) trong khi mã cũ chỉ tìm dấu `=` — nhãn CÓ trong tệp, CÓ trong đầu ra, mà vẫn trượt.
+      #
+      #   ⚠️ VÌ SAO PHẢI CHẠY THẬT, KHÔNG THỂ LINT: `tsc`, `eslint`, `prettier`, `vitest` đều không
+      #     mở tệp `.sh`; `actionlint` (bước trên) chỉ soi khối `run:` BÊN TRONG workflow, không soi
+      #     script rời; `shellcheck` cũng KHÔNG có luật nào cho lớp lỗi này. Cách duy nhất là CHẠY
+      #     script với một `docker` GIẢ rồi khẳng định trên đầu ra thật — đó là việc của script này.
+      #   ⚠️ Không cần Docker, không cần mạng, không cần VPS: `docker` giả nằm trong $PATH tạm.
+      #   ⚠️ Script tự đếm số khẳng định đỏ rồi mới quyết định mã thoát (nó CỐ Ý không dùng
+      #     `set -e` — dùng `set -e` ở tầng kiểm chứng là mắc lại đúng cái bệnh đang đi bắt).
+      #   ⚠️ Đã kiểm hai chiều ở máy trước khi đưa vào: bản CŨ của `deploy.sh` làm script này ĐỎ
+      #     7 khẳng định (và tái hiện y hệt triệu chứng "dừng sau dòng ✓ cấu hình hợp lệ…"); bản
+      #     ĐÃ SỬA ⇒ 14/14 xanh. Một cổng không từng đỏ là một cổng chưa được chứng minh.
+      - name: Tự kiểm scripts/deploy.sh (bước 1 — chống thoát im lặng)
+        run: bash scripts/tests/deploy-step1.test.sh
 
       - name: Cài Node 20 (có cache npm)
         uses: actions/setup-node@v4
