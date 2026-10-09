@@ -38,6 +38,31 @@ jobs:
       - name: Lấy mã nguồn
         uses: actions/checkout@v4
 
+      # ⚠️⚠️ CHỐT BIT THỰC THI — ĐẶT NGAY ĐẦU ĐỂ ĐỎ THẬT NHANH, VÀ VÌ SAO NÓ CẦN THIẾT:
+      #   Máy dev là **Windows**, nơi `core.filemode=false` (NTFS không có bit thực thi kiểu Unix).
+      #   Hệ quả: `git add` ghi các script là mode **100644**, và VPS Linux `git clone` về sẽ nhận
+      #   `scripts/deploy.sh` **KHÔNG chạy được** ⇒ `./scripts/deploy.sh` báo:
+      #       bash: ./scripts/deploy.sh: Permission denied
+      #   Đây là lỗi HOÀN TOÀN IM LẶNG ở phía máy dev: đĩa vẫn hiện `-rwxr-xr-x`, `npm run ci` vẫn
+      #   xanh, `bash scripts/deploy.sh` (gọi qua `bash`, không cần bit `x`) vẫn chạy — chỉ tới khi
+      #   chạy ĐÚNG cách trên VPS mới lộ. Đã xảy ra thật một lần với CẢ BỐN script.
+      #   Cách sửa: `git update-index --chmod=+x scripts/*.sh` — đổi mode TRONG INDEX, KHÔNG phải
+      #   `chmod` trên đĩa (chmod trên Windows không đi vào git).
+      #   ⚠️ Kiểm bằng `test -x` (kết quả THẬT sau khi checkout) chứ không chỉ đọc index: đó mới là
+      #      thứ VPS thực sự nhận được.
+      - name: Kiểm bit thực thi của script
+        run: |
+          fail=0
+          for f in scripts/*.sh; do
+            if [ -x "$f" ]; then
+              echo "  ✓ $f"
+            else
+              echo "::error file=$f::$f thiếu bit thực thi sau khi checkout — VPS sẽ báo 'Permission denied'. Sửa bằng: git update-index --chmod=+x $f"
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] || exit 1
+
       - name: Cài Node 20 (có cache npm)
         uses: actions/setup-node@v4
         with:
