@@ -50,10 +50,17 @@ jobs:
       #   `chmod` trên đĩa (chmod trên Windows không đi vào git).
       #   ⚠️ Kiểm bằng `test -x` (kết quả THẬT sau khi checkout) chứ không chỉ đọc index: đó mới là
       #      thứ VPS thực sự nhận được.
+      #   ⚠️ Cổng này quét CẢ script QA trong `docs/qa-t082/` — không chỉ `scripts/*.sh`.
+      #      Lý do: bài học trên áp dụng cho MỌI script người thật sẽ gõ trực tiếp, bất kể nó nằm ở
+      #      đâu. Khi thêm script mới vào `docs/`, hãy thêm vào danh sách dưới ĐÂY, nếu không nó
+      #      sẽ mất bit `x` một cách im lặng y hệt bốn script `.sh` năm nào.
+      #      `[ -e "$f" ] || continue` để mẫu không khớp cũng không làm đỏ oan (glob không khớp thì
+      #      bash giữ nguyên chuỗi mẫu, và `test -x` trên chuỗi đó sẽ sai).
       - name: Kiểm bit thực thi của script
         run: |
           fail=0
-          for f in scripts/*.sh; do
+          for f in scripts/*.sh docs/qa-t082/*.mjs; do
+            [ -e "$f" ] || continue
             if [ -x "$f" ]; then
               echo "  ✓ $f"
             else
