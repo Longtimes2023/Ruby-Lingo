@@ -134,14 +134,29 @@ const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
  * ⚠️ Một `<span>` cho MỖI VỊ TRÍ (không phải mỗi món): nhiều món cùng vị trí thì `flex gap-0.5`
  *    tự xếp cạnh nhau — giữ nguyên cơ chế cũ, và KHÔNG BAO GIỜ bỏ món nào của bé.
  *
- * ⚠️ Vài giá trị ÂM (`top-[-10%]`, `left-[-15%]`) là CỐ Ý: mũ phải nhô LÊN TRÊN đỉnh đầu, ba lô
+ * ⚠️ Vài giá trị ÂM (`top-[-13%]`, `left-[-15%]`) là CỐ Ý: mũ phải nhô LÊN TRÊN đỉnh đầu, ba lô
  *    phải thò RA NGOÀI sườn trái. Hộp `1em` là ô chữ của con vật, không phải một cái hộp phải
  *    nhốt mọi thứ vào trong.
+ *
+ * ⭐ CÁC CON SỐ TRÊN ĐƯỢC ĐỐI CHIẾU VỚI HỘP MỰC ĐO ĐƯỢC (Playwright/Chromium, phân tích điểm ảnh
+ *   ở `deviceScaleFactor: 4`, đã ẩn phụ kiện và bóng) — `%` của KHUNG 200×200:
+ *
+ *   | bậc | emoji | fs | mực y | mực x | (mực cao / fs) |
+ *   |---|---|---|---|---|---|
+ *   | `baby`  | 🐵 | 84px  | 33,4 → 68,8 | 27,9 → 72,1 | 0,84 |
+ *   | `adult` | 🐈 | 104px | 24,8 → 74,2 | 24,4 → 75,6 | 0,95 |
+ *   | `super` | 🐒 | 124px | 17,5 → 77,9 | 20,1 → 80,9 | 0,97 |
+ *
+ *   ⚠️ **Tỉ lệ `mực / font-size` KHÔNG hằng số (0,84 → 0,97)** — nó phụ thuộc HÌNH DÁNG của từng
+ *      emoji (con khỉ ít "đầy ô chữ" hơn con mèo). Vì vậy KHÔNG có bộ số nào đúng tuyệt đối cho
+ *      mọi con; các neo dưới đây là điểm cân bằng tốt nhất cho cả ba bậc, sai số ±2–4% khung
+ *      (≈ 4–8px trên khung 200px).
+ *   ⭐ Tâm mực theo trục NGANG luôn ≈ 50% ⇒ canh giữa hoạt động đúng; chỉ trục DỌC mới phải tính.
  */
 const ACCESSORY_ANCHOR: Record<AccessorySlot, string> = {
   back: 'left-[-15%] top-[34%]',
-  feet: 'left-1/2 top-[88%] -translate-x-1/2',
-  head: 'left-1/2 top-[-10%] -translate-x-1/2',
+  feet: 'left-1/2 top-[86%] -translate-x-1/2',
+  head: 'left-1/2 top-[-13%] -translate-x-1/2',
   neck: 'left-1/2 top-[65%] -translate-x-1/2',
   face: 'left-1/2 top-[28%] -translate-x-1/2',
 };
@@ -340,7 +355,7 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
             */}
             <span
               aria-hidden="true"
-              className="absolute bottom-[2%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
+              className="absolute bottom-[0%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
             />
 
             {/* Phụ kiện ĐEO SAU LƯNG (áo choàng / cánh / ba lô) — vẽ trước con vật. */}
