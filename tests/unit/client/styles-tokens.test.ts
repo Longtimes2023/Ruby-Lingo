@@ -363,7 +363,61 @@ describe('tông màu 11 chủ đề — mỗi chủ đề một tông riêng, đ
     ).toEqual([]);
   });
 
-  it('⑥ mọi tông chủ đề cách màu MANG Ý NGHĨA (⭐🌰❤️ + hồng thương hiệu) ≥ 20° hue', () => {
+  it('⑥ CHỮ của màu mang ý nghĩa: bản `-ink` ĐẠT AA, bản gốc TRƯỢT — đó là lý do bản `-ink` tồn tại', () => {
+    const surface = token(TOKENS_CSS, '--c-surface') as string;
+    const raised = token(TOKENS_CSS, '--c-surface-raised') as string;
+    const sunken = token(TOKENS_CSS, '--c-surface-sunken') as string;
+    const cacNen = [
+      ['surface', surface],
+      ['surface-raised', raised],
+      ['surface-sunken', sunken],
+    ] as const;
+    const viPham: string[] = [];
+
+    // Ba cặp đã TRẢ GIÁ — mỗi lần đều phát hiện bằng cách ĐO, không phải bằng cách nhìn:
+    //   ⭐ `--c-star`  2,15:1 (Nhóm 4) · ❤️ `--c-heart` 3,57:1 · ⚠️ `--c-warn` 3,02:1 (T082).
+    for (const goc of ['--c-star', '--c-heart', '--c-warn']) {
+      const ink = token(TOKENS_CSS, `${goc}-ink`) as string;
+      const vivid = token(TOKENS_CSS, goc) as string;
+
+      for (const [ten, mau] of cacNen) {
+        const cInk = contrast(ink, mau);
+        if (cInk < 4.5) {
+          viPham.push(`${goc}-ink ${ink} trên ${ten} chỉ ${cInk.toFixed(2)}:1 (< 4,5) — chữ sẽ mờ`);
+        }
+        // Canh CHIỀU NGƯỢC LẠI: nếu bản GỐC cũng đạt AA thì token `-ink` là thừa và nên xoá.
+        // Không có chiều này thì test chỉ khuyến khích tích thêm token mà không bao giờ dọn.
+        const cGoc = contrast(vivid, mau);
+        if (cGoc >= 4.5) {
+          viPham.push(
+            `${goc} ${vivid} đạt ${cGoc.toFixed(2)}:1 trên ${ten} ⇒ ${goc}-ink là THỪA, hãy xoá`,
+          );
+        }
+      }
+    }
+
+    // `--c-acorn` KHÔNG cần bản `-ink`: tự nó đã đủ tối (5,02 · 4,77 · 4,54). Khẳng định điều
+    // đó để không ai thêm một token chỉ vì muốn cho đối xứng.
+    const acorn = token(TOKENS_CSS, '--c-acorn') as string;
+    for (const [ten, mau] of cacNen) {
+      const c = contrast(acorn, mau);
+      if (c < 4.5) viPham.push(`--c-acorn ${acorn} trên ${ten} chỉ ${c.toFixed(2)}:1 (< 4,5)`);
+    }
+    expect(
+      token(TOKENS_CSS, '--c-acorn-ink'),
+      '--c-acorn đã đạt AA nên KHÔNG được thêm bản -ink (xem ghi chú ở `tokens.css`)',
+    ).toBeUndefined();
+
+    expect(
+      viPham,
+      `màu mang ý nghĩa dùng làm CHỮ trượt ngưỡng AA:\n  ${viPham.join('\n  ')}\n` +
+        '⇒ đây đúng là lỗi đã lặp lại BA lần (⭐ 2,15:1 · ❤️ 3,57:1 · ⚠️ 3,02:1). Quy tắc: màu\n' +
+        '   dùng cho NỀN và HÌNH giữ bản sáng (đó là hình ảnh bé nhìn); màu dùng cho CHỮ phải có\n' +
+        '   bản `-ink` tối hơn. Tương phản KHÔNG nhìn ra được bằng mắt trên ảnh chụp — phải tính.',
+    ).toEqual([]);
+  });
+
+  it('⑦ mọi tông chủ đề cách màu MANG Ý NGHĨA (⭐🌰❤️ + hồng thương hiệu) ≥ 20° hue', () => {
     const mauNghia = RESERVED.map((name) => ({
       name,
       hue: hueOf(token(TOKENS_CSS, name) as string),
@@ -390,7 +444,7 @@ describe('tông màu 11 chủ đề — mỗi chủ đề một tông riêng, đ
     ).toEqual([]);
   });
 
-  it('⑦ các tông chủ đề cách nhau ≥ 20° hue (mỗi chủ đề phải KHÁC nhau thật)', () => {
+  it('⑧ các tông chủ đề cách nhau ≥ 20° hue (mỗi chủ đề phải KHÁC nhau thật)', () => {
     const viPham: string[] = [];
     const hues = ids.map((id) => ({ id, hue: hueOf(tokens.get(`--c-th-${id}`) as string) }));
 
@@ -414,7 +468,7 @@ describe('tông màu 11 chủ đề — mỗi chủ đề một tông riêng, đ
     ).toEqual([]);
   });
 
-  it('⑧ ba tệp phải khớp NHAU: level.json ↔ themeAccent.ts ↔ tokens.css (không token mồ côi)', () => {
+  it('⑨ ba tệp phải khớp NHAU: level.json ↔ themeAccent.ts ↔ tokens.css (không token mồ côi)', () => {
     // Danh sách id khai trong themeAccent.ts (nguồn duy nhất về "chủ đề nào CÓ tông màu").
     const block =
       THEME_ACCENT_TS.match(/THEME_ACCENT_IDS\s*=\s*\[([\s\S]*?)\]\s*as const/)?.[1] ?? '';

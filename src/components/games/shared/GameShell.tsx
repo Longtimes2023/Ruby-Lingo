@@ -108,7 +108,7 @@ export function GameShell({
           */}
           {state.streak >= 2 && (
             <span
-              className="flex items-center gap-1 rounded-pill bg-surface-sunken px-2.5 py-1 text-kid-xs font-bold tabular-nums text-warn"
+              className="flex items-center gap-1 rounded-pill bg-surface-sunken px-2.5 py-1 text-kid-xs font-bold tabular-nums text-warn-ink"
               aria-label={t('game.streakLabel', { count: state.streak })}
             >
               <span aria-hidden="true">🔥</span>

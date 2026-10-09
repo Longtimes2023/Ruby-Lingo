@@ -147,6 +147,8 @@ export default {
         },
         warn: {
           DEFAULT: 'var(--c-warn)',
+          /** Bản dùng cho CHỮ — `--c-warn` chỉ đạt 3,02:1 trên nền `raised`, trượt AA 4,5:1. */
+          ink: 'var(--c-warn-ink)',
           soft: 'var(--c-warn-soft)',
         },
         danger: {

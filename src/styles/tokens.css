@@ -180,7 +180,20 @@
 
   /* --- Trạng thái ----------------------------------------------------- */
   --c-success: #16a34a;
+  /* ⚠️⚠️ `--c-warn` (#d97706) ĐỦ TỐI CHO VIỀN, KHÔNG ĐỦ CHO CHỮ — cùng họ lỗi với `--c-star`:
+     đo trên Chrome thật (T082): 3,19:1 trên `--c-surface` · **3,02:1** trên `--c-surface-raised`
+     · **2,88:1** trên `--c-surface-sunken`. Ngưỡng AA cho chữ thường là 4,5:1 ⇒ trượt CẢ BA.
+     Đây ĐÚNG là lỗi đã từng xảy ra với `--c-star` (2,15:1) và `--c-heart` (3,57:1) — xem khối
+     chú thích ở `--c-star-ink`. Cách sửa cũng y hệt: tách đôi theo VAI, không theo màu.
+       · `--c-warn`     #d97706 → giữ cho VIỀN (`border-warn`) và nền nhạt (`--c-warn-soft`).
+       · `--c-warn-ink` #a15207 → dùng cho CHỮ: 5,64:1 · 5,35:1 · 5,09:1 trên ba nền trên.
+     ⚠️ Chọn #a15207 chứ KHÔNG chọn #b45309 (amber-700): #b45309 chỉ đạt 4,54:1 trên
+        `--c-surface-sunken` — quá sát ngưỡng, lệch một chút là trượt. #a15207 giữ đúng tông
+        hổ phách của `--c-warn` (hue 29,2° so với 32,1°) mà vẫn còn dư địa.
+     ⚠️ ĐỪNG chép tay các con số trên — `tests/unit/client/styles-tokens.test.ts` tự tính lại.
+     ⇒ Ở component, chữ mang nghĩa cảnh báo PHẢI là `text-warn-ink`, KHÔNG BAO GIỜ `text-warn`. */
   --c-warn: #d97706;
+  --c-warn-ink: #a15207;
   --c-danger: #dc2626;
   --c-line: #f2dbe7;
 

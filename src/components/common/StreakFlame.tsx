@@ -79,7 +79,7 @@ export function StreakFlame({
       </span>
 
       {hasStreak ? (
-        <span className="text-kid-xs font-bold tabular-nums text-warn sm:text-kid-sm">
+        <span className="text-kid-xs font-bold tabular-nums text-warn-ink sm:text-kid-sm">
           {streak}
         </span>
       ) : (

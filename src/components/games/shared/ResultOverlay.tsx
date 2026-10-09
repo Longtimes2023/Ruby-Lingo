@@ -224,7 +224,7 @@ export function ResultOverlay({
             <span className="text-kid-xs text-ink-soft">
               🔥 {t('game.streakBonusLabel', { count: result.longestStreak })}
             </span>
-            <span className="text-kid-sm font-bold tabular-nums text-warn">
+            <span className="text-kid-sm font-bold tabular-nums text-warn-ink">
               +{result.streakBonus}
             </span>
           </div>

@@ -84,6 +84,6 @@ function describe(
       };
     case 'failed':
       // Cam, KHÔNG đỏ. Câu chữ trấn an — xem ghi chú đầu file.
-      return { icon: '☁️', text: t('error.syncFailed'), tone: 'border-warn bg-surface-sunken text-warn' };
+      return { icon: '☁️', text: t('error.syncFailed'), tone: 'border-warn bg-surface-sunken text-warn-ink' };
   }
 }

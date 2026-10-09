@@ -188,7 +188,7 @@ export function RecoveryCodePanel({
     <div className="flex flex-col gap-4">
       <div
         role="alert"
-        className="rounded-kid border-2 border-warn bg-surface-sunken px-4 py-3 text-kid-xs font-bold text-warn"
+        className="rounded-kid border-2 border-warn bg-surface-sunken px-4 py-3 text-kid-xs font-bold text-warn-ink"
       >
         Mã này chỉ hiện MỘT LẦN. Bố mẹ hãy chụp ảnh hoặc ghi lại ở nơi an toàn. Nếu quên mật
         khẩu, cần mã này để đặt lại.

@@ -87,7 +87,7 @@ export function SoundButton({
           ? 'border-line bg-surface text-ink'
           : // Khi đã tắt tiếng: đổi màu để trạng thái nhìn thấy được từ xa, không phải chỉ
             // dựa vào emoji (emoji nhỏ và khó phân biệt ở cỡ 24px).
-            'border-warn bg-surface-sunken text-warn',
+            'border-warn bg-surface-sunken text-warn-ink',
         className,
       )}
     >

@@ -37,6 +37,11 @@ describe('cn — không được nuốt cỡ chữ text-kid-*', () => {
       'text-heart',
       'text-success',
       'text-warn',
+      // Bản `-ink` dùng cho CHỮ (tương phản AA). Phải nằm cùng nhóm với `text-warn` thì
+      // `twMerge` mới không nuốt `text-kid-*` đứng cạnh — xem khối chú thích đầu `src/lib/cn.ts`.
+      'text-warn-ink',
+      'text-star-ink',
+      'text-heart-ink',
       'text-danger',
     ];
 
