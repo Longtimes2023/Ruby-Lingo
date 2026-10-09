@@ -1,0 +1,21 @@
+{
+  "id": "starters",
+  "code": "starters",
+  "name_en": "Cambridge Pre A1 Starters",
+  "name_vi": "Tiếng Anh Starters (Pre A1)",
+  "order": 1,
+  "_comment_themeOrder": "THỨ TỰ = BẢN ĐỒ HÀNH TRÌNH. Chủ đề ĐẦU TIÊN bắt buộc phải có unlockCondition = 'always' (validator V10 chặn nếu sai) — nếu không, bé không mở được gì cả. 'at-the-zoo' đứng đầu vì đây là chủ đề MVP đã có game.",
+  "themeIds": [
+    "at-the-zoo",
+    "my-body",
+    "at-the-clothes-shop",
+    "my-friends-birthday",
+    "my-favourite-food",
+    "at-home",
+    "at-school",
+    "at-the-beach",
+    "my-street",
+    "alphabet",
+    "numbers-1-20"
+  ]
+}

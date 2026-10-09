@@ -25,6 +25,20 @@
  *
  * ⚠️ Test này ĐỌC TỆP THẬT TRÊN ĐĨA. Test đỏ thì sửa NGUỒN (chạy lại
  *    `asset-src/words/plan.py` rồi `convert_words.py`), TUYỆT ĐỐI không nới test ra.
+ *
+ * ⚠️⚠️ NHƯNG CÓ HAI HẠNG BẤT BIẾN — ĐỪNG LẪN (bài học từ CI GitHub đỏ ngày 2026-10-09):
+ *   (a) BẤT BIẾN CỦA REPO — phải đúng ở MỌI nơi, kể cả bản clone sạch: manifest ↔ tệp webp
+ *       trên đĩa ↔ nội dung từ. `public/assets/words/*.webp` ĐƯỢC COMMIT nên luôn kiểm được.
+ *   (b) BẤT BIẾN CỦA XƯỞNG SINH ẢNH — chỉ có nghĩa ở nơi có ẢNH NGUỒN THÔ:
+ *       `asset-src/words/source/*.png` bị `.gitignore` loại (291 MB) nên KHÔNG tồn tại trong
+ *       bản clone sạch (CI GitHub, VPS). Phép kiểm "còn nguồn để tái tạo" thuộc hạng (b).
+ *   Lần đầu, phép kiểm (b) được viết y như phép kiểm (a) ⇒ nó chỉ xanh ở ĐÚNG MỘT MÁY TRÊN
+ *   ĐỜI: `npm run ci` xanh ở máy dev, còn CI GitHub đỏ ở bước "Chạy cổng kiểm của dự án" với
+ *   201 mục thiếu nguồn — trong khi `tsc`, `eslint` và `vite build` đều xanh, nên không có gì
+ *   gợi ý nguyên nhân.
+ *   ⇒ Ở nơi KHÔNG có xưởng: đừng im lặng bỏ qua. Khẳng định điều CÒN kiểm được (ledger vẫn ghi
+ *     đường dẫn nguồn cho MỌI mục `done`) — nhờ vậy khi chạy ở nơi CÓ xưởng, phép kiểm hạng (b)
+ *     có nghĩa chứ không rỗng.
  */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -196,6 +210,22 @@ describe('Ảnh từ vựng — bốn nguồn phải khớp nhau', () => {
     // Không đếm trùng: số mục `done` phải bằng số ảnh thật có trong manifest.
     expect(done.length).toBe(manifest.ids.length);
     // Mọi mục `done` cũng phải có ảnh nguồn — mất ảnh nguồn thì không tái tạo được.
+    //
+    // ⚠️ Đây là bất biến hạng (b) — xem khối chú thích đầu tệp. `asset-src/words/source/` bị
+    //    `.gitignore` loại nên chỉ tồn tại ở xưởng sinh ảnh, KHÔNG có trong bản clone sạch.
+    const SOURCE_DIR = join(ROOT, 'asset-src/words/source');
+    if (!existsSync(SOURCE_DIR)) {
+      // Không có xưởng ⇒ KHÔNG im lặng bỏ qua. Kiểm điều còn kiểm được: ledger phải ghi đường
+      // dẫn nguồn cho MỌI mục `done`. Nếu chính điều đó sai thì ở xưởng phép kiểm dưới đây sẽ
+      // rỗng nghĩa (mọi `value.file` undefined ⇒ mọi mục đều bị coi là thiếu nguồn).
+      expect(
+        done.every(
+          ([, value]) => typeof value.file === 'string' && value.file.startsWith('source/'),
+        ),
+        'ledger phải ghi đường dẫn ảnh nguồn (dạng `source/<tên>.png`) cho mọi mục done',
+      ).toBe(true);
+      return;
+    }
     const matNguon = done
       .filter(([, value]) => !existsSync(join(ROOT, 'asset-src/words', value.file ?? '')))
       .map(([key]) => key);

@@ -1,0 +1,124 @@
+{
+  "theme": {
+    "id": "my-favourite-food",
+    "levelId": "starters",
+    "name_en": "My favourite food",
+    "name_vi": "Món ăn bé thích",
+    "icon": "🍎",
+    "sceneImage": "my-favourite-food",
+    "sceneAlt": "Tranh cảnh bàn ăn đầy trái cây, rau củ, đồ ăn và đồ uống nhiều màu sắc",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": [
+      "my-favourite-food/l1",
+      "my-favourite-food/l2",
+      "my-favourite-food/l3",
+      "my-favourite-food/l4",
+      "my-favourite-food/l5",
+      "my-favourite-food/l6"
+    ]
+  },
+  "lessons": [
+    {
+      "id": "my-favourite-food/l1",
+      "themeId": "my-favourite-food",
+      "name_vi": "Trái cây ngon",
+      "wordIds": [
+        "starters.apple", "starters.banana", "starters.grapes",
+        "starters.orange-n", "starters.lemon", "starters.pear"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-favourite-food/l2",
+      "themeId": "my-favourite-food",
+      "name_vi": "Trái cây nhiệt đới",
+      "wordIds": [
+        "starters.lime", "starters.mango", "starters.pineapple",
+        "starters.coconut", "starters.watermelon", "starters.fruit"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-favourite-food/l3",
+      "themeId": "my-favourite-food",
+      "name_vi": "Rau củ tươi",
+      "wordIds": [
+        "starters.tomato", "starters.onion", "starters.potato",
+        "starters.carrot", "starters.peas", "starters.beans", "starters.rice"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-favourite-food/l4",
+      "themeId": "my-favourite-food",
+      "name_vi": "Bữa ăn trong ngày",
+      "wordIds": [
+        "starters.breakfast", "starters.lunch", "starters.dinner",
+        "starters.bread", "starters.egg", "starters.milk", "starters.water"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-favourite-food/l5",
+      "themeId": "my-favourite-food",
+      "name_vi": "Đồ ăn ngon",
+      "wordIds": [
+        "starters.fish", "starters.meat", "starters.sausage",
+        "starters.burger", "starters.chicken-meat", "starters.chips", "starters.cake"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-favourite-food/l6",
+      "themeId": "my-favourite-food",
+      "name_vi": "Đồ ngọt và đồ uống",
+      "wordIds": [
+        "starters.candy", "starters.chocolate", "starters.ice-cream",
+        "starters.lemonade", "starters.juice", "starters.drink"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.apple",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "apple",      "vi": "quả táo",        "type": "n", "icon": "🍎", "picturable": true },
+    { "id": "starters.banana",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "banana",     "vi": "quả chuối",      "type": "n", "icon": "🍌", "picturable": true },
+    { "id": "starters.grapes",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "grapes",     "vi": "chùm nho",       "type": "n", "icon": "🍇", "picturable": true },
+    { "id": "starters.fish",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "fish",       "vi": "cá",             "type": "n", "icon": "🐟", "picturable": true },
+    { "id": "starters.beans",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "beans",      "vi": "hạt đậu",        "type": "n", "icon": "🌰", "picturable": true },
+    { "id": "starters.egg",        "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "egg",        "vi": "quả trứng",      "type": "n", "icon": "🥚", "picturable": true },
+    { "id": "starters.milk",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "milk",       "vi": "sữa",            "type": "n", "icon": "🥛", "picturable": true },
+    { "id": "starters.tomato",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "tomato",     "vi": "quả cà chua",    "type": "n", "icon": "🍅", "picturable": true },
+    { "id": "starters.onion",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "onion",      "vi": "củ hành",        "type": "n", "icon": "🧅", "picturable": true },
+    { "id": "starters.rice",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "rice",       "vi": "cơm",            "type": "n", "icon": "🍚", "picturable": true },
+    { "id": "starters.peas",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "peas",       "vi": "đậu Hà Lan",     "type": "n", "icon": "🟢🟢", "picturable": true },
+    { "id": "starters.coconut",    "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "coconut",    "vi": "quả dừa",        "type": "n", "icon": "🥥", "picturable": true },
+    { "id": "starters.breakfast",  "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "breakfast",  "vi": "bữa sáng",       "type": "n", "icon": "🍳", "picturable": false },
+    { "id": "starters.dinner",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "dinner",     "vi": "bữa tối",        "type": "n", "icon": "🍽️", "picturable": false },
+    { "id": "starters.meat",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "meat",       "vi": "thịt",           "type": "n", "icon": "🥩", "picturable": true },
+    { "id": "starters.potato",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "potato",     "vi": "củ khoai tây",   "type": "n", "icon": "🥔", "picturable": true },
+    { "id": "starters.sausage",    "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "sausage",    "vi": "xúc xích",       "type": "n", "icon": "🌭", "picturable": true },
+    { "id": "starters.orange-n",   "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "orange",     "vi": "quả cam",        "type": "n", "icon": "🍊", "picturable": true },
+    { "id": "starters.lemon",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "lemon",      "vi": "quả chanh vàng", "type": "n", "icon": "🍋", "picturable": true },
+    { "id": "starters.lime",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "lime",       "vi": "quả chanh xanh", "type": "n", "icon": "🍋🟢", "picturable": true },
+    { "id": "starters.mango",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "mango",      "vi": "quả xoài",       "type": "n", "icon": "🥭", "picturable": true },
+    { "id": "starters.pear",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l1", "en": "pear",       "vi": "quả lê",         "type": "n", "icon": "🍐", "picturable": true },
+    { "id": "starters.pineapple",  "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "pineapple",  "vi": "quả dứa",        "type": "n", "icon": "🍍", "picturable": true },
+    { "id": "starters.water",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "water",      "vi": "nước",           "type": "n", "icon": "💧", "picturable": true },
+    { "id": "starters.fruit",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "fruit",      "vi": "trái cây",       "type": "n", "icon": "🍓", "picturable": false },
+    { "id": "starters.bread",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "bread",      "vi": "bánh mì",        "type": "n", "icon": "🍞", "picturable": true },
+    { "id": "starters.burger",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "burger",     "vi": "bánh kẹp",       "type": "n", "icon": "🍔", "picturable": true },
+    { "id": "starters.cake",       "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "cake",       "vi": "bánh ngọt",      "type": "n", "icon": "🍰", "picturable": true },
+    { "id": "starters.lunch",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l4", "en": "lunch",      "vi": "bữa trưa",       "type": "n", "icon": "🥪", "picturable": false },
+    { "id": "starters.candy",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "candy",      "vi": "kẹo",            "type": "n", "icon": "🍬", "picturable": true, "alt": ["sweets"] },
+    { "id": "starters.carrot",     "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l3", "en": "carrot",     "vi": "củ cà rốt",      "type": "n", "icon": "🥕", "picturable": true },
+    { "id": "starters.chips",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "chips",      "vi": "khoai tây chiên", "type": "n", "icon": "🍟", "picturable": true, "alt": ["fries"] },
+    { "id": "starters.chocolate",  "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "chocolate",  "vi": "sô-cô-la",       "type": "n", "icon": "🍫", "picturable": true },
+    { "id": "starters.lemonade",   "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "lemonade",   "vi": "nước chanh",     "type": "n", "icon": "🥤", "picturable": true },
+    { "id": "starters.ice-cream",  "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "ice cream",  "vi": "kem",            "type": "n", "icon": "🍦", "picturable": true },
+    { "id": "starters.chicken-meat",    "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l5", "en": "chicken",    "vi": "thịt gà",        "type": "n", "icon": "🍗", "picturable": true },
+    { "id": "starters.watermelon", "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l2", "en": "watermelon", "vi": "quả dưa hấu",    "type": "n", "icon": "🍉", "picturable": true },
+    { "id": "starters.drink",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "drink",      "vi": "đồ uống",        "type": "n", "icon": "🧃", "picturable": true },
+    { "id": "starters.juice",      "levelId": "starters", "primaryThemeId": "my-favourite-food", "primaryLessonId": "my-favourite-food/l6", "en": "juice",      "vi": "nước ép",        "type": "n", "icon": "🍹", "picturable": true }
+  ],
+  "exercises": []
+}

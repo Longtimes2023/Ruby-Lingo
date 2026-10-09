@@ -121,10 +121,16 @@ else
   info "Muốn đẩy cả những tệp này: git add -A && git commit -m '...' rồi chạy lại."
 fi
 
-# --- BƯỚC 3 — CHỐT CHỐNG RÒ RỈ: hỏi GIT, không hỏi .gitignore -----------------
-# `.gitignore` chỉ là *ý định*; thứ quyết định là git có theo dõi tệp hay không. Một lần
-# `git add -f data/` là đủ để dữ liệu trẻ em lên GitHub mà cây vẫn "sạch" ở BƯỚC 2.
-step "BƯỚC 3 — Chốt chống rò rỉ dữ liệu trẻ em"
+# --- BƯỚC 3 — CHỐT HAI CHIỀU: không rò rỉ dữ liệu, VÀ không nuốt mã nguồn ---------
+# Chiều 1: `.gitignore` chỉ là *ý định*; thứ quyết định là git có theo dõi tệp hay không. Một
+#          lần `git add -f data/` là đủ để dữ liệu trẻ em lên GitHub mà cây vẫn "sạch" ở BƯỚC 2.
+# Chiều 2 (⚠️ đã xảy ra thật 2026-10-09): một mẫu KHÔNG có `/` đầu khớp ở MỌI ĐỘ SÂU. `.gitignore`
+#          ghi `data/` với ý "chặn thư mục DB ở gốc" đã nuốt luôn `src/data/` — 17 tệp, gồm cả
+#          TOÀN BỘ nội dung từ vựng `src/data/levels/starters/**`. `git ls-files src/data/` trả về
+#          0 tệp mà KHÔNG có cảnh báo nào, vì tệp bị ignore thì git im lặng. Bản clone sạch thiếu
+#          tệp ⇒ `npm run typecheck` đỏ khó hiểu, `docker build` đỏ theo — còn máy dev thì xanh.
+#          ⇒ Phép kiểm dưới đây là chiều NGƯỢC LẠI của BƯỚC 3 chiều 1, và không thể thiếu.
+step "BƯỚC 3 — Chốt hai chiều: rò rỉ dữ liệu & nuốt mã nguồn"
 
 FORBIDDEN=(.env data backups _verify dist dist-server node_modules asset-src/words/source)
 LEAK=0
@@ -140,7 +146,19 @@ if [ "$LEAK" -eq 1 ]; then
   fail 3 "Có tệp CẤM đang được git theo dõi — ĐẨY LÊN GITHUB LÀ KHÔNG THỂ HOÀN TÁC. \
 Bỏ theo dõi (KHÔNG xoá tệp trên đĩa): git rm -r --cached <đường-dẫn> && git commit -m 'chore: bỏ theo dõi dữ liệu cục bộ'"
 fi
-ok "8/8 đường dẫn cấm đều KHÔNG bị git theo dõi."
+ok "Chiều 1: 8/8 đường dẫn cấm đều KHÔNG bị git theo dõi."
+
+NUOT="$(git status --ignored --porcelain 2>/dev/null | grep '^!!' | awk '{print $2}' \
+        | grep -E '^(src|shared|server|public|scripts|tests|deploy)/' || true)"
+if [ -n "$NUOT" ]; then
+  printf '\033[31m      ✗ .gitignore đang NUỐT các thư mục MÃ NGUỒN sau:\033[0m\n'
+  printf '%s\n' "$NUOT" | sed 's/^/        /' | head -20
+  fail 3 "Bản clone sạch (CI, VPS) sẽ THIẾU những tệp này ⇒ typecheck/build đỏ khó hiểu. \
+Nguyên nhân gần như luôn là một mẫu trong .gitignore THIẾU dấu '/' đầu dòng — mẫu không có '/' \
+khớp ở MỌI độ sâu (vd 'data/' nuốt luôn 'src/data/'). Sửa: thêm '/' đầu dòng cho mẫu đó, \
+kiểm bằng: git check-ignore -v <đường-dẫn>"
+fi
+ok "Chiều 2: không thư mục mã nguồn nào bị .gitignore nuốt."
 
 # --- BƯỚC 4 — Tạo repo GitHub (chỉ khi --create) ----------------------------
 if [ -n "$CREATE_NAME" ]; then

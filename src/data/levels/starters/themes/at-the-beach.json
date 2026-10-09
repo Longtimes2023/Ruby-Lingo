@@ -1,0 +1,101 @@
+{
+  "theme": {
+    "id": "at-the-beach",
+    "levelId": "starters",
+    "name_en": "At the beach",
+    "name_vi": "Ở bãi biển",
+    "icon": "🏖️",
+    "sceneImage": "at-the-beach",
+    "sceneAlt": "Tranh cảnh bãi biển với cát vàng, biển xanh, các bạn nhỏ chơi bóng và thả diều",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": ["at-the-beach/b1", "at-the-beach/b2", "at-the-beach/b3", "at-the-beach/b4"]
+  },
+  "lessons": [
+    {
+      "id": "at-the-beach/b1",
+      "themeId": "at-the-beach",
+      "name_vi": "Vận động ở biển",
+      "wordIds": [
+        "starters.swim",
+        "starters.jump",
+        "starters.walk",
+        "starters.throw",
+        "starters.catch",
+        "starters.hit"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-the-beach/b2",
+      "themeId": "at-the-beach",
+      "name_vi": "Chơi thể thao",
+      "wordIds": [
+        "starters.kick",
+        "starters.baseball",
+        "starters.table-tennis",
+        "starters.badminton",
+        "starters.tennis",
+        "starters.sport"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-the-beach/b3",
+      "themeId": "at-the-beach",
+      "name_vi": "Âm nhạc và sáng tạo",
+      "wordIds": [
+        "starters.sing",
+        "starters.paint",
+        "starters.take",
+        "starters.guitar",
+        "starters.piano",
+        "starters.camera"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-the-beach/b4",
+      "themeId": "at-the-beach",
+      "name_vi": "Cảnh bãi biển",
+      "wordIds": [
+        "starters.sand",
+        "starters.sea",
+        "starters.sun",
+        "starters.shell",
+        "starters.kite",
+        "starters.fishing"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.swim", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "swim", "vi": "bơi", "type": "v", "icon": "🏊", "picturable": true, "phonetic": "/swɪm/" },
+    { "id": "starters.jump", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "jump", "vi": "nhảy", "type": "v", "icon": "🤸", "picturable": true, "phonetic": "/dʒʌmp/" },
+    { "id": "starters.walk", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "walk", "vi": "đi bộ", "type": "v", "icon": "🚶", "picturable": true, "phonetic": "/wɔːk/" },
+    { "id": "starters.throw", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "throw", "vi": "ném", "type": "v", "icon": "🤾", "picturable": true, "phonetic": "/θrəʊ/" },
+    { "id": "starters.catch", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "catch", "vi": "bắt", "type": "v", "icon": "🧤", "picturable": true, "phonetic": "/kætʃ/" },
+    { "id": "starters.hit", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b1", "en": "hit", "vi": "đánh", "type": "v", "icon": "🏏", "picturable": true, "phonetic": "/hɪt/" },
+
+    { "id": "starters.kick", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "kick", "vi": "đá", "type": "v", "icon": "⚽", "picturable": true, "phonetic": "/kɪk/" },
+    { "id": "starters.baseball", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "baseball", "vi": "bóng chày", "type": "n", "icon": "⚾", "picturable": true, "phonetic": "/ˈbeɪs.bɔːl/" },
+    { "id": "starters.table-tennis", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "table tennis", "vi": "bóng bàn", "type": "n", "icon": "🏓", "picturable": true, "phonetic": "/ˈteɪ.bəl ˌten.ɪs/" },
+    { "id": "starters.badminton", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "badminton", "vi": "cầu lông", "type": "n", "icon": "🏸", "picturable": true, "phonetic": "/ˈbæd.mɪn.tən/" },
+    { "id": "starters.tennis", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "tennis", "vi": "quần vợt", "type": "n", "icon": "🎾", "picturable": true, "phonetic": "/ˈten.ɪs/" },
+    { "id": "starters.sport", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "sport", "vi": "thể thao", "type": "n", "icon": "🏅", "picturable": false, "phonetic": "/spɔːt/" },
+
+    { "id": "starters.sing", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "sing", "vi": "hát", "type": "v", "icon": "🎤", "picturable": true, "phonetic": "/sɪŋ/" },
+    { "id": "starters.paint", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "paint", "vi": "vẽ tranh", "type": "v", "icon": "🎨", "picturable": true, "phonetic": "/peɪnt/" },
+    { "id": "starters.take", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "take", "vi": "chụp ảnh", "type": "v", "icon": "📸", "picturable": true, "phonetic": "/teɪk/" },
+    { "id": "starters.guitar", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "guitar", "vi": "đàn ghi-ta", "type": "n", "icon": "🎸", "picturable": true, "phonetic": "/ɡɪˈtɑːr/" },
+    { "id": "starters.piano", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "piano", "vi": "đàn pi-a-nô", "type": "n", "icon": "🎹", "picturable": true, "phonetic": "/piˈæn.əʊ/" },
+    { "id": "starters.camera", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "camera", "vi": "máy ảnh", "type": "n", "icon": "📷", "picturable": true, "phonetic": "/ˈkæm.rə/" },
+
+    { "id": "starters.sand", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "sand", "vi": "cát", "type": "n", "icon": "🏖️", "picturable": true, "phonetic": "/sænd/" },
+    { "id": "starters.sea", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "sea", "vi": "biển", "type": "n", "icon": "🌊", "picturable": true, "phonetic": "/siː/" },
+    { "id": "starters.sun", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "sun", "vi": "mặt trời", "type": "n", "icon": "☀️", "picturable": true, "phonetic": "/sʌn/" },
+    { "id": "starters.shell", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "shell", "vi": "vỏ sò", "type": "n", "icon": "🐚", "picturable": true, "phonetic": "/ʃel/" },
+    { "id": "starters.kite", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "kite", "vi": "cái diều", "type": "n", "icon": "🪁", "picturable": true, "phonetic": "/kaɪt/" },
+    { "id": "starters.fishing", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "fishing", "vi": "câu cá", "type": "n", "icon": "🎣", "picturable": true, "phonetic": "/ˈfɪʃ.ɪŋ/" }
+  ],
+  "exercises": []
+}

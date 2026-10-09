@@ -13,20 +13,37 @@
 #
 #     2. `.env` — chứa `SESSION_SECRET`. Ai biết nó thì giả mạo được phiên đăng nhập.
 #
-#   ⚠️ BÀI HỌC ĐÃ TRẢ GIÁ: bản đầu của tệp này ghi `backup/` (SỐ ÍT), trong khi
-#      `scripts/backup-db.sh:55` ghi bản sao vào `backups/` (SỐ NHIỀU). Một chữ `s` khác nhau,
-#      và bản sao DB chứa dữ liệu thật của bé sẽ lọt lên GitHub mà KHÔNG có cảnh báo nào.
+#   ⚠️ BÀI HỌC ĐÃ TRẢ GIÁ #1 — SAI MỘT CHỮ `s`: bản đầu của tệp này ghi `backup/` (SỐ ÍT),
+#      trong khi `scripts/backup-db.sh:55` ghi bản sao vào `backups/` (SỐ NHIỀU). Một chữ `s`
+#      khác nhau, và bản sao DB chứa dữ liệu thật của bé sẽ lọt lên GitHub mà KHÔNG có cảnh báo.
 #      ⇒ Khi thêm một thư mục dữ liệu mới, kiểm ĐÚNG tên mà script ghi ra, đừng đoán.
+#
+#   ⚠️⚠️ BÀI HỌC ĐÃ TRẢ GIÁ #2 — THIẾU MỘT DẤU `/` (2026-10-09, làm ĐỎ CẢ HAI JOB CI):
+#      Mẫu KHÔNG có `/` đầu khớp ở **MỌI ĐỘ SÂU**, không chỉ ở gốc repo. Bản trước ghi `data/`
+#      với ý "chặn thư mục DB ở gốc" — nhưng nó khớp luôn `src/data/`, tức nuốt TRỌN tầng dữ
+#      liệu của app: `src/data/index.ts`, `avatars.ts`, `xp-levels.ts`, `global-scenes.ts`,
+#      `word-assets.json`, và TOÀN BỘ nội dung từ vựng `src/data/levels/starters/**` — 17 tệp.
+#      `git ls-files src/data/` trả về **0 tệp** và KHÔNG có cảnh báo nào.
+#      Hậu quả: bản clone sạch (CI GitHub, VPS) thiếu 17 tệp ⇒ `npm run typecheck` đỏ với
+#      "Cannot find module '../data/index.js'" ⇒ job `ci` đỏ, và `docker build` đỏ theo (nó
+#      cũng chạy `npm run typecheck`) — trong khi máy dev HOÀN TOÀN XANH, vì tệp vẫn nằm trên đĩa
+#      và `git status` không hề nhắc tới chúng.
+#      ⇒ LUẬT: mọi mẫu trỏ tới thư mục Ở GỐC REPO phải có `/` đầu dòng.
+#        Ngoại lệ DUY NHẤT là `node_modules/` — xem chú thích ở mục "Phụ thuộc".
+#        `scripts/push-to-github.sh` (BƯỚC 3) và CI đều có chốt canh đúng lỗi này.
 # =============================================================================
 
 # --- Phụ thuộc ---
+# ⚠️ CỐ Ý KHÔNG NEO (`/` đầu): node_modules LỒNG NHAU cũng phải bị chặn
+#    (vd `node_modules/tsx/node_modules/esbuild`). Đây là ngoại lệ duy nhất.
 node_modules/
 .pnp
 .pnp.js
 
 # --- Đầu ra build (image tự sinh lại; đẩy lên chỉ tổ nặng và dễ lẫn) ---
-dist/
-dist-server/
+# ⚠️ Neo ở gốc — cùng lý do như khối "DỮ LIỆU THẬT" bên dưới.
+/dist/
+/dist-server/
 .tsbuild/
 *.tsbuildinfo
 
@@ -38,14 +55,15 @@ vite.config.ts.timestamp-*.mjs
 # =============================================================================
 # --- DỮ LIỆU THẬT & SAO LƯU (TUYỆT ĐỐI không commit — xem khối đầu tệp) ---
 # =============================================================================
-data/
+# ⚠️ `/` ĐẦU DÒNG LÀ BẮT BUỘC — thiếu nó là nuốt luôn `src/data/`. Xem bài học #2 ở đầu tệp.
+/data/
 *.db
 *.db-wal
 *.db-shm
 # ⚠️ Phải có CẢ HAI dạng: `backups/` là nơi `scripts/backup-db.sh` thực sự ghi;
 #    `backup/` giữ lại để một thư mục gõ sai tên cũng không lọt qua.
-backups/
-backup/
+/backups/
+/backup/
 
 # =============================================================================
 # --- Bí mật & môi trường ---
@@ -60,11 +78,11 @@ backup/
 # =============================================================================
 # --- Đầu ra kiểm thử ---
 # =============================================================================
-coverage/
-playwright-report/
-test-results/
-blob-report/
-.playwright/
+/coverage/
+/playwright-report/
+/test-results/
+/blob-report/
+/.playwright/
 
 # Báo cáo JSON mà `npm run test:ci` sinh ra để `scripts/verify-test-count.ts` đối chiếu
 # số file test đã chạy với số file thật trên đĩa.
@@ -78,9 +96,9 @@ blob-report/
 # `_verify/` là xưởng đột biến, ~20 MB gồm cả bản sao lưu của mã nguồn để khôi phục.
 # Commit nó thì mỗi lần clone phải tải thêm 20 MB vô ích. (`scripts/verify-test-count.ts`
 # và `vite.config.ts` mới là phần cần commit.)
-_verify/
-outputs/
-generated-images/
+/_verify/
+/outputs/
+/generated-images/
 
 # ⚠️ `asset-src/words/source/` = **291 MB** ảnh PNG THÔ do AI sinh ra.
 #    Chúng là đầu vào của `convert_words.py`, KHÔNG phải thành phẩm: thành phẩm đã nằm trong
@@ -90,6 +108,7 @@ generated-images/
 #    ⚠️ Đây KHÔNG phải "xoá": tệp vẫn nằm trên máy dev, và sinh lại được từ `plan.json` +
 #       `subjects.py` (đều ĐƯỢC commit). Nếu cần bản gốc độ phân giải cao để lưu trữ, hãy đẩy
 #       chúng lên nơi khác (object storage), đừng để trong git.
+#    (Mẫu này CÓ `/` ở giữa nên đã được neo sẵn — không cần `/` đầu.)
 asset-src/words/source/
 
 # --- Trình soạn thảo / hệ điều hành ---

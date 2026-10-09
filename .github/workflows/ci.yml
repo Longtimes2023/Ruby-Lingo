@@ -63,6 +63,31 @@ jobs:
           done
           [ "$fail" -eq 0 ] || exit 1
 
+      # ⚠️⚠️ CHỐT "TỆP BẮT BUỘC PHẢI CÓ" — vì sao vẫn cần, dù `npm run ci` ở dưới cũng sẽ đỏ:
+      #   Ngày 2026-10-09, `.gitignore` có mẫu `data/` THIẾU dấu `/` đầu. Mẫu không có `/` khớp ở
+      #   MỌI ĐỘ SÂU, nên nó nuốt luôn `src/data/` — 17 tệp, gồm tầng dữ liệu và TOÀN BỘ nội dung
+      #   từ vựng `src/data/levels/starters/**`. Bản clone sạch thiếu 17 tệp ⇒ `npm run typecheck`
+      #   đỏ với "Cannot find module '../data/index.js'" — thông báo KHÔNG hề nhắc tới .gitignore,
+      #   nên rất dễ đi sửa sai chỗ (đã suýt sửa nhầm vào test).
+      #   Trên CI, `git status --ignored` KHÔNG giúp được: tệp bị ignore thì không có mặt để mà
+      #   liệt kê. Nên ở đây ta kiểm sự HIỆN DIỆN của những tệp đã biết là bắt buộc, để lỗi hiện
+      #   ra kèm ĐÚNG nguyên nhân thay vì một lỗi typecheck khó hiểu.
+      - name: Chốt — tệp bắt buộc phải có trong bản checkout
+        run: |
+          thieu=0
+          for p in src/data/index.ts src/data/avatars.ts src/data/xp-levels.ts \
+                   src/data/global-scenes.ts src/data/word-assets.json \
+                   src/data/levels/starters/level.json shared/content/content-index.json \
+                   src/styles/tokens.css package-lock.json Dockerfile .env.example; do
+            if [ -f "$p" ]; then
+              echo "  ✓ $p"
+            else
+              echo "::error file=$p::$p THIẾU trong bản clone sạch. Nguyên nhân thường gặp: một mẫu trong .gitignore thiếu dấu '/' đầu dòng nên khớp ở mọi độ sâu (vd 'data/' nuốt luôn 'src/data/'). Kiểm bằng: git check-ignore -v $p"
+              thieu=1
+            fi
+          done
+          [ "$thieu" -eq 0 ] || exit 1
+
       - name: Cài Node 20 (có cache npm)
         uses: actions/setup-node@v4
         with:

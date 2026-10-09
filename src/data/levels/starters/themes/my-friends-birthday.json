@@ -1,0 +1,85 @@
+{
+  "theme": {
+    "id": "my-friends-birthday",
+    "levelId": "starters",
+    "name_en": "My friend's birthday",
+    "name_vi": "Sinh nhật bạn của bé",
+    "icon": "🎂",
+    "sceneImage": "my-friends-birthday",
+    "sceneAlt": "Tranh cảnh bữa tiệc sinh nhật với bánh kem, bóng bay, các bạn nhỏ và gia đình quây quần",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": [
+      "my-friends-birthday/l1",
+      "my-friends-birthday/l2",
+      "my-friends-birthday/l3",
+      "my-friends-birthday/l4"
+    ]
+  },
+  "lessons": [
+    {
+      "id": "my-friends-birthday/l1",
+      "themeId": "my-friends-birthday",
+      "name_vi": "Gia đình của bé",
+      "wordIds": [
+        "starters.dad", "starters.mum", "starters.brother", "starters.sister",
+        "starters.grandfather", "starters.grandmother", "starters.cousin"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-friends-birthday/l2",
+      "themeId": "my-friends-birthday",
+      "name_vi": "Mọi người quanh bé",
+      "wordIds": [
+        "starters.person", "starters.man", "starters.woman",
+        "starters.child", "starters.baby"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-friends-birthday/l3",
+      "themeId": "my-friends-birthday",
+      "name_vi": "Bạn bè và thầy cô",
+      "wordIds": [
+        "starters.boy", "starters.girl", "starters.family",
+        "starters.miss", "starters.mr"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "my-friends-birthday/l4",
+      "themeId": "my-friends-birthday",
+      "name_vi": "Đồ chơi và khách mời",
+      "wordIds": [
+        "starters.robot", "starters.monster", "starters.balloon",
+        "starters.alien", "starters.mrs"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.robot",       "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l4", "en": "robot",       "vi": "người máy",             "type": "n",     "icon": "🤖", "picturable": true },
+    { "id": "starters.monster",     "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l4", "en": "monster",     "vi": "con quái vật",          "type": "n",     "icon": "👹", "picturable": true },
+    { "id": "starters.person",      "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l2", "en": "person",      "vi": "người",                 "type": "n",     "icon": "🧑", "picturable": true, "forms": { "plural": "people" } },
+    { "id": "starters.man",         "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l2", "en": "man",         "vi": "người đàn ông",         "type": "n",     "icon": "🧍‍♂️", "picturable": true, "forms": { "plural": "men" } },
+    { "id": "starters.woman",       "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l2", "en": "woman",       "vi": "người phụ nữ",          "type": "n",     "icon": "🧍‍♀️", "picturable": true, "forms": { "plural": "women" } },
+    { "id": "starters.child",       "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l2", "en": "child",       "vi": "đứa trẻ",               "type": "n",     "icon": "🧒", "picturable": true, "forms": { "plural": "children" } },
+    { "id": "starters.baby",        "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l2", "en": "baby",        "vi": "em bé",                 "type": "n",     "icon": "👶", "picturable": true },
+    { "id": "starters.boy",         "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l3", "en": "boy",         "vi": "bé trai",               "type": "n",     "icon": "👦", "picturable": true },
+    { "id": "starters.girl",        "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l3", "en": "girl",        "vi": "bé gái",                "type": "n",     "icon": "👧", "picturable": true },
+    { "id": "starters.balloon",     "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l4", "en": "balloon",     "vi": "bóng bay",              "type": "n",     "icon": "🎈", "picturable": true },
+    { "id": "starters.alien",       "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l4", "en": "alien",       "vi": "người ngoài hành tinh", "type": "n",     "icon": "👽", "picturable": true },
+    { "id": "starters.family",      "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l3", "en": "family",      "vi": "gia đình",              "type": "n",     "icon": "👨‍👩‍👧", "picturable": true },
+    { "id": "starters.dad",         "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "dad",         "vi": "bố",                    "type": "n",     "icon": "👨", "picturable": true, "alt": ["father"] },
+    { "id": "starters.mum",         "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "mum",         "vi": "mẹ",                    "type": "n",     "icon": "👩", "picturable": true, "alt": ["mother"] },
+    { "id": "starters.grandfather", "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "grandfather", "vi": "ông",                   "type": "n",     "icon": "👴", "picturable": true, "alt": ["grandpa"] },
+    { "id": "starters.grandmother", "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "grandmother", "vi": "bà",                    "type": "n",     "icon": "👵", "picturable": true, "alt": ["grandma"] },
+    { "id": "starters.sister",      "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "sister",      "vi": "chị em gái",            "type": "n",     "icon": "👧‍🤝", "picturable": true },
+    { "id": "starters.brother",     "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "brother",     "vi": "anh em trai",           "type": "n",     "icon": "👦‍🤝", "picturable": true },
+    { "id": "starters.cousin",      "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l1", "en": "cousin",      "vi": "anh chị em họ",         "type": "n",     "icon": "🧑‍🦱", "picturable": true },
+    { "id": "starters.miss",        "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l3", "en": "Miss",        "vi": "cô",                    "type": "title", "icon": "👩‍🎓", "picturable": false },
+    { "id": "starters.mr",          "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l3", "en": "Mr",          "vi": "thầy",                  "type": "title", "icon": "🤵", "picturable": false },
+    { "id": "starters.mrs",         "levelId": "starters", "primaryThemeId": "my-friends-birthday", "primaryLessonId": "my-friends-birthday/l4", "en": "Mrs",         "vi": "bà",                    "type": "title", "icon": "👰", "picturable": false }
+  ],
+  "exercises": []
+}

@@ -1,0 +1,130 @@
+{
+  "theme": {
+    "id": "at-home",
+    "levelId": "starters",
+    "name_en": "At home",
+    "name_vi": "Ở nhà",
+    "icon": "🏠",
+    "sceneImage": "at-home",
+    "sceneAlt": "Tranh cảnh ngôi nhà với phòng khách, phòng ngủ, nhà bếp và nhiều đồ đạc quen thuộc",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": ["at-home/h1", "at-home/h2", "at-home/h3", "at-home/h4", "at-home/h5"]
+  },
+  "lessons": [
+    {
+      "id": "at-home/h1",
+      "themeId": "at-home",
+      "name_vi": "Các phòng trong nhà",
+      "wordIds": [
+        "starters.bedroom",
+        "starters.bathroom",
+        "starters.kitchen",
+        "starters.living-room",
+        "starters.dining-room",
+        "starters.hall",
+        "starters.room"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-home/h2",
+      "themeId": "at-home",
+      "name_vi": "Đồ đạc trong nhà",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa",
+        "starters.bed",
+        "starters.box",
+        "starters.mirror"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-home/h3",
+      "themeId": "at-home",
+      "name_vi": "Đồ đạc quanh bé",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug",
+        "starters.clock",
+        "starters.radio",
+        "starters.window"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-home/h4",
+      "themeId": "at-home",
+      "name_vi": "Trang trí trong nhà",
+      "wordIds": [
+        "starters.door",
+        "starters.wall",
+        "starters.picture",
+        "starters.painting",
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-home/h5",
+      "themeId": "at-home",
+      "name_vi": "Ngôi nhà và khu vườn",
+      "wordIds": [
+        "starters.house",
+        "starters.apartment",
+        "starters.garden",
+        "starters.cat",
+        "starters.doll",
+        "starters.bath"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.bedroom", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "bedroom", "vi": "phòng ngủ", "type": "n", "icon": "🛏️🌙", "picturable": true, "phonetic": "/ˈbed.ruːm/" },
+    { "id": "starters.bathroom", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "bathroom", "vi": "phòng tắm", "type": "n", "icon": "🛁🚿", "picturable": true, "phonetic": "/ˈbɑːθ.ruːm/" },
+    { "id": "starters.kitchen", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "kitchen", "vi": "nhà bếp", "type": "n", "icon": "🍳🥘", "picturable": true, "phonetic": "/ˈkɪtʃ.ən/" },
+    { "id": "starters.living-room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "living room", "vi": "phòng khách", "type": "n", "icon": "🛋️📺", "picturable": true, "phonetic": "/ˈlɪv.ɪŋ ruːm/" },
+    { "id": "starters.dining-room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "dining room", "vi": "phòng ăn", "type": "n", "icon": "🍽️🪑", "picturable": true, "phonetic": "/ˈdaɪ.nɪŋ ruːm/" },
+    { "id": "starters.hall", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "hall", "vi": "hành lang", "type": "n", "icon": "🚪🧭", "picturable": false, "phonetic": "/hɔːl/" },
+    { "id": "starters.room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "room", "vi": "căn phòng", "type": "n", "icon": "🏡", "picturable": false, "phonetic": "/ruːm/" },
+
+    { "id": "starters.chair", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "chair", "vi": "cái ghế", "type": "n", "icon": "🪑", "picturable": true, "phonetic": "/tʃeər/" },
+    { "id": "starters.table", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "table", "vi": "cái bàn", "type": "n", "icon": "🍽️", "picturable": true, "phonetic": "/ˈteɪ.bəl/" },
+    { "id": "starters.lamp", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "lamp", "vi": "đèn bàn", "type": "n", "icon": "💡", "picturable": true, "phonetic": "/læmp/" },
+    { "id": "starters.sofa", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "sofa", "vi": "ghế sô-pha", "type": "n", "icon": "🛋️", "picturable": true, "phonetic": "/ˈsəʊ.fə/" },
+    { "id": "starters.bed", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "bed", "vi": "cái giường", "type": "n", "icon": "🛏️", "picturable": true, "phonetic": "/bed/" },
+    { "id": "starters.box", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "box", "vi": "cái hộp", "type": "n", "icon": "📦", "picturable": true, "phonetic": "/bɒks/" },
+    { "id": "starters.mirror", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "mirror", "vi": "cái gương", "type": "n", "icon": "🪞", "picturable": true, "phonetic": "/ˈmɪr.ər/" },
+
+    { "id": "starters.bookcase", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "bookcase", "vi": "tủ sách", "type": "n", "icon": "📚", "picturable": true, "phonetic": "/ˈbʊk.keɪs/" },
+    { "id": "starters.cupboard", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "cupboard", "vi": "cái tủ", "type": "n", "icon": "🗄️", "picturable": true, "phonetic": "/ˈkʌb.əd/" },
+    { "id": "starters.armchair", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "armchair", "vi": "ghế bành", "type": "n", "icon": "💺", "picturable": true, "phonetic": "/ˈɑːm.tʃeər/" },
+    { "id": "starters.rug", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "rug", "vi": "tấm thảm", "type": "n", "icon": "🟫", "picturable": true, "phonetic": "/rʌɡ/" },
+    { "id": "starters.clock", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "clock", "vi": "cái đồng hồ", "type": "n", "icon": "🕰️", "picturable": true, "phonetic": "/klɒk/" },
+    { "id": "starters.radio", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "radio", "vi": "đài radio", "type": "n", "icon": "📻", "picturable": true, "phonetic": "/ˈreɪ.di.əʊ/" },
+    { "id": "starters.window", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "window", "vi": "cửa sổ", "type": "n", "icon": "🪟", "picturable": true, "phonetic": "/ˈwɪn.dəʊ/" },
+
+    { "id": "starters.door", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "door", "vi": "cửa ra vào", "type": "n", "icon": "🚪", "picturable": true, "phonetic": "/dɔːr/" },
+    { "id": "starters.wall", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "wall", "vi": "bức tường", "type": "n", "icon": "🧱", "picturable": false, "phonetic": "/wɔːl/" },
+    { "id": "starters.picture", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "picture", "vi": "bức tranh", "type": "n", "icon": "🖼️", "picturable": true, "phonetic": "/ˈpɪk.tʃər/" },
+    { "id": "starters.painting", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "painting", "vi": "bức tranh vẽ", "type": "n", "icon": "🎨", "picturable": true, "phonetic": "/ˈpeɪn.tɪŋ/" },
+    { "id": "starters.television", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "television", "vi": "tivi", "type": "n", "icon": "📺", "picturable": true, "phonetic": "/ˈtel.ɪ.vɪʒ.ən/", "alt": ["tv"] },
+    { "id": "starters.phone", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "phone", "vi": "điện thoại", "type": "n", "icon": "☎️", "picturable": true, "phonetic": "/fəʊn/" },
+    { "id": "starters.flower", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "flower", "vi": "bông hoa", "type": "n", "icon": "🌸", "picturable": true, "phonetic": "/ˈflaʊ.ər/" },
+
+    { "id": "starters.house", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "house", "vi": "ngôi nhà", "type": "n", "icon": "🏠", "picturable": true, "phonetic": "/haʊs/", "alt": ["home"] },
+    { "id": "starters.apartment", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "apartment", "vi": "căn hộ", "type": "n", "icon": "🏢", "picturable": true, "phonetic": "/əˈpɑːt.mənt/", "alt": ["flat"] },
+    { "id": "starters.garden", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "garden", "vi": "khu vườn", "type": "n", "icon": "🌷", "picturable": true, "phonetic": "/ˈɡɑː.dən/" },
+    { "id": "starters.cat", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "cat", "vi": "con mèo", "type": "n", "icon": "🐱", "picturable": true, "phonetic": "/kæt/" },
+    { "id": "starters.doll", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "doll", "vi": "búp bê", "type": "n", "icon": "🪆", "picturable": true, "phonetic": "/dɒl/" },
+    { "id": "starters.bath", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "bath", "vi": "bồn tắm", "type": "n", "icon": "🛁", "picturable": true, "phonetic": "/bɑːθ/" }
+  ],
+  "exercises": []
+}

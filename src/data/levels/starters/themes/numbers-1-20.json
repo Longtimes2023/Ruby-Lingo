@@ -1,0 +1,84 @@
+{
+  "theme": {
+    "id": "numbers-1-20",
+    "levelId": "starters",
+    "name_en": "Numbers 1-20",
+    "name_vi": "Số 1-20",
+    "icon": "🔢",
+    "sceneImage": "",
+    "sceneAlt": "Chủ đề số đếm từ 1 đến 20. Mỗi thẻ hiển thị biểu tượng số (1️⃣ đến 🔟, và các số 11 đến 20 dùng hai ô số ghép như 1️⃣1️⃣ cho số 11).",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": ["numbers-1-20/n1", "numbers-1-20/n2", "numbers-1-20/n3"]
+  },
+  "lessons": [
+    {
+      "id": "numbers-1-20/n1",
+      "themeId": "numbers-1-20",
+      "name_vi": "Số 1 đến 7",
+      "wordIds": [
+        "starters.one",
+        "starters.two",
+        "starters.three",
+        "starters.four",
+        "starters.five",
+        "starters.six",
+        "starters.seven"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "numbers-1-20/n2",
+      "themeId": "numbers-1-20",
+      "name_vi": "Số 8 đến 14",
+      "wordIds": [
+        "starters.eight",
+        "starters.nine",
+        "starters.ten",
+        "starters.eleven",
+        "starters.twelve",
+        "starters.thirteen",
+        "starters.fourteen"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "numbers-1-20/n3",
+      "themeId": "numbers-1-20",
+      "name_vi": "Số 15 đến 20",
+      "wordIds": [
+        "starters.fifteen",
+        "starters.sixteen",
+        "starters.seventeen",
+        "starters.eighteen",
+        "starters.nineteen",
+        "starters.twenty"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.one", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "one", "vi": "một", "type": "n", "icon": "1️⃣", "picturable": false },
+    { "id": "starters.two", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "two", "vi": "hai", "type": "n", "icon": "2️⃣", "picturable": false },
+    { "id": "starters.three", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "three", "vi": "ba", "type": "n", "icon": "3️⃣", "picturable": false },
+    { "id": "starters.four", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "four", "vi": "bốn", "type": "n", "icon": "4️⃣", "picturable": false },
+    { "id": "starters.five", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "five", "vi": "năm", "type": "n", "icon": "5️⃣", "picturable": false },
+    { "id": "starters.six", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "six", "vi": "sáu", "type": "n", "icon": "6️⃣", "picturable": false },
+    { "id": "starters.seven", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n1", "en": "seven", "vi": "bảy", "type": "n", "icon": "7️⃣", "picturable": false },
+
+    { "id": "starters.eight", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "eight", "vi": "tám", "type": "n", "icon": "8️⃣", "picturable": false },
+    { "id": "starters.nine", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "nine", "vi": "chín", "type": "n", "icon": "9️⃣", "picturable": false },
+    { "id": "starters.ten", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "ten", "vi": "mười", "type": "n", "icon": "🔟", "picturable": false },
+    { "id": "starters.eleven", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "eleven", "vi": "mười một", "type": "n", "icon": "1️⃣1️⃣", "picturable": false },
+    { "id": "starters.twelve", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "twelve", "vi": "mười hai", "type": "n", "icon": "1️⃣2️⃣", "picturable": false },
+    { "id": "starters.thirteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "thirteen", "vi": "mười ba", "type": "n", "icon": "1️⃣3️⃣", "picturable": false },
+    { "id": "starters.fourteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n2", "en": "fourteen", "vi": "mười bốn", "type": "n", "icon": "1️⃣4️⃣", "picturable": false },
+
+    { "id": "starters.fifteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "fifteen", "vi": "mười lăm", "type": "n", "icon": "1️⃣5️⃣", "picturable": false },
+    { "id": "starters.sixteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "sixteen", "vi": "mười sáu", "type": "n", "icon": "1️⃣6️⃣", "picturable": false },
+    { "id": "starters.seventeen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "seventeen", "vi": "mười bảy", "type": "n", "icon": "1️⃣7️⃣", "picturable": false },
+    { "id": "starters.eighteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "eighteen", "vi": "mười tám", "type": "n", "icon": "1️⃣8️⃣", "picturable": false },
+    { "id": "starters.nineteen", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "nineteen", "vi": "mười chín", "type": "n", "icon": "1️⃣9️⃣", "picturable": false },
+    { "id": "starters.twenty", "levelId": "starters", "primaryThemeId": "numbers-1-20", "primaryLessonId": "numbers-1-20/n3", "en": "twenty", "vi": "hai mươi", "type": "n", "icon": "2️⃣0️⃣", "picturable": false }
+  ],
+  "exercises": []
+}

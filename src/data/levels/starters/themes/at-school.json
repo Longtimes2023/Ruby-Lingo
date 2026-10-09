@@ -1,0 +1,111 @@
+{
+  "theme": {
+    "id": "at-school",
+    "levelId": "starters",
+    "name_en": "At school",
+    "name_vi": "Ở trường",
+    "icon": "🏫",
+    "sceneImage": "at-school",
+    "sceneAlt": "Tranh cảnh lớp học với bảng, bàn ghế, sách vở, máy tính và các bạn nhỏ",
+    "unlockCondition": { "type": "coming_soon" },
+    "lessonIds": ["at-school/s1", "at-school/s2", "at-school/s3", "at-school/s4"]
+  },
+  "lessons": [
+    {
+      "id": "at-school/s1",
+      "themeId": "at-school",
+      "name_vi": "Đồ dùng học tập",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser",
+        "starters.book",
+        "starters.desk",
+        "starters.board"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-school/s2",
+      "themeId": "at-school",
+      "name_vi": "Môn học và thể thao",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.music",
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-school/s3",
+      "themeId": "at-school",
+      "name_vi": "Trong lớp học",
+      "wordIds": [
+        "starters.teacher",
+        "starters.classroom",
+        "starters.class",
+        "starters.letter",
+        "starters.alphabet",
+        "starters.page",
+        "starters.line"
+      ],
+      "exerciseIds": []
+    },
+    {
+      "id": "at-school/s4",
+      "themeId": "at-school",
+      "name_vi": "Học và chơi",
+      "wordIds": [
+        "starters.close",
+        "starters.open",
+        "starters.tick",
+        "starters.cross",
+        "starters.keyboard",
+        "starters.mouse-computer",
+        "starters.floor",
+        "starters.part"
+      ],
+      "exerciseIds": []
+    }
+  ],
+  "words": [
+    { "id": "starters.pencil", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "pencil", "vi": "bút chì", "type": "n", "icon": "✏️", "picturable": true, "phonetic": "/ˈpen.səl/" },
+    { "id": "starters.pen", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "pen", "vi": "bút mực", "type": "n", "icon": "🖊️", "picturable": true, "phonetic": "/pen/" },
+    { "id": "starters.ruler", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "ruler", "vi": "cái thước", "type": "n", "icon": "📏", "picturable": true, "phonetic": "/ˈruː.lər/" },
+    { "id": "starters.eraser", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "eraser", "vi": "cục tẩy", "type": "n", "icon": "🧽", "picturable": true, "phonetic": "/ɪˈreɪ.zər/", "alt": ["rubber"] },
+    { "id": "starters.book", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "book", "vi": "quyển sách", "type": "n", "icon": "📚", "picturable": true, "phonetic": "/bʊk/" },
+    { "id": "starters.desk", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "desk", "vi": "bàn học", "type": "n", "icon": "🪑", "picturable": true, "phonetic": "/desk/" },
+    { "id": "starters.board", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "board", "vi": "cái bảng", "type": "n", "icon": "📋", "picturable": true, "phonetic": "/bɔːd/" },
+
+    { "id": "starters.football", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "football", "vi": "bóng đá", "type": "n", "icon": "⚽", "picturable": true, "phonetic": "/ˈfʊt.bɔːl/", "alt": ["soccer"] },
+    { "id": "starters.basketball", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "basketball", "vi": "bóng rổ", "type": "n", "icon": "🏀", "picturable": true, "phonetic": "/ˈbɑː.skɪt.bɔːl/" },
+    { "id": "starters.hockey", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "hockey", "vi": "khúc côn cầu", "type": "n", "icon": "🏑", "picturable": true, "phonetic": "/ˈhɒk.i/" },
+    { "id": "starters.music", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "music", "vi": "âm nhạc", "type": "n", "icon": "🎵", "picturable": false, "phonetic": "/ˈmjuː.zɪk/" },
+    { "id": "starters.computer", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "computer", "vi": "máy tính", "type": "n", "icon": "💻", "picturable": true, "phonetic": "/kəmˈpjuː.tər/" },
+    { "id": "starters.draw", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "draw", "vi": "vẽ", "type": "v", "icon": "🖍️", "picturable": true, "phonetic": "/drɔː/" },
+    { "id": "starters.drawing", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "drawing", "vi": "bức vẽ", "type": "n", "icon": "🎨", "picturable": true, "phonetic": "/ˈdrɔː.ɪŋ/" },
+
+    { "id": "starters.teacher", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "teacher", "vi": "cô giáo", "type": "n", "icon": "🧑‍🏫", "picturable": true, "phonetic": "/ˈtiː.tʃər/" },
+    { "id": "starters.classroom", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "classroom", "vi": "phòng học", "type": "n", "icon": "🏫", "picturable": true, "phonetic": "/ˈklɑːs.ruːm/" },
+    { "id": "starters.class", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "class", "vi": "lớp học", "type": "n", "icon": "👥", "picturable": false, "phonetic": "/klɑːs/" },
+    { "id": "starters.letter", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "letter", "vi": "chữ cái", "type": "n", "icon": "🔤", "picturable": true, "phonetic": "/ˈlet.ər/" },
+    { "id": "starters.alphabet", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "alphabet", "vi": "bảng chữ cái", "type": "n", "icon": "🔠", "picturable": false, "phonetic": "/ˈæl.fə.bet/" },
+    { "id": "starters.page", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "page", "vi": "trang sách", "type": "n", "icon": "📄", "picturable": true, "phonetic": "/peɪdʒ/" },
+    { "id": "starters.line", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "line", "vi": "đường kẻ", "type": "n", "icon": "➖", "picturable": false, "phonetic": "/laɪn/" },
+
+    { "id": "starters.close", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "close", "vi": "đóng lại", "type": "v", "icon": "📕", "picturable": false, "phonetic": "/kləʊz/" },
+    { "id": "starters.open", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "open", "vi": "mở ra", "type": "adj", "icon": "📖", "picturable": false, "phonetic": "/ˈəʊ.pən/" },
+    { "id": "starters.tick", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "tick", "vi": "dấu tick", "type": "n", "icon": "✅", "picturable": true, "phonetic": "/tɪk/" },
+    { "id": "starters.cross", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "cross", "vi": "dấu gạch chéo", "type": "n", "icon": "❌", "picturable": true, "phonetic": "/krɒs/" },
+    { "id": "starters.keyboard", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "keyboard", "vi": "bàn phím", "type": "n", "icon": "⌨️", "picturable": true, "phonetic": "/ˈkiː.bɔːd/" },
+    { "id": "starters.mouse-computer", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "mouse", "vi": "chuột máy tính", "type": "n", "icon": "🖱️", "picturable": true, "phonetic": "/maʊs/" },
+    { "id": "starters.floor", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "floor", "vi": "sàn nhà", "type": "n", "icon": "🟫", "picturable": false, "phonetic": "/flɔːr/" },
+    { "id": "starters.part", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "part", "vi": "phần", "type": "n", "icon": "🧩", "picturable": false, "phonetic": "/pɑːt/" }
+  ],
+  "exercises": []
+}
