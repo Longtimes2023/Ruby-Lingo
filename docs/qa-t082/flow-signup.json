@@ -1,0 +1,25 @@
+{
+  "url": "http://localhost:4310/signup",
+  "outDir": "C:/Users/Steven Zhang/WorkBuddy AI/2026-10-06-10-20-56/rubylingo/docs/qa-t082/shots",
+  "width": 1280,
+  "height": 900,
+  "mobile": false,
+  "steps": [
+    { "wait": 1500 },
+    { "fill": "input[name=email]", "value": "qa.a11y.4310@example.com" },
+    { "fill": "input[name=password]", "value": "Matkhau12345" },
+    { "fill": "input[name=displayName]", "value": "QA A11y" },
+    { "check": "input[name=parentalConsent]" },
+    { "click": "button[type=submit]" },
+    { "waitForText": "Lưu lại mã khôi phục này", "timeoutMs": 12000 },
+    { "shot": "flow-01-recovery" },
+    { "clickText": "Tôi đã lưu rồi", "tag": "button" },
+    { "waitFor": "input[name=nickname]", "timeoutMs": 8000 },
+    { "fill": "input[name=nickname]", "value": "Bin" },
+    { "click": "button[type=submit]" },
+    { "waitFor": "nav", "timeoutMs": 10000 },
+    { "wait": 1500 },
+    { "eval": "location.pathname", "as": "pathname" },
+    { "shot": { "name": "flow-02-journeymap", "fullPage": true } }
+  ]
+}

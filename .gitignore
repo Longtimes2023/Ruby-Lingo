@@ -111,6 +111,16 @@ vite.config.ts.timestamp-*.mjs
 #    (Mẫu này CÓ `/` ở giữa nên đã được neo sẵn — không cần `/` đầu.)
 asset-src/words/source/
 
+# ⚠️ Ảnh chụp QA (`docs/qa-t082/shots*/`) = 92 tệp PNG, 8,7 MB. BÁO CÁO (`BAO-CAO.md`) và
+#    SCRIPT TÁI LẬP (`audit.mjs`, `seed-report.mjs`, `vite.qa.config.mts`) thì ĐƯỢC commit —
+#    chúng mới là thứ có giá trị lâu dài. Còn ảnh thì sinh lại được bất cứ lúc nào:
+#        node docs/qa-t082/audit.mjs
+#    Giữ ảnh trong git nghĩa là mọi `git clone` trên VPS phải kéo thêm 8,7 MB không dùng đến,
+#    cho một thứ đã cũ ngay sau lần đo kế tiếp. (`server.log` đã bị `*.log` ở dưới bắt rồi.)
+#    Mẫu có `/` đầu ⇒ neo vào GỐC repo; `shots*` khớp cả `shots/`, `shots-parent/`,
+#    `shots-parent-filled/`, `shots-parent-l5fixed/`.
+/docs/qa-t082/shots*/
+
 # --- Trình soạn thảo / hệ điều hành ---
 .vscode/*
 !.vscode/extensions.json
