@@ -637,18 +637,42 @@ ALTER TABLE pet_state_new RENAME TO pet_state;
 
 ### D.1.6 `PetAvatar` vẽ lại (đặc tả)
 Props mới: `petType: PetType`, `petChosen: boolean` (giữ `petName`, `evolutionStage`, `items`).
+
+> ⚠️⚠️ **PHẦN NÀY ĐÃ ĐƯỢC SỬA SAU KHI ĐO TRÊN TRÌNH DUYỆT THẬT — BẢN GỐC CÓ HAI LỖI.**
+> Bản gốc (ghi ngày 2026-10-09, trước khi triển khai) thiếu **lớp căn giữa** trên ô 200×200 và
+> neo phụ kiện theo `%` **của khung**. Cả hai đều sai, và cả hai đều **không cổng nào bắt được**
+> (jsdom không chạy CSS, không tính layout):
+>   ① Ô là `<div>` thường còn con vật là `<span>` **inline** ⇒ nó trôi về GÓC TRÊN-TRÁI. Đo được:
+>      tâm con vật ở **28,8% / 31,3%** thay vì 50% / 50% ⇒ mũ lơ lửng cạnh tai, kính nằm ngang MÁ
+>      chứ không trên mắt, khăn rơi dưới cằm. Đúng lời chủ dự án: *"icon đeo vô con pet thô, lung
+>      tung"*. **Thiếu `flex items-center justify-center` là lỗi của BẢN THIẾT KẾ này.**
+>   ② Neo theo `%`-của-**khung** sai về NGUYÊN TẮC, không chỉ sai con số: `font-size` đổi theo bậc
+>      (84/104/124px) nên con vật chiếm **42% → 52% → 62%** chiều cao khung, trong khi các con số
+>      `%` đứng yên ⇒ mũ đúng ở `baby` sẽ **tụt xuống ngang mắt** ở `super`.
+>
+> **Cách sửa đã áp dụng:** con vật sống trong một **hộp `1em × 1em`** (chính là ô chữ của nó), và
+> **mọi phụ kiện neo theo HỘP ĐÓ**. Vì cỡ phụ kiện vốn tính bằng `em`, neo `%`-của-hộp-`1em`
+> khiến **vị trí và kích cỡ cùng lớn lên với con vật** ⇒ một bảng số dùng cho cả ba bậc.
+> Bóng và tia ✨ cũng đổi sang `em` (một cái bóng `90px` cố định dưới con `super` `124px` trông
+> như một vết bẩn rời rạc). Mã thật: `src/components/common/PetAvatar.tsx`.
+
 ```
 <div class="flex flex-col gap-1">
-  <div role="img" aria-label={...} class="relative flex flex-col overflow-hidden rounded-card border-2 border-line">
+  <div role="img" aria-label={...} class="relative flex flex-col overflow-hidden rounded-card border-2 border-line bg-surface-raised">
     {/* DẢI 1 — TRỜI */}
     <div class="bg-pet-sky px-3 pt-2 pb-1">
       <SceneryRow items={sky} />          {/* ul flex-wrap justify-center gap-2, mỗi món text-[28px] */}
     </div>
-    {/* KHU THÚ CƯNG — Ô VUÔNG CỐ ĐỊNH 200×200 (toạ độ % luôn đúng mọi bề rộng) */}
-    <div class="relative mx-auto size-[200px] shrink-0 {STAGE_TEXT_SIZE[stage]}">
-      <span aria-hidden class="absolute left-1/2 bottom-[6%] h-[10px] w-[90px] -translate-x-1/2 rounded-pill bg-pet-shadow" />
-      <span aria-hidden class="relative z-[1] leading-none">{petEmojiFor(petType, stage)}</span>
-      {/* Phụ kiện theo ACCESSORY_SLOTS (thứ tự z từ sau ra trước) */}
+    {/* KHUNG CỐ ĐỊNH 200×200 — khoảng thở + giữ `1em` ổn định mọi bề rộng.
+        ⚠️ `flex items-center justify-center` LÀ BẮT BUỘC — xem cảnh báo ở trên. */}
+    <div class="relative mx-auto flex size-[200px] shrink-0 items-center justify-center {STAGE_TEXT_SIZE[stage]}">
+      {/* HỘP `1em` CỦA CON VẬT — HỆ TOẠ ĐỘ DUY NHẤT CỦA MỌI PHỤ KIỆN. Không `overflow: hidden`
+          (mũ nhô lên trên đỉnh đầu, ba lô thò ra ngoài sườn — cả hai đều có toạ độ ÂM). */}
+      <div class="relative flex size-[1em] items-center justify-center">
+        <span aria-hidden class="absolute bottom-[0%] left-1/2 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow" />
+        <span aria-hidden class="relative z-[2] leading-none">{petEmojiFor(petType, stage)}</span>
+        {/* Phụ kiện theo ACCESSORY_SLOTS (thứ tự z từ sau ra trước) */}
+      </div>
     </div>
     {/* DẢI 2 — ĐẤT */}
     <div class="bg-pet-ground px-3 pt-1 pb-2"><SceneryRow items={ground} /></div>
@@ -656,24 +680,40 @@ Props mới: `petType: PetType`, `petChosen: boolean` (giữ `petName`, `evoluti
   <p class="text-center text-kid-xs font-bold text-ink-soft">{stage.name_vi}</p>
 </div>
 ```
-- **Cỡ thú cưng theo bậc** (đặt `font-size` lên ô 200×200; emoji là con kế thừa):
+- **Cỡ thú cưng theo bậc** (đặt `font-size` lên khung 200×200; emoji là con kế thừa):
   `{ baby: 'text-[84px]', adult: 'text-[104px]', super: 'text-[124px]' }`.
-- **Neo phụ kiện theo % (PRD §7.2)** — dùng **lớp arbitrary-value Tailwind** (KHÔNG `style={{ transform }}`).
-  Cỡ món **tỉ lệ với cỡ thú cưng** bằng đơn vị `em` (con của ô 200×200):
-  | slot | lớp cỡ | món 1 | món 2 | món 3 |
-  |---|---|---|---|---|
-  | `back` | `text-[0.33em]` | `left-[2%] top-[28%]` | `left-[-8%] top-[36%]` | `left-[-18%] top-[44%]` |
-  | `feet` | `text-[0.25em]` | `left-1/2 bottom-[4%] -translate-x-1/2` | `left-[42%] bottom-[4%] -translate-x-1/2` | `left-[58%] …` |
-  | `head` | `text-[0.30em]` | `left-[36%] top-[10%]` | `left-1/2 top-[4%] -translate-x-1/2` | `left-[64%] top-[10%]` |
-  | `neck` | `text-[0.25em]` | `left-1/2 top-[66%] -translate-x-1/2` | `left-[42%] top-[66%] -translate-x-1/2` | `left-[58%] …` |
-  | `face` | `text-[0.27em]` | `left-1/2 top-[40%] -translate-x-1/2` | `text-[0.22em] left-[62%] top-[32%]` | `…` |
+- **Neo phụ kiện theo `%` CỦA HỘP `1em`** (KHÔNG phải khung — xem cảnh báo ở trên) — dùng
+  **lớp arbitrary-value Tailwind** (KHÔNG `style={{ transform }}`).
+  Cỡ món **tỉ lệ với cỡ thú cưng** bằng đơn vị `em`:
+  | slot | lớp cỡ | neo (`%` của hộp `1em`) |
+  |---|---|---|
+  | `back` | `text-[0.33em]` | `left-[-15%] top-[34%]` (lệch trái, để không che mặt) |
+  | `feet` | `text-[0.25em]` | `left-1/2 top-[86%] -translate-x-1/2` |
+  | `head` | `text-[0.30em]` | `left-1/2 top-[-13%] -translate-x-1/2` (âm: mũ nhô lên trên đầu) |
+  | `neck` | `text-[0.25em]` | `left-1/2 top-[65%] -translate-x-1/2` |
+  | `face` | `text-[0.27em]` | `left-1/2 top-[28%] -translate-x-1/2` |
   Mỗi slot vẫn là **một `<span class="absolute flex items-center gap-0.5 leading-none …">`** chứa các món của slot
   đó (giữ nguyên cơ chế "nhiều món cùng vị trí ⇒ xếp cạnh nhau", **không bao giờ bỏ món của bé**).
-- **Bậc `super`**: thêm `<span aria-hidden class="absolute right-[8%] top-[8%] animate-pulse text-[28px]">✨</span>`
-  + viền sáng `shadow-super` trên ô. `animate-pulse` **đã** bị `prefers-reduced-motion` tắt ở `tokens.css`.
+- **Bậc `super`**: thêm `<span aria-hidden class="absolute right-[2%] top-[-4%] animate-pulse text-[0.34em]">✨</span>`
+  (cỡ bằng `em` để lớn lên cùng con vật) + viền sáng `shadow-super` trên khung.
+  `animate-pulse` **đã** bị `prefers-reduced-motion` tắt ở `tokens.css`.
 - `role="img"` + `aria-label` cập nhật theo **tên con + bậc + danh sách đồ** (giữ như hiện tại, thay tên).
 - **Xoá** `ACCESSORY_ANCHOR`/`ACCESSORY_TEXT_SIZE` cũ (neo kiểu cũ "lơ lửng") — thay bằng bảng trên.
 - `MOMO_ICON` **giữ** (chỉ còn dùng cho `EmptyState` lúc chưa nạp xong).
+
+#### ⭐ SỐ ĐO ĐỂ ĐỐI CHIẾU KHI SỬA NEO (Playwright/Chromium, khung 200×200, `%` của khung)
+Phân tích điểm ảnh ở `deviceScaleFactor: 4`, đã ẩn phụ kiện và bóng:
+
+| bậc | emoji | `font-size` | mực `y` | mực `x` | mực cao / `fs` |
+|---|---|---|---|---|---|
+| `baby`  | 🐵 | 84px  | 33,4 → 68,8 | 27,9 → 72,1 | 0,84 |
+| `adult` | 🐈 | 104px | 24,8 → 74,2 | 24,4 → 75,6 | 0,95 |
+| `super` | 🐒 | 124px | 17,5 → 77,9 | 20,1 → 80,9 | 0,97 |
+
+⚠️ **Tỉ lệ `mực / font-size` KHÔNG hằng số (0,84 → 0,97)** — nó phụ thuộc HÌNH DÁNG từng emoji
+(🐵 ít "đầy ô chữ" hơn 🐈). Vì vậy **không có bộ số nào đúng tuyệt đối cho mọi con**; các neo trên
+là điểm cân bằng cho cả ba bậc, sai số ±2–4% khung (≈ 4–8px trên 200px).
+⭐ Tâm mực theo trục **NGANG luôn ≈ 50%** ⇒ canh giữa hoạt động đúng; chỉ trục **DỌC** mới phải tính.
 
 ### D.1.7 Token mới (bắt buộc — không hardcode màu)
 `src/styles/tokens.css` (trong `:root`):
