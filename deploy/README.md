@@ -330,13 +330,23 @@ chủ đề. Bước 5 chỉ nói "DB mở được"; chỉ bước 6 mới nói
 - **CI có BA job, không phải một** (`.github/workflows/ci.yml`) — biết để đọc đúng tab **Actions**:
   | Job | Kiểm gì | Vì sao cần riêng |
   |---|---|---|
-  | `ci` | y hệt `npm run ci` ở máy: typecheck · lint · validate:content · sinh tệp · **1384 unit test** | tầng rẻ nhất, bắt lỗi nhanh nhất |
+  | `ci` | y hệt `npm run ci` ở máy: typecheck · lint · validate:content · sinh tệp · **1384 unit test** — cộng ba chốt hạ tầng (bit thực thi · tệp bắt buộc · biến bắt buộc trong `.env.example`) và **cổng kiểm tệp workflow** | tầng rẻ nhất, bắt lỗi nhanh nhất |
   | `e2e` | Playwright trên **Chromium thật**, 3 viewport (360/820/1280): đăng ký → tạo bé → bản đồ, thanh điều hướng dưới, một bài học thẻ từ | tầng DUY NHẤT chứng minh app chạy được đầu-cuối — unit test chạy trên jsdom nên **không** render CSS, **không** có cookie thật, **không** đi qua HTTP |
   | `docker-image` | `docker build` | bắt `COPY failed: file not found` **trước** khi lên VPS |
 
   `e2e` khai `needs: ci` ⇒ chỉ chạy khi tầng unit đã xanh (không đốt 5 phút để kết luận lại điều cũ).
   ⚠️ **Chỉ deploy khi cả ba xanh.** `./scripts/update.sh` kéo mã mới về nhưng **KHÔNG** tự kiểm CI —
   hãy nhìn tab **Actions** trước khi chạy nó.
+
+- **Cổng kiểm tệp workflow** (bước 2 của job `ci`): `.github/workflows/*.yml` là tệp **duy nhất**
+  trong repo mà `npm run ci` không đọc tới, nên trước đây nó không có cổng nào phủ. Ba loại lỗi lọt
+  qua `js-yaml` (chỉ bắt YAML hỏng cú pháp) đều khiến GitHub **không chạy job nào**: khoá sai chính tả
+  trong step (`withh:` thay vì `with:`), `needs:` trỏ job không tồn tại, biểu thức `${{ }}` sai.
+  Bước này tải **actionlint 1.7.12** bản ghim, **đối chiếu sha256** với bản phát hành chính thức rồi
+  chạy không kèm đường dẫn ⇒ tự quét **mọi** workflow, kể cả tệp thêm sau này. `shellcheck` 0.9.0
+  đã có sẵn trong runner nên các khối `run:` cũng được lint luôn.
+  Muốn chạy ở máy: tải `actionlint_1.7.12_windows_amd64.zip` từ trang phát hành của actionlint, giải
+  nén, rồi chạy `actionlint` **từ gốc repo** (không truyền đường dẫn tệp).
 
 ---
 

@@ -4,7 +4,9 @@
 #
 # ⭐ VÌ SAO BA JOB TÁCH RỜI (không gộp làm một):
 #   • `ci`           — cổng kiểm của DỰ ÁN, y hệt `npm run ci` mà lập trình viên chạy ở máy
-#                      (typecheck + lint + validate:content + gen + test). Đây là thứ chặn code sai.
+#                      (typecheck + lint + validate:content + gen + test), CỘNG ba chốt hạ tầng
+#                      (bit thực thi, tệp bắt buộc, biến bắt buộc) và cổng kiểm tệp workflow.
+#                      Đây là thứ chặn code sai.
 #   • `e2e`          — cổng kiểm ĐẦU-CUỐI: Chromium thật, HTTP thật, cookie thật, 3 viewport.
 #                      Đây là tầng DUY NHẤT chứng minh app chạy được, vì unit test chạy trên jsdom
 #                      (không render CSS, không router thật, không cookie).
@@ -40,6 +42,35 @@ jobs:
     steps:
       - name: Lấy mã nguồn
         uses: actions/checkout@v4
+
+      # ⚠️⚠️ CỔNG KIỂM TỆP WORKFLOW — TỆP DUY NHẤT TRONG REPO TRƯỚC ĐÂY KHÔNG CÓ CỔNG NÀO PHỦ.
+      #   `npm run ci` không đọc `.github/`; `js-yaml` chỉ bắt YAML hỏng cú pháp. Ba loại lỗi
+      #   vẫn lọt qua, và cả ba đều khiến GitHub KHÔNG chạy job nào (hoặc chạy sai):
+      #     • khoá sai chính tả trong một step (`withh:` thay vì `with:`) — YAML vẫn hợp lệ;
+      #     • `needs:` trỏ tới job không tồn tại ⇒ workflow không hợp lệ;
+      #     • biểu thức `${{ needs.x.y }}` sai ⇒ chỉ đỏ lúc chạy, không đỏ lúc đọc.
+      #   Vì repo là PRIVATE, không có cách nào kiểm trước khi push — và đã có lần sửa chính tệp
+      #   này làm rơi mất một dòng `- name:` mà chỉ phát hiện được nhờ parse lại thủ công.
+      #
+      #   ⚠️ VÌ SAO TẢI BẢN GHIM + KIỂM CHECKSUM, KHÔNG dùng action của bên thứ ba:
+      #     (a) không thêm một phụ thuộc thực thi nữa vào đường CI; (b) phiên bản và mã băm nằm
+      #     ngay trong tệp này nên đọc là thấy; (c) mã băm lấy từ `actionlint_1.7.12_checksums.txt`
+      #     của chính bản phát hành đó ⇒ tệp tải về bị đổi thì bước này ĐỎ, chứ không âm thầm
+      #     chạy một binary lạ.
+      #   ⚠️ `shellcheck` 0.9.0 ĐÃ CÓ SẴN trong runner `ubuntu-24.04` ⇒ actionlint tự dùng nó để
+      #     lint luôn các khối `run:` của workflow, KHÔNG cần cài thêm gì.
+      #   ⚠️ Chạy KHÔNG kèm đường dẫn tệp ⇒ actionlint tự quét MỌI workflow trong repo, nên tệp
+      #     thêm sau này cũng được canh mà không phải sửa bước này.
+      #   ⚠️ Đã kiểm ở máy (bản Windows, cùng shellcheck 0.9.0): actionlint bắt đúng 3 lỗi tiêm
+      #     thử (khoá lạ, `needs` không tồn tại, thuộc tính `needs.*` sai) ⇒ cổng này thật sự có
+      #     tác dụng, không phải "xanh cho vui".
+      - name: Kiểm tệp workflow (actionlint)
+        run: |
+          curl -fsSL -o /tmp/actionlint.tar.gz \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  /tmp/actionlint.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/actionlint.tar.gz -C /tmp actionlint
+          /tmp/actionlint
 
       # ⚠️⚠️ CHỐT BIT THỰC THI — ĐẶT NGAY ĐẦU ĐỂ ĐỎ THẬT NHANH, VÀ VÌ SAO NÓ CẦN THIẾT:
       #   Máy dev là **Windows**, nơi `core.filemode=false` (NTFS không có bit thực thi kiểu Unix).
