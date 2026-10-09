@@ -2,9 +2,12 @@
 # RubyLingo — CI (GitHub Actions). Cổng kiểm chạy trên MỌI push vào `main` và mọi pull_request.
 # =============================================================================
 #
-# ⭐ VÌ SAO HAI JOB TÁCH RỜI (không gộp làm một):
+# ⭐ VÌ SAO BA JOB TÁCH RỜI (không gộp làm một):
 #   • `ci`           — cổng kiểm của DỰ ÁN, y hệt `npm run ci` mà lập trình viên chạy ở máy
 #                      (typecheck + lint + validate:content + gen + test). Đây là thứ chặn code sai.
+#   • `e2e`          — cổng kiểm ĐẦU-CUỐI: Chromium thật, HTTP thật, cookie thật, 3 viewport.
+#                      Đây là tầng DUY NHẤT chứng minh app chạy được, vì unit test chạy trên jsdom
+#                      (không render CSS, không router thật, không cookie).
 #   • `docker-image` — cổng kiểm của ĐƯỜNG DEPLOY: `docker build` phải xanh TRÊN CI, không chỉ
 #                      trên VPS. Nhờ nó, lỗi `COPY failed: file not found` (thiếu tệp trong build
 #                      context) lộ ra ở PR thay vì để lộ lúc deploy — đúng lúc người dùng đang chờ.
@@ -120,6 +123,83 @@ jobs:
       #   khác trong pipeline lỡ GHI ĐÈ lên tệp đang được theo dõi.
       - name: Canh lệch tệp sinh tự động
         run: git diff --exit-code -- shared/content/content-index.json src/styles/tokens.css
+
+  # ⭐ JOB THỨ HAI — TẦNG DUY NHẤT CHỨNG MINH "APP CHẠY ĐƯỢC ĐẦU-CUỐI THẬT".
+  #   Hai job còn lại đều KHÔNG chạy app trong trình duyệt: `ci` chạy unit test trên jsdom (không
+  #   render CSS, không router thật, không HTTP, không cookie) và `docker-image` chỉ build. Ba loại
+  #   lỗi vì thế lọt qua cả hai: (a) cookie phiên `httpOnly` không được set ⇒ mọi request sau đó
+  #   thành ẩn danh; (b) guard định tuyến dựng sai ⇒ bé thấy màn trắng; (c) asset 404 ⇒ thẻ chủ đề
+  #   trắng trơn. Playwright bắt đúng ba loại đó, trên Chromium thật, ở 3 viewport (360/820/1280).
+  #
+  # ⚠️ `needs: ci` — CỐ Ý. Tầng unit rẻ hơn và bắt lỗi nhanh hơn; nếu nó đỏ thì chạy e2e chỉ tốn
+  #   thêm ~5 phút để kết luận cùng một điều.
+  #
+  # ⚠️⚠️ `timeout-minutes` — CỐ Ý, KHÔNG PHẢI CHO ĐẸP. Đã gặp THẬT trên máy dev: khi Playwright
+  #   không tắt được webServer, tiến trình sống 18 phút SAU KHI test đã xong và lượt chạy không bao
+  #   giờ in dòng tổng kết. Không có trần thời gian, sự cố như vậy trên CI sẽ treo job tới hạn mặc
+  #   định của GitHub. Trần 20 phút biến "treo vô hạn" thành "đỏ sau 20 phút".
+  #
+  # ⚠️ VÌ SAO CHỈ CÀI `chromium`: cả 3 project đều dùng Chromium (`Desktop Chrome`). `--with-deps`
+  #   kéo theo thư viện hệ thống mà Chromium cần (font, libnss, libgbm…); thiếu chúng thì Chromium
+  #   chết lúc khởi động với lỗi khó đọc. KHÔNG cài firefox/webkit — chưa project nào dùng.
+  #
+  # ⚠️ VÌ SAO KHÔNG KHAI BIẾN MÔI TRƯỜNG Ở ĐÂY: mọi thứ server cần đã do `playwright.config.ts`
+  #   cấp qua `webServer.env` (DB riêng `data/e2e.db`, cổng 4173, `PUBLIC_ORIGIN` khớp `baseURL`,
+  #   `SESSION_SECRET` cho DB tạm). Bản clone sạch KHÔNG có `.env` mà vẫn chạy được:
+  #   `server/db/connection.ts` tự `mkdirSync` thư mục `data/` (thư mục này bị `.gitignore` nên nó
+  #   KHÔNG tồn tại trong bản clone).
+  #
+  # ⚠️⚠️ LUẬT SỐ 1 CỦA TẦNG NÀY: e2e TUYỆT ĐỐI KHÔNG ĐƯỢC CHẠM `data/rubylingo.db` — đó là DB chứa
+  #   DỮ LIỆU THẬT CỦA TRẺ. Nó chạy trên `data/e2e.db`; xem khối chú thích đầu `playwright.config.ts`.
+  e2e:
+    name: Test đầu-cuối (Playwright · 3 viewport)
+    runs-on: ubuntu-latest
+    needs: ci
+    timeout-minutes: 20
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node 20 (có cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Cài phụ thuộc
+        run: npm ci
+
+      # Cache riêng cho trình duyệt. Khoá theo `package-lock.json` ⇒ khi `@playwright/test` đổi
+      # phiên bản thì cache tự vô hiệu, không bao giờ chạy một Chromium lệch với thư viện.
+      - name: Cache trình duyệt Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Cài Chromium
+        run: npx playwright install --with-deps chromium
+
+      # KHÔNG cần bước build riêng: `tests/e2e/serve.mjs` tự chạy `build:client` + `build:server`
+      # TRƯỚC khi lên sóng ⇒ e2e luôn kiểm ĐÚNG mã đang có trên đĩa, không bao giờ kiểm `dist/` cũ.
+      - name: Chạy test đầu-cuối
+        run: npm run test:e2e
+
+      # ⚠️ ẢNH + VẾT LỖI NẰM NGOÀI THƯ MỤC LÀM VIỆC — CỐ Ý (xem `playwright.config.ts`): `outputDir`
+      #   trỏ vào thư mục TẠM của hệ điều hành để tránh lớp shim chặn xoá hàng loạt trên máy dev.
+      #   Trên runner Ubuntu `os.tmpdir()` là `/tmp`, nên đường dẫn tải lên nằm ngoài repo.
+      #   ⚠️ `rubylingo-e2e-build.log` là thứ DUY NHẤT nói được VÌ SAO build đỏ — `serve.mjs` ghi log
+      #   build ra TỆP chứ không ra ống (đó chính là cách nó né lỗi `EBUSY` khi tạo ống).
+      - name: Tải lên ảnh/vết lỗi khi đỏ
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ket-qua
+          path: |
+            /tmp/rubylingo-e2e-results
+            /tmp/rubylingo-e2e-build.log
+          if-no-files-found: ignore
+          retention-days: 7
 
   docker-image:
     name: Build image (bảo vệ đường deploy)

@@ -290,6 +290,16 @@ chủ đề. Bước 5 chỉ nói "DB mở được"; chỉ bước 6 mới nói
   một tệp `.sh` có CRLF khi chạy trên Linux sẽ chết ngay dòng đầu với
   `bad interpreter: No such file or directory` — nhìn như "script hỏng" chứ không như "sai xuống
   dòng". Tệp này khiến quy tắc đúng trên **mọi máy**, không phụ thuộc `core.autocrlf` cục bộ.
+- **CI có BA job, không phải một** (`.github/workflows/ci.yml`) — biết để đọc đúng tab **Actions**:
+  | Job | Kiểm gì | Vì sao cần riêng |
+  |---|---|---|
+  | `ci` | y hệt `npm run ci` ở máy: typecheck · lint · validate:content · sinh tệp · **1384 unit test** | tầng rẻ nhất, bắt lỗi nhanh nhất |
+  | `e2e` | Playwright trên **Chromium thật**, 3 viewport (360/820/1280): đăng ký → tạo bé → bản đồ, thanh điều hướng dưới, một bài học thẻ từ | tầng DUY NHẤT chứng minh app chạy được đầu-cuối — unit test chạy trên jsdom nên **không** render CSS, **không** có cookie thật, **không** đi qua HTTP |
+  | `docker-image` | `docker build` | bắt `COPY failed: file not found` **trước** khi lên VPS |
+
+  `e2e` khai `needs: ci` ⇒ chỉ chạy khi tầng unit đã xanh (không đốt 5 phút để kết luận lại điều cũ).
+  ⚠️ **Chỉ deploy khi cả ba xanh.** `./scripts/update.sh` kéo mã mới về nhưng **KHÔNG** tự kiểm CI —
+  hãy nhìn tab **Actions** trước khi chạy nó.
 
 ---
 
