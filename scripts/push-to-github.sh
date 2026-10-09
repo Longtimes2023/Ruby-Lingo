@@ -14,7 +14,12 @@
 #            thẳng GIT (nguồn chân lý) thay vì tin vào tệp cấu hình.
 #     • P2 — ĐẨY VÀO REPO KHÔNG RỖNG: GitHub tạo repo kèm README ⇒ `git push` bị từ chối
 #            (non-fast-forward) và người mới thường "sửa" bằng `--force`, tức là xoá mất commit
-#            của chính mình. BƯỚC 6 phát hiện TRƯỚC khi push và chỉ đúng cách xử lý.
+#            của chính mình. BƯỚC 6 phân biệt BA tình huống TRƯỚC khi push: remote chưa có nhánh
+#            (push đầu) · remote là TỔ TIÊN của HEAD (fast-forward — trường hợp bình thường của
+#            mọi lần cập nhật sau) · lịch sử không liên quan (mới là ca cần xử lý).
+#            ⚠️ Bản đầu của BƯỚC 6 từ chối MỌI remote không rỗng ⇒ tự chặn chính mình ngay ở
+#               lần push thứ hai. Đã sửa; đây là lý do phải kiểm bằng quan hệ tổ tiên, không
+#               phải bằng "remote có rỗng hay không".
 #     • P3 — PUSH "THÀNH CÔNG" NHƯNG KHÔNG CÓ GÌ LÊN: push vào sai remote/nhánh, hoặc bị chặn
 #            giữa đường. BƯỚC 8 ĐỌC LẠI remote và so hash — chỉ khi hash khớp mới in "xong".
 #
@@ -229,15 +234,38 @@ if ! REMOTE_HEADS="$(git ls-remote --heads origin 2>&1)"; then
       Chi tiết git trả về: ${REMOTE_HEADS}"
 fi
 
-if [ -n "$REMOTE_HEADS" ]; then
-  warn "Remote KHÔNG rỗng — đã có nhánh:"
-  printf '%s\n' "$REMOTE_HEADS" | sed 's/^/      /'
-  fail 6 "Push sẽ bị TỪ CHỐI (non-fast-forward) vì lịch sử không liên quan. \
+# Nhánh ta sắp đẩy có đang tồn tại trên remote không, và nếu có thì push này là loại gì?
+REMOTE_HASH="$(printf '%s\n' "$REMOTE_HEADS" | awk -v b="refs/heads/$BRANCH" '$2 == b { print $1 }')"
+
+if [ -z "$REMOTE_HASH" ]; then
+  ok "Remote chưa có nhánh '$BRANCH' — đây là push ĐẦU TIÊN, không thể xung đột."
+else
+  info "Remote '$BRANCH' đang ở: ${REMOTE_HASH:0:12}"
+
+  # Cần có commit đó trong máy mới so được quan hệ tổ tiên. Lần push thứ hai trở đi thì thường
+  # đã có; nếu chưa (máy mới clone, hoặc vừa fetch xong ở nơi khác) thì fetch đúng nhánh đó.
+  if ! git cat-file -e "${REMOTE_HASH}^{commit}" 2>/dev/null; then
+    info "Chưa có commit đó ở máy — fetch nhánh '$BRANCH' để so được quan hệ."
+    git fetch --quiet origin "$BRANCH" || fail 6 "Không fetch được nhánh '$BRANCH' từ origin."
+  fi
+
+  if git merge-base --is-ancestor "$REMOTE_HASH" "$LOCAL_HEAD" 2>/dev/null; then
+    # ⭐ ĐÂY LÀ TRƯỜNG HỢP BÌNH THƯỜNG của mọi lần push thứ hai trở đi. Bản đầu của script này
+    #    từ chối MỌI remote không rỗng — tức là tự chặn chính mình ở lần cập nhật đầu tiên.
+    AHEAD="$(git rev-list --count "$REMOTE_HASH..$LOCAL_HEAD")"
+    ok "FAST-FORWARD: remote là TỔ TIÊN của HEAD cục bộ ⇒ push chỉ TIẾN THẲNG."
+    info "Sẽ đẩy thêm $AHEAD commit, không ghi đè lịch sử của ai."
+  elif git merge-base --is-ancestor "$LOCAL_HEAD" "$REMOTE_HASH" 2>/dev/null; then
+    fail 6 "Remote ĐI TRƯỚC cục bộ (remote ${REMOTE_HASH:0:12} chứa HEAD ${LOCAL_HEAD:0:12}). \
+Đẩy lên sẽ bị từ chối. Trước hết: git pull --ff-only origin $BRANCH"
+  else
+    warn "Remote KHÔNG rỗng và lịch sử KHÔNG LIÊN QUAN — đã có nhánh:"
+    printf '%s\n' "$REMOTE_HEADS" | sed 's/^/      /'
+    fail 6 "Push sẽ bị TỪ CHỐI (non-fast-forward). \
 ĐỪNG dùng --force (sẽ xoá commit của chính bạn). Cách sạch nhất: xoá repo trên GitHub, \
 tạo lại ở trạng thái TRỐNG (không README/.gitignore/license), rồi chạy lại script này."
+  fi
 fi
-
-ok "Remote tồn tại và ĐANG RỖNG — push thẳng sẽ không xung đột."
 
 # --- BƯỚC 7 — Đẩy -----------------------------------------------------------
 step "BƯỚC 7 — Đẩy lên GitHub"
