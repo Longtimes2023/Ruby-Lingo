@@ -1,0 +1,52 @@
+%% RubyLingo — LUỒNG GỌI (4 điểm A·B·C·D). Nguồn: docs/ux-20261009/THIET-KE.md §A.4
+sequenceDiagram
+  autonumber
+  participant Bé
+  participant ChoosePet as ChoosePetPage
+  participant Shop as shopStore/useShop
+  participant API as rewardsApi
+  participant Route as POST /pet/type
+  participant Svc as RewardService.choosePet
+  participant Pets as shared/content/pets.ts
+  participant DB as pet_state
+
+  Bé->>ChoosePet: chạm 1 con + "Chọn bạn này!"
+  ChoosePet->>Shop: choosePet(petType)
+  Shop->>API: POST /children/:id/pet/type { petType }
+  API->>Route: HTTP
+  Route->>Route: choosePetRequestSchema.parse(body)
+  Route->>Svc: choosePet(parentId, childId, input)
+  Svc->>Svc: requireChild(parentId, childId)
+  Svc->>Pets: isPetId(petType)
+  alt petType lạ
+    Pets-->>Svc: false
+    Svc-->>Route: errors.validation(...)
+  else hợp lệ
+    Svc->>DB: transaction: ensurePetRow + UPDATE pet_type
+    Svc->>DB: readPet() (petType + petChosen)
+    Svc-->>Route: PetState
+  end
+  Route-->>API: { data: PetState }
+  API-->>Shop: PetState
+  Shop->>Shop: applyServerSnapshot({pet}) + reload()
+  Shop-->>ChoosePet: xong
+  ChoosePet->>Bé: điều hướng về /pet (thấy con mới ngay)
+
+  Note over Bé,DB: Đổi con KHÔNG trừ ⭐, KHÔNG tiêu đồ, KHÔNG đụng happiness
+
+  %% ---- (D) đọc kết quả game để tô chip ----
+  participant Theme as ThemePage
+  participant Hook as useGameResults
+  participant GR as GameResultService
+  participant GDB as game_result
+  Bé->>Theme: mở /theme/at-the-zoo (quay về sau khi chơi)
+  Theme->>Hook: useGameResults()
+  Hook->>API: GET /children/:id/game-results
+  API->>GR: listGameSummaries(parentId, childId)
+  GR->>GDB: SELECT exercise_id, MAX(stars), MAX(score), COUNT(*), MAX(created_at) GROUP BY exercise_id
+  GDB-->>GR: rows
+  GR-->>Hook: GameResultsResponse
+  Hook-->>Theme: Map<exerciseId, summary>
+  Theme->>Bé: chip game đã chơi tô màu success + số ★
+
+  Note over Hook,Theme: Mạng LỖI ⇒ query error ⇒ Map rỗng ⇒ chip vẫn như cũ (KHÔNG tô sai, KHÔNG báo lỗi cho bé)

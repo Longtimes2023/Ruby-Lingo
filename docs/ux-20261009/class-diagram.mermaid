@@ -1,0 +1,122 @@
+%% RubyLingo — SƠ ĐỒ LỚP (4 điểm A·B·C·D). Nguồn: docs/ux-20261009/THIET-KE.md §A.3
+classDiagram
+  %% ---------- Nội dung dùng chung ----------
+  class PetDefinition {
+    +string id
+    +string name_vi
+    +string name_en
+    +string iconBaby
+    +string iconAdult
+    +string iconSuper
+    +string phase
+  }
+  class PetsModule {
+    <<module shared/content/pets.ts>>
+    +PET_DEFINITIONS: PetDefinition[]
+    +DEFAULT_PET_ID = "monkey"
+    +getPetDefinition(id) PetDefinition
+    +isPetId(id) boolean
+    +petEmojiFor(id, stage) string
+  }
+  class Word {
+    +string id
+    +string levelId
+    +string primaryThemeId
+    +string primaryLessonId
+    +string icon
+    +boolean picturable
+  }
+  class DistractorMode {
+    <<type>>
+    'same_theme' | 'cross_theme' | 'similar_sound' | 'same_lesson'
+  }
+
+  %% ---------- Trạng thái thưởng ----------
+  class PetState {
+    +string childId
+    +PetType petType
+    +boolean petChosen
+    +EvolutionStage evolutionStage
+    +number wordsLearned
+    +number happiness
+    +string[] equippedItemIds
+    +string|null lastFedAt
+    +string updatedAt
+  }
+  class RewardSnapshot {
+    +Wallet wallet
+    +XpState xp
+    +PetState pet
+    +InventoryItem[] inventory
+    +string serverTime
+  }
+  class GameResultSummary {
+    +string exerciseId
+    +0..3 bestStars
+    +number bestScore
+    +number attempts
+    +string lastPlayedAt
+  }
+  class GameResultsResponse {
+    +string childId
+    +GameResultSummary[] results
+    +string serverTime
+  }
+
+  %% ---------- Service server ----------
+  class RewardService {
+    +getSnapshot(parentId, childId) RewardSnapshot
+    +readPet(db, childId) PetState
+    +choosePet(parentId, childId, input) PetState
+    -ensurePetRow(db, childId, at) void
+  }
+  class ChildService {
+    +createChild(parentId, input) ChildProfileDto
+  }
+  class GameResultService {
+    +submit(parentId, childId, input) GameResultAward
+    +listGameSummaries(parentId, childId) GameResultsResponse
+    -requireChild(parentId, childId) void
+  }
+
+  %% ---------- Client ----------
+  class ContentRepository {
+    +pickDistractors(wordId, count, mode, seed) Word[]
+    -matchesMode(word, target, themeWordIds, mode) boolean
+  }
+  class PetAvatar {
+    +petType: PetType
+    +petChosen: boolean
+    +petName: string
+    +evolutionStage: EvolutionStage
+    +items: ShopItem[]
+  }
+  class ChoosePetPage {
+    +choose(petType) Promise~void~
+  }
+  class PetHousePage {
+    +redirectIfNotChosen() void
+  }
+  class ThemePage {
+    +useGameResults() Map~string,GameResultSummary~
+  }
+  class WordIcon {
+    +wordId: string
+    +fallback: string
+  }
+
+  %% ---------- Quan hệ ----------
+  PetsModule --> PetDefinition : tạo/đọc
+  RewardService --> PetsModule : tra danh mục (không ném)
+  RewardService --> PetState : trả
+  ChildService --> PetState : tạo hàng (pet_type NULL)
+  RewardSnapshot --> PetState : chứa
+  GameResultService --> GameResultsResponse : trả
+  GameResultsResponse --> GameResultSummary : chứa
+  ContentRepository --> Word : chọn nhiễu theo primaryLessonId
+  ContentRepository --> DistractorMode : nhận
+  PetAvatar --> PetsModule : petEmojiFor(petType, stage)
+  PetHousePage --> PetAvatar : truyền petType/petChosen
+  PetHousePage --> ChoosePetPage : điều hướng khi !petChosen
+  ThemePage --> GameResultsResponse : đọc để tô chip
+  WordIcon --> Word : ảnh hay emoji
