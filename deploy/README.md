@@ -2,7 +2,7 @@
 
 Tài liệu này là **quy trình vận hành**, không phải tài liệu kiến trúc. Phần "vì sao" nằm trong
 chú thích ở `Dockerfile`, `docker-compose.yml`, `scripts/deploy.sh`, `scripts/update.sh`,
-`scripts/backup-db.sh`.
+`scripts/backup-db.sh`, `scripts/push-to-github.sh`.
 Tài liệu kiến trúc đầy đủ ở `../deliverables/english-starters/ARCHITECTURE.md` (mục Nhóm 12) —
 **nằm ngoài repo**, không cần cho deploy.
 
@@ -20,6 +20,32 @@ Tài liệu kiến trúc đầy đủ ở `../deliverables/english-starters/ARCH
 > đang chạy bản nào, không soát lại được đã đổi những gì.
 > Với git: sửa ở máy dev → `git push` → trên VPS `./scripts/update.sh`. VPS tự biết mình đang ở
 > commit nào, và `git pull` chỉ mang về phần thay đổi.
+
+### 0.0. Đẩy mã nguồn lên GitHub — TRÊN MÁY DEV (làm trước 0.1)
+
+```bash
+# Tạo repo trên GitHub ở trạng thái TRỐNG (KHÔNG README, KHÔNG .gitignore, KHÔNG license)
+# rồi, từ gốc repo trên máy dev:
+./scripts/push-to-github.sh git@github.com:<user>/rubylingo.git
+```
+
+Script làm 9 bước và **dừng ở bước đỏ** thay vì đẩy hỏng: kiểm tra repo có commit → cho biết
+tệp nào **chưa** commit sẽ không lên → **hỏi thẳng git** xem `data/`/`.env`/`backups/` có bị theo
+dõi không (`.gitignore` chỉ là ý định; `git add -f` đủ để vô hiệu hoá nó) → gắn `origin` → thử
+đọc remote → **chặn nếu repo không rỗng** (tạo kèm README ⇒ push bị từ chối, và "sửa" bằng
+`--force` là xoá mất commit của chính mình) → push → **đọc lại remote và so hash**.
+
+> ⚠️ `data/` chứa DB SQLite với **dữ liệu trẻ em thật**, `backups/` chứa bản sao DB đó, `.env`
+> chứa `SESSION_SECRET`. Push là thao tác **không hoàn tác được rẻ tiền** — xoá commit trên
+> GitHub không xoá bản sao đã bị fetch. Đó là lý do có chốt ở bước 3.
+
+Có PAT (scope tạo repo) thì tạo repo trống + đẩy trong một lệnh:
+
+```bash
+GITHUB_TOKEN=ghp_xxx ./scripts/push-to-github.sh --create rubylingo
+```
+
+Kiểm tra trước khi đẩy thật (không đẩy gì): `DRY_RUN=1 ./scripts/push-to-github.sh <url>`
 
 ### 0.1. `git clone` — CHỈ MỘT LẦN
 
