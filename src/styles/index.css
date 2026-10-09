@@ -1,0 +1,106 @@
+/* ⚠️ `fonts.css` PHẢI đứng trước `tokens.css`: mọi `@import` phải nằm trên cùng,
+   nếu chèn sau sẽ bị CSS bỏ qua im lặng và font không bao giờ được nạp. */
+@import './fonts.css';
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    /* Không cho pinch-zoom phá layout game trên điện thoại */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-md);
+    color: var(--c-ink);
+    background-color: var(--c-surface-sunken);
+    /* Bé hay chạm lung tung: tắt highlight xanh khi chạm trên mobile */
+    -webkit-tap-highlight-color: transparent;
+    /* Không cho kéo chọn text khi bé kéo thẻ/ghép hình trong game */
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-y: none;
+  }
+
+  /* Cho phép chọn text ở những chỗ thật sự cần (câu hỏi phụ huynh, input) */
+  input,
+  textarea,
+  [data-selectable='true'] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    margin: 0;
+    font-weight: 700;
+  }
+
+  /* Vòng focus rõ ràng cho người dùng bàn phím (a11y) */
+  :focus-visible {
+    outline: 3px solid var(--c-brand-strong);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* Ảnh không bao giờ tràn khỏi khung */
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  /* Vùng an toàn cho iPhone có tai thỏ / thanh home */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .px-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Ẩn khỏi mắt nhưng vẫn cho screen reader đọc */
+  .sr-only-kid {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}

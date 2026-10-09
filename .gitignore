@@ -1,0 +1,108 @@
+# =============================================================================
+# RubyLingo — .gitignore
+# =============================================================================
+# ⚠️⚠️ TỆP NÀY LÀ MỘT CHỐT AN TOÀN, KHÔNG CHỈ LÀ "DỌN DẸP".
+#
+#   Repo này sẽ được đẩy lên GitHub, và VPS `git clone` về để deploy. Có HAI thứ tuyệt đối
+#   không được lên đó:
+#
+#     1. `data/` và `backups/` — chúng chứa SQLite với DỮ LIỆU THẬT CỦA TRẺ (biệt danh, tuổi,
+#        avatar, tiến độ học). Đẩy lên GitHub = rò rỉ dữ liệu trẻ em, vi phạm COPPA/GDPR-K mà
+#        chính dự án đã cam kết tuân thủ. Và vì git giữ LỊCH SỬ VĨNH VIỄN, xoá ở commit sau
+#        KHÔNG xoá được khỏi các commit trước — phải viết lại lịch sử.
+#
+#     2. `.env` — chứa `SESSION_SECRET`. Ai biết nó thì giả mạo được phiên đăng nhập.
+#
+#   ⚠️ BÀI HỌC ĐÃ TRẢ GIÁ: bản đầu của tệp này ghi `backup/` (SỐ ÍT), trong khi
+#      `scripts/backup-db.sh:55` ghi bản sao vào `backups/` (SỐ NHIỀU). Một chữ `s` khác nhau,
+#      và bản sao DB chứa dữ liệu thật của bé sẽ lọt lên GitHub mà KHÔNG có cảnh báo nào.
+#      ⇒ Khi thêm một thư mục dữ liệu mới, kiểm ĐÚNG tên mà script ghi ra, đừng đoán.
+# =============================================================================
+
+# --- Phụ thuộc ---
+node_modules/
+.pnp
+.pnp.js
+
+# --- Đầu ra build (image tự sinh lại; đẩy lên chỉ tổ nặng và dễ lẫn) ---
+dist/
+dist-server/
+.tsbuild/
+*.tsbuildinfo
+
+# Vite ghi file tạm này mỗi khi vite.config.ts đổi rồi thường tự xoá, nhưng khi
+# tiến trình bị kill giữa chừng thì nó ở lại và rất dễ bị commit nhầm.
+vite.config.ts.timestamp-*.mjs
+*.timestamp-*.mjs
+
+# =============================================================================
+# --- DỮ LIỆU THẬT & SAO LƯU (TUYỆT ĐỐI không commit — xem khối đầu tệp) ---
+# =============================================================================
+data/
+*.db
+*.db-wal
+*.db-shm
+# ⚠️ Phải có CẢ HAI dạng: `backups/` là nơi `scripts/backup-db.sh` thực sự ghi;
+#    `backup/` giữ lại để một thư mục gõ sai tên cũng không lọt qua.
+backups/
+backup/
+
+# =============================================================================
+# --- Bí mật & môi trường ---
+# =============================================================================
+.env
+.env.local
+.env.*.local
+# ⚠️ Dòng `!` phải nằm SAU để ghi đè: `.env.example` là MẪU (không có bí mật) và CẦN được commit,
+#    vì VPS dùng nó làm điểm bắt đầu cho `.env` riêng. Trong .gitignore, dòng khớp CUỐI CÙNG thắng.
+!.env.example
+
+# =============================================================================
+# --- Đầu ra kiểm thử ---
+# =============================================================================
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# Báo cáo JSON mà `npm run test:ci` sinh ra để `scripts/verify-test-count.ts` đối chiếu
+# số file test đã chạy với số file thật trên đĩa.
+.vitest-report.json
+# Báo cáo của vòng đột biến (`_verify/run-mutations.sh`) — là ĐẦU RA, không phải nguồn.
+.mut-report.json
+
+# =============================================================================
+# --- Vùng làm việc kiểm chứng / sinh tài sản: KHÔNG phải mã sản phẩm ---
+# =============================================================================
+# `_verify/` là xưởng đột biến, ~20 MB gồm cả bản sao lưu của mã nguồn để khôi phục.
+# Commit nó thì mỗi lần clone phải tải thêm 20 MB vô ích. (`scripts/verify-test-count.ts`
+# và `vite.config.ts` mới là phần cần commit.)
+_verify/
+outputs/
+generated-images/
+
+# ⚠️ `asset-src/words/source/` = **291 MB** ảnh PNG THÔ do AI sinh ra.
+#    Chúng là đầu vào của `convert_words.py`, KHÔNG phải thành phẩm: thành phẩm đã nằm trong
+#    `public/assets/words/*.webp` (201 ảnh, đã được commit). Giữ chúng trong git nghĩa là MỌI lần
+#    `git clone` trên VPS — và mọi lần `git pull` sau đó — đều phải kéo hàng trăm MB không dùng
+#    đến, trong khi `deploy.sh` chỉ cần `public/`.
+#    ⚠️ Đây KHÔNG phải "xoá": tệp vẫn nằm trên máy dev, và sinh lại được từ `plan.json` +
+#       `subjects.py` (đều ĐƯỢC commit). Nếu cần bản gốc độ phân giải cao để lưu trữ, hãy đẩy
+#       chúng lên nơi khác (object storage), đừng để trong git.
+asset-src/words/source/
+
+# --- Trình soạn thảo / hệ điều hành ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- Nhật ký ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

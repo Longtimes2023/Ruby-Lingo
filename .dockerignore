@@ -1,0 +1,61 @@
+# =============================================================================
+# RubyLingo — ngữ cảnh build cho Docker (Nhóm 12).
+# =============================================================================
+# ⚠️⚠️ ĐÂY KHÔNG PHẢI "TỆP CHO GỌN" — NÓ LÀ MỘT CHỐT AN NINH (lỗi S6 trong ARCHITECTURE.md).
+#
+#   `.env` chứa các giá trị của MÔI TRƯỜNG DEV (`COOKIE_SECURE=false`, `DB_PATH` tương đối,
+#   `SESSION_SECRET` mẫu, `NODE_ENV=development`). Nếu nó lọt vào image thì những giá trị DEV đó
+#   nằm SẴN trong container production và được `dotenv` nạp như cấu hình thật — biến một tệp
+#   "chỉ để dev" thành cấu hình production NGẦM, không ai đọc thấy, không cảnh báo.
+#   ⇒ `.env` PHẢI bị loại. (Compose vẫn nạp `.env` LÚC CHẠY qua `env_file:` — đó là đường đúng.)
+# =============================================================================
+
+# --- Bí mật & môi trường (S6) ---
+.env
+.env.*
+!.env.example
+
+# --- Dữ liệu chạy thật: KHÔNG BAO GIỜ vào image ---
+data/
+# ⚠️ Bản sao DB (T078) cũng KHÔNG được vào context: chúng chứa DỮ LIỆU THẬT CỦA BÉ, và image là
+#    thứ được chia sẻ/đẩy lên registry. Ở đây chỉ chặn "đi nhầm vào image"; việc bản thân bản sao
+#    không bao giờ được commit đã do `.gitignore` lo.
+backups/
+*.log
+
+# --- Vùng làm việc/kiểm chứng của nhóm, không phải mã sản phẩm ---
+_verify/
+outputs/
+generated-images/
+docs/
+asset-src/
+
+# --- Phụ thuộc & đầu ra build (build stage tự sinh lại; gửi vào context là phí + dễ lẫn) ---
+node_modules/
+dist/
+dist-server/
+coverage/
+.vitest-report.json
+.mut-report.json
+
+# --- Hệ điều hành / trình soạn thảo / VCS ---
+.git/
+.gitignore
+.editorconfig
+.prettierrc
+
+# --- E2E (cần browser, không dùng trong image runtime) ---
+tests/e2e/
+
+# --- Tệp rác do Vite sinh khi dev (thấy rõ trong gốc repo) ---
+vite.config.ts.timestamp-*.mjs
+
+# --- Tài liệu & chính tệp deploy ---
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ⚠️ CỐ Ý KHÔNG LOẠI: `tests/` và `scripts/` — `npm run build` chạy `typecheck`, mà
+#    `tsconfig.server.json` gom `scripts/` và `tsconfig.test.json` gom `tests/**`. Loại chúng
+#    khỏi context sẽ làm build ĐỎ ở bước typecheck ("No inputs were found"), không phải ở bundling.

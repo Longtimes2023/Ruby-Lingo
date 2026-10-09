@@ -1,0 +1,13 @@
+{
+  "note": "Bộ avatar DỰNG SẴN cho bé chọn. KHÔNG BAO GIỜ cho tải ảnh thật lên — đây là ràng buộc COPPA/GDPR-K, không phải lựa chọn kỹ thuật. Emoji dùng thay ảnh nên không tốn request tải. Cố tình KHÔNG dùng trùng emoji của 5 linh vật dẫn đường (🐵 Momo · 🐰 Bông · 🐢 Rocky · 🦜 Pico · 🐿️ Nut) để bé không nhầm avatar của mình với nhân vật hướng dẫn.",
+  "avatars": [
+    { "id": "fox", "name_vi": "Cáo con", "icon": "🦊" },
+    { "id": "panda", "name_vi": "Gấu trúc", "icon": "🐼" },
+    { "id": "koala", "name_vi": "Gấu túi", "icon": "🐨" },
+    { "id": "lion", "name_vi": "Sư tử con", "icon": "🦁" },
+    { "id": "frog", "name_vi": "Ếch xanh", "icon": "🐸" },
+    { "id": "owl", "name_vi": "Cú mèo", "icon": "🦉" },
+    { "id": "octopus", "name_vi": "Bạch tuộc", "icon": "🐙" },
+    { "id": "unicorn", "name_vi": "Kỳ lân", "icon": "🦄" }
+  ]
+}

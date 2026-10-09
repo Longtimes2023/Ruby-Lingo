@@ -1,0 +1,157 @@
+{
+  "note": "Định nghĩa nhiệm vụ (data-driven). periodKey được server suy ra khi truy vấn nên KHÔNG cần cron để reset. tier: daily | weekly | milestone. milestone không bao giờ reset.",
+  "quests": [
+    {
+      "id": "qd-01",
+      "tier": "daily",
+      "description_vi": "Học 1 bài mới",
+      "icon": "📖",
+      "criteria": { "kind": "complete_lessons", "count": 1 },
+      "rewards": [
+        { "kind": "stars", "amount": 10 },
+        { "kind": "xp", "amount": 20 }
+      ],
+      "phase": "mvp"
+    },
+    {
+      "id": "qd-02",
+      "tier": "daily",
+      "description_vi": "Chơi 3 game",
+      "icon": "🎮",
+      "criteria": { "kind": "play_games", "count": 3 },
+      "rewards": [
+        { "kind": "stars", "amount": 15 },
+        { "kind": "acorns", "amount": 1 }
+      ],
+      "phase": "mvp"
+    },
+    {
+      "id": "qd-03",
+      "tier": "daily",
+      "description_vi": "Trả lời đúng 12 câu",
+      "icon": "✅",
+      "criteria": { "kind": "correct_answers", "count": 12 },
+      "rewards": [
+        { "kind": "stars", "amount": 20 },
+        { "kind": "acorns", "amount": 1 }
+      ],
+      "phase": "mvp"
+    },
+
+    {
+      "id": "qw-01",
+      "tier": "weekly",
+      "description_vi": "Học 5 bài trong tuần",
+      "icon": "📚",
+      "criteria": { "kind": "complete_lessons", "count": 5 },
+      "rewards": [
+        { "kind": "stars", "amount": 60 },
+        { "kind": "acorns", "amount": 3 },
+        { "kind": "badge", "refId": "badge-diligent" }
+      ],
+      "phase": "p1"
+    },
+    {
+      "id": "qw-02",
+      "tier": "weekly",
+      "description_vi": "Học 4 ngày trong tuần",
+      "icon": "🗓️",
+      "criteria": { "kind": "learn_days", "count": 4 },
+      "rewards": [
+        { "kind": "stars", "amount": 40 },
+        { "kind": "acorns", "amount": 2 }
+      ],
+      "phase": "p1"
+    },
+    {
+      "id": "qw-03",
+      "tier": "weekly",
+      "description_vi": "Mở khoá 1 chủ đề mới",
+      "icon": "🗺️",
+      "criteria": { "kind": "unlock_theme", "count": 1 },
+      "rewards": [
+        { "kind": "stars", "amount": 80 },
+        { "kind": "acorns", "amount": 5 },
+        { "kind": "badge", "refId": "badge-explorer" }
+      ],
+      "phase": "p1"
+    },
+
+    {
+      "id": "qm-01",
+      "tier": "milestone",
+      "description_vi": "Bước đầu tiên — hoàn thành bài đầu tiên ở Sở thú",
+      "icon": "👣",
+      "criteria": { "kind": "complete_lesson", "lessonId": "at-the-zoo/z1" },
+      "rewards": [
+        { "kind": "stars", "amount": 20 },
+        { "kind": "badge", "refId": "badge-first-step" },
+        { "kind": "sticker", "refId": "sticker-medal" }
+      ],
+      "phase": "mvp"
+    },
+    {
+      "id": "qm-02",
+      "tier": "milestone",
+      "description_vi": "Bạn của sở thú — hoàn thành cả 3 bài ở Sở thú",
+      "icon": "🦁",
+      "criteria": { "kind": "complete_theme", "themeId": "at-the-zoo" },
+      "rewards": [
+        { "kind": "stars", "amount": 50 },
+        { "kind": "acorns", "amount": 2 },
+        { "kind": "badge", "refId": "badge-zoo-friend" },
+        { "kind": "sticker", "refId": "sticker-star" }
+      ],
+      "phase": "mvp"
+    },
+    {
+      "id": "qm-03",
+      "tier": "milestone",
+      "description_vi": "Nhà thám hiểm — đạt cấp 3",
+      "icon": "🧭",
+      "criteria": { "kind": "reach_level", "level": 3 },
+      "rewards": [
+        { "kind": "stars", "amount": 40 },
+        { "kind": "acorns", "amount": 3 }
+      ],
+      "phase": "p1"
+    },
+    {
+      "id": "qm-04",
+      "tier": "milestone",
+      "description_vi": "Bộ sưu tập vui — sưu tầm 6 sticker",
+      "icon": "🎁",
+      "criteria": { "kind": "collect_stickers", "count": 6 },
+      "rewards": [
+        { "kind": "stars", "amount": 30 },
+        { "kind": "acorns", "amount": 1 }
+      ],
+      "phase": "p1"
+    },
+    {
+      "id": "qm-05",
+      "tier": "milestone",
+      "description_vi": "Chủ đề tiếp theo — mở khoá chủ đề Cơ thể của bé",
+      "icon": "🌿",
+      "criteria": { "kind": "complete_theme", "themeId": "my-body" },
+      "rewards": [
+        { "kind": "stars", "amount": 60 },
+        { "kind": "acorns", "amount": 4 },
+        { "kind": "badge", "refId": "badge-body-explorer" }
+      ],
+      "phase": "p1"
+    },
+    {
+      "id": "qm-06",
+      "tier": "milestone",
+      "description_vi": "Trả lời đúng 30 câu — mở khoá Kỳ lân bảy sắc",
+      "icon": "🦄",
+      "criteria": { "kind": "correct_answers", "count": 30 },
+      "rewards": [
+        { "kind": "stars", "amount": 40 },
+        { "kind": "sticker", "refId": "sticker-unicorn" }
+      ],
+      "phase": "mvp"
+    }
+  ]
+}

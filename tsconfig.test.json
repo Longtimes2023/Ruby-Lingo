@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Test chạy trên jsdom (cần DOM) nhưng đồng thời đọc file thật bằng `node:fs`
+    // (cần type của Node). Không tsconfig nào khác có đủ cả hai:
+    //   - tsconfig.app    : có DOM, KHÔNG có type Node
+    //   - tsconfig.server : có type Node, KHÔNG có DOM
+    // Nên test phải có config riêng, thay vì nới lỏng type của app (sẽ cho phép code
+    // client gọi API của Node mà không báo lỗi).
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"],
+    "jsx": "react-jsx"
+  },
+  "include": ["tests/**/*.ts", "tests/**/*.tsx"]
+}

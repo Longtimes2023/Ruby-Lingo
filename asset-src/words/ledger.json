@@ -1,0 +1,945 @@
+{
+  "alien": {
+    "file": "source/alien.png",
+    "prompt_sha": "8d20347af49e",
+    "status": "done"
+  },
+  "angry": {
+    "file": "source/angry.png",
+    "prompt_sha": "1af97e417a80",
+    "status": "done"
+  },
+  "apartment": {
+    "file": "source/apartment.png",
+    "status": "done"
+  },
+  "apple": {
+    "file": "source/apple.png",
+    "prompt_sha": "3267be62f30a",
+    "status": "done"
+  },
+  "arm": {
+    "file": "source/arm.png",
+    "status": "done"
+  },
+  "armchair": {
+    "file": "source/armchair.png",
+    "status": "done"
+  },
+  "baby": {
+    "file": "source/baby.png",
+    "prompt_sha": "f3084787aa76",
+    "status": "done"
+  },
+  "badminton": {
+    "file": "source/badminton.png",
+    "prompt_sha": "f3f3295fe3bb",
+    "status": "done"
+  },
+  "bag": {
+    "file": "source/bag.png",
+    "prompt_sha": "913b8a737566",
+    "status": "done"
+  },
+  "balloon": {
+    "file": "source/balloon.png",
+    "prompt_sha": "facae4979e7c",
+    "status": "done"
+  },
+  "banana": {
+    "file": "source/banana.png",
+    "prompt_sha": "294e2eb76535",
+    "status": "done"
+  },
+  "baseball": {
+    "file": "source/baseball.png",
+    "prompt_sha": "0eb6d3f9470c",
+    "status": "done"
+  },
+  "basketball": {
+    "file": "source/basketball.png",
+    "prompt_sha": "efde4d8fd25b",
+    "status": "done"
+  },
+  "bath": {
+    "file": "source/bath.png",
+    "status": "done"
+  },
+  "bathroom": {
+    "file": "source/bathroom.png",
+    "status": "done"
+  },
+  "beans": {
+    "file": "source/beans.png",
+    "prompt_sha": "c659b14db162",
+    "status": "done"
+  },
+  "bed": {
+    "file": "source/bed.png",
+    "status": "done"
+  },
+  "bedroom": {
+    "file": "source/bedroom.png",
+    "status": "done"
+  },
+  "bird": {
+    "file": "source/bird.png",
+    "status": "done"
+  },
+  "black": {
+    "file": "source/black.png",
+    "prompt_sha": "a3edaaa1e6d7",
+    "status": "done"
+  },
+  "blue": {
+    "file": "source/blue.png",
+    "prompt_sha": "fa1266cf1147",
+    "status": "done"
+  },
+  "board": {
+    "file": "source/board.png",
+    "prompt_sha": "8590d53745e8",
+    "status": "done"
+  },
+  "boat": {
+    "file": "source/boat.png",
+    "prompt_sha": "084fb876c01d",
+    "status": "done"
+  },
+  "body": {
+    "file": "source/body.png",
+    "status": "done"
+  },
+  "book": {
+    "file": "source/book.png",
+    "prompt_sha": "eba5e5bff181",
+    "status": "done"
+  },
+  "bookcase": {
+    "file": "source/bookcase.png",
+    "status": "done"
+  },
+  "bookshop": {
+    "file": "source/bookshop.png",
+    "prompt_sha": "08ce91f1b22f",
+    "status": "done"
+  },
+  "box": {
+    "file": "source/box.png",
+    "status": "done"
+  },
+  "boy": {
+    "file": "source/boy.png",
+    "prompt_sha": "aa50e8839637",
+    "status": "done"
+  },
+  "bread": {
+    "file": "source/bread.png",
+    "prompt_sha": "50e89f8fa84a",
+    "status": "done"
+  },
+  "brother": {
+    "file": "source/brother.png",
+    "prompt_sha": "e243270ffb1a",
+    "status": "done"
+  },
+  "brown": {
+    "file": "source/brown.png",
+    "prompt_sha": "4724f7899e8a",
+    "status": "done"
+  },
+  "burger": {
+    "file": "source/burger.png",
+    "prompt_sha": "e158299b5164",
+    "status": "done"
+  },
+  "bus": {
+    "file": "source/bus.png",
+    "prompt_sha": "5c6e97d4bc21",
+    "status": "done"
+  },
+  "cake": {
+    "file": "source/cake.png",
+    "prompt_sha": "e762b2b1bdba",
+    "status": "done"
+  },
+  "camera": {
+    "file": "source/camera.png",
+    "prompt_sha": "fddfdaad2d7c",
+    "status": "done"
+  },
+  "candy": {
+    "file": "source/candy.png",
+    "prompt_sha": "a475b2998d65",
+    "status": "done"
+  },
+  "carrot": {
+    "file": "source/carrot.png",
+    "prompt_sha": "c8c7e37742c2",
+    "status": "done"
+  },
+  "cat": {
+    "file": "source/cat.png",
+    "status": "done"
+  },
+  "catch": {
+    "file": "source/catch.png",
+    "prompt_sha": "aed0f112e779",
+    "status": "done"
+  },
+  "chair": {
+    "file": "source/chair.png",
+    "prompt_sha": "2de450ba8a9a",
+    "status": "done"
+  },
+  "chicken": {
+    "file": "source/chicken.png",
+    "status": "done"
+  },
+  "chicken-meat": {
+    "file": "source/chicken-meat.png",
+    "prompt_sha": "f07525d5a87f",
+    "status": "done"
+  },
+  "child": {
+    "file": "source/child.png",
+    "prompt_sha": "696cccae9ef6",
+    "status": "done"
+  },
+  "chips": {
+    "file": "source/chips.png",
+    "prompt_sha": "70e883b09df0",
+    "status": "done"
+  },
+  "chocolate": {
+    "file": "source/chocolate.png",
+    "prompt_sha": "1d6c7803c191",
+    "status": "done"
+  },
+  "classroom": {
+    "file": "source/classroom.png",
+    "prompt_sha": "a0ea2110c47a",
+    "status": "done"
+  },
+  "clock": {
+    "file": "source/clock.png",
+    "status": "done"
+  },
+  "coconut": {
+    "file": "source/coconut.png",
+    "prompt_sha": "70a9bd538241",
+    "status": "done"
+  },
+  "computer": {
+    "file": "source/computer.png",
+    "prompt_sha": "c7f414cce367",
+    "status": "done"
+  },
+  "cousin": {
+    "file": "source/cousin.png",
+    "prompt_sha": "56b31d10354d",
+    "status": "done"
+  },
+  "cow": {
+    "file": "source/cow.png",
+    "status": "done"
+  },
+  "crocodile": {
+    "file": "source/crocodile.png",
+    "status": "done"
+  },
+  "cross": {
+    "file": "source/cross.png",
+    "prompt_sha": "1338cb0fa5ef",
+    "status": "done"
+  },
+  "cupboard": {
+    "file": "source/cupboard.png",
+    "status": "done"
+  },
+  "dad": {
+    "file": "source/dad.png",
+    "prompt_sha": "58f2ccbb6edc",
+    "status": "done"
+  },
+  "desk": {
+    "file": "source/desk.png",
+    "prompt_sha": "a7bc65ee05fa",
+    "status": "done"
+  },
+  "dining-room": {
+    "file": "source/dining-room.png",
+    "status": "done"
+  },
+  "dog": {
+    "file": "source/dog.png",
+    "status": "done"
+  },
+  "doll": {
+    "file": "source/doll.png",
+    "status": "done"
+  },
+  "door": {
+    "file": "source/door.png",
+    "status": "done"
+  },
+  "draw": {
+    "file": "source/draw.png",
+    "prompt_sha": "deeb00780cd2",
+    "status": "done"
+  },
+  "drawing": {
+    "file": "source/drawing.png",
+    "prompt_sha": "125e5b6baa02",
+    "status": "done"
+  },
+  "dress": {
+    "file": "source/dress.png",
+    "prompt_sha": "4196bc941120",
+    "status": "done"
+  },
+  "drink": {
+    "file": "source/drink.png",
+    "prompt_sha": "0a4a98afb336",
+    "status": "done"
+  },
+  "drive": {
+    "file": "source/drive.png",
+    "prompt_sha": "94e765b9ced2",
+    "status": "done"
+  },
+  "duck": {
+    "file": "source/duck.png",
+    "status": "done"
+  },
+  "ear": {
+    "file": "source/ear.png",
+    "status": "done"
+  },
+  "egg": {
+    "file": "source/egg.png",
+    "prompt_sha": "c43f8cc083c3",
+    "status": "done"
+  },
+  "elephant": {
+    "file": "source/elephant.png",
+    "status": "done"
+  },
+  "eraser": {
+    "file": "source/eraser.png",
+    "prompt_sha": "2347e45794e0",
+    "status": "done"
+  },
+  "eye": {
+    "file": "source/eye.png",
+    "status": "done"
+  },
+  "face": {
+    "file": "source/face.png",
+    "status": "done"
+  },
+  "family": {
+    "file": "source/family.png",
+    "prompt_sha": "96162d33c4a9",
+    "status": "done"
+  },
+  "fish": {
+    "file": "source/fish.png",
+    "prompt_sha": "ced581fcd5d4",
+    "status": "done"
+  },
+  "fishing": {
+    "file": "source/fishing.png",
+    "prompt_sha": "b35ff70c6422",
+    "status": "done"
+  },
+  "flower": {
+    "file": "source/flower.png",
+    "status": "done"
+  },
+  "fly": {
+    "file": "source/fly.png",
+    "prompt_sha": "7ae7a1056c5e",
+    "status": "done"
+  },
+  "foot": {
+    "file": "source/foot.png",
+    "status": "done"
+  },
+  "football": {
+    "file": "source/football.png",
+    "prompt_sha": "9571eb877dd3",
+    "status": "done"
+  },
+  "frog": {
+    "file": "source/frog.png",
+    "status": "done"
+  },
+  "garden": {
+    "file": "source/garden.png",
+    "status": "done"
+  },
+  "giraffe": {
+    "file": "source/giraffe.png",
+    "status": "done"
+  },
+  "girl": {
+    "file": "source/girl.png",
+    "prompt_sha": "1fd5aa65255d",
+    "status": "done"
+  },
+  "glasses": {
+    "file": "source/glasses.png",
+    "prompt_sha": "9d111d05cc1f",
+    "status": "done"
+  },
+  "goat": {
+    "file": "source/goat.png",
+    "status": "done"
+  },
+  "grandfather": {
+    "file": "source/grandfather.png",
+    "prompt_sha": "0522ca0f28e6",
+    "status": "done"
+  },
+  "grandmother": {
+    "file": "source/grandmother.png",
+    "prompt_sha": "a01edb7b1254",
+    "status": "done"
+  },
+  "grapes": {
+    "file": "source/grapes.png",
+    "prompt_sha": "9b301bf3bc24",
+    "status": "done"
+  },
+  "green": {
+    "file": "source/green.png",
+    "prompt_sha": "766b34682b5d",
+    "status": "done"
+  },
+  "grey": {
+    "file": "source/grey.png",
+    "prompt_sha": "7cd0906933f4",
+    "status": "done"
+  },
+  "guitar": {
+    "file": "source/guitar.png",
+    "prompt_sha": "b902b0c64c79",
+    "status": "done"
+  },
+  "hair": {
+    "file": "source/hair.png",
+    "status": "done"
+  },
+  "hand": {
+    "file": "source/hand.png",
+    "status": "done"
+  },
+  "handbag": {
+    "file": "source/handbag.png",
+    "prompt_sha": "ed4a0dfed79b",
+    "status": "done"
+  },
+  "hat": {
+    "file": "source/hat.png",
+    "prompt_sha": "d93c5426ae91",
+    "status": "done"
+  },
+  "head": {
+    "file": "source/head.png",
+    "status": "done"
+  },
+  "helicopter": {
+    "file": "source/helicopter.png",
+    "prompt_sha": "bf8660795fb9",
+    "status": "done"
+  },
+  "hippo": {
+    "file": "source/hippo.png",
+    "status": "done"
+  },
+  "hit": {
+    "file": "source/hit.png",
+    "prompt_sha": "dc6680453b1c",
+    "status": "done"
+  },
+  "hockey": {
+    "file": "source/hockey.png",
+    "prompt_sha": "816cade880ba",
+    "status": "done"
+  },
+  "horse": {
+    "file": "source/horse.png",
+    "status": "done"
+  },
+  "house": {
+    "file": "source/house.png",
+    "status": "done"
+  },
+  "ice-cream": {
+    "file": "source/ice-cream.png",
+    "prompt_sha": "10366cdfac99",
+    "status": "done"
+  },
+  "jacket": {
+    "file": "source/jacket.png",
+    "prompt_sha": "e6fdd9fb4d21",
+    "status": "done"
+  },
+  "jeans": {
+    "file": "source/jeans.png",
+    "prompt_sha": "ef5abc9ee754",
+    "status": "done"
+  },
+  "juice": {
+    "file": "source/juice.png",
+    "prompt_sha": "a1bf08fa5f2f",
+    "status": "done"
+  },
+  "jump": {
+    "file": "source/jump.png",
+    "prompt_sha": "957728f0dd4a",
+    "status": "done"
+  },
+  "keyboard": {
+    "file": "source/keyboard.png",
+    "prompt_sha": "e032fa667f58",
+    "status": "done"
+  },
+  "kick": {
+    "file": "source/kick.png",
+    "prompt_sha": "10d65c6ede4e",
+    "status": "done"
+  },
+  "kitchen": {
+    "file": "source/kitchen.png",
+    "status": "done"
+  },
+  "kite": {
+    "file": "source/kite.png",
+    "prompt_sha": "8660fbafa455",
+    "status": "done"
+  },
+  "lamp": {
+    "file": "source/lamp.png",
+    "status": "done"
+  },
+  "leg": {
+    "file": "source/leg.png",
+    "status": "done"
+  },
+  "lemon": {
+    "file": "source/lemon.png",
+    "prompt_sha": "4e6cef4ca100",
+    "status": "done"
+  },
+  "lemonade": {
+    "file": "source/lemonade.png",
+    "prompt_sha": "5f355220d644",
+    "status": "done"
+  },
+  "letter": {
+    "file": "source/letter.png",
+    "prompt_sha": "9d5a59c7096d",
+    "status": "done"
+  },
+  "lime": {
+    "file": "source/lime.png",
+    "prompt_sha": "41922c9b8e59",
+    "status": "done"
+  },
+  "living-room": {
+    "file": "source/living-room.png",
+    "status": "done"
+  },
+  "lizard": {
+    "file": "source/lizard.png",
+    "status": "done"
+  },
+  "lorry": {
+    "file": "source/lorry.png",
+    "prompt_sha": "a9f03b02f958",
+    "status": "done"
+  },
+  "man": {
+    "file": "source/man.png",
+    "prompt_sha": "750cd757da2d",
+    "status": "done"
+  },
+  "mango": {
+    "file": "source/mango.png",
+    "prompt_sha": "583a4b3135d7",
+    "status": "done"
+  },
+  "meat": {
+    "file": "source/meat.png",
+    "prompt_sha": "bc2e6622500f",
+    "status": "done"
+  },
+  "milk": {
+    "file": "source/milk.png",
+    "prompt_sha": "a80caf6dc55e",
+    "status": "done"
+  },
+  "mirror": {
+    "file": "source/mirror.png",
+    "status": "done"
+  },
+  "monkey": {
+    "file": "source/monkey.png",
+    "status": "done"
+  },
+  "monster": {
+    "file": "source/monster.png",
+    "prompt_sha": "a7d1be7b0b6f",
+    "status": "done"
+  },
+  "motorbike": {
+    "file": "source/motorbike.png",
+    "prompt_sha": "93062f3df784",
+    "status": "done"
+  },
+  "mouse": {
+    "file": "source/mouse.png",
+    "status": "done"
+  },
+  "mouse-computer": {
+    "file": "source/mouse-computer.png",
+    "prompt_sha": "f3417a61a2e4",
+    "status": "done"
+  },
+  "mouth": {
+    "file": "source/mouth.png",
+    "status": "done"
+  },
+  "mum": {
+    "file": "source/mum.png",
+    "prompt_sha": "dd98bc6259a6",
+    "status": "done"
+  },
+  "nose": {
+    "file": "source/nose.png",
+    "status": "done"
+  },
+  "onion": {
+    "file": "source/onion.png",
+    "prompt_sha": "aeddcecf6531",
+    "status": "done"
+  },
+  "orange-adj": {
+    "file": "source/orange-adj.png",
+    "prompt_sha": "d194ce618338",
+    "status": "done"
+  },
+  "orange-n": {
+    "file": "source/orange-n.png",
+    "prompt_sha": "b56dd676206e",
+    "status": "done"
+  },
+  "page": {
+    "file": "source/page.png",
+    "prompt_sha": "b7637f254a4b",
+    "status": "done"
+  },
+  "paint": {
+    "file": "source/paint.png",
+    "prompt_sha": "d59b00c8892b",
+    "status": "done"
+  },
+  "painting": {
+    "file": "source/painting.png",
+    "prompt_sha": "ef3d3cb3c564",
+    "status": "done"
+  },
+  "park": {
+    "file": "source/park.png",
+    "prompt_sha": "c56d47afc855",
+    "status": "done"
+  },
+  "pear": {
+    "file": "source/pear.png",
+    "prompt_sha": "c23539386820",
+    "status": "done"
+  },
+  "peas": {
+    "file": "source/peas.png",
+    "prompt_sha": "d5da8bd4dfc8",
+    "status": "done"
+  },
+  "pen": {
+    "file": "source/pen.png",
+    "prompt_sha": "eb9929a23fe5",
+    "status": "done"
+  },
+  "pencil": {
+    "file": "source/pencil.png",
+    "status": "done"
+  },
+  "person": {
+    "file": "source/person.png",
+    "prompt_sha": "d7f0f08261c6",
+    "status": "done"
+  },
+  "phone": {
+    "file": "source/phone.png",
+    "status": "done"
+  },
+  "piano": {
+    "file": "source/piano.png",
+    "prompt_sha": "5173fd8dfb96",
+    "status": "done"
+  },
+  "picture": {
+    "file": "source/picture.png",
+    "prompt_sha": "99dbe5ed754a",
+    "status": "done"
+  },
+  "pineapple": {
+    "file": "source/pineapple.png",
+    "prompt_sha": "35ba47aab635",
+    "status": "done"
+  },
+  "pink": {
+    "file": "source/pink.png",
+    "prompt_sha": "cd4e127406e0",
+    "status": "done"
+  },
+  "potato": {
+    "file": "source/potato.png",
+    "prompt_sha": "74c284d70ca5",
+    "status": "done"
+  },
+  "purple": {
+    "file": "source/purple.png",
+    "prompt_sha": "254107a2a359",
+    "status": "done"
+  },
+  "radio": {
+    "file": "source/radio.png",
+    "status": "done"
+  },
+  "red": {
+    "file": "source/red.png",
+    "prompt_sha": "e4a015f4441f",
+    "status": "done"
+  },
+  "rice": {
+    "file": "source/rice.png",
+    "prompt_sha": "95c263987538",
+    "status": "done"
+  },
+  "ride": {
+    "file": "source/ride.png",
+    "prompt_sha": "d283903bdede",
+    "status": "done"
+  },
+  "robot": {
+    "file": "source/robot.png",
+    "prompt_sha": "36d9a0d641d2",
+    "status": "done"
+  },
+  "rug": {
+    "file": "source/rug.png",
+    "status": "done"
+  },
+  "ruler": {
+    "file": "source/ruler.png",
+    "prompt_sha": "4cfe70a208e4",
+    "status": "done"
+  },
+  "run": {
+    "file": "source/run.png",
+    "prompt_sha": "d0af8d7c1321",
+    "status": "done"
+  },
+  "sand": {
+    "file": "source/sand.png",
+    "prompt_sha": "5d5f4fbeba7b",
+    "status": "done"
+  },
+  "sausage": {
+    "file": "source/sausage.png",
+    "prompt_sha": "a03d063d5ac9",
+    "status": "done"
+  },
+  "sea": {
+    "file": "source/sea.png",
+    "prompt_sha": "8cde7656243c",
+    "status": "done"
+  },
+  "sheep": {
+    "file": "source/sheep.png",
+    "status": "done"
+  },
+  "shell": {
+    "file": "source/shell.png",
+    "prompt_sha": "06eb55424985",
+    "status": "done"
+  },
+  "shirt": {
+    "file": "source/shirt.png",
+    "prompt_sha": "e80f0a44d0f5",
+    "status": "done"
+  },
+  "shoe": {
+    "file": "source/shoe.png",
+    "prompt_sha": "73c85aa94081",
+    "status": "done"
+  },
+  "shop": {
+    "file": "source/shop.png",
+    "prompt_sha": "77c0cb90a9e2",
+    "status": "done"
+  },
+  "sing": {
+    "file": "source/sing.png",
+    "prompt_sha": "3906508109cc",
+    "status": "done"
+  },
+  "sister": {
+    "file": "source/sister.png",
+    "prompt_sha": "f6972a6db894",
+    "status": "done"
+  },
+  "skirt": {
+    "file": "source/skirt.png",
+    "prompt_sha": "e84478699d5b",
+    "status": "done"
+  },
+  "smile": {
+    "file": "source/smile.png",
+    "status": "done"
+  },
+  "snake": {
+    "file": "source/snake.png",
+    "status": "done"
+  },
+  "sock": {
+    "file": "source/sock.png",
+    "prompt_sha": "335065f79e63",
+    "status": "done"
+  },
+  "sofa": {
+    "file": "source/sofa.png",
+    "status": "done"
+  },
+  "spider": {
+    "file": "source/spider.png",
+    "status": "done"
+  },
+  "sun": {
+    "file": "source/sun.png",
+    "prompt_sha": "e80f3a9f190e",
+    "status": "done"
+  },
+  "swim": {
+    "file": "source/swim.png",
+    "status": "done"
+  },
+  "t-shirt": {
+    "file": "source/t-shirt.png",
+    "prompt_sha": "a56136f67009",
+    "status": "done"
+  },
+  "table": {
+    "file": "source/table.png",
+    "status": "done"
+  },
+  "table-tennis": {
+    "file": "source/table-tennis.png",
+    "prompt_sha": "60b148dc5a5e",
+    "status": "done"
+  },
+  "take": {
+    "file": "source/take.png",
+    "prompt_sha": "d993ce041628",
+    "status": "done"
+  },
+  "teacher": {
+    "file": "source/teacher.png",
+    "prompt_sha": "b31179c8f9dd",
+    "status": "done"
+  },
+  "television": {
+    "file": "source/television.png",
+    "status": "done"
+  },
+  "tennis": {
+    "file": "source/tennis.png",
+    "prompt_sha": "bd925b856309",
+    "status": "done"
+  },
+  "throw": {
+    "file": "source/throw.png",
+    "prompt_sha": "993c25f5ca45",
+    "status": "done"
+  },
+  "tick": {
+    "file": "source/tick.png",
+    "prompt_sha": "f329f18f51e5",
+    "status": "done"
+  },
+  "tiger": {
+    "file": "source/tiger.png",
+    "status": "done"
+  },
+  "tomato": {
+    "file": "source/tomato.png",
+    "prompt_sha": "2527220533a9",
+    "status": "done"
+  },
+  "train": {
+    "file": "source/train.png",
+    "prompt_sha": "56c226ad7f7c",
+    "status": "done"
+  },
+  "tree": {
+    "file": "source/tree.png",
+    "prompt_sha": "691c28baa6a4",
+    "status": "done"
+  },
+  "trousers": {
+    "file": "source/trousers.png",
+    "prompt_sha": "0ff81b9fb92d",
+    "status": "done"
+  },
+  "walk": {
+    "file": "source/walk.png",
+    "prompt_sha": "26f4b55e3418",
+    "status": "done"
+  },
+  "watch": {
+    "file": "source/watch.png",
+    "prompt_sha": "db159e8e4dcd",
+    "status": "done"
+  },
+  "water": {
+    "file": "source/water.png",
+    "prompt_sha": "9ac267224035",
+    "status": "done"
+  },
+  "watermelon": {
+    "file": "source/watermelon.png",
+    "prompt_sha": "f443e8808736",
+    "status": "done"
+  },
+  "white": {
+    "file": "source/white.png",
+    "prompt_sha": "eea2357adb21",
+    "status": "done"
+  },
+  "window": {
+    "file": "source/window.png",
+    "status": "done"
+  },
+  "woman": {
+    "file": "source/woman.png",
+    "prompt_sha": "68cc88845082",
+    "status": "done"
+  },
+  "yellow": {
+    "file": "source/yellow.png",
+    "prompt_sha": "ff25f91a05f1",
+    "status": "done"
+  }
+}

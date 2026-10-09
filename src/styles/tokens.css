@@ -1,0 +1,317 @@
+/* ==========================================================================
+   RubyLingo — Design tokens
+   Nguồn chân lý duy nhất cho màu / cỡ chữ / bo góc / khoảng chạm.
+   Tailwind đọc các biến này (xem tailwind.config.ts), KHÔNG hardcode màu ở component.
+
+   Nguyên tắc cho trẻ 7+:
+   - Chữ nội dung >= 24px (--fs-md), không bao giờ nhỏ hơn 16px
+   - Vùng chạm >= 64px, nút chính >= 88px
+   - Tương phản đạt WCAG AA
+   ========================================================================== */
+
+:root {
+  /* --- Màu thương hiệu: HỒNG MÂM XÔI là chủ đạo -----------------------
+     ⭐ VÌ SAO `--c-brand` CHỈ CÓ MỘT GIÁ TRỊ MÀ KHÔNG TÁCH "màu chữ" VÀ "màu nền":
+       Màu này vừa làm NỀN (nút, thanh tiến độ — chữ TRẮNG nằm trên) vừa làm CHỮ
+       (`text-brand` trên nền sáng). Hai vai đó ngược chiều nhau: nền thì muốn tối để chữ
+       trắng nổi, chữ thì cũng muốn tối để nổi trên nền trắng. Một giá trị đủ tối thoả cả
+       hai thì không phải tách làm hai token — và tách ra sẽ phải sửa 32 chỗ `text-brand`
+       ở 21 tệp, tức là 32 cơ hội để lệch.
+       Đo thật (công thức WCAG 2.1, nền sáng nhất màu này từng đứng là `--c-brand-soft`):
+         · `#c81e63` trên trắng ................ 5.50:1  ✅ AA
+         · `#c81e63` trên `--c-brand-soft` ...... 4.67:1  ✅ AA
+         · chữ trắng trên `#c81e63` ............. 5.50:1  ✅ AA
+       Ngưỡng AA cho chữ thường là 4,5:1. Mọi cặp đều vượt, kể cả ở cỡ 16px — vốn KHÔNG
+       được coi là "chữ lớn" nên không có ngưỡng nới 3:1.
+     ⚠️ Màu cũ `#7c3aed` (tím violet) có độ chói tương đương, nên đổi màu KHÔNG làm UI
+       nặng/nhẹ đi — chỉ đổi sắc. Đó là chủ ý: đây là *đổi da*, không phải *đổi bố cục*.
+     -------------------------------------------------------------------- */
+  --c-brand: #c81e63;
+  --c-brand-soft: #fce7f3; /* nền nhạt: chip trạng thái, tab đang chọn, nhãn số thứ tự */
+  --c-brand-tint: #fff5f9; /* nền rất nhạt: dải tóm tắt, mặt thẻ nổi */
+  --c-brand-pop: #f472b6; /* hồng tươi — CHỈ để tô gradient/chấm trang trí, KHÔNG đặt chữ lên */
+  --c-brand-strong: #9d174d; /* nhấn mạnh / trạng thái đang bấm (chữ trắng: 7.89:1) */
+
+  /* --- Màu phần thưởng ------------------------------------------------
+     ⚠️ BA MÀU NÀY MANG *Ý NGHĨA*, KHÔNG PHẢI TRANG TRÍ — nên chúng phải giữ được sự khác
+     biệt với màu thương hiệu hồng mâm xôi ở trên. Nếu accent cũng trôi về hồng thì bé
+     không còn phân biệt được "sao mình vừa kiếm" với "màu của app".
+       · `--c-star` hổ phách  — sắc độ 38°, cách hồng (332°) gần 1/4 vòng bánh xe màu
+       · `--c-acorn` nâu đất  — tối và kém bão hoà hơn hẳn
+       · `--c-heart` đỏ tươi  — 0°, ngả cam; khác hồng ở chỗ ĐỎ không có ánh lam
+     Đây là lý do 3 màu này KHÔNG được đổi theo brand khi làm da mới.
+     -------------------------------------------------------------------- */
+  --c-star: #f59e0b;
+  --c-acorn: #b45309;
+  --c-heart: #ef4444;
+
+  /* --- Bản "màu chữ" của màu phần thưởng ------------------------------
+     ⚠️ VÌ SAO MÀU THƯỞNG CẦN HAI GIÁ TRỊ, KHÁC HẲN MÀU THƯƠNG HIỆU:
+       Màu thương hiệu vừa làm nền vừa làm chữ, nên một giá trị đủ tối là xong (xem ghi chú
+       ở `--c-brand`). Màu thưởng thì ngược lại: `--c-star` PHẢI sáng để làm hạt sao vàng,
+       `--c-heart` PHẢI tươi để làm trái tim đỏ — đó là hình ảnh bé nhìn. Nhưng đúng hai giá
+       trị sáng đó, khi đem làm MÀU CHỮ 16px trên nền trắng, đo ra chỉ được **2,15:1** (⭐) và
+       **3,57:1** (❤️) — trượt hẳn ngưỡng AA 4,5:1.
+       Nên tách đôi: giữ `--c-star` / `--c-heart` cho NỀN và HÌNH, thêm bản `-ink` tối hơn
+       cho CHỮ. Đây là hai vai khác nhau thật, không phải hai tên cho cùng một thứ.
+         · `--c-star-ink`  #9a5a08 → 5,47:1 trên trắng · 5,19:1 trên `--c-surface-raised`
+         · `--c-heart-ink` #b91c1c → 6,47:1 trên trắng · 6,14:1 trên `--c-surface-raised`
+       `--c-acorn` KHÔNG cần bản `-ink`: bản thân nó đã là nâu tối, đo được 5,02:1 trên trắng
+       ⇒ đạt AA ngay từ đầu. Thêm một token nữa chỉ để cho đối xứng là thừa.
+     -------------------------------------------------------------------- */
+  --c-star-ink: #9a5a08;
+  --c-heart-ink: #b91c1c;
+
+  /* --- 11 tông màu chủ đề ---------------------------------------------
+     "Mỗi chủ đề một tông màu riêng": bé nhìn bản đồ hành trình là phân biệt được ngay chặng
+     nào là chặng nào, không phải đọc chữ.
+
+     ⭐⭐ CÁCH CHỌN — CHUẨN HOÁ THEO CIE L*, KHÔNG THEO ĐỘ TƯƠNG PHẢN:
+       Lần đầu tôi chọn mỗi tông bằng cách "tìm giá trị đầu tiên đạt ngưỡng tương phản".
+       Cách đó hỏng: hue VÀNG phải rất tối mới đạt 3:1 trên nền trắng, còn hue XANH chỉ cần
+       hơi đậm — kết quả là 11 thẻ có trọng lượng thị giác lệch nhau, thẻ vàng nặng như đá,
+       thẻ xanh nhạt như bóng. Lần hai tôi chuẩn hoá theo độ tương phản, vẫn lệch vì độ tương
+       phản không phải độ sáng mà mắt thấy.
+       Lần ba (đang dùng): chốt **CIE L\*** — độ sáng cảm nhận — cho từng vai. Vì L\* là hàm
+       THUẦN của độ chói Y, chốt L\* là chốt luôn Y, nên **độ tương phản trên nền trắng tự
+       động giống nhau ở cả 11 tông**. Một mũi tên trúng hai đích, không phải cân bằng hai thứ.
+
+     ⭐⭐ 44 MÃ NÀY DO SCRIPT SINH, KHÔNG VIẾT TAY: `scripts/gen-theme-colors.ts` tính từ
+       (hue, L*, độ bão hoà), TỰ ĐO LẠI bằng công thức WCAG 2.1 rồi mới ghi ra đĩa. Chạy lại:
+         npx tsx scripts/gen-theme-colors.ts           # chỉ kiểm + in bảng
+         npx tsx scripts/gen-theme-colors.ts --apply   # ghi lại 44 mã vào tệp này
+       `tests/unit/client/styles-tokens.test.ts` (khẳng định ④–⑧) ĐỘC LẬP kiểm lại trên chính
+       các mã đang nằm ở đây — hai đường đi, một đáp số.
+
+     Bốn vai (mỗi chủ đề 4 token, 11 × 4 = 44). Số đo dưới đây là của lần chạy script hiện tại:
+       · `--c-th-<id>`      L*≈56  — VIỀN, dải gradient, trang trí. Đo được 3,27–3,67:1 trên ba
+                                     mặt nền (ngưỡng WCAG cho thành phần GIAO DIỆN là 3:1).
+                                     Không bao giờ đặt chữ lên đây.
+       · `--c-th-<id>-ink`  L*≈45  — CHỮ trên nền sáng. 4,61–5,41:1 trên CẢ NĂM nền nó từng
+                                     đứng (nền tối nhất là `--c-surface-sunken`) ⇒ đạt AA 4,5:1
+                                     ở mọi chỗ, không cần kiểm lại từng chỗ.
+       · `--c-th-<id>-soft` L*≈94  — NỀN chip.
+       · `--c-th-<id>-tint` L*≈96,5 — NỀN thân thẻ, rất nhạt, để tranh và chữ không bị pha màu.
+
+     ⚠️ VÌ SAO `soft` NHẠT HƠN `soft` CỦA BRAND (`--c-brand-soft: #fce7f3`):
+       `-ink` bị chốt ở L*≈45 nên nền chip không được đậm hơn mức còn giữ 4,5:1. Đây là ràng
+       buộc thật, không phải lựa chọn thẩm mỹ.
+
+     ⭐ 11 HUE CHIA ĐỀU 25,0°, TRẢI TỪ 60° ĐẾN 310°:
+       Bốn màu mang nghĩa — `--c-heart` đỏ 0°, `--c-acorn` nâu 26,0°, `--c-star` hổ phách 37,7°,
+       `--c-brand` hồng 335,6° — khoanh vùng cấm ±20° ⇒ cung dùng được là (57,7° … 315,6°), dài
+       257,9°. Chia ĐỀU là cách duy nhất làm khoảng cách NHỎ NHẤT lớn nhất — mà khoảng cách nhỏ
+       nhất chính là thứ khẳng định ⑦ canh giữ.
+       ⚠️ Bài học đã trả giá: bản đầu tôi chia tay (58°, 78°, 100°…) để "mỗi chủ đề một sắc thái
+         riêng". Hai cặp rơi ĐÚNG 20,0° danh nghĩa, mà lưới độ sáng 0,25% làm hue đọc lại lệch
+         ~0,3° ⇒ đo ra 19,7° và 19,9° — TRƯỢT ngưỡng. Đặt đúng bằng ngưỡng là tự chuốc lấy lỗi.
+       Số đo hiện tại: cặp chủ đề gần nhau nhất **24,5°** (`my-friends-birthday` ↔ `at-school`);
+       tông gần một màu mang nghĩa nhất **22,3°** (`numbers-1-20` ↔ `--c-star`).
+
+     ⚠️ KHÔNG ĐƯỢC ĐỔI 3 MÀU PHẦN THƯỞNG THEO CÁC TÔNG NÀY. Giữ được khoảng cách hue thì bé vẫn
+     phân biệt "sao mình vừa kiếm" với "màu của chủ đề". Ngưỡng được kiểm bằng
+     `tests/unit/client/styles-tokens.test.ts` (khẳng định ⑥ và ⑦), không phải ghi nhớ bằng mắt.
+     -------------------------------------------------------------------- */
+  --c-th-numbers-1-20: #8a8a11; /* Số 1-20 — vàng chanh */
+  --c-th-numbers-1-20-ink: #6e6e0c;
+  --c-th-numbers-1-20-soft: #f2f2a7;
+  --c-th-numbers-1-20-tint: #f6f6e1;
+  --c-th-at-home: #5e9512; /* Ở nhà — vàng ô liu (gỗ, ấm) */
+  --c-th-at-home-ink: #4a760d;
+  --c-th-at-home-soft: #dff6be;
+  --c-th-at-home-tint: #f0f8e5;
+  --c-th-my-favourite-food: #2a9b13; /* Món ăn yêu thích — xanh rau */
+  --c-th-my-favourite-food-ink: #207b0e;
+  --c-th-my-favourite-food-soft: #d3f8cc;
+  --c-th-my-favourite-food-tint: #ecf9e9;
+  --c-th-at-the-zoo: #139b35; /* Ở sở thú — xanh rừng */
+  --c-th-at-the-zoo-ink: #0e7b29;
+  --c-th-at-the-zoo-soft: #cef8d8;
+  --c-th-at-the-zoo-tint: #e9f9ed;
+  --c-th-my-body: #13996c; /* Cơ thể của bé — xanh ngọc (sức khoẻ) */
+  --c-th-my-body-ink: #0e7a56;
+  --c-th-my-body-soft: #cbf8e9;
+  --c-th-my-body-tint: #e9f9f4;
+  --c-th-at-the-beach: #1494a0; /* Bãi biển — xanh ngọc lam */
+  --c-th-at-the-beach-ink: #0e767f;
+  --c-th-at-the-beach-soft: #cff5f8;
+  --c-th-at-the-beach-tint: #eaf8f9;
+  --c-th-my-friends-birthday: #2c88e5; /* Sinh nhật bạn — xanh da trời (bóng bay) */
+  --c-th-my-friends-birthday-ink: #156bc1;
+  --c-th-my-friends-birthday-soft: #e3effb;
+  --c-th-my-friends-birthday-tint: #f1f6fb;
+  --c-th-at-school: #717ced; /* Ở trường — xanh dương (đồng phục, vở) */
+  --c-th-at-school-ink: #4b58eb;
+  --c-th-at-school-soft: #ecedfc;
+  --c-th-at-school-tint: #f4f5fc;
+  --c-th-my-street: #986eed; /* Đường phố — xanh lam */
+  --c-th-my-street-ink: #7c45ea;
+  --c-th-my-street-soft: #f1ebfc;
+  --c-th-my-street-tint: #f7f4fc;
+  --c-th-at-the-clothes-shop: #c453ea; /* Hiệu quần áo — tím chàm (vải) */
+  --c-th-at-the-clothes-shop-ink: #ab18dc;
+  --c-th-at-the-clothes-shop-soft: #f7e9fc;
+  --c-th-at-the-clothes-shop-tint: #f9f3fc;
+  --c-th-alphabet: #e638c9; /* Bảng chữ cái — tím hồng */
+  --c-th-alphabet-ink: #c115a4;
+  --c-th-alphabet-soft: #fce8f8;
+  --c-th-alphabet-tint: #fbf2fa;
+
+  /* --- Bề mặt (light theme mặc định) ----------------------------------
+     Ngả hồng rất nhẹ thay vì ngả xanh (slate) như trước: đặt cạnh brand hồng thì nền xanh
+     xám làm cả app trông "bẩn". Vẫn đủ nhạt để chữ đen đạt 17:1.
+     -------------------------------------------------------------------- */
+  --c-surface: #ffffff;
+  --c-surface-raised: #fff7fa;
+  --c-surface-sunken: #fdf0f6;
+
+  /* --- Chữ ------------------------------------------------------------
+     ⚠️ ĐÃ SỬA LỖI TƯƠNG PHẢN CÓ SẴN: `--c-ink-faint` cũ (`#94a3b8`) chỉ đạt **2,56:1**
+     trên nền trắng — trượt hẳn ngưỡng AA 4,5:1, mà nó lại đang được dùng cho chữ 16px
+     (tên tiếng Anh của chủ đề, nhãn phụ). 16px KHÔNG phải "chữ lớn" nên không được nới.
+     Giá trị mới `#78666f` đo được 5,35:1 trên trắng và 4,83:1 trên `--c-surface-sunken`
+     (nền tệ nhất mà nó từng đứng trên) ⇒ đạt AA ở mọi chỗ dùng.
+     Ba bậc chữ vẫn phân tầng rõ: 17,2:1 → 8,6:1 → 5,4:1.
+     -------------------------------------------------------------------- */
+  --c-ink: #2b1420;
+  --c-ink-soft: #5f4450;
+  --c-ink-faint: #78666f;
+  --c-ink-inverse: #ffffff;
+
+  /* --- Trạng thái ----------------------------------------------------- */
+  --c-success: #16a34a;
+  --c-warn: #d97706;
+  --c-danger: #dc2626;
+  --c-line: #f2dbe7;
+
+  /* --- Nền nhạt của màu ngữ nghĩa --------------------------------------
+     ⚠️⚠️ VÌ SAO PHẢI KHAI SẴN, KHÔNG ĐƯỢC VIẾT `bg-success/10`:
+       Tailwind sinh độ mờ bằng `rgb(var(--c-success) / 0.1)`. Nhưng `--c-success` là mã HEX
+       (`#16a34a`), không phải bộ ba kênh (`22 163 74`) ⇒ CSS sinh ra KHÔNG HỢP LỆ, trình duyệt
+       BỎ QUA khai báo, và nền trở thành trong suốt hoàn toàn.
+       Đã ĐO trên Chrome thật, không phải suy luận:
+           bg-success     -> rgb(22, 163, 74)      ✅
+           bg-success/10  -> rgba(0, 0, 0, 0)      ❌ trong suốt
+           bg-star/15     -> rgba(0, 0, 0, 0)      ❌
+           bg-danger/5    -> rgba(0, 0, 0, 0)      ❌
+       Hậu quả thật: **16 chỗ** tô nền phản hồi trong các game ("đã lộ đáp án", "chưa đúng",
+       "đã ghép cặp", "đang gợi ý") chưa bao giờ hiện nền — bé chỉ thấy đổi màu viền. Lỗi này
+       im lặng tuyệt đối: `tsc`, eslint, jsdom đều không chạy CSS, và trên màn hình thì một nền
+       trong suốt trông y hệt "thiết kế cố ý không tô nền".
+       Vì vậy: nền nhạt của màu ngữ nghĩa là TOKEN RIÊNG, khai bằng `rgba()` sẵn độ mờ.
+     ⚠️ ĐỪNG BAO GIỜ viết `bg-<màu-token>/<số>` ở component. Canh giữ:
+       `tests/unit/client/styles-tokens.test.ts`.
+     -------------------------------------------------------------------- */
+  --c-success-soft: rgba(22, 163, 74, 0.12);
+  --c-warn-soft: rgba(217, 119, 6, 0.12);
+  --c-danger-soft: rgba(220, 38, 38, 0.09);
+  --c-star-soft: rgba(245, 158, 11, 0.18);
+
+  /* --- Lớp phủ --------------------------------------------------------
+     Màu phủ mờ cho overlay ăn mừng / hộp thoại.
+     ⭐ Vì sao phải là token RIÊNG chứ không dùng `bg-ink/45`:
+       Tailwind sinh độ mờ bằng `rgb(var(--c-ink) / 0.45)`, nhưng `--c-ink` là mã hex
+       (`#0f172a`) chứ không phải bộ ba kênh (`15 23 42`) ⇒ CSS sinh ra không hợp lệ và
+       lớp phủ trở nên TRONG SUỐT. Khai sẵn một màu rgba là cách duy nhất chắc chắn đúng.
+     ------------------------------------------------------------------ */
+  --c-scrim: rgba(43, 20, 32, 0.45);
+
+  /* --- Cỡ chữ (px, không dùng rem để tránh lệch khi zoom) ------------- */
+  --fs-xs: 16px; /* nhãn phụ — KHÔNG nhỏ hơn mức này */
+  --fs-sm: 20px; /* phụ đề */
+  --fs-md: 24px; /* nội dung chính */
+  --fs-lg: 28px; /* tiêu đề bài */
+  --fs-xl: 34px; /* tiêu đề màn hình */
+  --fs-2xl: 42px; /* từ vựng trên flashcard */
+  --fs-3xl: 56px; /* từ vựng lớn / con số */
+
+  /* --- Bo góc / bóng / khoảng chạm ------------------------------------
+     Bóng nay ngả nâu mận (thay vì ngả xanh đen): bóng xám trên nền hồng trông như vết bẩn,
+     bóng cùng họ màu thì trông như bóng đổ thật.
+     `--sh-brand` là "quầng hồng" riêng cho thẻ chủ đề — đây là thứ tạo cảm giác nổi khối
+     mà một `box-shadow` xám không làm được.
+     -------------------------------------------------------------------- */
+  --r-kid: 20px;
+  --r-card: 26px;
+  --sh-kid: 0 2px 0 rgba(93, 33, 62, 0.1);
+  --sh-kid-lg: 0 6px 0 rgba(93, 33, 62, 0.12);
+  --sh-brand: 0 10px 24px rgba(200, 30, 99, 0.16);
+  --sh-pop: 0 12px 32px rgba(93, 33, 62, 0.18);
+  --sp-touch: 64px;
+  --sp-touch-lg: 88px;
+
+  /* --- Font -----------------------------------------------------------
+     Hai họ này được TỰ HOST ở `public/fonts/` và khai trong `src/styles/fonts.css`
+     (nạp trước file này ở `index.css`). Nếu thiếu `fonts.css`, hai dòng dưới vẫn
+     "trông đúng" nhưng trình duyệt sẽ lặng lẽ rơi về font hệ thống — đúng lỗi
+     đã xảy ra trước đây, khiến cả app render bằng Segoe UI mà không ai biết.
+     -------------------------------------------------------------------- */
+  --font-display: 'Baloo 2', 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ==========================================================================
+   Bậc thang cỡ chữ theo breakpoint — điện thoại nhỏ không bị tràn.
+   Tailwind đọc --fs-* nên chỉ cần đổi ở đây là toàn app đổi theo.
+   ========================================================================== */
+@media (max-width: 479px) {
+  :root {
+    --fs-md: 20px;
+    --fs-lg: 24px;
+    --fs-xl: 28px;
+    --fs-2xl: 34px;
+    --fs-3xl: 44px;
+    --sp-touch: 56px;
+    --sp-touch-lg: 72px;
+  }
+}
+
+@media (min-width: 1366px) {
+  :root {
+    --fs-md: 26px;
+    --fs-lg: 30px;
+    --fs-xl: 36px;
+    --fs-2xl: 46px;
+    --fs-3xl: 62px;
+  }
+}
+
+/* ==========================================================================
+   Tôn trọng cài đặt hệ điều hành: giảm chuyển động
+   Quan trọng với trẻ nhạy cảm với chuyển động.
+   ========================================================================== */
+
+/* ⚠️ THỨ TỰ KHAI BÁO QUAN TRỌNG: giá trị mặc định phải đứng TRƯỚC media query.
+   Bản đầu làm ngược (media query trước, `:root` sau) nên `--motion-scale: 1` LUÔN thắng —
+   cùng độ cụ thể (`:root`), khai sau thì thắng — và cài đặt của hệ điều hành bị vô hiệu
+   hoàn toàn mà không có gì báo. */
+:root {
+  --motion-scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-scale: 0;
+  }
+
+  /* ⚠️⚠️ FRAMER MOTION KHÔNG PHỦ HẾT — PHẢI CHẶN CẢ Ở TẦNG CSS.
+     `useReducedMotion()` của framer-motion chỉ tác động tới component dùng `motion.*`.
+     Những hiệu ứng viết bằng CSS thuần (tiện ích `animate-pulse`, `animate-spin`,
+     `animate-bounce` của Tailwind, và mọi `transition` ta tự đặt) KHÔNG đi qua nó.
+
+     Cụ thể đã gặp: game Nghe & Chạm dùng `animate-pulse` để nhấp nháy viền ô đáp án khi
+     bật gợi ý. Nếu không có khối này, một bé bật "giảm chuyển động" vì nhạy cảm với
+     chuyển động vẫn thấy viền nhấp nháy liên tục — đúng thứ bé cần tránh.
+
+     `!important` ở đây là CHÍNH ĐÁNG: nó ghi đè tiện ích Tailwind (vốn có độ cụ thể của
+     class), và đây là ý muốn tường minh của người dùng ở cấp hệ điều hành — không có
+     trường hợp nào một hiệu ứng trang trí được quyền thắng nó. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

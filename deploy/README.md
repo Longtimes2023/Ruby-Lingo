@@ -1,0 +1,313 @@
+# RubyLingo — Deploy & Phục hồi (Nhóm 12)
+
+Tài liệu này là **quy trình vận hành**, không phải tài liệu kiến trúc. Phần "vì sao" nằm trong
+chú thích ở `Dockerfile`, `docker-compose.yml`, `scripts/deploy.sh`, `scripts/update.sh`,
+`scripts/backup-db.sh`.
+Tài liệu kiến trúc đầy đủ ở `../deliverables/english-starters/ARCHITECTURE.md` (mục Nhóm 12) —
+**nằm ngoài repo**, không cần cho deploy.
+
+**Luồng chuẩn:** GitHub (repo private) → VPS `git clone` **một lần** → mỗi lần cập nhật chạy
+`./scripts/update.sh` (pull + build lại container).
+
+---
+
+## 0. ĐƯA MÃ NGUỒN LÊN VPS — `git clone`
+
+> ⭐ **VÌ SAO LÀ GIT, KHÔNG PHẢI NÉN `.tar.gz` RỒI `scp`:**
+> `scripts/deploy.sh` chạy `docker compose up -d --build` với **thư mục hiện tại** làm build
+> context ⇒ mã nguồn phải có mặt trên VPS. Cách nén/scp làm được điều đó, nhưng mỗi lần sửa một
+> dòng lại phải đóng gói → chuyển → giải nén **bằng tay**, và **không có lịch sử**: không biết VPS
+> đang chạy bản nào, không soát lại được đã đổi những gì.
+> Với git: sửa ở máy dev → `git push` → trên VPS `./scripts/update.sh`. VPS tự biết mình đang ở
+> commit nào, và `git pull` chỉ mang về phần thay đổi.
+
+### 0.1. `git clone` — CHỈ MỘT LẦN
+
+```bash
+sudo mkdir -p /srv && cd /srv
+sudo git clone <url-repo-github> rubylingo      # repo PRIVATE
+cd rubylingo
+```
+
+> ⚠️ **Repo là PRIVATE.** Trong đó có mã nguồn nhưng **không** có dữ liệu trẻ em và **không** có
+> `.env` (xem 0.5). Nếu để public, ít nhất hãy biết rằng mã nguồn là công khai.
+>
+> ⚠️ VPS cần quyền đọc repo private. Hai cách (xem mục 5):
+> **deploy key** (khoá SSH chỉ-đọc riêng cho repo — khuyến nghị) hoặc **fine-grained PAT**.
+
+Kiểm nhanh (đều phải xanh):
+
+```bash
+git log -1 --oneline                                                  # có lịch sử
+ls -l Dockerfile docker-compose.yml .env.example scripts/deploy.sh    # deploy.sh phải có 'x'
+find public/assets/words -name '*.webp' | wc -l                       # 201
+ls -1 server/db/migrations/*.sql | wc -l                              # 10
+```
+
+### 0.2. Tạo `.env` **TRÊN VPS** (không lấy từ repo)
+
+```bash
+cp .env.example .env
+# điền: SUBDOMAIN · DOMAIN_NAME · SESSION_SECRET · COOKIE_SECURE=true · PUBLIC_ORIGIN
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"   # SESSION_SECRET
+```
+
+Chi tiết từng biến: mục 1.
+
+### 0.3. Deploy lần đầu
+
+```bash
+./scripts/deploy.sh
+```
+
+### 0.4. Cập nhật về sau — `./scripts/update.sh`
+
+```bash
+./scripts/update.sh                 # fetch → xem có gì mới → pull --ff-only → deploy (5 bước kiểm)
+FORCE=1 ./scripts/update.sh         # build lại DÙ không có commit mới
+```
+
+Script **dừng lại** (chứ không tự "xử lý") trong ba trường hợp, vì cả ba đều là việc của con người:
+
+| Bước | Dừng khi | Vì sao không tự xử lý |
+|---|---|---|
+| 2 | `data/` · `backups/` · `.env` **đang bị git theo dõi** | dữ liệu trẻ em / bí mật đã lọt — pull sẽ càng làm nặng |
+| 4 | cây có thay đổi với tệp **được theo dõi** | ai đó sửa tay trên VPS ⇒ pull sẽ xung đột |
+| 5 | `git pull --ff-only` thất bại (lịch sử phân kỳ) | **không bao giờ** tạo merge commit trên server |
+
+> ⚠️ Script **không** chép lại logic kiểm chứng của `deploy.sh` — nó `exec ./scripts/deploy.sh` ở
+> bước cuối. Hai bản sao thì bản này sẽ lệch, và lệch theo hướng tệ nhất: *"tưởng là đã kiểm"*.
+
+### 0.5. ⚠️ Những gì **KHÔNG** nằm trong repo — và vì sao `git pull` không bao giờ đụng vào
+
+| Không commit | Chứa gì | Nếu lọt lên GitHub |
+|---|---|---|
+| `data/` | DB SQLite: biệt danh, tuổi, avatar, tiến độ học của **trẻ em** | rò rỉ dữ liệu trẻ em (vi phạm COPPA/GDPR-K) |
+| `backups/` | bản sao của chính DB đó | như trên |
+| `.env` | `SESSION_SECRET` | giả mạo được phiên đăng nhập |
+
+⚠️ **Git giữ lịch sử VĨNH VIỄN**: xoá ở commit sau **không** xoá khỏi commit trước. Nếu những thứ
+này đã từng được commit thì phải **viết lại lịch sử** (lọc repo) và **đổi `SESSION_SECRET`** —
+`scripts/update.sh` bước 2 chặn đúng tình huống này trước khi pull.
+
+`asset-src/words/source/` (291 MB ảnh PNG thô) cũng bị loại: thành phẩm đã ở
+`public/assets/words/*.webp`, và giữ ảnh thô trong git nghĩa là **mọi lần `git clone`/`pull`** đều
+phải kéo hàng trăm MB không dùng tới. Tệp vẫn nằm trên máy dev và sinh lại được từ `plan.json` +
+`subjects.py` (đều **được** commit).
+
+### 0.6. Đường DỰ PHÒNG — khi không dùng được GitHub
+
+```bash
+./scripts/pack-for-vps.sh                     # → ../rubylingo-src-<ISO-UTC>.tar.gz (~9 MB)
+scp ../rubylingo-src-*.tar.gz user@vps:/tmp/
+# trên VPS: tar -xzf … -C /srv/rubylingo   (rồi tự đối chiếu với commit đang chạy)
+```
+
+Dùng khi: GitHub không truy cập được, hoặc cần dựng lại đúng một bản cũ mà không muốn `git pull`.
+Script dùng **whitelist** (chỉ đưa những gì đã liệt kê) và tự kiểm 7 chốt trước khi báo xong —
+trong đó chốt đáng giá nhất là **mọi nguồn `COPY` của `Dockerfile` phải có trong gói**, tức là
+"gói này build được", không chỉ "gói này có `src/`".
+
+> ⚠️ Gói tar **không có lịch sử commit** ⇒ sau khi giải nén, `git status` sẽ cho thấy một cây hỗn
+> độn so với bản clone. Đây là đường thoát hiểm, không phải luồng thường ngày.
+
+---
+
+## 1. Deploy
+
+### Chuẩn bị `.env` (cùng thư mục với `docker-compose.yml`)
+
+```
+SUBDOMAIN=rubylingo                    # dùng cho Host(...) của Traefik
+DOMAIN_NAME=example.com                # tên miền GỐC, KHÔNG kèm subdomain
+SESSION_SECRET=<chuỗi ngẫu nhiên ≥32 ký tự>
+COOKIE_SECURE=true
+PUBLIC_ORIGIN=https://rubylingo.example.com    # ⚠️ KHÔNG có dấu "/" ở cuối
+```
+
+Sinh `SESSION_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
+
+> ⚠️ **KHÔNG commit `.env`.** `.dockerignore` đã loại nó khỏi image (lỗi S6), nhưng nó vẫn không
+> được vào git.
+
+### Chạy deploy
+
+```bash
+./scripts/deploy.sh
+```
+
+Script **build → up → 5 bước kiểm** và **chỉ báo thành công khi cả 5 bước xanh**:
+
+| Bước | Kiểm gì | Chặn lỗi |
+|---|---|---|
+| 1 | `docker compose config` + soi giá trị đã thay thế | biến rỗng ⇒ `Host(.)` 404 / `https://.` 403 (A) |
+| 2 | chờ app sẵn sàng, rồi số migration trong image == nguồn | image thiếu `.sql` ⇒ schema rỗng (S3/C) |
+| 3 | `./data/rubylingo.db` có thật trên host | DB ghi ngoài volume ⇒ mất khi thay container (S1) |
+| 4 | `/api/health`: `migrationsApplied` == số tệp migration | DB chưa migrate mà health vẫn "ok" (S3) |
+| 5 | poll `https://<tên miền>/api/health` tới 200 | crash-loop ⇒ 502 vĩnh viễn (B) |
+
+> ⚠️ Đừng "sửa" lỗi 502 bằng cách thêm `ports:` vào compose — cổng 3000 **không** được lộ ra
+> Internet; Traefik là cửa duy nhất.
+
+---
+
+## 2. Backup
+
+```bash
+./scripts/backup-db.sh                  # giữ 7 ngày (mặc định)
+RETENTION_DAYS=14 ./scripts/backup-db.sh
+```
+
+- Bản sao ghi vào `./backups/` (**ngoài** volume `./data`; script **từ chối** chạy nếu `BACKUP_DIR`
+  nằm trong `./data`).
+- Dùng **SQLite Online Backup API** qua `better-sqlite3` (không `cp` tệp đang mở, không cần CLI
+  `sqlite3` — image runtime không có nó).
+- Mỗi bản được kiểm **ngay**: `PRAGMA integrity_check` + `PRAGMA foreign_key_check`; hỏng ⇒ script
+  thoát khác 0.
+- Cron: xem `deploy/backup-cron.example`.
+
+### ⚠️ Hai việc bắt buộc để backup có ý nghĩa
+
+1. **Thử phục hồi MỘT LẦN** vào DB tạm (mục 3 dưới). Bản sao chưa từng mở lại thì chưa được gọi là
+   backup.
+2. **Đẩy bản sao ra khỏi máy** (rsync/scp máy khác, hoặc `rclone` lên object storage). `./backups`
+   cùng ổ đĩa với `./data` thì hỏng ổ là mất cả hai. *Việc theo dõi — chưa làm ở T078.*
+
+---
+
+## 3. QUY TRÌNH PHỤC HỒI
+
+> ⚠️ **KHÔNG phục hồi khi app đang chạy.** SQLite đang mở DB; ghi đè tệp dưới chân nó có thể để lại
+> trạng thái hỗn hợp giữa `.db` mới và `-wal` cũ.
+
+### Bước 0 — Chọn bản sao
+
+```bash
+ls -lh backups/            # tên theo ISO UTC ⇒ sắp xếp theo tên = theo thời gian
+```
+
+### Bước 1 — Kiểm bản sao TRƯỚC khi động vào DB thật
+
+```bash
+# copy bản sao vào container rồi integrity_check trên chính byte sẽ phục hồi
+docker compose cp backups/<tệp>.db rubylingo:/tmp/restore-test.db
+docker compose exec -T rubylingo node -e '
+import("better-sqlite3").then((m) => {
+  const db = new m.default("/tmp/restore-test.db", { readonly: true });
+  console.log(JSON.stringify(db.pragma("integrity_check")));
+  db.close();
+});'
+docker compose exec -T rubylingo rm -f /tmp/restore-test.db
+```
+
+Phải in ra `[{"integrity_check":"ok"}]`. **Nếu không phải `ok` ⇒ DỪNG**, chọn bản sao khác.
+
+### Bước 2 — Dừng app
+
+```bash
+docker compose down
+```
+
+> ⚠️⚠️ **TUYỆT ĐỐI KHÔNG `docker compose down -v`.** `-v` **XOÁ VOLUME** ⇒ xoá luôn DB và cả
+> `./data`. Một chữ `-v` là mất sạch dữ liệu học của các bé.
+
+### Bước 3 — Giữ lại bản đang có (đường lùi)
+
+```bash
+cp data/rubylingo.db "data/rubylingo.db.before-restore-$(date -u +%Y%m%dT%H%M%SZ)"
+```
+
+> Nghe thừa, nhưng đây là đường lùi khi bản backup bạn chọn hoá ra cũng không ổn. Sau khi mọi thứ
+> xác nhận tốt thì xoá tệp này.
+
+### Bước 4 — Thay DB **và xoá WAL/SHM cũ**
+
+```bash
+cp backups/<tệp>.db data/rubylingo.db
+rm -f data/rubylingo.db-wal data/rubylingo.db-shm
+```
+
+> ⚠️ **Phải xoá `-wal` và `-shm`.** Chúng thuộc DB CŨ; để lại thì SQLite có thể áp WAL cũ lên DB
+> mới ⇒ trạng thái trộn giữa hai bản, và không có thông báo nào.
+
+### Bước 5 — Khởi động lại và kiểm
+
+```bash
+docker compose up -d
+# đợi app sẵn sàng rồi kiểm:
+docker compose exec -T rubylingo node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>r.text()).then(t=>console.log(t))"
+```
+
+`migrationsApplied` phải bằng số tệp trong `server/db/migrations/` (**hiện 10**). Nếu nhỏ hơn ⇒
+bản sao thuộc phiên bản cũ; app vẫn chạy được vì `runMigrations()` chạy lúc khởi động, nhưng hãy
+xác nhận số đó đã đúng **sau khi** app lên.
+
+### Bước 6 — Kiểm bằng mắt (quan trọng nhất)
+
+Mở `https://<tên miền>`, đăng nhập, và kiểm: danh sách bé, một hồ sơ bé, ví ⭐/🌰, tiến độ một
+chủ đề. Bước 5 chỉ nói "DB mở được"; chỉ bước 6 mới nói "dữ liệu của bé còn đúng".
+
+---
+
+## 4. Ghi chú
+
+- **Quyền ghi**: container chạy bằng `root` (chấp nhận cho MVP). `./data` là bind mount từ host ⇒
+  tệp do app tạo thuộc `root`. Nếu hạ quyền chạy container, phải `chown` lại `./data` **và**
+  `./backups` — nếu không, app không ghi được DB và backup không ghi được tệp (cùng họ lỗi S1).
+- **Nhật ký**: `docker compose logs --tail=200 rubylingo`.
+- **`HTTP` bị đá sang `HTTPS`** bởi router phụ của Traefik — PWA và Web Speech chỉ chạy trên HTTPS.
+- **`.gitattributes`** ghim `*.sh`/`*.sql`/`Dockerfile` về **LF**. Máy dev là Windows, VPS là Linux;
+  một tệp `.sh` có CRLF khi chạy trên Linux sẽ chết ngay dòng đầu với
+  `bad interpreter: No such file or directory` — nhìn như "script hỏng" chứ không như "sai xuống
+  dòng". Tệp này khiến quy tắc đúng trên **mọi máy**, không phụ thuộc `core.autocrlf` cục bộ.
+
+---
+
+## 5. Cho VPS quyền đọc repo PRIVATE
+
+VPS phải chứng minh danh tính với GitHub mỗi lần `git fetch`/`pull`. Hai cách, **đều không cần
+nhúng mật khẩu tài khoản vào VPS**:
+
+### Cách A — Deploy key (khuyến nghị: quyền hẹp nhất, thu hồi được riêng)
+
+```bash
+# TRÊN VPS
+ssh-keygen -t ed25519 -C "rubylingo-vps" -f ~/.ssh/rubylingo_deploy -N ""
+cat ~/.ssh/rubylingo_deploy.pub          # dán vào GitHub → repo → Settings → Deploy keys
+```
+
+Trên GitHub: **Settings → Deploy keys → Add deploy key**, dán khoá công khai, **KHÔNG** tick
+*Allow write access* (VPS chỉ cần đọc).
+
+```bash
+# TRÊN VPS — nói cho git dùng khoá này cho đúng host GitHub
+cat >> ~/.ssh/config <<'EOF'
+Host github.com
+  IdentityFile ~/.ssh/rubylingo_deploy
+  IdentitiesOnly yes
+EOF
+chmod 600 ~/.ssh/config
+ssh -T git@github.com        # phải thấy "successfully authenticated"
+```
+
+⚠️ Dùng URL dạng **SSH** khi clone: `git clone git@github.com:<user>/<repo>.git`.
+⚠️ Khoá bị lộ ⇒ chỉ thu hồi được **một repo** (đó là ưu điểm so với PAT).
+
+### Cách B — Fine-grained PAT
+
+Tạo token ở GitHub → **Settings → Developer settings → Fine-grained tokens**, cấp quyền
+**Contents: Read-only** cho **đúng một repo**. Dùng URL HTTPS:
+
+```bash
+git clone https://<TOKEN>@github.com/<user>/<repo>.git
+```
+
+> ⚠️ Token nằm trong `.git/config` ⇒ **lộ theo mọi bản sao của thư mục repo**, và `git remote -v`
+> in nó ra. Ưu điểm duy nhất so với cách A là không phải tạo khoá SSH. **Ưu tiên cách A.**
+
+⚠️ **Không bao giờ** đặt token trong `.env` của app hay trong `docker-compose.yml` — đó là bí mật
+của **git**, không phải của ứng dụng, và `docker-compose.yml` nằm trong repo.

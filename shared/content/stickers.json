@@ -1,0 +1,33 @@
+{
+  "note": "Sticker = phần thưởng BIẾN THIÊN: bé mở ra mới biết là con gì (variable reward). lessonId = sticker rơi ra khi hoàn thành bài đó; không có lessonId = sticker đặc biệt, trao theo điều kiện khác. QUY TẮC ICON: mỗi sticker phải có emoji KHÁC với icon tiền tệ (⭐ 🌰), với mọi vật phẩm trong shop-items.json và với mọi huy hiệu trong badges.json — bé nhìn hình là phải phân biệt được ngay đang ở túi đồ hay bộ sưu tập.",
+  "stickers": [
+    { "id": "sticker-z1", "name_vi": "Voi con", "icon": "🐘", "lessonId": "at-the-zoo/z1", "phase": "mvp" },
+    { "id": "sticker-z2", "name_vi": "Cún con", "icon": "🐶", "lessonId": "at-the-zoo/z2", "phase": "mvp" },
+    { "id": "sticker-z3", "name_vi": "Ếch xanh", "icon": "🐸", "lessonId": "at-the-zoo/z3", "phase": "mvp" },
+    { "id": "sticker-star", "name_vi": "Ngôi sao băng", "icon": "💫", "phase": "mvp" },
+    { "id": "sticker-unicorn", "name_vi": "Kỳ lân bảy sắc", "icon": "🦄", "phase": "mvp" },
+    { "id": "sticker-medal", "name_vi": "Huy chương vàng", "icon": "🥇", "phase": "mvp" },
+
+    { "id": "sticker-body", "name_vi": "Bàn tay xinh", "icon": "✋", "lessonId": "my-body/l2", "phase": "p1" },
+    { "id": "sticker-face", "name_vi": "Mặt cười", "icon": "😊", "lessonId": "my-body/l1", "phase": "p1" },
+    { "id": "sticker-colour", "name_vi": "Bảng màu", "icon": "🎨", "lessonId": "at-the-clothes-shop/l1", "phase": "p1" },
+    { "id": "sticker-shirt", "name_vi": "Áo xinh", "icon": "👕", "lessonId": "at-the-clothes-shop/l3", "phase": "p1" },
+    { "id": "sticker-cupcake", "name_vi": "Bánh cupcake", "icon": "🧁", "lessonId": "my-friends-birthday/l4", "phase": "p1" },
+    { "id": "sticker-kite", "name_vi": "Cánh diều", "icon": "🪁", "lessonId": "my-friends-birthday/l4", "phase": "p1" },
+    { "id": "sticker-strawberry", "name_vi": "Quả dâu", "icon": "🍓", "lessonId": "my-favourite-food/l1", "phase": "p1" },
+    { "id": "sticker-lollipop", "name_vi": "Kẹo mút", "icon": "🍭", "lessonId": "my-favourite-food/l6", "phase": "p1" },
+    { "id": "sticker-house", "name_vi": "Ngôi nhà", "icon": "🏠", "lessonId": "at-home/h5", "phase": "p1" },
+    { "id": "sticker-teddy", "name_vi": "Gấu bông", "icon": "🧸", "lessonId": "at-home/h3", "phase": "p1" },
+    { "id": "sticker-book", "name_vi": "Quyển sách", "icon": "📚", "lessonId": "at-school/s1", "phase": "p1" },
+    { "id": "sticker-crayon", "name_vi": "Bút sáp màu", "icon": "🖍️", "lessonId": "at-school/s2", "phase": "p1" },
+    { "id": "sticker-sun", "name_vi": "Ông mặt trời", "icon": "☀️", "lessonId": "at-the-beach/b4", "phase": "p1" },
+    { "id": "sticker-shell", "name_vi": "Vỏ sò", "icon": "🐚", "lessonId": "at-the-beach/b4", "phase": "p1" },
+    { "id": "sticker-bus", "name_vi": "Xe buýt", "icon": "🚌", "lessonId": "my-street/m1", "phase": "p1" },
+    { "id": "sticker-traffic", "name_vi": "Đèn giao thông", "icon": "🚦", "lessonId": "my-street/m3", "phase": "p1" },
+
+    { "id": "sticker-alphabet", "name_vi": "Bảng chữ cái", "icon": "🔤", "lessonId": "alphabet/a4", "phase": "p2" },
+    { "id": "sticker-numbers", "name_vi": "Bảng số", "icon": "🔢", "lessonId": "numbers-1-20/n3", "phase": "p2" },
+    { "id": "sticker-crown", "name_vi": "Vương miện nhí", "icon": "🎖️", "phase": "p2" },
+    { "id": "sticker-diamond", "name_vi": "Kim cương", "icon": "💎", "phase": "p2" }
+  ]
+}

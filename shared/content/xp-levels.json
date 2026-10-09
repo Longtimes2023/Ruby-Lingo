@@ -1,0 +1,82 @@
+{
+  "note": "Bảng 7 cấp Nhà thám hiểm. XP tách biệt hoàn toàn với tiến hoá linh vật (2 thanh tiến độ độc lập). Sửa file này là cả client lẫn server đổi theo.",
+  "levels": [
+    {
+      "level": 1,
+      "title_vi": "Nhà thám hiểm nhỏ",
+      "icon": "🐾",
+      "xpRequired": 0,
+      "rewards": []
+    },
+    {
+      "level": 2,
+      "title_vi": "Người bạn của thú rừng",
+      "icon": "🌿",
+      "xpRequired": 150,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-forest-friend" },
+        { "kind": "stars", "amount": 20 }
+      ]
+    },
+    {
+      "level": 3,
+      "title_vi": "Người chăm vườn thú",
+      "icon": "🧺",
+      "xpRequired": 400,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-explorer" },
+        { "kind": "stars", "amount": 30 },
+        { "kind": "acorns", "amount": 3 }
+      ]
+    },
+    {
+      "level": 4,
+      "title_vi": "Người dẫn đường",
+      "icon": "🧭",
+      "xpRequired": 900,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-guide" },
+        { "kind": "stars", "amount": 40 },
+        { "kind": "item", "refId": "acc-star-glasses" }
+      ]
+    },
+    {
+      "level": 5,
+      "title_vi": "Nhà sưu tầm nhí",
+      "icon": "🔍",
+      "xpRequired": 1600,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-collector" },
+        { "kind": "stars", "amount": 50 },
+        { "kind": "acorns", "amount": 5 }
+      ]
+    },
+    {
+      "level": 6,
+      "title_vi": "Người bảo vệ vườn thú",
+      "icon": "🛡️",
+      "xpRequired": 2800,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-protector" },
+        { "kind": "stars", "amount": 60 }
+      ]
+    },
+    {
+      "level": 7,
+      "title_vi": "Huyền thoại Vườn Thú",
+      "icon": "🌟",
+      "xpRequired": 4500,
+      "rewards": [
+        { "kind": "badge", "refId": "badge-legend" },
+        { "kind": "stars", "amount": 100 },
+        { "kind": "acorns", "amount": 10 }
+      ]
+    }
+  ],
+  "evolutionStages": [
+    { "stage": "egg", "name_vi": "Trứng", "icon": "🥚", "wordsRequired": 0 },
+    { "stage": "baby", "name_vi": "Nhóc con", "icon": "🐣", "wordsRequired": 20 },
+    { "stage": "adult", "name_vi": "Trưởng thành", "icon": "🐵", "wordsRequired": 80 },
+    { "stage": "super", "name_vi": "Siêu cấp", "icon": "✨", "wordsRequired": 200 }
+  ]
+}

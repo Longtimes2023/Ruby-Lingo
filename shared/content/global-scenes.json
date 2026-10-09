@@ -1,0 +1,12 @@
+{
+  "note": "Tranh cảnh TOÀN CỤC — KHÔNG thuộc Theme nào. `image` là KHOÁ asset (không phải đường dẫn): khoá \"home-scene\" ⇒ file assets/scenes/home-scene.webp. Validator kiểm file có thật (V17) — có khoá mà thiếu file là CẢNH BÁO, không phải lỗi, vì tranh do người vẽ bổ sung sau. Màn hình M6 (Nhà thú cưng) là màn hình DUY NHẤT không thuộc chủ đề nào, nên nền của nó phải nằm ở đây chứ không phải Theme.sceneImage.",
+  "scenes": [
+    {
+      "id": "home-scene",
+      "key": "homeSceneImage",
+      "image": "home-scene",
+      "description": "Ngôi nhà trên cây — nơi 5 linh vật của bé sống cùng nhau",
+      "usedInScreen": "M6"
+    }
+  ]
+}

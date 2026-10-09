@@ -1,0 +1,25 @@
+-- =============================================================================
+-- 010 — CỔNG PIN PHỤ HUYNH: dấu "phiên này đã qua cổng lúc nào" (T072)
+-- =============================================================================
+-- ⭐ NHÓM 11 (Khu vực phụ huynh) thêm một "cổng PIN": trước khi xem báo cáo / cài đặt /
+--   đổi PIN, phụ huynh phải nhập đúng mã PIN 4 số.
+--
+--   VÌ SAO ĐẶT Ở `session`, KHÔNG PHẢI Ở `parent_account`:
+--     Cổng này thuộc về MỘT PHIÊN, không thuộc về tài khoản. Phụ huynh mở cổng trên máy này
+--     KHÔNG có nghĩa là máy khác (một phiên khác) cũng đã mở. Nếu để trên `parent_account` thì
+--     mở cổng ở một thiết bị sẽ mở luôn ở mọi thiết bị — sai cả về bảo mật lẫn về ý nghĩa.
+--
+--   VÌ SAO LÀ MỘT MỐC THỜI GIAN (`gate_opened_at`) CHỨ KHÔNG PHẢI CỜ boolean:
+--     Cổng có HIỆU LỰC GIỚI HẠN (xem `PARENT_GATE_TTL_MS` ở `shared/constants.ts`). Lưu mốc
+--     thời gian cho phép server tự tính "còn hiệu lực hay không" ở mỗi lần đọc, KHÔNG cần cron
+--     dọn dẹp — đúng khuôn mẫu `period_key` của nhiệm vụ (kỳ cũ tự nhiên không khớp).
+--
+--   ⚠️ PIN vẫn chỉ là RÀO UX, KHÔNG phải ranh giới bảo mật (xem chú thích `pin_hash` ở
+--      `001_account.sql`). Ranh giới thật là PHIÊN ĐĂNG NHẬP. Cột này chỉ để giới hạn thời gian
+--      khu vực phụ huynh còn "mở" sau khi nhập PIN — bảo vệ trường hợp bé cầm lại máy.
+--
+-- ✅ `ALTER TABLE ADD COLUMN` là thao tác CHỈ THÊM, nullable, không đụng dữ liệu đang có ⇒ hàng
+--    phiên cũ hợp lệ ngay (cổng đóng, coi như chưa nhập PIN). Cùng văn phong với `008`/`009`.
+-- =============================================================================
+
+ALTER TABLE session ADD COLUMN gate_opened_at TEXT;

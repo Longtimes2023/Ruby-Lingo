@@ -1,0 +1,42 @@
+# RubyLingo — cron cho backup DB (T078)
+#
+# CÀI ĐẶT:
+#   1. Chạy tay MỘT lần cho chắc (từ gốc repo):
+#        ./scripts/backup-db.sh
+#      Phải thấy "✅ BACKUP THÀNH CÔNG" và tệp mới trong ./backups/. Nếu chưa xanh thì ĐỪNG cài cron
+#      — một cron đỏ mỗi đêm là loại lỗi không ai đọc cho tới ngày cần phục hồi.
+#   2. `crontab -e` rồi dán khối dưới (SỬA đường dẫn repo cho khớp VPS).
+#
+# ⚠️⚠️ VÌ SAO PHẢI KHAI `SHELL` VÀ `PATH` — ĐỌC TRƯỚC KHI BỎ:
+#   Cron chạy với **PATH TỐI GIẢN** (thường chỉ `/usr/bin:/bin`) và `cwd` là HOME của user.
+#   Trên nhiều VPS, `docker` nằm ở `/usr/local/bin` ⇒ cron sẽ chết với `docker: not found`,
+#   trong khi chạy tay vẫn xanh ⇒ **lỗi chỉ xuất hiện trong cron, im lặng, và chỉ lộ ra khi bạn
+#   cần bản backup**. Vì vậy: khai `PATH` tường minh, VÀ nếu `docker` vẫn không thấy thì dùng
+#   `DOCKER_BIN=/đường/dẫn/tuyệt/đối/docker`.
+#
+#   (`backup-db.sh` tự tính gốc repo từ vị trí chính nó, KHÔNG phụ thuộc `cwd` — nên `cd` trong
+#    dòng cron là KHÔNG cần, và cũng không nên.)
+
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+# Ghi log để còn biết đêm qua có chạy hay không. Đọc lại vài hôm đầu sau khi cài.
+# 02:30 mỗi ngày. Đổi giờ cho lệch với các cron khác trên VPS.
+30 2 * * * /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+
+# Nếu `docker` KHÔNG nằm trong PATH ở trên, thay dòng cuối bằng dạng này:
+# 30 2 * * * DOCKER_BIN=/usr/local/bin/docker /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+
+# Giữ 14 ngày thay vì 7:
+# 30 2 * * * RETENTION_DAYS=14 /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+
+# Đổi thư mục backup (rất khuyến khích: để ở Ổ/PHÂN VÙNG KHÁC với `./data`):
+# 30 2 * * * BACKUP_DIR=/srv/rubylingo-backups /srv/rubylingo/scripts/backup-db.sh >> /var/log/rubylingo-backup.log 2>&1
+
+# =============================================================================
+# ⚠️ BẢN SAO Ở CÙNG Ổ ĐĨA VỚI `./data` VẪN CÓ THỂ MẤT CÙNG NHAU
+# =============================================================================
+#   Script từ chối để `BACKUP_DIR` nằm TRONG volume `./data` (đó là mức tối thiểu). Nhưng nếu
+#   `./backups` vẫn nằm trên CÙNG ổ đĩa/partition với `./data` thì hỏng ổ đó là mất cả hai.
+#   Việc thật sự đúng là đẩy bản sao RA KHỎI máy (rsync/scp sang máy khác, hoặc `rclone` lên
+#   object storage). Đây là VIỆC THEO DÕI, chưa làm ở T078 — nhưng đừng coi cron này là "đã an toàn".
+# =============================================================================

@@ -1,0 +1,57 @@
+/**
+ * RubyLingo — dựng đường dẫn trong app.
+ *
+ * ⭐ VÌ SAO GOM VÀO MỘT CHỖ, KHÔNG NỐI CHUỖI TẠI CHỖ:
+ *   Ba màn hình (`JourneyMapPage`, `ThemePage`, `FlashcardPage`, `GamePage`) đều dựng URL cho
+ *   cùng vài khái niệm "chủ đề / bài học / bài tập". Nối chuỗi tại chỗ thì đổi hình dạng URL
+ *   (`/flashcards` → `/cards`) trở thành một cuộc đi tìm: thiếu một chỗ là có một link chết,
+ *   và **không có lỗi biên dịch nào báo** — chỉ có bé bấm vào rồi thấy màn hình trắng.
+ *
+ * ⚠️⚠️ `encodeURIComponent` LÀ BẮT BUỘC, KHÔNG PHẢI CHO ĐẸP:
+ *   `lessonId` của dự án CÓ chứa dấu `/` — "at-the-zoo/z1". Dấu `/` nằm trần trong một đoạn
+ *   đường dẫn sẽ bị React Router hiểu thành hai đoạn, và route `/lesson/:lessonId/...` không
+ *   bao giờ khớp. Phải mã hoá thành `at-the-zoo%2Fz1`; `useParams` sẽ tự giải mã lại, nên
+ *   phía đọc không cần làm gì. Cùng lý do đã ghi ở đầu `router.tsx`.
+ */
+
+import type { Exercise } from '@shared/types/content.js';
+
+/** `/theme/:themeId` — danh sách bài của một chủ đề. */
+export function themePath(themeId: string): string {
+  return `/theme/${encodeURIComponent(themeId)}`;
+}
+
+/** `/lesson/:lessonId/flashcards` — màn hình học thẻ từ. */
+export function flashcardsPath(lessonId: string): string {
+  return `/lesson/${encodeURIComponent(lessonId)}/flashcards`;
+}
+
+/** `/lesson/:lessonId/game/:exerciseSlug` — màn hình chơi một bài tập cụ thể. */
+export function gamePath(lessonId: string, exerciseSlug: string): string {
+  return `/lesson/${encodeURIComponent(lessonId)}/game/${encodeURIComponent(exerciseSlug)}`;
+}
+
+/**
+ * Phần đuôi của `exercise.id` dùng làm đoạn cuối trong URL game.
+ *
+ * ⚠️ Nhận `Pick<Exercise, 'id' | 'lessonId'>` chứ KHÔNG nhận cả `Exercise`: hàm chỉ đọc hai
+ *   trường đó, nên kiểu hẹp hơn vừa nói đúng sự thật, vừa cho test dựng được dữ liệu tối thiểu
+ *   mà không phải bịa ra cả một bài tập đầy đủ (`as never` — mùi code che mất lỗi thật).
+ *
+ * ⚠️ VÌ SAO KHÔNG ĐƯA CẢ `exercise.id` VÀO URL:
+ *   `exercise.id` là `"at-the-zoo/z1/listen-tap"` — đã chứa `lessonId` ở trong. URL vốn đã có
+ *   `/lesson/:lessonId/`, nên đưa cả id vào sẽ thành
+ *   `/lesson/at-the-zoo%2Fz1/game/at-the-zoo%2Fz1%2Flisten-tap`: `lessonId` lặp hai lần và URL
+ *   đầy `%2F` không ai đọc được. Xem ghi chú dài ở đầu `GamePage.tsx`.
+ *
+ * ⚠️ Có nhánh dự phòng vì `exercise.id` là DỮ LIỆU, không phải hằng số: schema quy ước
+ *   `"{lessonId}/{slug}"`, nhưng nếu một file nội dung viết sai quy ước thì hàm này vẫn phải
+ *   trả về một chuỗi dùng được (đoạn cuối cùng) thay vì ném lỗi làm trắng cả trang chủ đề.
+ */
+export function exerciseSlug(exercise: Pick<Exercise, 'id' | 'lessonId'>): string {
+  const prefix = `${exercise.lessonId}/`;
+  if (exercise.id.startsWith(prefix)) return exercise.id.slice(prefix.length);
+
+  const segments = exercise.id.split('/');
+  return segments[segments.length - 1] ?? exercise.id;
+}

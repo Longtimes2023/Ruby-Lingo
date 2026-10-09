@@ -1,0 +1,24 @@
+{
+  "note": "Huy hiệu = SƯU TẦM, không tiêu được. Server trao theo sự kiện. criteria.kind phải khớp union BadgeCriteria trong shared/types/reward.ts. QUY TẮC ICON: mỗi huy hiệu phải có emoji KHÁC với tiền tệ (⭐ 🌰), với mọi huy hiệu khác, và với mọi sticker — bé nhìn hình phải phân biệt được ngay đang ở bộ sưu tập nào. Huy hiệu gắn với cấp XP (badge-forest-friend, badge-explorer, badge-guide, badge-collector, badge-protector, badge-legend) dùng ĐÚNG icon của cấp đó để bé nhận ra ngay.",
+  "badges": [
+    { "id": "badge-first-step", "name_vi": "Bước đầu tiên", "icon": "🌱", "description_vi": "Hoàn thành bài học đầu tiên", "criteria": { "kind": "complete_lesson", "lessonId": "at-the-zoo/z1" }, "phase": "mvp" },
+    { "id": "badge-zoo-friend", "name_vi": "Bạn của sở thú", "icon": "🦁", "description_vi": "Hoàn thành cả 3 bài ở Sở thú", "criteria": { "kind": "complete_theme", "themeId": "at-the-zoo" }, "phase": "mvp" },
+    { "id": "badge-good-ear", "name_vi": "Tai thính", "icon": "👂", "description_vi": "Chơi giỏi game Nghe & Chạm 20 lần", "criteria": { "kind": "win_game", "gameType": "listen_tap", "count": 20 }, "phase": "mvp" },
+    { "id": "badge-letter-writer", "name_vi": "Thợ viết chữ", "icon": "✏️", "description_vi": "Điền đúng chữ cái 20 lần", "criteria": { "kind": "win_game", "gameType": "missing_letter", "count": 20 }, "phase": "mvp" },
+    { "id": "badge-streak-7", "name_vi": "Bền bỉ", "icon": "🔥", "description_vi": "Học 7 ngày liên tiếp", "criteria": { "kind": "streak_days", "days": 7 }, "phase": "mvp" },
+    { "id": "badge-perfect", "name_vi": "Hoàn hảo", "icon": "🏆", "description_vi": "Đạt 3 sao ở 3 bài", "criteria": { "kind": "perfect_lessons", "count": 3 }, "phase": "mvp" },
+
+    { "id": "badge-forest-friend", "name_vi": "Người bạn của thú rừng", "icon": "🌿", "description_vi": "Đạt cấp 2", "criteria": { "kind": "reach_level", "level": 2 }, "phase": "p1" },
+    { "id": "badge-zoo-keeper", "name_vi": "Người chăm vườn thú", "icon": "🪣", "description_vi": "Kiếm được 1000 Sao", "criteria": { "kind": "earn_currency", "currency": "stars", "amount": 1000 }, "phase": "p1" },
+    { "id": "badge-diligent", "name_vi": "Sóc chăm chỉ", "icon": "🐿️", "description_vi": "Kiếm được 50 Hạt dẻ", "criteria": { "kind": "earn_currency", "currency": "acorns", "amount": 50 }, "phase": "p1" },
+    { "id": "badge-explorer", "name_vi": "Nhà thám hiểm", "icon": "🧺", "description_vi": "Đạt cấp 3", "criteria": { "kind": "reach_level", "level": 3 }, "phase": "p1" },
+    { "id": "badge-memory-master", "name_vi": "Trí nhớ siêu phàm", "icon": "🃏", "description_vi": "Thắng 10 lượt Lật thẻ", "criteria": { "kind": "win_game", "gameType": "memory_match", "count": 10 }, "phase": "p1" },
+    { "id": "badge-link-king", "name_vi": "Vua nối", "icon": "🔗", "description_vi": "Nối đúng 50 cặp từ với hình", "criteria": { "kind": "win_game", "gameType": "word_picture", "count": 50 }, "phase": "p1" },
+    { "id": "badge-body-explorer", "name_vi": "Hiểu cơ thể mình", "icon": "🧍", "description_vi": "Hoàn thành chủ đề Cơ thể của bé", "criteria": { "kind": "complete_theme", "themeId": "my-body" }, "phase": "p1" },
+
+    { "id": "badge-guide", "name_vi": "Người dẫn đường", "icon": "🧭", "description_vi": "Đạt cấp 4", "criteria": { "kind": "reach_level", "level": 4 }, "phase": "p2" },
+    { "id": "badge-collector", "name_vi": "Nhà sưu tầm nhí", "icon": "🔍", "description_vi": "Đạt cấp 5", "criteria": { "kind": "reach_level", "level": 5 }, "phase": "p2" },
+    { "id": "badge-protector", "name_vi": "Người bảo vệ vườn thú", "icon": "🛡️", "description_vi": "Đạt cấp 6", "criteria": { "kind": "reach_level", "level": 6 }, "phase": "p2" },
+    { "id": "badge-legend", "name_vi": "Huyền thoại Vườn Thú", "icon": "🌟", "description_vi": "Đạt cấp 7", "criteria": { "kind": "reach_level", "level": 7 }, "phase": "p2" }
+  ]
+}

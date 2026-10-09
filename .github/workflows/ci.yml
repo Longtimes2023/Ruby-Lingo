@@ -1,0 +1,83 @@
+# =============================================================================
+# RubyLingo — CI (GitHub Actions). Cổng kiểm chạy trên MỌI push vào `main` và mọi pull_request.
+# =============================================================================
+#
+# ⭐ VÌ SAO HAI JOB TÁCH RỜI (không gộp làm một):
+#   • `ci`           — cổng kiểm của DỰ ÁN, y hệt `npm run ci` mà lập trình viên chạy ở máy
+#                      (typecheck + lint + validate:content + gen + test). Đây là thứ chặn code sai.
+#   • `docker-image` — cổng kiểm của ĐƯỜNG DEPLOY: `docker build` phải xanh TRÊN CI, không chỉ
+#                      trên VPS. Nhờ nó, lỗi `COPY failed: file not found` (thiếu tệp trong build
+#                      context) lộ ra ở PR thay vì để lộ lúc deploy — đúng lúc người dùng đang chờ.
+#
+# ⚠️⚠️ VÌ SAO KHÔNG CÀI python3/make/g++ CHO MODULE NATIVE:
+#   `better-sqlite3` và `@node-rs/argon2` là module NATIVE. `ubuntu-latest` dùng glibc, và hai gói
+#   này phát hành bản dựng sẵn cho linux-x64-gnu ⇒ `npm ci` tải bản prebuilt về là chạy, KHÔNG cần
+#   biên dịch. Thêm bước cài toolchain sẽ (a) làm CI chậm, và (b) tệ hơn — che mất một lỗi thật:
+#   nếu prebuilt đổi, ta MUỐN thấy nó đỏ ĐỂ BIẾT MÀ XỬ LÝ, chứ không phải để nó tự build lại trong
+#   im lặng. ⇒ Cố ý KHÔNG thêm bước cài toolchain.
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Huỷ run CŨ khi có commit MỚI trên cùng một nhánh. Không có mục này, một run cũ "xanh" có thể
+# làm bạn tưởng commit mới cũng xanh, trong khi run mới còn đang xếp hàng.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Cổng kiểm dự án (npm run ci)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node 20 (có cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # `npm ci` (không phải `npm install`): cài ĐÚNG theo package-lock.json, tất định, và là
+      # điều kiện để bước canh lệch bên dưới nói được điều gì đó về môi trường thật.
+      - name: Cài phụ thuộc
+        run: npm ci
+
+      - name: Chạy cổng kiểm của dự án
+        run: npm run ci
+
+      # ⚠️ CANH LỆCH TỆP SINH TỰ ĐỘNG — và vì sao bước này KHÔNG đỏ giả:
+      #   `npm run ci` chạy `gen:content-index` và `gen:theme-colors`. Hai script đó là NGUỒN của
+      #   `shared/content/content-index.json` và `src/styles/tokens.css`.
+      #   Đã ĐỌC CẢ HAI script để kiểm: đầu ra của chúng KHÔNG chứa dấu thời gian / ngày / hash
+      #   ngẫu nhiên — chúng sắp khoá theo alphabet và tô màu bằng công thức CIE L* thuần tuý.
+      #   ⇒ Chạy lại trên máy sạch cho ra tệp Y HỆT ⇒ `git diff` chỉ đỏ khi CÓ thật sự lệch.
+      #   Đây là lớp canh THỨ HAI (lớp thứ nhất nằm trong chính hai generator, chế độ kiểm mặc
+      #   định đã `exit 1` khi lệch): nó bắt trường hợp ai đó sửa TAY tệp sinh ra, hoặc một bước
+      #   khác trong pipeline lỡ GHI ĐÈ lên tệp đang được theo dõi.
+      - name: Canh lệch tệp sinh tự động
+        run: git diff --exit-code -- shared/content/content-index.json src/styles/tokens.css
+
+  docker-image:
+    name: Build image (bảo vệ đường deploy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      # ⚠️ CHỈ BUILD. Cố ý KHÔNG thêm: `.env` (build không cần — `NODE_ENV` do compose đặt lúc
+      #    chạy), `npm run ci` (đã có job `ci` ở trên, chạy lại là nhân đôi thời gian), và
+      #    `docker compose up` (job này không chạy container — nó không kiểm app, mà kiểm IMAGE).
+      #   Một mình `docker build` đã bắt được lỗi tốn kém nhất của đường deploy: thiếu tệp trong
+      #   build context (`COPY failed: file not found`). Và bước TỰ KIỂM số lượng migration trong
+      #   Dockerfile (`RUN test "$(ls -1 ./dist-server/migrations/*.sql | wc -l)" -eq "$(cat
+      #   /tmp/migrations-count.txt)"`) chạy NGAY Ở ĐÂY ⇒ image thiếu `.sql` đỏ TRÊN CI, không
+      #   phải đỏ lúc deploy trên VPS.
+      - name: docker build
+        run: docker build -t rubylingo:ci .

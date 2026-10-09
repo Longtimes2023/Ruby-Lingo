@@ -1,0 +1,1575 @@
+{
+  "note": "SINH TỰ ĐỘNG bởi scripts/gen-content-index.ts từ src/data/levels/**. KHÔNG sửa tay — sửa src/data/ rồi chạy `npm run gen:content-index -- --apply`.",
+  "levels": [
+    {
+      "id": "starters",
+      "themeIds": [
+        "at-the-zoo",
+        "my-body",
+        "at-the-clothes-shop",
+        "my-friends-birthday",
+        "my-favourite-food",
+        "at-home",
+        "at-school",
+        "at-the-beach",
+        "my-street",
+        "alphabet",
+        "numbers-1-20"
+      ]
+    }
+  ],
+  "themes": [
+    {
+      "id": "at-the-zoo",
+      "levelId": "starters",
+      "index": 1,
+      "lessonIds": [
+        "at-the-zoo/z1",
+        "at-the-zoo/z2",
+        "at-the-zoo/z3"
+      ],
+      "wordCount": 21,
+      "hasGames": true,
+      "unlock": {
+        "type": "always"
+      }
+    },
+    {
+      "id": "my-body",
+      "levelId": "starters",
+      "index": 2,
+      "lessonIds": [
+        "my-body/l1",
+        "my-body/l2"
+      ],
+      "wordCount": 13,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "at-the-clothes-shop",
+      "levelId": "starters",
+      "index": 3,
+      "lessonIds": [
+        "at-the-clothes-shop/l1",
+        "at-the-clothes-shop/l2",
+        "at-the-clothes-shop/l3",
+        "at-the-clothes-shop/l4",
+        "at-the-clothes-shop/l5"
+      ],
+      "wordCount": 27,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "my-friends-birthday",
+      "levelId": "starters",
+      "index": 4,
+      "lessonIds": [
+        "my-friends-birthday/l1",
+        "my-friends-birthday/l2",
+        "my-friends-birthday/l3",
+        "my-friends-birthday/l4"
+      ],
+      "wordCount": 22,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "my-favourite-food",
+      "levelId": "starters",
+      "index": 5,
+      "lessonIds": [
+        "my-favourite-food/l1",
+        "my-favourite-food/l2",
+        "my-favourite-food/l3",
+        "my-favourite-food/l4",
+        "my-favourite-food/l5",
+        "my-favourite-food/l6"
+      ],
+      "wordCount": 39,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "at-home",
+      "levelId": "starters",
+      "index": 6,
+      "lessonIds": [
+        "at-home/h1",
+        "at-home/h2",
+        "at-home/h3",
+        "at-home/h4",
+        "at-home/h5"
+      ],
+      "wordCount": 34,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "at-school",
+      "levelId": "starters",
+      "index": 7,
+      "lessonIds": [
+        "at-school/s1",
+        "at-school/s2",
+        "at-school/s3",
+        "at-school/s4"
+      ],
+      "wordCount": 29,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "at-the-beach",
+      "levelId": "starters",
+      "index": 8,
+      "lessonIds": [
+        "at-the-beach/b1",
+        "at-the-beach/b2",
+        "at-the-beach/b3",
+        "at-the-beach/b4"
+      ],
+      "wordCount": 24,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "my-street",
+      "levelId": "starters",
+      "index": 9,
+      "lessonIds": [
+        "my-street/m1",
+        "my-street/m2",
+        "my-street/m3"
+      ],
+      "wordCount": 20,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "alphabet",
+      "levelId": "starters",
+      "index": 10,
+      "lessonIds": [
+        "alphabet/a1",
+        "alphabet/a2",
+        "alphabet/a3",
+        "alphabet/a4"
+      ],
+      "wordCount": 26,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    },
+    {
+      "id": "numbers-1-20",
+      "levelId": "starters",
+      "index": 11,
+      "lessonIds": [
+        "numbers-1-20/n1",
+        "numbers-1-20/n2",
+        "numbers-1-20/n3"
+      ],
+      "wordCount": 20,
+      "hasGames": false,
+      "unlock": {
+        "type": "coming_soon"
+      }
+    }
+  ],
+  "words": [
+    {
+      "id": "starters.a",
+      "en": "A",
+      "vi": "chữ A"
+    },
+    {
+      "id": "starters.afternoon",
+      "en": "afternoon",
+      "vi": "buổi chiều"
+    },
+    {
+      "id": "starters.alien",
+      "en": "alien",
+      "vi": "người ngoài hành tinh"
+    },
+    {
+      "id": "starters.alphabet",
+      "en": "alphabet",
+      "vi": "bảng chữ cái"
+    },
+    {
+      "id": "starters.angry",
+      "en": "angry",
+      "vi": "tức giận"
+    },
+    {
+      "id": "starters.animal",
+      "en": "animal",
+      "vi": "con vật"
+    },
+    {
+      "id": "starters.apartment",
+      "en": "apartment",
+      "vi": "căn hộ"
+    },
+    {
+      "id": "starters.apple",
+      "en": "apple",
+      "vi": "quả táo"
+    },
+    {
+      "id": "starters.arm",
+      "en": "arm",
+      "vi": "cánh tay"
+    },
+    {
+      "id": "starters.armchair",
+      "en": "armchair",
+      "vi": "ghế bành"
+    },
+    {
+      "id": "starters.b",
+      "en": "B",
+      "vi": "chữ B"
+    },
+    {
+      "id": "starters.baby",
+      "en": "baby",
+      "vi": "em bé"
+    },
+    {
+      "id": "starters.badminton",
+      "en": "badminton",
+      "vi": "cầu lông"
+    },
+    {
+      "id": "starters.bag",
+      "en": "bag",
+      "vi": "cái túi"
+    },
+    {
+      "id": "starters.balloon",
+      "en": "balloon",
+      "vi": "bóng bay"
+    },
+    {
+      "id": "starters.banana",
+      "en": "banana",
+      "vi": "quả chuối"
+    },
+    {
+      "id": "starters.baseball",
+      "en": "baseball",
+      "vi": "bóng chày"
+    },
+    {
+      "id": "starters.basketball",
+      "en": "basketball",
+      "vi": "bóng rổ"
+    },
+    {
+      "id": "starters.bath",
+      "en": "bath",
+      "vi": "bồn tắm"
+    },
+    {
+      "id": "starters.bathroom",
+      "en": "bathroom",
+      "vi": "phòng tắm"
+    },
+    {
+      "id": "starters.beans",
+      "en": "beans",
+      "vi": "hạt đậu"
+    },
+    {
+      "id": "starters.bed",
+      "en": "bed",
+      "vi": "cái giường"
+    },
+    {
+      "id": "starters.bedroom",
+      "en": "bedroom",
+      "vi": "phòng ngủ"
+    },
+    {
+      "id": "starters.bird",
+      "en": "bird",
+      "vi": "con chim"
+    },
+    {
+      "id": "starters.black",
+      "en": "black",
+      "vi": "màu đen"
+    },
+    {
+      "id": "starters.blue",
+      "en": "blue",
+      "vi": "màu xanh dương"
+    },
+    {
+      "id": "starters.board",
+      "en": "board",
+      "vi": "cái bảng"
+    },
+    {
+      "id": "starters.boat",
+      "en": "boat",
+      "vi": "con thuyền"
+    },
+    {
+      "id": "starters.body",
+      "en": "body",
+      "vi": "cơ thể"
+    },
+    {
+      "id": "starters.book",
+      "en": "book",
+      "vi": "quyển sách"
+    },
+    {
+      "id": "starters.bookcase",
+      "en": "bookcase",
+      "vi": "tủ sách"
+    },
+    {
+      "id": "starters.bookshop",
+      "en": "bookshop",
+      "vi": "hiệu sách"
+    },
+    {
+      "id": "starters.box",
+      "en": "box",
+      "vi": "cái hộp"
+    },
+    {
+      "id": "starters.boy",
+      "en": "boy",
+      "vi": "bé trai"
+    },
+    {
+      "id": "starters.bread",
+      "en": "bread",
+      "vi": "bánh mì"
+    },
+    {
+      "id": "starters.breakfast",
+      "en": "breakfast",
+      "vi": "bữa sáng"
+    },
+    {
+      "id": "starters.brother",
+      "en": "brother",
+      "vi": "anh em trai"
+    },
+    {
+      "id": "starters.brown",
+      "en": "brown",
+      "vi": "màu nâu"
+    },
+    {
+      "id": "starters.burger",
+      "en": "burger",
+      "vi": "bánh kẹp"
+    },
+    {
+      "id": "starters.bus",
+      "en": "bus",
+      "vi": "xe buýt"
+    },
+    {
+      "id": "starters.c",
+      "en": "C",
+      "vi": "chữ C"
+    },
+    {
+      "id": "starters.cake",
+      "en": "cake",
+      "vi": "bánh ngọt"
+    },
+    {
+      "id": "starters.camera",
+      "en": "camera",
+      "vi": "máy ảnh"
+    },
+    {
+      "id": "starters.candy",
+      "en": "candy",
+      "vi": "kẹo"
+    },
+    {
+      "id": "starters.carrot",
+      "en": "carrot",
+      "vi": "củ cà rốt"
+    },
+    {
+      "id": "starters.cat",
+      "en": "cat",
+      "vi": "con mèo"
+    },
+    {
+      "id": "starters.catch",
+      "en": "catch",
+      "vi": "bắt"
+    },
+    {
+      "id": "starters.chair",
+      "en": "chair",
+      "vi": "cái ghế"
+    },
+    {
+      "id": "starters.chicken",
+      "en": "chicken",
+      "vi": "con gà"
+    },
+    {
+      "id": "starters.chicken-meat",
+      "en": "chicken",
+      "vi": "thịt gà"
+    },
+    {
+      "id": "starters.child",
+      "en": "child",
+      "vi": "đứa trẻ"
+    },
+    {
+      "id": "starters.chips",
+      "en": "chips",
+      "vi": "khoai tây chiên"
+    },
+    {
+      "id": "starters.chocolate",
+      "en": "chocolate",
+      "vi": "sô-cô-la"
+    },
+    {
+      "id": "starters.class",
+      "en": "class",
+      "vi": "lớp học"
+    },
+    {
+      "id": "starters.classroom",
+      "en": "classroom",
+      "vi": "phòng học"
+    },
+    {
+      "id": "starters.clock",
+      "en": "clock",
+      "vi": "cái đồng hồ"
+    },
+    {
+      "id": "starters.close",
+      "en": "close",
+      "vi": "đóng lại"
+    },
+    {
+      "id": "starters.clothes",
+      "en": "clothes",
+      "vi": "quần áo"
+    },
+    {
+      "id": "starters.coconut",
+      "en": "coconut",
+      "vi": "quả dừa"
+    },
+    {
+      "id": "starters.computer",
+      "en": "computer",
+      "vi": "máy tính"
+    },
+    {
+      "id": "starters.cousin",
+      "en": "cousin",
+      "vi": "anh chị em họ"
+    },
+    {
+      "id": "starters.cow",
+      "en": "cow",
+      "vi": "con bò"
+    },
+    {
+      "id": "starters.crocodile",
+      "en": "crocodile",
+      "vi": "cá sấu"
+    },
+    {
+      "id": "starters.cross",
+      "en": "cross",
+      "vi": "dấu gạch chéo"
+    },
+    {
+      "id": "starters.cupboard",
+      "en": "cupboard",
+      "vi": "cái tủ"
+    },
+    {
+      "id": "starters.d",
+      "en": "D",
+      "vi": "chữ D"
+    },
+    {
+      "id": "starters.dad",
+      "en": "dad",
+      "vi": "bố"
+    },
+    {
+      "id": "starters.day",
+      "en": "day",
+      "vi": "ban ngày"
+    },
+    {
+      "id": "starters.desk",
+      "en": "desk",
+      "vi": "bàn học"
+    },
+    {
+      "id": "starters.dining-room",
+      "en": "dining room",
+      "vi": "phòng ăn"
+    },
+    {
+      "id": "starters.dinner",
+      "en": "dinner",
+      "vi": "bữa tối"
+    },
+    {
+      "id": "starters.dog",
+      "en": "dog",
+      "vi": "con chó"
+    },
+    {
+      "id": "starters.doll",
+      "en": "doll",
+      "vi": "búp bê"
+    },
+    {
+      "id": "starters.door",
+      "en": "door",
+      "vi": "cửa ra vào"
+    },
+    {
+      "id": "starters.draw",
+      "en": "draw",
+      "vi": "vẽ"
+    },
+    {
+      "id": "starters.drawing",
+      "en": "drawing",
+      "vi": "bức vẽ"
+    },
+    {
+      "id": "starters.dress",
+      "en": "dress",
+      "vi": "váy liền"
+    },
+    {
+      "id": "starters.drink",
+      "en": "drink",
+      "vi": "đồ uống"
+    },
+    {
+      "id": "starters.drive",
+      "en": "drive",
+      "vi": "lái xe"
+    },
+    {
+      "id": "starters.duck",
+      "en": "duck",
+      "vi": "con vịt"
+    },
+    {
+      "id": "starters.e",
+      "en": "E",
+      "vi": "chữ E"
+    },
+    {
+      "id": "starters.ear",
+      "en": "ear",
+      "vi": "cái tai"
+    },
+    {
+      "id": "starters.egg",
+      "en": "egg",
+      "vi": "quả trứng"
+    },
+    {
+      "id": "starters.eight",
+      "en": "eight",
+      "vi": "tám"
+    },
+    {
+      "id": "starters.eighteen",
+      "en": "eighteen",
+      "vi": "mười tám"
+    },
+    {
+      "id": "starters.elephant",
+      "en": "elephant",
+      "vi": "con voi"
+    },
+    {
+      "id": "starters.eleven",
+      "en": "eleven",
+      "vi": "mười một"
+    },
+    {
+      "id": "starters.eraser",
+      "en": "eraser",
+      "vi": "cục tẩy"
+    },
+    {
+      "id": "starters.evening",
+      "en": "evening",
+      "vi": "buổi tối"
+    },
+    {
+      "id": "starters.eye",
+      "en": "eye",
+      "vi": "con mắt"
+    },
+    {
+      "id": "starters.f",
+      "en": "F",
+      "vi": "chữ F"
+    },
+    {
+      "id": "starters.face",
+      "en": "face",
+      "vi": "khuôn mặt"
+    },
+    {
+      "id": "starters.family",
+      "en": "family",
+      "vi": "gia đình"
+    },
+    {
+      "id": "starters.fifteen",
+      "en": "fifteen",
+      "vi": "mười lăm"
+    },
+    {
+      "id": "starters.fish",
+      "en": "fish",
+      "vi": "cá"
+    },
+    {
+      "id": "starters.fishing",
+      "en": "fishing",
+      "vi": "câu cá"
+    },
+    {
+      "id": "starters.five",
+      "en": "five",
+      "vi": "năm"
+    },
+    {
+      "id": "starters.floor",
+      "en": "floor",
+      "vi": "sàn nhà"
+    },
+    {
+      "id": "starters.flower",
+      "en": "flower",
+      "vi": "bông hoa"
+    },
+    {
+      "id": "starters.fly",
+      "en": "fly",
+      "vi": "bay"
+    },
+    {
+      "id": "starters.foot",
+      "en": "foot",
+      "vi": "bàn chân"
+    },
+    {
+      "id": "starters.football",
+      "en": "football",
+      "vi": "bóng đá"
+    },
+    {
+      "id": "starters.four",
+      "en": "four",
+      "vi": "bốn"
+    },
+    {
+      "id": "starters.fourteen",
+      "en": "fourteen",
+      "vi": "mười bốn"
+    },
+    {
+      "id": "starters.frog",
+      "en": "frog",
+      "vi": "con ếch"
+    },
+    {
+      "id": "starters.fruit",
+      "en": "fruit",
+      "vi": "trái cây"
+    },
+    {
+      "id": "starters.g",
+      "en": "G",
+      "vi": "chữ G"
+    },
+    {
+      "id": "starters.garden",
+      "en": "garden",
+      "vi": "khu vườn"
+    },
+    {
+      "id": "starters.giraffe",
+      "en": "giraffe",
+      "vi": "hươu cao cổ"
+    },
+    {
+      "id": "starters.girl",
+      "en": "girl",
+      "vi": "bé gái"
+    },
+    {
+      "id": "starters.glasses",
+      "en": "glasses",
+      "vi": "kính"
+    },
+    {
+      "id": "starters.go",
+      "en": "go",
+      "vi": "đi"
+    },
+    {
+      "id": "starters.goat",
+      "en": "goat",
+      "vi": "con dê"
+    },
+    {
+      "id": "starters.grandfather",
+      "en": "grandfather",
+      "vi": "ông"
+    },
+    {
+      "id": "starters.grandmother",
+      "en": "grandmother",
+      "vi": "bà"
+    },
+    {
+      "id": "starters.grapes",
+      "en": "grapes",
+      "vi": "chùm nho"
+    },
+    {
+      "id": "starters.green",
+      "en": "green",
+      "vi": "màu xanh lá"
+    },
+    {
+      "id": "starters.grey",
+      "en": "grey",
+      "vi": "màu xám"
+    },
+    {
+      "id": "starters.guitar",
+      "en": "guitar",
+      "vi": "đàn ghi-ta"
+    },
+    {
+      "id": "starters.h",
+      "en": "H",
+      "vi": "chữ H"
+    },
+    {
+      "id": "starters.hair",
+      "en": "hair",
+      "vi": "mái tóc"
+    },
+    {
+      "id": "starters.hall",
+      "en": "hall",
+      "vi": "hành lang"
+    },
+    {
+      "id": "starters.hand",
+      "en": "hand",
+      "vi": "bàn tay"
+    },
+    {
+      "id": "starters.handbag",
+      "en": "handbag",
+      "vi": "túi xách"
+    },
+    {
+      "id": "starters.hat",
+      "en": "hat",
+      "vi": "cái mũ"
+    },
+    {
+      "id": "starters.head",
+      "en": "head",
+      "vi": "cái đầu"
+    },
+    {
+      "id": "starters.helicopter",
+      "en": "helicopter",
+      "vi": "trực thăng"
+    },
+    {
+      "id": "starters.hippo",
+      "en": "hippo",
+      "vi": "hà mã"
+    },
+    {
+      "id": "starters.hit",
+      "en": "hit",
+      "vi": "đánh"
+    },
+    {
+      "id": "starters.hockey",
+      "en": "hockey",
+      "vi": "khúc côn cầu"
+    },
+    {
+      "id": "starters.horse",
+      "en": "horse",
+      "vi": "con ngựa"
+    },
+    {
+      "id": "starters.house",
+      "en": "house",
+      "vi": "ngôi nhà"
+    },
+    {
+      "id": "starters.i",
+      "en": "I",
+      "vi": "chữ I"
+    },
+    {
+      "id": "starters.ice-cream",
+      "en": "ice cream",
+      "vi": "kem"
+    },
+    {
+      "id": "starters.j",
+      "en": "J",
+      "vi": "chữ J"
+    },
+    {
+      "id": "starters.jacket",
+      "en": "jacket",
+      "vi": "áo khoác"
+    },
+    {
+      "id": "starters.jeans",
+      "en": "jeans",
+      "vi": "quần bò"
+    },
+    {
+      "id": "starters.juice",
+      "en": "juice",
+      "vi": "nước ép"
+    },
+    {
+      "id": "starters.jump",
+      "en": "jump",
+      "vi": "nhảy"
+    },
+    {
+      "id": "starters.k",
+      "en": "K",
+      "vi": "chữ K"
+    },
+    {
+      "id": "starters.keyboard",
+      "en": "keyboard",
+      "vi": "bàn phím"
+    },
+    {
+      "id": "starters.kick",
+      "en": "kick",
+      "vi": "đá"
+    },
+    {
+      "id": "starters.kitchen",
+      "en": "kitchen",
+      "vi": "nhà bếp"
+    },
+    {
+      "id": "starters.kite",
+      "en": "kite",
+      "vi": "cái diều"
+    },
+    {
+      "id": "starters.l",
+      "en": "L",
+      "vi": "chữ L"
+    },
+    {
+      "id": "starters.lamp",
+      "en": "lamp",
+      "vi": "đèn bàn"
+    },
+    {
+      "id": "starters.leg",
+      "en": "leg",
+      "vi": "cái chân"
+    },
+    {
+      "id": "starters.lemon",
+      "en": "lemon",
+      "vi": "quả chanh vàng"
+    },
+    {
+      "id": "starters.lemonade",
+      "en": "lemonade",
+      "vi": "nước chanh"
+    },
+    {
+      "id": "starters.letter",
+      "en": "letter",
+      "vi": "chữ cái"
+    },
+    {
+      "id": "starters.lime",
+      "en": "lime",
+      "vi": "quả chanh xanh"
+    },
+    {
+      "id": "starters.line",
+      "en": "line",
+      "vi": "đường kẻ"
+    },
+    {
+      "id": "starters.living-room",
+      "en": "living room",
+      "vi": "phòng khách"
+    },
+    {
+      "id": "starters.lizard",
+      "en": "lizard",
+      "vi": "con thằn lằn"
+    },
+    {
+      "id": "starters.lorry",
+      "en": "lorry",
+      "vi": "xe tải"
+    },
+    {
+      "id": "starters.lunch",
+      "en": "lunch",
+      "vi": "bữa trưa"
+    },
+    {
+      "id": "starters.m",
+      "en": "M",
+      "vi": "chữ M"
+    },
+    {
+      "id": "starters.man",
+      "en": "man",
+      "vi": "người đàn ông"
+    },
+    {
+      "id": "starters.mango",
+      "en": "mango",
+      "vi": "quả xoài"
+    },
+    {
+      "id": "starters.meat",
+      "en": "meat",
+      "vi": "thịt"
+    },
+    {
+      "id": "starters.milk",
+      "en": "milk",
+      "vi": "sữa"
+    },
+    {
+      "id": "starters.mirror",
+      "en": "mirror",
+      "vi": "cái gương"
+    },
+    {
+      "id": "starters.miss",
+      "en": "Miss",
+      "vi": "cô"
+    },
+    {
+      "id": "starters.monkey",
+      "en": "monkey",
+      "vi": "con khỉ"
+    },
+    {
+      "id": "starters.monster",
+      "en": "monster",
+      "vi": "con quái vật"
+    },
+    {
+      "id": "starters.morning",
+      "en": "morning",
+      "vi": "buổi sáng"
+    },
+    {
+      "id": "starters.motorbike",
+      "en": "motorbike",
+      "vi": "xe máy"
+    },
+    {
+      "id": "starters.mouse",
+      "en": "mouse",
+      "vi": "con chuột"
+    },
+    {
+      "id": "starters.mouse-computer",
+      "en": "mouse",
+      "vi": "chuột máy tính"
+    },
+    {
+      "id": "starters.mouth",
+      "en": "mouth",
+      "vi": "cái miệng"
+    },
+    {
+      "id": "starters.mr",
+      "en": "Mr",
+      "vi": "thầy"
+    },
+    {
+      "id": "starters.mrs",
+      "en": "Mrs",
+      "vi": "bà"
+    },
+    {
+      "id": "starters.mum",
+      "en": "mum",
+      "vi": "mẹ"
+    },
+    {
+      "id": "starters.music",
+      "en": "music",
+      "vi": "âm nhạc"
+    },
+    {
+      "id": "starters.n",
+      "en": "N",
+      "vi": "chữ N"
+    },
+    {
+      "id": "starters.nine",
+      "en": "nine",
+      "vi": "chín"
+    },
+    {
+      "id": "starters.nineteen",
+      "en": "nineteen",
+      "vi": "mười chín"
+    },
+    {
+      "id": "starters.nose",
+      "en": "nose",
+      "vi": "cái mũi"
+    },
+    {
+      "id": "starters.o",
+      "en": "O",
+      "vi": "chữ O"
+    },
+    {
+      "id": "starters.one",
+      "en": "one",
+      "vi": "một"
+    },
+    {
+      "id": "starters.onion",
+      "en": "onion",
+      "vi": "củ hành"
+    },
+    {
+      "id": "starters.open",
+      "en": "open",
+      "vi": "mở ra"
+    },
+    {
+      "id": "starters.orange-adj",
+      "en": "orange",
+      "vi": "màu cam"
+    },
+    {
+      "id": "starters.orange-n",
+      "en": "orange",
+      "vi": "quả cam"
+    },
+    {
+      "id": "starters.p",
+      "en": "P",
+      "vi": "chữ P"
+    },
+    {
+      "id": "starters.page",
+      "en": "page",
+      "vi": "trang sách"
+    },
+    {
+      "id": "starters.paint",
+      "en": "paint",
+      "vi": "vẽ tranh"
+    },
+    {
+      "id": "starters.painting",
+      "en": "painting",
+      "vi": "bức tranh vẽ"
+    },
+    {
+      "id": "starters.park",
+      "en": "park",
+      "vi": "công viên"
+    },
+    {
+      "id": "starters.part",
+      "en": "part",
+      "vi": "phần"
+    },
+    {
+      "id": "starters.pear",
+      "en": "pear",
+      "vi": "quả lê"
+    },
+    {
+      "id": "starters.peas",
+      "en": "peas",
+      "vi": "đậu Hà Lan"
+    },
+    {
+      "id": "starters.pen",
+      "en": "pen",
+      "vi": "bút mực"
+    },
+    {
+      "id": "starters.pencil",
+      "en": "pencil",
+      "vi": "bút chì"
+    },
+    {
+      "id": "starters.person",
+      "en": "person",
+      "vi": "người"
+    },
+    {
+      "id": "starters.phone",
+      "en": "phone",
+      "vi": "điện thoại"
+    },
+    {
+      "id": "starters.piano",
+      "en": "piano",
+      "vi": "đàn pi-a-nô"
+    },
+    {
+      "id": "starters.picture",
+      "en": "picture",
+      "vi": "bức tranh"
+    },
+    {
+      "id": "starters.pineapple",
+      "en": "pineapple",
+      "vi": "quả dứa"
+    },
+    {
+      "id": "starters.pink",
+      "en": "pink",
+      "vi": "màu hồng"
+    },
+    {
+      "id": "starters.potato",
+      "en": "potato",
+      "vi": "củ khoai tây"
+    },
+    {
+      "id": "starters.purple",
+      "en": "purple",
+      "vi": "màu tím"
+    },
+    {
+      "id": "starters.q",
+      "en": "Q",
+      "vi": "chữ Q"
+    },
+    {
+      "id": "starters.r",
+      "en": "R",
+      "vi": "chữ R"
+    },
+    {
+      "id": "starters.radio",
+      "en": "radio",
+      "vi": "đài radio"
+    },
+    {
+      "id": "starters.red",
+      "en": "red",
+      "vi": "màu đỏ"
+    },
+    {
+      "id": "starters.rice",
+      "en": "rice",
+      "vi": "cơm"
+    },
+    {
+      "id": "starters.ride",
+      "en": "ride",
+      "vi": "đạp xe"
+    },
+    {
+      "id": "starters.robot",
+      "en": "robot",
+      "vi": "người máy"
+    },
+    {
+      "id": "starters.room",
+      "en": "room",
+      "vi": "căn phòng"
+    },
+    {
+      "id": "starters.rug",
+      "en": "rug",
+      "vi": "tấm thảm"
+    },
+    {
+      "id": "starters.ruler",
+      "en": "ruler",
+      "vi": "cái thước"
+    },
+    {
+      "id": "starters.run",
+      "en": "run",
+      "vi": "chạy"
+    },
+    {
+      "id": "starters.s",
+      "en": "S",
+      "vi": "chữ S"
+    },
+    {
+      "id": "starters.sand",
+      "en": "sand",
+      "vi": "cát"
+    },
+    {
+      "id": "starters.sausage",
+      "en": "sausage",
+      "vi": "xúc xích"
+    },
+    {
+      "id": "starters.sea",
+      "en": "sea",
+      "vi": "biển"
+    },
+    {
+      "id": "starters.seven",
+      "en": "seven",
+      "vi": "bảy"
+    },
+    {
+      "id": "starters.seventeen",
+      "en": "seventeen",
+      "vi": "mười bảy"
+    },
+    {
+      "id": "starters.sheep",
+      "en": "sheep",
+      "vi": "con cừu"
+    },
+    {
+      "id": "starters.shell",
+      "en": "shell",
+      "vi": "vỏ sò"
+    },
+    {
+      "id": "starters.shirt",
+      "en": "shirt",
+      "vi": "áo sơ mi"
+    },
+    {
+      "id": "starters.shoe",
+      "en": "shoe",
+      "vi": "đôi giày"
+    },
+    {
+      "id": "starters.shop",
+      "en": "shop",
+      "vi": "cửa hàng"
+    },
+    {
+      "id": "starters.sing",
+      "en": "sing",
+      "vi": "hát"
+    },
+    {
+      "id": "starters.sister",
+      "en": "sister",
+      "vi": "chị em gái"
+    },
+    {
+      "id": "starters.six",
+      "en": "six",
+      "vi": "sáu"
+    },
+    {
+      "id": "starters.sixteen",
+      "en": "sixteen",
+      "vi": "mười sáu"
+    },
+    {
+      "id": "starters.skirt",
+      "en": "skirt",
+      "vi": "chân váy"
+    },
+    {
+      "id": "starters.smile",
+      "en": "smile",
+      "vi": "nụ cười"
+    },
+    {
+      "id": "starters.snake",
+      "en": "snake",
+      "vi": "con rắn"
+    },
+    {
+      "id": "starters.sock",
+      "en": "sock",
+      "vi": "đôi tất"
+    },
+    {
+      "id": "starters.sofa",
+      "en": "sofa",
+      "vi": "ghế sô-pha"
+    },
+    {
+      "id": "starters.spider",
+      "en": "spider",
+      "vi": "con nhện"
+    },
+    {
+      "id": "starters.sport",
+      "en": "sport",
+      "vi": "thể thao"
+    },
+    {
+      "id": "starters.stop",
+      "en": "stop",
+      "vi": "dừng lại"
+    },
+    {
+      "id": "starters.sun",
+      "en": "sun",
+      "vi": "mặt trời"
+    },
+    {
+      "id": "starters.swim",
+      "en": "swim",
+      "vi": "bơi"
+    },
+    {
+      "id": "starters.t",
+      "en": "T",
+      "vi": "chữ T"
+    },
+    {
+      "id": "starters.t-shirt",
+      "en": "T-shirt",
+      "vi": "áo phông"
+    },
+    {
+      "id": "starters.table",
+      "en": "table",
+      "vi": "cái bàn"
+    },
+    {
+      "id": "starters.table-tennis",
+      "en": "table tennis",
+      "vi": "bóng bàn"
+    },
+    {
+      "id": "starters.tail",
+      "en": "tail",
+      "vi": "cái đuôi"
+    },
+    {
+      "id": "starters.take",
+      "en": "take",
+      "vi": "chụp ảnh"
+    },
+    {
+      "id": "starters.teacher",
+      "en": "teacher",
+      "vi": "cô giáo"
+    },
+    {
+      "id": "starters.television",
+      "en": "television",
+      "vi": "tivi"
+    },
+    {
+      "id": "starters.ten",
+      "en": "ten",
+      "vi": "mười"
+    },
+    {
+      "id": "starters.tennis",
+      "en": "tennis",
+      "vi": "quần vợt"
+    },
+    {
+      "id": "starters.thirteen",
+      "en": "thirteen",
+      "vi": "mười ba"
+    },
+    {
+      "id": "starters.three",
+      "en": "three",
+      "vi": "ba"
+    },
+    {
+      "id": "starters.throw",
+      "en": "throw",
+      "vi": "ném"
+    },
+    {
+      "id": "starters.tick",
+      "en": "tick",
+      "vi": "dấu tick"
+    },
+    {
+      "id": "starters.tiger",
+      "en": "tiger",
+      "vi": "con hổ"
+    },
+    {
+      "id": "starters.tomato",
+      "en": "tomato",
+      "vi": "quả cà chua"
+    },
+    {
+      "id": "starters.train",
+      "en": "train",
+      "vi": "tàu hỏa"
+    },
+    {
+      "id": "starters.tree",
+      "en": "tree",
+      "vi": "cái cây"
+    },
+    {
+      "id": "starters.trousers",
+      "en": "trousers",
+      "vi": "quần dài"
+    },
+    {
+      "id": "starters.twelve",
+      "en": "twelve",
+      "vi": "mười hai"
+    },
+    {
+      "id": "starters.twenty",
+      "en": "twenty",
+      "vi": "hai mươi"
+    },
+    {
+      "id": "starters.two",
+      "en": "two",
+      "vi": "hai"
+    },
+    {
+      "id": "starters.u",
+      "en": "U",
+      "vi": "chữ U"
+    },
+    {
+      "id": "starters.v",
+      "en": "V",
+      "vi": "chữ V"
+    },
+    {
+      "id": "starters.w",
+      "en": "W",
+      "vi": "chữ W"
+    },
+    {
+      "id": "starters.walk",
+      "en": "walk",
+      "vi": "đi bộ"
+    },
+    {
+      "id": "starters.wall",
+      "en": "wall",
+      "vi": "bức tường"
+    },
+    {
+      "id": "starters.watch",
+      "en": "watch",
+      "vi": "đồng hồ đeo tay"
+    },
+    {
+      "id": "starters.water",
+      "en": "water",
+      "vi": "nước"
+    },
+    {
+      "id": "starters.watermelon",
+      "en": "watermelon",
+      "vi": "quả dưa hấu"
+    },
+    {
+      "id": "starters.white",
+      "en": "white",
+      "vi": "màu trắng"
+    },
+    {
+      "id": "starters.window",
+      "en": "window",
+      "vi": "cửa sổ"
+    },
+    {
+      "id": "starters.woman",
+      "en": "woman",
+      "vi": "người phụ nữ"
+    },
+    {
+      "id": "starters.x",
+      "en": "X",
+      "vi": "chữ X"
+    },
+    {
+      "id": "starters.y",
+      "en": "Y",
+      "vi": "chữ Y"
+    },
+    {
+      "id": "starters.yellow",
+      "en": "yellow",
+      "vi": "màu vàng"
+    },
+    {
+      "id": "starters.z",
+      "en": "Z",
+      "vi": "chữ Z"
+    }
+  ]
+}

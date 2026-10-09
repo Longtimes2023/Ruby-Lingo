@@ -1,0 +1,42 @@
+-- =============================================================================
+-- 008 — GAME_RESULT: thêm hai con số đếm được
+-- =============================================================================
+-- Migration 003 đã tạo bảng `game_result` với `total_questions`, `correct_count`,
+-- `longest_streak`, `score`, `stars`, `duration_seconds`. Khi viết T049 (endpoint chấm điểm)
+-- mới thấy thiếu hai con số, và chúng KHÔNG suy ra được từ các cột đang có:
+--
+--   • `answered`      — số câu bé ĐI QUA. Khác `total_questions` (số câu THEO KẾ HOẠCH) mỗi
+--                       khi bé hết mạng ❤️ giữa chừng.
+--                       ⚠️ Vì sao phải lưu riêng thay vì suy ra từ `correct_count`: bé có thể
+--                       đi hết 6 câu mà chỉ 4 câu đúng ngay lần đầu. Hai con số đó là hai câu
+--                       hỏi khác nhau ("bé làm được bao nhiêu" và "bé giỏi đến đâu"), và nếu
+--                       chỉ giữ một thì báo cáo phụ huynh không phân biệt được một bé bỏ dở
+--                       với một bé làm sai.
+--   • `wrong_attempts`— tổng số lần chọn SAI trong cả lượt. Dùng để trả lời "bé phải thử lại
+--                       nhiều không". Không cộng dồn được từ `word_progress` về sau vì bảng
+--                       đó chỉ giữ số CUỐI CÙNG (xem luật LWW ở `shared/progress-merge.ts`).
+--
+-- ✅ ALTER TABLE ADD COLUMN là thao tác CHỈ THÊM, không dựng lại bảng ⇒ không đụng tới dữ
+--    liệu đang có và không cần migration bù. Các cột đều có DEFAULT 0 nên hàng cũ (nếu có)
+--    vẫn hợp lệ ngay.
+--
+-- ⚠️ KHÔNG có `IF NOT EXISTS` cho ADD COLUMN trong SQLite — nhưng KHÔNG CẦN: migration runner
+--    (`server/db/migrate.ts`) ghi tên file vào `schema_migrations` sau khi chạy thành công, và
+--    chỉ chạy những file chưa có trong đó. Cả file này nằm trong MỘT transaction, nên hoặc
+--    cả hai cột được thêm, hoặc không cột nào — không bao giờ có trạng thái nửa vời.
+--
+-- GHI CHÚ VỀ NGỮ NGHĨA `correct_count` (cột có từ 003, giữ nguyên tên):
+--   = số câu bé trả lời ĐÚNG NGAY LẦN ĐẦU. Đây chính là con số quyết định số sao
+--     (`starsForRun(correctFirstTry, answered)`), và cũng là con số được đem chia cho
+--     `answered` để ra tỉ lệ đúng — KHÔNG chia cho `total_questions`, vì như vậy bé hết mạng
+--     sớm sẽ bị tính là "sai" cả những câu chưa hề được hỏi.
+-- =============================================================================
+
+ALTER TABLE game_result ADD COLUMN answered       INTEGER NOT NULL DEFAULT 0 CHECK (answered >= 0);
+ALTER TABLE game_result ADD COLUMN wrong_attempts INTEGER NOT NULL DEFAULT 0 CHECK (wrong_attempts >= 0);
+
+-- ⚠️ KHÔNG thêm chỉ mục cho hai cột này.
+--   Truy vấn duy nhất dùng chúng là "cộng dồn số câu bé đã đi qua", mà nó luôn đi kèm điều
+--   kiện `child_id` — và `idx_game_result_child (child_id, created_at DESC)` từ 003 đã phục vụ
+--   đúng truy vấn đó. Một chỉ mục `(child_id, created_at)` nữa chỉ tốn thêm dung lượng và làm
+--   chậm mọi lần ghi, mà không tăng tốc được gì.

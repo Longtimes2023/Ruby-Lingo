@@ -1,0 +1,117 @@
+# =============================================================================
+# RubyLingo — deploy bằng Docker Compose SAU TRAEFIK (Nhóm 12).
+# =============================================================================
+# ⚠️⚠️ ĐỌC "SÁU LỖI HỎNG-IM-LẶNG" Ở `ARCHITECTURE.md` (Nhóm 12) TRƯỚC KHI SỬA.
+#
+# -----------------------------------------------------------------------------
+# BIẾN CẦN CÓ TRONG `.env` (cùng thư mục với tệp này) — ⚠️ KHÔNG commit `.env`:
+# -----------------------------------------------------------------------------
+#   SUBDOMAIN=rubylingo                # dùng cho Host(...) của Traefik
+#   DOMAIN_NAME=example.com            # ⚠️ tên miền GỐC, không kèm subdomain
+#   SESSION_SECRET=<chuỗi ngẫu nhiên ≥32 ký tự>
+#   COOKIE_SECURE=true                 # bắt buộc true sau HTTPS (Traefik lo TLS)
+#   PUBLIC_ORIGIN=https://rubylingo.example.com   # ⚠️ KHÔNG có dấu "/" ở cuối (S5)
+#   # (DB_PATH/HOST/PORT/NODE_ENV do tệp này GHI ĐÈ — xem khối `environment` bên dưới)
+# =============================================================================
+
+services:
+  rubylingo:
+    build: .
+    image: rubylingo:latest
+    restart: unless-stopped
+
+    # Nạp .env (SESSION_SECRET, COOKIE_SECURE…) …
+    env_file:
+      - .env
+    # …NHƯNG bốn giá trị dưới đây được GHI ĐÈ trong compose, và đó là ĐIỀU KIỆN SỐNG CÒN:
+    # `environment` THẮNG `env_file` (thứ tự ưu tiên của compose), nên dù `.env` còn sót giá trị
+    # của DEV thì container vẫn nhận giá trị đúng cho production. Đây là chốt chặn cho S1/S2/S5.
+    environment:
+      # S2: thiếu `production` ⇒ CSP TẮT và cảnh báo an ninh KHÔNG in (server/config.ts).
+      NODE_ENV: production
+      # ⚠️ MẶC ĐỊNH TRONG MÃ LÀ `127.0.0.1` ⇒ server chỉ nghe trong lòng container ⇒ Traefik
+      #    (container KHÁC) không tới được ⇒ **502 im lặng** (app vẫn log "listening", health nội
+      #    bộ vẫn xanh). Compose GHI ĐÈ thành 0.0.0.0 để không phụ thuộc nội dung `.env`.
+      HOST: "0.0.0.0"
+      PORT: "3000"
+      # S1: `DB_PATH` TUYỆT ĐỐI. `server/config.ts` giải đường dẫn tương đối theo
+      #     `process.cwd()`; đường dẫn tuyệt đối khiến nó KHÔNG phụ thuộc WORKDIR ⇒ DB luôn nằm
+      #     trong volume, không ghi ra chỗ khác rồi mất khi container bị thay.
+      DB_PATH: /app/data/rubylingo.db
+      # S5: `PUBLIC_ORIGIN` được so KHỚP CHÍNH XÁC với header `Origin`. Một dấu `/` ở cuối làm
+      #     MỌI request GHI (đăng nhập, mua đồ, nộp lượt chơi…) trả 403 — mà đọc chỉ vẫn bình
+      #     thường, nên rất dễ tưởng lỗi ở chỗ khác. Ghim ở đây, KHÔNG có `/` cuối.
+      # ⚠️ `:?` (BẮT BUỘC) — xem ghi chú dài ở khối `labels` bên dưới: thiếu biến thì compose chỉ
+      #    WARN rồi thay CHUỖI RỖNG ⇒ `https://.` mà app vẫn "khoẻ".
+      PUBLIC_ORIGIN: "https://${SUBDOMAIN:?SUBDOMAIN chưa đặt trong .env}.${DOMAIN_NAME:?DOMAIN_NAME chưa đặt trong .env}"
+      # ⚠️ AN NINH — BỐN BIẾN DƯỚI ĐÂY TRƯỚC ĐÓ VẪN LẤY TỪ `.env` (giá trị DEV), NAY GHIM LẠI:
+      #   `SESSION_SECRET` trong `.env.example` là CHUỖI MẪU (khoá công khai) ⇒ ai biết nó thì
+      #   GIẢ MẠO ĐƯỢC PHIÊN ĐĂNG NHẬP. Và `server/config.ts` chỉ **in cảnh báo rồi VẪN CHẠY** ⇒
+      #   đây là lỗi hoàn toàn im lặng. Dùng `:?` để THIẾU LÀ CHẾT NGAY, không chạy với khoá mẫu.
+      COOKIE_SECURE: "true"
+      SESSION_SECRET: "${SESSION_SECRET:?SESSION_SECRET chưa đặt trong .env — sinh bằng: node -e \"console.log(require('crypto').randomBytes(48).toString('base64url'))\"}"
+      # `.env.example` để `LOG_LEVEL=debug` (giá trị DEV). Production dùng `info`.
+      LOG_LEVEL: info
+
+    volumes:
+      # DB SQLite nằm Ở ĐÂY. ⚠️ Phải khớp `DB_PATH` ở trên (`/app/data`).
+      - ./data:/app/data
+
+    # ⚠️ `expose` (KHÔNG phải `ports`): cổng chỉ mở trong mạng nội bộ Docker cho Traefik.
+    #    Dùng `ports:` sẽ mở thẳng cổng 3000 ra Internet, bỏ qua TLS/redirect của Traefik.
+    expose:
+      - "3000"
+
+    networks:
+      - traefik_network
+
+    # ⚠️ S3: healthcheck này CHỈ trả lời "tiến trình còn sống". Nó KHÔNG phát hiện DB chưa migrate
+    #    (`countAppliedMigrations()` nuốt lỗi và trả 0 ⇒ health vẫn "ok"). Sau deploy PHẢI chạy
+    #    thêm smoke test đọc `migrationsApplied` — xem cuối `Dockerfile`.
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    labels:
+      - "traefik.enable=true"
+      # ⚠️ BẮT BUỘC khi Traefik dùng nhiều network: nếu thiếu, Traefik có thể chọn nhầm mạng và
+      #    không thấy IP container ⇒ 502 im lặng.
+      - "traefik.docker.network=traefik_network"
+
+      # --- Router HTTPS (chính) ---
+      # ⚠️⚠️ `${BIẾN:?thông báo}` — BẮT BUỘC, KHÔNG ĐƯỢC viết `${BIẾN}` trơn:
+      #   Với `${BIẾN}` trơn, compose chỉ **WARN** rồi thay bằng CHUỖI RỖNG khi `.env` thiếu biến.
+      #   Hệ quả (cả hai đều IM LẶNG — app vẫn khởi động, health vẫn xanh):
+      #     • nhãn thành `Host(.)` ⇒ Traefik KHÔNG khớp host nào ⇒ **404** cho mọi truy cập;
+      #     • `PUBLIC_ORIGIN` thành `https://.` ⇒ mọi request GHI trả **403** (S5), mà đọc thì vẫn được.
+      #   `:?` biến nó thành lỗi NGAY LÚC `docker compose up`: không có cấu hình đúng thì không
+      #   có container nào chạy cả.
+      - "traefik.http.routers.rubylingo.rule=Host(`${SUBDOMAIN:?SUBDOMAIN chưa đặt trong .env}.${DOMAIN_NAME:?DOMAIN_NAME chưa đặt trong .env}`)"
+      - "traefik.http.routers.rubylingo.entrypoints=websecure"
+      - "traefik.http.routers.rubylingo.tls=true"
+      - "traefik.http.routers.rubylingo.tls.certresolver=mytlschallenge"
+
+      # ⚠️⚠️ THIẾU NHÃN NÀY ⇒ 502: Traefik không biết cổng nào trong container (app nghe 3000,
+      #    không phải 80). App vẫn "khoẻ" trong container, chỉ Traefik không tới được.
+      - "traefik.http.services.rubylingo.loadbalancer.server.port=3000"
+
+      # --- Router HTTP (chỉ để chuyển hướng sang HTTPS) ---
+      # ⭐ PWA (service worker) và Web Speech API CHỈ chạy trên HTTPS ⇒ phải đảm bảo http:// luôn
+      #    bị đá sang https://, không để hai phiên bản cùng phục vụ.
+      - "traefik.http.routers.rubylingo-web.rule=Host(`${SUBDOMAIN:?SUBDOMAIN chưa đặt trong .env}.${DOMAIN_NAME:?DOMAIN_NAME chưa đặt trong .env}`)"
+      - "traefik.http.routers.rubylingo-web.entrypoints=web"
+      - "traefik.http.routers.rubylingo-web.middlewares=rubylingo-redirect"
+      - "traefik.http.middlewares.rubylingo-redirect.redirectscheme.scheme=https"
+
+networks:
+  # ⚠️ Mạng do Traefik tạo SẴN trên VPS ⇒ `external: true`. Khai `internal`/đổi tên sẽ tạo một
+  #    mạng MỚI cùng tên khác và Traefik không thấy service nào ⇒ 404/502 không rõ nguyên nhân.
+  traefik_network:
+    external: true

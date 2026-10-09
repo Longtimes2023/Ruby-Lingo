@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="RubyLingo">
+  <title>RubyLingo — Nhà Vườn Thú Của Bé</title>
+
+  <!--
+    Logo RubyLingo: thỏ hồng.
+    Đây là NGUỒN CHÂN LÝ DUY NHẤT của logo — `index.html` trỏ favicon vào đúng file
+    này và `BrandLogo.tsx` cũng render đúng file này. Không vẽ lại ở chỗ khác.
+
+    Nguyên tắc vẽ: chỉ giữ những nét còn đọc được ở 16×16 px (kích thước tab trình
+    duyệt) — 2 tai, đầu tròn, 2 mắt, mũi. Chi tiết nhỏ (ria, răng) bị bỏ vì ở 16px
+    chúng chỉ thành vết bẩn.
+  -->
+  <defs>
+    <linearGradient id="rl-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf2f8" />
+      <stop offset="1" stop-color="#ede9fe" />
+    </linearGradient>
+    <linearGradient id="rl-fur" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#f9a8d4" />
+      <stop offset="1" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="16" fill="url(#rl-bg)" />
+
+  <!--
+    Phóng toàn bộ thỏ lên 1.102 lần quanh tâm khung (32, 32).
+    Vì sao cần: ở 16×16 px mắt thỏ chỉ ~0.7 px nên KHÔNG hiển thị — nhận diện lúc đó
+    hoàn toàn dựa vào HÌNH BÓNG (đầu + 2 tai). Bản gốc chỉ chiếm 36/64 = 56% chiều
+    ngang khung, đệm quá nhiều nên bóng bị nhỏ.
+    Hệ số 1.102 = 54/49, tức chiều CAO của thỏ (49 đơn vị) vừa khít 54 đơn vị, chừa
+    5 đơn vị đệm mỗi cạnh trên/dưới. Dùng phóng đều 1 hệ số (không phóng riêng trục X)
+    để đầu thỏ không bị biến thành hình elip bẹt.
+    Đã kiểm: đỉnh tai lên y=5.0 và đáy đầu xuống y=59.0 — không tràn khung, không vào
+    vùng 4 góc bo tròn (rx=16 ⇒ góc là x<16 hoặc x>48).
+  -->
+  <g transform="translate(32 32) scale(1.102) translate(-32 -30.5)">
+    <!-- Hai tai (vẽ TRƯỚC đầu để đầu che phần gốc tai) -->
+    <g fill="url(#rl-fur)">
+      <ellipse cx="23" cy="18.5" rx="5.8" ry="12.5" transform="rotate(-14 23 18.5)" />
+      <ellipse cx="41" cy="18.5" rx="5.8" ry="12.5" transform="rotate(14 41 18.5)" />
+    </g>
+    <!-- Lòng tai -->
+    <g fill="#fbcfe8">
+      <ellipse cx="23" cy="19.5" rx="2.8" ry="8.4" transform="rotate(-14 23 19.5)" />
+      <ellipse cx="41" cy="19.5" rx="2.8" ry="8.4" transform="rotate(14 41 19.5)" />
+    </g>
+
+    <!-- Đầu -->
+    <ellipse cx="32" cy="38.5" rx="18" ry="16.5" fill="url(#rl-fur)" />
+
+    <!-- Má hồng -->
+    <ellipse cx="19.5" cy="43" rx="4" ry="3" fill="#fb7185" opacity="0.42" />
+    <ellipse cx="44.5" cy="43" rx="4" ry="3" fill="#fb7185" opacity="0.42" />
+
+    <!-- Mắt (kèm đốm sáng cho có hồn) -->
+    <circle cx="25.3" cy="36.5" r="2.7" fill="#4a1d3f" />
+    <circle cx="38.7" cy="36.5" r="2.7" fill="#4a1d3f" />
+    <circle cx="26.3" cy="35.4" r="0.95" fill="#ffffff" opacity="0.92" />
+    <circle cx="39.7" cy="35.4" r="0.95" fill="#ffffff" opacity="0.92" />
+
+    <!-- Mũi -->
+    <path d="M32 41.2 L35 43.5 Q32 46.4 29 43.5 Z" fill="#be185d" />
+
+    <!-- Miệng -->
+    <path
+      d="M32 45.5 Q29.3 48.2 27 45.9"
+      fill="none"
+      stroke="#be185d"
+      stroke-width="1.6"
+      stroke-linecap="round"
+    />
+    <path
+      d="M32 45.5 Q34.7 48.2 37 45.9"
+      fill="none"
+      stroke="#be185d"
+      stroke-width="1.6"
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

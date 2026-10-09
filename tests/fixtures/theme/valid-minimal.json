@@ -1,0 +1,84 @@
+{
+  "theme": {
+    "id": "fix-theme",
+    "levelId": "fix-level",
+    "name_en": "Fixture theme",
+    "name_vi": "Chủ đề thử",
+    "icon": "🧪",
+    "sceneImage": "",
+    "sceneAlt": "",
+    "unlockCondition": { "type": "always" },
+    "lessonIds": ["fix-theme/f1"]
+  },
+  "lessons": [
+    {
+      "id": "fix-theme/f1",
+      "themeId": "fix-theme",
+      "name_vi": "Bài thử",
+      "wordIds": ["fix-level.a", "fix-level.b", "fix-level.c", "fix-level.d"],
+      "exerciseIds": ["fix-theme/ex1"]
+    }
+  ],
+  "words": [
+    {
+      "id": "fix-level.a",
+      "levelId": "fix-level",
+      "primaryThemeId": "fix-theme",
+      "primaryLessonId": "fix-theme/f1",
+      "en": "apple",
+      "vi": "quả táo",
+      "type": "n",
+      "icon": "🍎",
+      "picturable": true
+    },
+    {
+      "id": "fix-level.b",
+      "levelId": "fix-level",
+      "primaryThemeId": "fix-theme",
+      "primaryLessonId": "fix-theme/f1",
+      "en": "banana",
+      "vi": "quả chuối",
+      "type": "n",
+      "icon": "🍌",
+      "picturable": true
+    },
+    {
+      "id": "fix-level.c",
+      "levelId": "fix-level",
+      "primaryThemeId": "fix-theme",
+      "primaryLessonId": "fix-theme/f1",
+      "en": "cherry",
+      "vi": "quả anh đào",
+      "type": "n",
+      "icon": "🍒",
+      "picturable": true
+    },
+    {
+      "id": "fix-level.d",
+      "levelId": "fix-level",
+      "primaryThemeId": "fix-theme",
+      "primaryLessonId": "fix-theme/f1",
+      "en": "grape",
+      "vi": "quả nho",
+      "type": "n",
+      "icon": "🍇",
+      "picturable": true
+    }
+  ],
+  "exercises": [
+    {
+      "id": "fix-theme/ex1",
+      "lessonId": "fix-theme/f1",
+      "gameType": "listen_tap",
+      "wordIds": ["fix-level.a", "fix-level.b", "fix-level.c", "fix-level.d"],
+      "difficulty": 1,
+      "config": {
+        "kind": "listen_tap",
+        "rounds": 4,
+        "optionCount": 3,
+        "distractorMode": "same_theme",
+        "speechRate": 0.85
+      }
+    }
+  ]
+}

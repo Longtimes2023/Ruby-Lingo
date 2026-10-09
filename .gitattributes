@@ -1,0 +1,49 @@
+# =============================================================================
+# RubyLingo — .gitattributes
+# =============================================================================
+# ⚠️ VÌ SAO CẦN TỆP NÀY (VÀ VÌ SAO KHÔNG PHẢI "CHO GỌN"):
+#
+#   Repo được phát triển trên WINDOWS và TRIỂN KHAI trên LINUX (VPS + container). Kiểu xuống
+#   dòng là thứ KHÁC NHAU giữa hai nền tảng, và git chỉ đúng nếu được nói rõ.
+#
+#   ⚠️ LỖI IM LẶNG CỤ THỂ MÀ TỆP NÀY CHẶN:
+#     Một tệp `.sh` có CRLF khi chạy trên Linux sẽ chết ngay dòng đầu:
+#         bash: ./scripts/deploy.sh: /usr/bin/env: bad interpreter: No such file or directory
+#     hoặc `$'\r': command not found`. Nhìn thì như "thiếu bash" hay "script hỏng", trong khi
+#     nguyên nhân thật là một ký tự CR vô hình ở cuối mỗi dòng.
+#
+#   ⚠️ VÀ ĐIỀU TỆ HƠN: hành vi này phụ thuộc `core.autocrlf` CỦA TỪNG MÁY. Máy dev này đang đặt
+#     `core.autocrlf=true`, nên nó đã tự chuẩn hoá về LF — nghĩa là HÔM NAY không có gì hỏng cả.
+#     Nhưng nó chỉ đúng nhờ CẤU HÌNH CỦA MỘT MÁY. Ai clone trên máy khác, hoặc dùng trình soạn
+#     thảo tự lưu CRLF, sẽ commit CRLF mà không biết. `.gitattributes` biến điều đó thành QUY TẮC
+#     CỦA REPO, đúng trên mọi máy, không phụ thuộc cấu hình cục bộ.
+# =============================================================================
+
+# --- Mặc định: chuẩn hoá về LF trong repo; git tự nhận biết tệp nhị phân ---
+* text=auto eol=lf
+
+# --- ⚠️ Script chạy trên Linux: BẮT BUỘC LF, không khoan nhượng ---
+*.sh text eol=lf
+*.sql text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.conf text eol=lf
+*.example text eol=lf
+
+# --- Tệp nhị phân: git KHÔNG được đụng vào (không diff, không đổi xuống dòng) ---
+#     `text=auto` đã tự đoán, nhưng khai tường minh thì không phải phụ thuộc vào việc đoán đúng.
+#     Nhãn `binary` tương đương `-text -diff`.
+*.webp binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff2 binary
+*.woff  binary
+*.ttf  binary
+*.otf  binary
+*.mp3  binary
+*.m4a  binary
+*.db   binary

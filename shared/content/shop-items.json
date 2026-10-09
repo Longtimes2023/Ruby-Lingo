@@ -1,0 +1,41 @@
+{
+  "note": "30 vật phẩm / 3 nhóm. Toàn bộ icon dùng EMOJI ⇒ 0 request tải ảnh. phase: mvp (12 món) | p1 | p2. QUY TẮC: không icon nào được dùng cho cả tiền tệ (⭐ 🌰) và vật phẩm, và tên vật phẩm không được trùng tên tiền tệ. QUY TẮC MỚI (T065): phụ kiện BẮT BUỘC có \"slot\" ∈ {head, face, neck, back, feet} — vị trí gắn lên người Momo; trang trí BẮT BUỘC có \"slot\" ∈ {sky, ground} — hàng bày quanh cảnh; đồ ăn KHÔNG được có \"slot\". Schema shopItemsFileSchema TỪ CHỐI danh mục vi phạm, nên server không khởi động được — thiếu slot nghĩa là món bé vừa mua biến mất khỏi Momo mà không có lỗi nào.",
+  "currencies": {
+    "stars": { "name_vi": "Sao", "icon": "⭐" },
+    "acorns": { "name_vi": "Hạt dẻ", "icon": "🌰" }
+  },
+  "items": [
+    { "id": "food-banana", "name_vi": "Chuối", "icon": "🍌", "category": "food", "price": 5, "currency": "stars", "description_vi": "Món khoái khẩu của Momo", "happinessGain": 1, "phase": "mvp" },
+    { "id": "food-carrot", "name_vi": "Cà rốt", "icon": "🥕", "category": "food", "price": 5, "currency": "stars", "description_vi": "Giòn ngọt, tốt cho mắt", "happinessGain": 1, "phase": "mvp" },
+    { "id": "food-apple", "name_vi": "Táo", "icon": "🍎", "category": "food", "price": 6, "currency": "stars", "description_vi": "Quả táo đỏ mọng nước", "happinessGain": 1, "phase": "mvp" },
+    { "id": "food-cookie", "name_vi": "Bánh quy", "icon": "🍪", "category": "food", "price": 8, "currency": "stars", "description_vi": "Bánh quy thơm lừng, ai cũng thích", "happinessGain": 1, "phase": "mvp" },
+    { "id": "food-honey", "name_vi": "Mật ong", "icon": "🍯", "category": "food", "price": 12, "currency": "stars", "description_vi": "Ngọt lịm, có hiệu ứng đặc biệt", "happinessGain": 2, "effect": "sparkle", "phase": "mvp" },
+    { "id": "food-milk", "name_vi": "Sữa", "icon": "🥛", "category": "food", "price": 7, "currency": "stars", "description_vi": "Ly sữa ấm cho buổi sáng", "happinessGain": 1, "phase": "p1" },
+    { "id": "food-juice", "name_vi": "Nước ép", "icon": "🧃", "category": "food", "price": 10, "currency": "stars", "description_vi": "Nước ép trái cây mát lạnh", "happinessGain": 1, "phase": "p1" },
+    { "id": "food-watermelon", "name_vi": "Dưa hấu", "icon": "🍉", "category": "food", "price": 15, "currency": "stars", "description_vi": "Miếng dưa hấu to mát rượi", "happinessGain": 2, "phase": "p1" },
+    { "id": "food-icecream", "name_vi": "Kem", "icon": "🍦", "category": "food", "price": 18, "currency": "stars", "description_vi": "Kem lấp lánh như tuyết", "happinessGain": 2, "effect": "sparkle", "phase": "p1" },
+    { "id": "food-cake", "name_vi": "Bánh sinh nhật", "icon": "🎂", "category": "food", "price": 3, "currency": "acorns", "description_vi": "Bánh sinh nhật với nến lung linh", "happinessGain": 3, "effect": "big_animation", "phase": "p2" },
+
+    { "id": "acc-bow", "name_vi": "Nơ", "icon": "🎀", "category": "accessory", "slot": "head", "price": 35, "currency": "stars", "description_vi": "Chiếc nơ xinh xắn", "phase": "mvp" },
+    { "id": "acc-hat", "name_vi": "Mũ", "icon": "🎩", "category": "accessory", "slot": "head", "price": 40, "currency": "stars", "description_vi": "Mũ lịch lãm cho bạn thú cưng", "phase": "mvp" },
+    { "id": "acc-glasses", "name_vi": "Kính", "icon": "🕶️", "category": "accessory", "slot": "face", "price": 45, "currency": "stars", "description_vi": "Kính râm ngầu ơi là ngầu", "phase": "mvp" },
+    { "id": "acc-scarf", "name_vi": "Khăn quàng", "icon": "🧣", "category": "accessory", "slot": "neck", "price": 50, "currency": "stars", "description_vi": "Khăn quàng ấm áp cho mùa đông", "phase": "mvp" },
+    { "id": "acc-shoes", "name_vi": "Giày", "icon": "👟", "category": "accessory", "slot": "feet", "price": 55, "currency": "stars", "description_vi": "Đôi giày chạy nhảy tung tăng", "phase": "p1" },
+    { "id": "acc-backpack", "name_vi": "Ba lô", "icon": "🎒", "category": "accessory", "slot": "back", "price": 60, "currency": "stars", "description_vi": "Ba lô đi phiêu lưu", "phase": "p1" },
+    { "id": "acc-crown", "name_vi": "Vương miện", "icon": "👑", "category": "accessory", "slot": "head", "price": 10, "currency": "acorns", "description_vi": "Vương miện lấp lánh — món hiếm!", "effect": "sparkle", "phase": "p1" },
+    { "id": "acc-star-glasses", "name_vi": "Kính ngôi sao", "icon": "😎", "category": "accessory", "slot": "face", "price": 15, "currency": "acorns", "description_vi": "Kính hình ngôi sao đặc biệt", "effect": "sparkle", "phase": "p2" },
+    { "id": "acc-cape", "name_vi": "Áo choàng siêu nhân", "icon": "🦸", "category": "accessory", "slot": "back", "price": 20, "currency": "acorns", "description_vi": "Áo choàng bay như siêu anh hùng", "effect": "big_animation", "phase": "p2" },
+    { "id": "acc-wings", "name_vi": "Cánh bướm", "icon": "🦋", "category": "accessory", "slot": "back", "price": 80, "currency": "stars", "description_vi": "Đôi cánh bướm rực rỡ sắc màu", "effect": "sparkle", "phase": "p2" },
+
+    { "id": "dec-balloon", "name_vi": "Bóng bay", "icon": "🎈", "category": "decoration", "slot": "sky", "price": 20, "currency": "stars", "description_vi": "Chùm bóng bay nhiều màu", "phase": "mvp" },
+    { "id": "dec-plant", "name_vi": "Chậu cây", "icon": "🪴", "category": "decoration", "slot": "ground", "price": 25, "currency": "stars", "description_vi": "Chậu cây xanh mát", "phase": "mvp" },
+    { "id": "dec-lantern", "name_vi": "Đèn lồng", "icon": "🏮", "category": "decoration", "slot": "sky", "price": 30, "currency": "stars", "description_vi": "Đèn lồng đỏ ấm áp", "phase": "mvp" },
+    { "id": "dec-picture", "name_vi": "Tranh treo tường", "icon": "🖼️", "category": "decoration", "slot": "sky", "price": 35, "currency": "stars", "description_vi": "Bức tranh trang trí nhà", "phase": "p1" },
+    { "id": "dec-sunflower", "name_vi": "Chậu hoa hướng dương", "icon": "🌻", "category": "decoration", "slot": "ground", "price": 40, "currency": "stars", "description_vi": "Hoa hướng dương luôn quay về phía mặt trời", "phase": "p1" },
+    { "id": "dec-flag", "name_vi": "Cờ gió", "icon": "🎏", "category": "decoration", "slot": "sky", "price": 45, "currency": "stars", "description_vi": "Dây cờ gió tung bay", "phase": "p1" },
+    { "id": "dec-treehouse", "name_vi": "Nhà trên cây mini", "icon": "🏡", "category": "decoration", "slot": "ground", "price": 50, "currency": "stars", "description_vi": "Ngôi nhà nhỏ xinh trên cành cây", "phase": "p1" },
+    { "id": "dec-aquarium", "name_vi": "Bể cá", "icon": "🐠", "category": "decoration", "slot": "ground", "price": 60, "currency": "stars", "description_vi": "Bể cá với chú cá vàng bơi lội", "phase": "p1" },
+    { "id": "dec-rainbow", "name_vi": "Cầu vồng", "icon": "🌈", "category": "decoration", "slot": "sky", "price": 70, "currency": "stars", "description_vi": "Cầu vồng bảy sắc lung linh", "effect": "rainbow", "phase": "p2" },
+    { "id": "dec-castle", "name_vi": "Lâu đài nhỏ", "icon": "🏰", "category": "decoration", "slot": "ground", "price": 60, "currency": "acorns", "description_vi": "Lâu đài tráng lệ — món đắt nhất!", "effect": "big_animation", "phase": "p2" }
+  ]
+}
