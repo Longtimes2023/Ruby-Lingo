@@ -1,10 +1,17 @@
 /**
- * RubyLingo — Routes tiến độ: `/api/children/:id/progress**` và `/api/children/:id/game-result`.
+ * RubyLingo — Routes tiến độ: `/api/children/:id/progress**`, `/api/children/:id/game-result`
+ * và `/api/children/:id/game-results` (kênh ĐỌC kết quả game, T05).
  *
- * ⭐ BA ENDPOINT, ĐÚNG BA CHIỀU:
+ * ⭐ BỐN ENDPOINT, ĐÚNG BỐN CHIỀU:
  *   `GET  /api/children/:id/progress`       — đọc ảnh chụp (lần đầu mở app, hoặc sau khi cài lại)
  *   `POST /api/children/:id/progress/sync`  — gửi sự kiện lên, nhận ảnh chụp đã gộp
  *   `POST /api/children/:id/game-result`    — gửi MỘT LƯỢT CHƠI GAME đã kết thúc, nhận thưởng
+ *   `GET  /api/children/:id/game-results`   — đọc kết quả game ĐÃ CHƠI (gộp theo bài tập, T05)
+ *
+ * ⚠️ VÌ SAO `game-result` (ghi) VÀ `game-results` (đọc) LÀ HAI ĐƯỜNG DẪN KHÁC NHAU:
+ *    Một cái GHI một lượt chơi (POST, một đơn vị có nghĩa được chấm ở `GameResultService.submit`),
+ *    một cái ĐỌC tổng hợp để tô chip (GET, chỉ-đọc). Gộp chúng vào một đường dẫn sẽ trộn kênh GHI
+ *    với kênh ĐỌC — đúng thứ ta cố tình tránh (xem ghi chú ở `shared/schemas/progress.ts`).
  *
  * ⚠️ VÌ SAO `game-result` KHÔNG ĐI QUA `/progress/sync`:
  *    `sync` nhận một LÔ sự kiện rời rạc, mỗi sự kiện là một câu trả lời độc lập. Nhưng một
@@ -31,6 +38,7 @@ import type { FastifyInstance } from 'fastify';
 
 import type {
   ApiOk,
+  GameResultsGetResponse,
   ProgressGetResponse,
   ProgressSyncRequest,
   ProgressSyncResponse,
@@ -105,4 +113,29 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
     const body: ApiOk<SubmitGameResultResponse> = { data: award };
     return reply.send(body);
   });
+
+  // --- Đọc kết quả game ĐÃ CHƠI (T05) -----------------------------------
+  /**
+   * `GET /api/children/:id/game-results` — danh sách kết quả game đã chơi, GỘP theo bài tập.
+   *
+   * ⭐ VÌ SAO CHỈ `requireParent`, KHÔNG CỔNG PIN (`requireParentGate`):
+   *   Đây là dữ liệu hiển thị cho BÉ ở màn chủ đề (tô màu chip trò chơi "đã chơi"), cùng nhóm
+   *   với `/progress` và `/rewards` — tất cả đều chỉ `requireParent`. Cổng PIN dành cho BÁO CÁO
+   *   PHỤ HUYNH (`GET /children/:id/report`, xem `routes/reports.ts`) — đó mới là màn hình của bố
+   *   mẹ. Bắt bé đi qua cổng PIN để xem chip của chính mình là sai vai.
+   *
+   * ⚠️ Quyền với bé CỤ THỂ do `GameResultService.listGameSummaries` kiểm (`parent_id`) — nằm
+   *    trong service, đúng như MỌI service khác. Tầng route KHÔNG kiểm lại, cũng KHÔNG gọi DB.
+   */
+  app.get(
+    '/api/children/:id/game-results',
+    { preHandler: requireParent },
+    async (req, reply) => {
+      const authed = req as AuthedRequest;
+      const body: ApiOk<GameResultsGetResponse> = {
+        data: gameResultService.listGameSummaries(authed.parent.id, childIdFromParams(req)),
+      };
+      return reply.send(body);
+    },
+  );
 }

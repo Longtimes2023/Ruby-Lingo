@@ -34,6 +34,8 @@ import type {
   GameResultAward,
 } from '@shared/types/progress.js';
 import { progressApi } from '../api/endpoints.js';
+import { queryClient } from '../lib/queryClient.js';
+import { gameResultsQueryKey } from '../lib/queryKeys.js';
 import { useRewardStore } from '../store/rewardStore.js';
 import { createClientEventId } from './ProgressService.js';
 
@@ -340,6 +342,28 @@ export const gameResultQueue = new GameResultQueue({
    */
   onSent: (childId, submission, award) => {
     useRewardStore.getState().applyAward(childId, submission, award);
+
+    /**
+     * ⭐⭐ ĐÂY LÀ NƠI DUY NHẤT BIẾT "LƯỢT CHƠI ĐÃ TỚI SERVER" (T05 — Chỉnh sửa bắt buộc #2).
+     *
+     *   Chip trò chơi ở màn chủ đề đổi màu khi đọc được kết quả game mới. Nhưng `flush()` gọi
+     *   hook này CHỈ SAU khi response đã về và mục đã bỏ khỏi hàng đợi — nghĩa là `game_result`
+     *   đã nằm trong DB. Chỉ tới lúc này việc đọc lại mới thấy dữ liệu mới.
+     *
+     *   ⚠️ VÌ SAO KHÔNG CHỈ DỰA VÀO `refetchOnMount: 'always'` Ở HOOK:
+     *     Lượt chơi vừa xong còn nằm trong hàng đợi chờ gửi lên server. Nếu bé quay lại màn chủ đề
+     *     TRƯỚC khi hàng đợi gửi xong thì `refetchOnMount` đọc lại cũng KHÔNG thấy gì ⇒ chip vẫn
+     *     chưa đổi — đúng triệu chứng chủ dự án báo. Làm mới ĐÚNG LÚC này (khi dữ liệu đã lên
+     *     server) là cách duy nhất chắc chắn.
+     *
+     *   ⚠️ Đây là mã NGOÀI React: đọc `queryClient` bằng instance dùng chung (không hook) — cùng
+     *     mẫu với `useRewardStore.getState()` ngay trên. `void` vì `invalidateQueries` trả Promise
+     *     và ta không chờ nó (không được để nó chặn `flush()`).
+     *
+     *   ⚠️ Khoá dựng qua `gameResultsQueryKey` — CÙNG hàm mà `useGameResults` dùng. Viết chuỗi khoá
+     *     ở hai chỗ là mời gọi một bên đổi còn bên kia không ⇒ làm mới một khoá không tồn tại, im lặng.
+     */
+    void queryClient.invalidateQueries({ queryKey: gameResultsQueryKey(childId) });
   },
   onError: (message, error) => {
     // Chỉ ghi log. Bé không bao giờ thấy lỗi này — thành tích vẫn nằm trong hàng đợi.

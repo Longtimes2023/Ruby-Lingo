@@ -29,6 +29,14 @@
  *   làm") — đủ để không có khoảng trắng gây hiểu là "hỏng rồi", mà không tạo ra nút bấm dẫn tới
  *   hư không.
  *
+ * ⭐ CHIP ĐỔI MÀU KHI TRÒ ĐÃ CHƠI (T05): `useGameResults()` cho biết RIÊNG từng bài tập đã chơi
+ *   chưa + tốt nhất mấy sao. Chip đã chơi dùng `border-success bg-success-soft` + huy hiệu ✓ +
+ *   số ★ — CÙNG ngôn ngữ thị giác với dòng bài học đã hoàn thành (`bg-success`).
+ *   ⚠️ KHÔNG lấy sao của BÀI (`LessonProgress.starsBest`) tô cho cả 5 chip: một bài có 5 game, tô
+ *     theo sao của bài là nói dối (game chưa chơi cũng sáng sao). Xem `useGameResults`.
+ *   ⚠️ Khi chưa biết (mạng lỗi / chưa có dữ liệu) chip ở trạng thái TRUNG TÍNH y như chưa chơi —
+ *     KHÔNG hiện lỗi kỹ thuật, KHÔNG hiện "0 ★" (đó là lời nói dối). Xem `useGameResults`.
+ *
  * ⚠️⚠️ HAI ĐIỀU KIỆN KHÁC NHAU, PHẢI KIỂM CẢ HAI:
  *     • `isGamePlayable(gameType)`  — trò này đã có component chưa (tình trạng MÃ NGUỒN).
  *     • `isExercisePlayable(exercise, runtime)` — MÁY NÀY có chơi được không (VD `say_it` cần
@@ -43,6 +51,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { ThemeAccess } from '@shared/theme-access.js';
 import type { Exercise, Lesson } from '@shared/types/content.js';
 import { GAME_LABELS } from '@shared/types/content.js';
+import type { GameResultSummary } from '@shared/types/progress.js';
 
 import { EmptyState } from '../components/common/EmptyState.js';
 import { ProgressBar } from '../components/common/ProgressBar.js';
@@ -50,6 +59,7 @@ import { isGamePlayable } from '../components/games/shared/registry.js';
 import { SceneImage } from '../components/journey/SceneImage.js';
 import { sceneAssetUrlOrNull } from '../data/index.js';
 import { useGameRuntime, useThemeBundle } from '../hooks/useContent.js';
+import { useGameResults } from '../hooks/useGameResults.js';
 import { useCompletedLessonIds, useLearnedWordIds } from '../hooks/useProgress.js';
 import { useThemeAccess } from '../hooks/useThemeAccess.js';
 import { cn } from '../lib/cn.js';
@@ -67,6 +77,11 @@ export function ThemePage() {
   const completedLessons = useCompletedLessonIds();
   // Cần để biết MÁY NÀY chơi được trò nào — xem ghi chú "HAI ĐIỀU KIỆN" ở đầu file.
   const runtime = useGameRuntime();
+  /**
+   * ⭐ Kết quả game ĐÃ CHƠI (T05) — để tô chip "đã chơi" (✓ + ★). Trả `Map` rỗng khi chưa có dữ
+   *   liệu HOẶC khi mạng lỗi (KHÔNG ném, KHÔNG hiện lỗi cho bé) — xem `useGameResults`.
+   */
+  const { byExerciseId: gameResults } = useGameResults();
 
   const access = byThemeId.get(themeId);
 
@@ -180,6 +195,7 @@ export function ThemePage() {
                 completed={completedLessons.has(lesson.id)}
                 exercises={exercises.filter((exercise) => exercise.lessonId === lesson.id)}
                 runtime={runtime}
+                gameResults={gameResults}
               />
             </li>
           ))}
@@ -243,6 +259,15 @@ interface LessonRowProps {
   exercises: Exercise[];
   /** Khả năng trình duyệt — để biết máy này chơi được trò nào. */
   runtime: GameRuntime;
+  /**
+   * Kết quả game đã chơi, tra theo `exercise.id` (T05).
+   *
+   * ⚠️ Truyền cả `Map` xuống (không lọc sẵn "trò đã chơi") vì mỗi chip tra khoá của CHÍNH nó —
+   *   lọc ở nơi gọi thì phải biết trước mọi `exerciseId`, mà dòng bài học mới là nơi có danh sách
+   *   đó. `Map` rỗng (chưa biết / mạng lỗi) ⇒ mọi chip ở trạng thái "chưa chơi" — trung tính, không
+   *   nói dối (xem `useGameResults`).
+   */
+  gameResults: Map<string, GameResultSummary>;
 }
 
 function LessonRow({
@@ -252,6 +277,7 @@ function LessonRow({
   completed,
   exercises,
   runtime,
+  gameResults,
 }: LessonRowProps) {
   const { t } = useTranslation();
   const total = lesson.wordIds.length;
@@ -334,35 +360,77 @@ function LessonRow({
 
           {playable.length > 0 && (
             <ul className="flex flex-wrap gap-2">
-              {playable.map((exercise) => (
-                <li key={exercise.id}>
-                  <Link
-                    to={gamePath(exercise.lessonId, exerciseSlug(exercise))}
-                    // Nhãn đọc nói rõ đây là một hành động ("Chơi trò ..."), vì trước mắt bé
-                    // chỉ có tên trò chơi — screen reader đọc trơ ra sẽ thành một danh từ.
-                    aria-label={t('theme.playGame', {
-                      game: GAME_LABELS[exercise.gameType].name_vi,
-                    })}
-                    className={cn(
-                      'inline-flex min-h-touch items-center gap-2 rounded-pill border-2',
-                      'border-th bg-th-soft px-4 text-kid-xs font-bold text-th-ink',
-                      'shadow-kid transition duration-kid active:translate-y-[1px] active:shadow-none',
-                      'select-none hoverable:brightness-105',
-                    )}
-                  >
-                    <span aria-hidden="true" className="text-[20px] leading-none">
-                      {GAME_LABELS[exercise.gameType].icon}
-                    </span>
-                    {/*
-                      ⚠️ `whitespace-nowrap` LÀ BẮT BUỘC — đã từng thấy lỗi này trên ảnh render
-                        của bản trước: không có nó, tên trò chơi dài ("Điền chữ cái còn thiếu")
-                        bị ngắt giữa viên thuốc và viên đó cao gấp đôi các viên khác. Bề rộng
-                        viên do NỘI DUNG quyết định; chỗ hết chỗ là ở HÀNG (`flex-wrap` của `ul`).
-                    */}
-                    <span className="whitespace-nowrap">{GAME_LABELS[exercise.gameType].name_vi}</span>
-                  </Link>
-                </li>
-              ))}
+              {playable.map((exercise) => {
+                const gameLabel = GAME_LABELS[exercise.gameType].name_vi;
+                const summary = gameResults.get(exercise.id);
+                /**
+                 * ⭐ "ĐÃ CHƠI" = có bản ghi VÀ tốt nhất ≥ 1 ★. Hàng có thật KHÔNG BAO GIỜ 0 ★
+                 *   (ràng buộc `game-scoring`: hoàn thành là đã có thưởng), nên `> 0` tương đương
+                 *   "có bản ghi". Dùng `?? 0` để `Map` rỗng (chưa biết / mạng lỗi) ⇒ `played=false`
+                 *   ⇒ chip TRUNG TÍNH y như chưa chơi (KHÔNG hiện "0 ★" — đó là lời nói dối).
+                 */
+                const bestStars = summary?.bestStars ?? 0;
+                const played = bestStars > 0;
+
+                return (
+                  <li key={exercise.id}>
+                    <Link
+                      to={gamePath(exercise.lessonId, exerciseSlug(exercise))}
+                      // Nhãn đọc nói rõ đây là HÀNH ĐỘNG ("Chơi trò ...") — screen reader đọc trơ
+                      // ra sẽ thành một danh từ. Khi đã chơi, thêm trạng thái "đã được N sao" để
+                      // trình đọc màn hình nghe được thứ bé nhìn thấy qua màu + ✓ + ★.
+                      aria-label={
+                        played
+                          ? t('theme.playGamePlayed', { game: gameLabel, stars: bestStars })
+                          : t('theme.playGame', { game: gameLabel })
+                      }
+                      className={cn(
+                        'inline-flex min-h-touch items-center gap-2 rounded-pill border-2',
+                        'px-4 text-kid-xs font-bold',
+                        'shadow-kid transition duration-kid active:translate-y-[1px] active:shadow-none',
+                        'select-none hoverable:brightness-105',
+                        /**
+                         * ⭐ NGÔN NGỮ THỊ GIÁC NHẤT QUÁN với dòng bài học đã học (dòng hoàn thành
+                         *   dùng `bg-success text-ink-inverse` — xem đầu `LessonRow`).
+                         * ⚠️ Ở đây nhãn là CHỮ 16px nên KHÔNG dùng chữ trắng trên nền `--c-success`
+                         *   (chỉ 3,4:1 — trượt AA 4,5:1). Giữ chữ `text-ink` (đủ tương phản), chỉ
+                         *   dùng nền `-soft` + viền `border-success` cho MÀU; `✓`/`★` là HÌNH
+                         *   (ngưỡng 3:1). Xem §D.2.6 của THIET-KE.
+                         */
+                        played
+                          ? 'border-success bg-success-soft text-ink'
+                          : 'border-th bg-th-soft text-th-ink',
+                      )}
+                    >
+                      <span aria-hidden="true" className="text-[20px] leading-none">
+                        {GAME_LABELS[exercise.gameType].icon}
+                      </span>
+                      {/*
+                        ⚠️ `whitespace-nowrap` LÀ BẮT BUỘC — đã từng thấy lỗi này trên ảnh render
+                          của bản trước: không có nó, tên trò chơi dài ("Điền chữ cái còn thiếu")
+                          bị ngắt giữa viên thuốc và viên đó cao gấp đôi các viên khác. Bề rộng
+                          viên do NỘI DUNG quyết định; chỗ hết chỗ là ở HÀNG (`flex-wrap` của `ul`).
+                      */}
+                      <span className="whitespace-nowrap">{gameLabel}</span>
+                      {played && (
+                        <>
+                          {/* Huy hiệu ✓ — HÌNH (aria-hidden), đồng bộ với huy hiệu ở đầu dòng bài. */}
+                          <span
+                            aria-hidden="true"
+                            className="flex size-5 items-center justify-center rounded-full bg-success text-[13px] font-bold text-ink-inverse"
+                          >
+                            ✓
+                          </span>
+                          {/* Số ★ đã đạt — dùng `text-star-ink` (bản CHỮ của màu sao, đủ AA). */}
+                          <span aria-hidden="true" className="text-star-ink">
+                            {'★'.repeat(bestStars)}
+                          </span>
+                        </>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           )}
 

@@ -21,6 +21,7 @@ import type {
   EquipItemResponse,
   FeedPetRequest,
   FeedPetResponse,
+  GameResultsGetResponse,
   HealthResponse,
   LoginRequest,
   ParentGateRequest,
@@ -146,6 +147,19 @@ export const progressApi = {
     body: SubmitGameResultRequest,
   ): Promise<SubmitGameResultResponse> =>
     api.post(`/children/${encodeURIComponent(childId)}/game-result`, body),
+
+  /**
+   * Đọc danh sách kết quả game ĐÃ CHƠI của một bé, gộp theo bài tập (T05).
+   *
+   * ⭐ KÊNH ĐỌC RIÊNG, KHÔNG PHẢI KÊNH GHI: client chỉ ĐỌC để tô chip trò chơi ở màn chủ đề.
+   *   Nó KHÔNG bao giờ gửi ngược lên — vì thế nó không nằm trong ảnh chụp tiến độ
+   *   (`progressSnapshotSchema` là kênh GHI hai chiều; nhét vào đó là phá "server là trọng tài").
+   *
+   * ⚠️ Route chỉ cần `requireParent` (KHÔNG cổng PIN): đây là màn hình CỦA BÉ, cùng nhóm với
+   *    `/progress` và `/rewards`. Cổng PIN dành cho báo cáo phụ huynh (`/report`).
+   */
+  getGameResults: (childId: string, options?: RequestOptions): Promise<GameResultsGetResponse> =>
+    api.get(`/children/${encodeURIComponent(childId)}/game-results`, options),
 };
 
 // =============================================================================

@@ -69,11 +69,12 @@ import {
 } from '../../shared/game-scoring.js';
 import { gameResultSubmissionSchema } from '../../shared/schemas/progress.js';
 import type { GameResultSubmissionInput } from '../../shared/schemas/progress.js';
-import type { GameResultAward } from '../../shared/types/progress.js';
+import { gameResultsResponseSchema } from '../../shared/schemas/progress.js';
+import type { GameResultAward, GameResultsResponse } from '../../shared/types/progress.js';
 import type { Db } from '../db/connection.js';
-import { transaction } from '../db/connection.js';
+import { getDb, transaction } from '../db/connection.js';
 import { newId } from '../lib/ids.js';
-import { localDateKey } from '../lib/time.js';
+import { localDateKey, nowIso } from '../lib/time.js';
 import { errors } from '../plugins/errors.js';
 import { childService } from './ChildService.js';
 import type { ChildService } from './ChildService.js';
@@ -204,6 +205,18 @@ interface GameResultRow {
   created_at: string;
   answered: number;
   wrong_attempts: number;
+}
+
+/**
+ * Một hàng KẾT QUẢ GỘP theo `exercise_id` (T05) — đầu ra của `GROUP BY` trong
+ * `listGameSummaries`. Tên trường theo `AS` của câu SQL.
+ */
+interface GameSummaryRow {
+  exercise_id: string;
+  best_stars: number;
+  best_score: number;
+  attempts: number;
+  last_played_at: string;
 }
 
 /**
@@ -501,6 +514,63 @@ export class GameResultService {
         /** Sticker vừa mở ở lượt này (`null` nếu bài không có sticker, hoặc sticker đã có). */
         stickerEarned,
       };
+    });
+  }
+
+  // --- Đọc kết quả đã chơi (T05) --------------------------------------------
+
+  /**
+   * Kết quả game ĐÃ CHƠI của một bé, **GỘP theo `exercise_id`** — nguồn dữ liệu cho chip trò chơi.
+   *
+   * ⭐ VÌ SAO LÀ MỘT PHƯƠNG THỨC ĐỌC RIÊNG, KHÔNG NHÉT VÀO `getSnapshot`/`getRewards`:
+   *   `game_result` là miền dữ liệu RIÊNG (thành tích từng bài tập), không phải ví hay tiến độ.
+   *   Nhét nó vào ảnh chụp ví sẽ làm phình mọi lần mở app, và trộn hai miền vào một response.
+   *   Cần thì MỞ MỘT ĐƯỜNG ĐỌC cho nó — đó là cả việc này.
+   *
+   * ⚠️ `MAX(stars)` (KHÔNG `SUM`): câu hỏi là "đã chơi bài tập này chưa + tốt nhất tới đâu", không
+   *    phải tổng. `stars` không bao giờ 0 với hàng có thật (ràng buộc `game-scoring`: tối thiểu
+   *    1 ★) nên hễ có hàng là `bestStars ≥ 1` ⇒ `ThemePage` đọc ra `played = bestStars > 0`.
+   * ⚠️ `COUNT(*)` = số lượt chơi; `MAX(created_at)` = lượt gần nhất. Chỉ đọc — câu SQL này KHÔNG
+   *    ghi gì (đây là lý do T05 KHÔNG cần migration nào).
+   * ⚠️ `idx_game_result_child (child_id, created_at DESC)` phục vụ `WHERE child_id = ?` rất tốt.
+   *
+   * ⚠️ Dùng `getDb()` trực tiếp (không qua `transaction`): đây là một truy vấn CHỈ-ĐỌC, không có
+   *    chuỗi ghi nào cần tính nguyên tử. `requireChild` bên dưới mới là thứ quyết định quyền.
+   */
+  listGameSummaries(parentId: string, childId: string): GameResultsResponse {
+    // Quyền sở hữu do service kiểm (KHÔNG tin `:id` trong URL) — ném CHILD_NOT_FOUND nếu bé không
+    // thuộc phụ huynh này. Cùng mẫu như mọi phương thức khác của dự án.
+    this.requireChild(parentId, childId);
+
+    const rows = getDb()
+      .prepare(
+        `SELECT exercise_id,
+                MAX(stars)      AS best_stars,
+                MAX(score)      AS best_score,
+                COUNT(*)        AS attempts,
+                MAX(created_at) AS last_played_at
+           FROM game_result
+          WHERE child_id = ?
+          GROUP BY exercise_id`,
+      )
+      .all(childId) as GameSummaryRow[];
+
+    // Parse ĐẦU RA bằng chính schema dùng chung — nếu server trả sai hình dạng, nó ném Ở ĐÂY
+    // (log rõ ràng) chứ không để client nhận dữ liệu méo mó rồi hỏng âm thầm.
+    return gameResultsResponseSchema.parse({
+      childId,
+      results: rows.map((row) => ({
+        exerciseId: row.exercise_id,
+        // `game_result.stars` trong DB nằm trong 0–3 (ràng buộc CHECK ở migration
+        // `003_progress.sql`), và `starsForRun()` không bao giờ trả 0 cho một lượt có thật ⇒ hàng
+        // đọc ra luôn có `bestStars ≥ 1`. Ép kiểu này an toàn; schema ở trên vẫn là lưới an toàn
+        // cuối cùng.
+        bestStars: row.best_stars as 0 | 1 | 2 | 3,
+        bestScore: row.best_score,
+        attempts: row.attempts,
+        lastPlayedAt: row.last_played_at,
+      })),
+      serverTime: nowIso(),
     });
   }
 

@@ -310,6 +310,11 @@ export const vi = {
     /** Nhãn đọc của một chip trò chơi — nói rõ đây là HÀNH ĐỘNG, không phải tên một đồ vật. */
     playGame: 'Chơi trò {{game}}',
     /**
+     * Nhãn đọc của chip trò chơi ĐÃ CHƠI (T05) — thêm trạng thái "đã được N sao" để trình đọc
+     * màn hình nghe được thứ mà bé nhìn thấy qua màu + huy hiệu ✓ + số ★.
+     */
+    playGamePlayed: 'Chơi trò {{game}} — đã được {{stars}} sao',
+    /**
      * Số trò CÒN ĐANG LÀM của một bài — gộp thành MỘT DÒNG CHỮ, không phải một rừng chip xám.
      * ⭐ Bé đọc ra "còn nữa, nhưng chưa có" — chứ không đọc ra "hỏng rồi" (một khoảng trắng) hay
      *   "con không bấm được" (một chip xám bấm không ra gì).
