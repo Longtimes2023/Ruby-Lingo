@@ -51,15 +51,18 @@ Kiểm tra trước khi đẩy thật (không đẩy gì): `DRY_RUN=1 ./scripts/
 
 ```bash
 sudo mkdir -p /srv && cd /srv
-sudo git clone <url-repo-github> rubylingo      # repo PRIVATE
+# Repo PUBLIC  ⇒ HTTPS, KHÔNG cần khoá, KHÔNG cần deploy key:
+sudo git clone https://github.com/Longtimes2023/Ruby-Lingo.git rubylingo
+# Repo PRIVATE ⇒ đọc MỤC 5 TRƯỚC (deploy key / PAT), rồi dùng URL SSH:
+#   sudo git clone git@github.com:Longtimes2023/Ruby-Lingo.git rubylingo
 cd rubylingo
 ```
 
-> ⚠️ **Repo là PRIVATE.** Trong đó có mã nguồn nhưng **không** có dữ liệu trẻ em và **không** có
-> `.env` (xem 0.5). Nếu để public, ít nhất hãy biết rằng mã nguồn là công khai.
->
-> ⚠️ VPS cần quyền đọc repo private. Hai cách (xem mục 5):
-> **deploy key** (khoá SSH chỉ-đọc riêng cho repo — khuyến nghị) hoặc **fine-grained PAT**.
+> ⚠️ **Trạng thái repo (public/private) quyết định cách clone — kiểm trước khi gõ lệnh.**
+> Trong repo có mã nguồn nhưng **không** có dữ liệu trẻ em và **không** có `.env` (xem 0.5),
+> nên để **public** là chấp nhận được. Nếu để **private** thì VPS phải có deploy key hoặc PAT
+> (mục 5) — và khi đó phải nhớ `sudo` làm git dùng khoá SSH của **root**, không phải của bạn.
+
 
 Kiểm nhanh (đều phải xanh):
 
@@ -352,8 +355,29 @@ chủ đề. Bước 5 chỉ nói "DB mở được"; chỉ bước 6 mới nói
 
 ## 5. Cho VPS quyền đọc repo PRIVATE
 
+> ⚠️ **Repo đang để PUBLIC ⇒ BỎ QUA CẢ MỤC NÀY.** Trên repo public, `git clone`/`git pull` qua
+> **HTTPS** không cần danh tính gì cả:
+> ```bash
+> sudo git clone https://github.com/<user>/<repo>.git /srv/rubylingo
+> ```
+> Chỉ đọc tiếp khi repo là **PRIVATE**.
+
 VPS phải chứng minh danh tính với GitHub mỗi lần `git fetch`/`pull`. Hai cách, **đều không cần
 nhúng mật khẩu tài khoản vào VPS**:
+
+### ⚠️⚠️ TRƯỚC KHI LÀM GÌ: `sudo` làm git dùng khoá SSH của **root**, KHÔNG phải của bạn
+
+Mục 0.1 hướng dẫn `sudo git clone …`. `sudo` chạy git với tư cách **root** ⇒ git đọc
+`/root/.ssh/config` và `/root/.ssh/id_*`, **KHÔNG** đọc `~/.ssh/` của tài khoản thường. Nếu bạn tạo
+deploy key bằng tài khoản thường rồi `sudo git clone`, kết quả là:
+
+```text
+git@github.com: Permission denied (publickey).
+```
+
+⇒ Hoặc tạo khoá **bằng `sudo`** (khoá nằm ở `/root/.ssh/` — mọi lệnh `ssh-keygen`/`cat` dưới đây
+phải thêm `sudo`), hoặc **bỏ `sudo`** ở bước clone rồi `sudo chown -R "$USER" /srv/rubylingo`.
+Cách gọn nhất khi repo là **public**: dùng HTTPS và quên hẳn chuyện khoá.
 
 ### Cách A — Deploy key (khuyến nghị: quyền hẹp nhất, thu hồi được riêng)
 

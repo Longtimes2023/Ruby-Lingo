@@ -304,11 +304,15 @@ fi
 step "BƯỚC 9 — Việc tiếp theo"
 
 printf '    1) Trên VPS (MỘT LẦN):\n'
+printf '         # repo PUBLIC ⇒ dùng HTTPS, KHÔNG cần deploy key:\n'
+printf '         #   sudo git clone https://github.com/<user>/<repo>.git /srv/rubylingo\n'
+printf '         # repo PRIVATE ⇒ dùng URL SSH dưới đây + deploy key/PAT (deploy/README.md §5)\n'
 printf '         sudo git clone %s /srv/rubylingo\n' "$URL"
 printf '         cd /srv/rubylingo && cp .env.example .env && nano .env\n'
 printf '         sudo ./scripts/deploy.sh\n'
 printf '    2) Mỗi lần cập nhật sau:  sửa ở máy dev → push → trên VPS chạy\n'
 printf '         ./scripts/update.sh\n'
-printf '    3) Cho VPS quyền đọc repo private (deploy key hoặc PAT): xem deploy/README.md §5.\n'
+printf '    3) CHỈ khi repo PRIVATE mới cần deploy key/PAT — deploy/README.md §5.\n'
+printf '       ⚠️ sudo làm git dùng khoá SSH của ROOT, không phải của bạn.\n'
 
 printf '\n\033[32m\033[1m▶ XONG — mã nguồn đã ở GitHub, đã kiểm chứng bằng hash.\033[0m\n\n'
