@@ -576,6 +576,81 @@ export const vi = {
      */
     speakDisclaimer:
       'RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.',
+
+    // --- Màn hình khu vực thi (Giai đoạn 7) --------------------------------
+    /** Tiêu đề thẻ cổng ở bản đồ hành trình + màn khu vực thi. */
+    title: 'Khu vực thi',
+    /** Trạng thái TRUNG TÍNH khi chưa đọc được cổng (đang tải / mạng lỗi). KHÔNG nói "còn thiếu". */
+    checking: 'Đang kiểm tra...',
+    /** Cổng chưa mở vì còn bài chưa học xong. */
+    lockedLessons:
+      'Bé ơi, còn {{missing}} bài nữa để học hết nhé! (đã xong {{done}}/{{total}} bài)',
+    /** Cổng chưa mở vì còn game chưa chơi. */
+    lockedGames: 'Còn {{missing}} trò chơi bé chưa thử! Chơi cho vui rồi mình thi nhé.',
+    /** Nút vào khu vực thi (chỉ có khi cổng đã mở). */
+    enter: 'Vào khu vực thi',
+    /** Nhãn đọc cho screen reader của thẻ cổng khi đã mở. */
+    enterLabel: 'Vào khu vực thi Starters',
+
+    lastShields: 'Khiên tốt nhất: {{count}}',
+    bestShieldsNone: 'Chưa làm lần nào',
+    startedHint: 'Bé đang làm dở, vào làm tiếp nhé!',
+
+    intro: 'Bé chọn một phần để làm nhé. Mỗi lần làm một phần thôi cho bé đỡ mệt!',
+    totalShields: 'Tổng khiên: {{count}}',
+
+    sectionListening: 'Nghe',
+    sectionReadingWriting: 'Đọc & Viết',
+    sectionSpeaking: 'Nói',
+
+    startSection: 'Bắt đầu',
+    continueSection: 'Làm tiếp',
+    redoSection: 'Làm lại',
+    /** Số câu của một phần, hiện trên thẻ phần. */
+    itemCount: '{{count}} câu',
+
+    itemProgress: 'Câu {{current}}/{{total}}',
+    resumeNote: 'Mình làm tiếp nhé!',
+    speakingIntro: 'Bé nghe câu mẫu tiếng Anh rồi tự nói to lên nhé. Nói xong thì bấm nút.',
+
+    /** Màn kết thúc một phần. */
+    sectionDoneTitle: 'Bé làm xong phần này rồi!',
+    shieldsEarned: 'Bé được {{count}} khiên',
+    /** Nhãn đọc đầy đủ cho screen reader (khiên vẽ bằng hình 🛡️ nên cần chữ đọc lên). */
+    shieldsEarnedLabel: '{{section}}: bé được {{count}} khiên',
+    /** Câu khen theo mức khiên — KHÔNG có từ chê. */
+    praiseFive: 'Siêu sao!',
+    praiseFour: 'Giỏi lắm!',
+    praiseThree: 'Bé làm tốt lắm!',
+    praiseTwo: 'Bé cố lên nào, mình thử lại nhé!',
+    praiseOne: 'Bé đã hoàn thành! Mình thử lại vui hơn nhé!',
+
+    /** Đang gửi kết quả lên server. */
+    sending: 'Đang gửi kết quả cho bé...',
+    /** Gửi hỏng — KHÔNG lộ lỗi kỹ thuật; giữ kết quả tạm và cho bé thử lại. */
+    sendFailed: 'Chưa gửi được kết quả. Bé bấm thử lại nhé!',
+    sendRetry: 'Thử lại',
+    /** Kết quả tạm (chưa gửi được) — vẫn hiện khiên, chỉ chưa đồng bộ. */
+    provisionalNote: 'Kết quả này đang chờ gửi, mình thử lại nhé!',
+
+    nextSection: 'Làm phần tiếp',
+    backToHome: 'Về khu vực thi',
+    seeCertificate: 'Xem chứng nhận',
+
+    /** Màn chứng nhận. */
+    certificateTitle: 'Chứng nhận nhỏ của bé',
+    certificateIntro: 'Bé đã hoàn thành bài thi Starters!',
+    certificateTotal: 'Tổng cộng {{count}} khiên',
+    certificateIncomplete: 'Bé còn phần {{sections}} chưa làm. Mình làm nốt nhé!',
+    certificateMedalLabel: 'Huy chương tốt nghiệp Starters',
+
+    /** Không có phần thi này / chưa tới lúc. */
+    homeTitle: 'Khu vực thi Starters',
+    lockedTitle: 'Chưa tới lúc làm bài thi',
+    notFoundTitle: 'Không tìm thấy phần thi này',
+    notFoundHint: 'Bé quay lại khu vực thi nhé!',
+    loadErrorTitle: 'Chưa mở được khu vực thi',
+    loadErrorHint: 'Có vẻ mạng đang chậm. Bé thử lại nhé!',
   },
 
   /**

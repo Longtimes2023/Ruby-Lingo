@@ -55,3 +55,32 @@ export function exerciseSlug(exercise: Pick<Exercise, 'id' | 'lessonId'>): strin
   const segments = exercise.id.split('/');
   return segments[segments.length - 1] ?? exercise.id;
 }
+
+// =============================================================================
+// Bài thi cuối khoá (Starters)
+// =============================================================================
+//
+// Đặt cùng chỗ với các đường dẫn học vì cùng lý do: URL bài thi xuất hiện ở thẻ cổng trên bản đồ,
+// ở màn khu vực thi, ở màn một phần, và ở màn chứng nhận. Nối chuỗi tại chỗ thì đổi hình dạng URL
+// là một cuộc đi tìm, và một chỗ quên sẽ tạo link chết — KHÔNG có lỗi biên dịch nào báo.
+
+/**
+ * `/final-test` — khu vực thi: trạng thái cổng + ba phần.
+ *
+ * ⚠️ Đây KHÔNG phải một mục ở `BottomNav` — 5 mục là TRẦN của dự án (xem `router.tsx`). Điểm
+ *    vào là thẻ "🎓 Khu vực thi" ở cuối bản đồ hành trình.
+ */
+export function finalTestHomePath(): string {
+  return '/final-test';
+}
+
+/** `/final-test/:section` — màn chơi MỘT phần (`listening` | `reading-writing` | `speaking`). */
+export function finalTestSectionPath(section: string): string {
+  return `/final-test/${encodeURIComponent(section)}`;
+}
+
+/** `/final-test/certificate` — màn "chứng nhận" trong app: tổng khiên ba phần. */
+export function finalTestCertificatePath(): string {
+  return '/final-test/certificate';
+}
+

@@ -23,6 +23,11 @@ import type {
   EquipItemResponse,
   FeedPetRequest,
   FeedPetResponse,
+  FinalTestGetResponse,
+  FinalTestProgressSaveRequest,
+  FinalTestProgressSaveResponse,
+  FinalTestSubmitRequest,
+  FinalTestSubmitResponse,
   GameResultsGetResponse,
   HealthResponse,
   LoginRequest,
@@ -162,6 +167,49 @@ export const progressApi = {
    */
   getGameResults: (childId: string, options?: RequestOptions): Promise<GameResultsGetResponse> =>
     api.get(`/children/${encodeURIComponent(childId)}/game-results`, options),
+};
+
+// =============================================================================
+// Bài thi cuối khoá — `/api/children/:id/final-test**`
+// =============================================================================
+
+/**
+ * Ba chiều của khu vực thi cuối khoá. Cùng khuôn với `progressApi.submitGameResult`:
+ *   · `get`          — ĐỌC trạng thái cổng + khiên cao nhất từng phần + tiến độ đang dở.
+ *   · `submit`       — NỘP một phần. Body CHỈ là SỰ THẬT THÔ; server tự chấm (B4).
+ *   · `saveProgress` — LƯU tiến độ đang dở để đổi máy làm tiếp.
+ *
+ * ⚠️ `:section` NẰM TRÊN ĐƯỜNG DẪN, không trong body — một sự thật chỉ có MỘT chỗ khai
+ *    (xem `shared/schemas/final-test-api.ts`). Vì vậy `submit` nhận `section` riêng.
+ */
+export const finalTestApi = {
+  /** Trạng thái khu vực thi: cổng đã mở chưa + mỗi phần bé đang ở đâu. */
+  get: (childId: string, options?: RequestOptions): Promise<FinalTestGetResponse> =>
+    api.get(`/children/${encodeURIComponent(childId)}/final-test`, options),
+
+  /**
+   * Nộp MỘT phần đã làm xong — server chấm lại từ `answers` và trả khiên chính thức.
+   *
+   * ⚠️ LŨY ĐẲNG theo `clientEventId`: mất mạng rồi gửi lại ĐÚNG payload cũ ⇒ server không cộng
+   *    thưởng hai lần (`duplicate: true`). Chỗ gọi PHẢI giữ nguyên `clientEventId` giữa các lần
+   *    thử, không sinh mã mới.
+   */
+  submit: (
+    childId: string,
+    section: string,
+    body: FinalTestSubmitRequest,
+  ): Promise<FinalTestSubmitResponse> =>
+    api.post(
+      `/children/${encodeURIComponent(childId)}/final-test/${encodeURIComponent(section)}/submit`,
+      body,
+    ),
+
+  /** Lưu tiến độ đang dở của một phần (để bé đổi máy vẫn làm tiếp). */
+  saveProgress: (
+    childId: string,
+    body: FinalTestProgressSaveRequest,
+  ): Promise<FinalTestProgressSaveResponse> =>
+    api.put(`/children/${encodeURIComponent(childId)}/final-test/progress`, body),
 };
 
 // =============================================================================

@@ -41,6 +41,9 @@ import { LoginPage } from './pages/auth/LoginPage.js';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage.js';
 import { SignupPage } from './pages/auth/SignupPage.js';
 import { ParentGatePage } from './pages/parent/ParentGatePage.js';
+import { FinalTestCertificatePage } from './pages/final-test/FinalTestCertificatePage.js';
+import { FinalTestHomePage } from './pages/final-test/FinalTestHomePage.js';
+import { FinalTestSectionPage } from './pages/final-test/FinalTestSectionPage.js';
 import { ChoosePetPage } from './pages/pet/ChoosePetPage.js';
 import { PetHousePage } from './pages/pet/PetHousePage.js';
 import { ExplorerProfilePage } from './pages/profile/ExplorerProfilePage.js';
@@ -112,6 +115,22 @@ export function AppRoutes() {
           <Route path="/theme/:themeId" element={<ThemePage />} />
           <Route path="/lesson/:lessonId/flashcards" element={<FlashcardPage />} />
           <Route path="/lesson/:lessonId/game/:exerciseSlug" element={<GamePage />} />
+
+          {/*
+            BÀI THI CUỐI KHOÁ (Giai đoạn 7) — ba route, ba màn:
+              `/final-test`              trạng thái cổng + ba phần (điểm vào)
+              `/final-test/certificate`  tổng khiên ba phần + huy chương tốt nghiệp
+              `/final-test/:section`     chơi MỘT phần (listening | reading-writing | speaking)
+
+            ⚠️ KHÔNG thêm mục vào `BottomNav` — 5 mục là TRẦN của dự án (xem `BottomNav.tsx`).
+               Điểm vào là thẻ "🎓 Khu vực thi" ở cuối `JourneyMapPage`.
+
+            ⚠️ `certificate` khai TRƯỚC `:section` cho DỄ ĐỌC; `react-router` v6 vốn xếp đoạn TĨNH
+               cao hơn đoạn động nên `/final-test/certificate` không bao giờ khớp `:section`.
+          */}
+          <Route path="/final-test" element={<FinalTestHomePage />} />
+          <Route path="/final-test/certificate" element={<FinalTestCertificatePage />} />
+          <Route path="/final-test/:section" element={<FinalTestSectionPage />} />
 
           {/*
             Bảng nhiệm vụ (M9). Nằm NGANG HÀNG với ba tầng đi xuống ở trên, không nằm dưới chúng:

@@ -26,3 +26,18 @@ export function gameResultsQueryKey(
 ): readonly ['game-results', string | null] {
   return ['game-results', childId] as const;
 }
+
+/**
+ * Khoá truy vấn cho TRẠNG THÁI khu vực thi cuối khoá của một bé.
+ *
+ * ⭐ Cùng lý do như `gameResultsQueryKey`: có HAI nơi chạm vào "trạng thái khu vực thi":
+ *   1. `useFinalTestGate` — ĐỌC (dựng truy vấn).
+ *   2. `FinalTestSectionPage` — LÀM MỚI sau khi nộp một phần (khiên cao nhất đổi).
+ *   Hai nơi tự viết chuỗi thì chỉ cần một bên đổi là bên kia làm mới một khoá không tồn tại —
+ *   khiên trên màn khu vực thi không cập nhật, và không có lỗi nào.
+ */
+export function finalTestQueryKey(
+  childId: string | null,
+): readonly ['final-test', string | null] {
+  return ['final-test', childId] as const;
+}

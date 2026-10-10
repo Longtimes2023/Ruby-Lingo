@@ -27,6 +27,7 @@ import { JourneyMapPage } from '@/pages/JourneyMapPage.js';
 import { useSessionStore } from '@/store/sessionStore.js';
 import type * as ChildStatusHooks from '@/hooks/useChildStatus.js';
 import type * as ContentHooks from '@/hooks/useContent.js';
+import type * as FinalTestHooks from '@/hooks/useFinalTest.js';
 import type * as ThemeAccessHooks from '@/hooks/useThemeAccess.js';
 import type { ChildProfileDto } from '@shared/types/api.js';
 
@@ -66,6 +67,20 @@ vi.mock('@/hooks/useThemeAccess.js', async (importOriginal) => {
 vi.mock('@/hooks/useChildStatus.js', async (importOriginal) => {
   const actual = await importOriginal<typeof ChildStatusHooks>();
   return { ...actual, useChildStatus: () => ({ status: null }) };
+});
+
+/*
+  ⚠️ Thẻ "🎓 Khu vực thi" ở cuối bản đồ gọi `useFinalTestGate()` (đọc trạng thái cổng từ server).
+  Ở tệp test này ta chỉ quan tâm HÀNH VI CỦA BẢN ĐỒ (không có thao tác quản trị), KHÔNG quan tâm
+  nội dung khu vực thi — nên thay bằng trạng thái "đang kiểm tra" (state null). Không mock thì hook
+  sẽ gọi `useQuery` mà tệp này render KHÔNG có `QueryClientProvider` ⇒ ném "No QueryClient set".
+*/
+vi.mock('@/hooks/useFinalTest.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof FinalTestHooks>();
+  return {
+    ...actual,
+    useFinalTestGate: () => ({ state: null, isLoading: false, isError: false, refetch: () => {} }),
+  };
 });
 
 const CHILD: ChildProfileDto = {

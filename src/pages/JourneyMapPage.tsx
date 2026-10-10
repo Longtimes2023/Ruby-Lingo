@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next';
 import { getAvatar } from '../data/avatars.js';
 import { getXpProgress } from '../data/xp-levels.js';
 import { useChildStatus } from '../hooks/useChildStatus.js';
+import { useFinalTestGate } from '../hooks/useFinalTest.js';
 import { useThemeAccess } from '../hooks/useThemeAccess.js';
 import { useThemeMap } from '../hooks/useContent.js';
 import { HeartMeter } from '../components/common/HeartMeter.js';
@@ -38,6 +39,7 @@ import { ResponsiveGrid } from '../components/common/ResponsiveGrid.js';
 import { StarCounter } from '../components/common/StarCounter.js';
 import { StreakFlame } from '../components/common/StreakFlame.js';
 import { XpBar } from '../components/common/XpBar.js';
+import { FinalTestGatewayCard } from '../components/final-test/FinalTestGatewayCard.js';
 import { ThemeCard } from '../components/journey/ThemeCard.js';
 import { useActiveChild } from '../store/sessionStore.js';
 
@@ -47,6 +49,12 @@ export function JourneyMapPage() {
   const items = useThemeMap();
   const { access, summary, isHydrated } = useThemeAccess();
   const { status } = useChildStatus();
+  /**
+   * ⭐ Trạng thái cổng khu vực thi cuối khoá (Giai đoạn 7) — chỉ ĐỌC để vẽ thẻ "🎓 Khu vực thi".
+   *   ⚠️ Mạng lỗi ⇒ `state === null` ⇒ thẻ ở trạng thái TRUNG TÍNH "Đang kiểm tra...", KHÔNG nói
+   *      bé còn thiếu gì (tránh mắng oan khi offline — xem `FinalTestGatewayCard`).
+   */
+  const finalTest = useFinalTestGate();
 
   // `RequireChild` đã bảo đảm có bé trước khi tới đây; nhánh này chỉ để TypeScript yên tâm và
   // để không bao giờ render ra màn hình trắng nếu guard bị gỡ nhầm.
@@ -162,6 +170,15 @@ export function JourneyMapPage() {
             );
           })}
         </ResponsiveGrid>
+      </section>
+
+      {/* --- 4. Khu vực thi cuối khoá ---------------------------------------
+          ⭐ ĐIỂM VÀO của bài thi nằm ở ĐÂY, không ở `BottomNav` (5 mục là trần của dự án).
+             Thẻ này bấm được khi bé đã học hết + chơi hết; ngược lại nó hiện RÕ còn thiếu gì.
+             ⚠️ Khi CHƯA đọc được trạng thái cổng (đang tải / mạng lỗi), thẻ ở trạng thái TRUNG
+                TÍNH — không nói bé còn thiếu gì (xem `FinalTestGatewayCard`). */}
+      <section aria-label={t('finalTest.title')}>
+        <FinalTestGatewayCard state={finalTest.state} />
       </section>
     </div>
   );
