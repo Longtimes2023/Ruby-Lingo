@@ -7,8 +7,15 @@
     "icon": "🔤",
     "sceneImage": "",
     "sceneAlt": "Chủ đề bảng chữ cái gồm 26 chữ cái A đến Z. Vì chữ cái không có emoji riêng nên mỗi thẻ hiển thị chính chữ cái in hoa làm biểu tượng.",
-    "unlockCondition": { "type": "coming_soon" },
-    "lessonIds": ["alphabet/a1", "alphabet/a2", "alphabet/a3", "alphabet/a4"]
+    "unlockCondition": {
+      "type": "coming_soon"
+    },
+    "lessonIds": [
+      "alphabet/a1",
+      "alphabet/a2",
+      "alphabet/a3",
+      "alphabet/a4"
+    ]
   },
   "lessons": [
     {
@@ -24,7 +31,11 @@
         "starters.f",
         "starters.g"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "alphabet/a1/memory-match",
+        "alphabet/a1/memory-match-2",
+        "alphabet/a1/missing-letter"
+      ]
     },
     {
       "id": "alphabet/a2",
@@ -39,7 +50,11 @@
         "starters.m",
         "starters.n"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "alphabet/a2/memory-match",
+        "alphabet/a2/memory-match-2",
+        "alphabet/a2/missing-letter"
+      ]
     },
     {
       "id": "alphabet/a3",
@@ -53,7 +68,10 @@
         "starters.s",
         "starters.t"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "alphabet/a3/memory-match",
+        "alphabet/a3/missing-letter"
+      ]
     },
     {
       "id": "alphabet/a4",
@@ -67,39 +85,490 @@
         "starters.y",
         "starters.z"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "alphabet/a4/memory-match",
+        "alphabet/a4/missing-letter"
+      ]
     }
   ],
   "words": [
-    { "id": "starters.a", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "A", "vi": "chữ A", "type": "n", "icon": "A", "picturable": false },
-    { "id": "starters.b", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "B", "vi": "chữ B", "type": "n", "icon": "B", "picturable": false },
-    { "id": "starters.c", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "C", "vi": "chữ C", "type": "n", "icon": "C", "picturable": false },
-    { "id": "starters.d", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "D", "vi": "chữ D", "type": "n", "icon": "D", "picturable": false },
-    { "id": "starters.e", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "E", "vi": "chữ E", "type": "n", "icon": "E", "picturable": false },
-    { "id": "starters.f", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "F", "vi": "chữ F", "type": "n", "icon": "F", "picturable": false },
-    { "id": "starters.g", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a1", "en": "G", "vi": "chữ G", "type": "n", "icon": "G", "picturable": false },
-
-    { "id": "starters.h", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "H", "vi": "chữ H", "type": "n", "icon": "H", "picturable": false },
-    { "id": "starters.i", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "I", "vi": "chữ I", "type": "n", "icon": "I", "picturable": false },
-    { "id": "starters.j", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "J", "vi": "chữ J", "type": "n", "icon": "J", "picturable": false },
-    { "id": "starters.k", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "K", "vi": "chữ K", "type": "n", "icon": "K", "picturable": false },
-    { "id": "starters.l", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "L", "vi": "chữ L", "type": "n", "icon": "L", "picturable": false },
-    { "id": "starters.m", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "M", "vi": "chữ M", "type": "n", "icon": "M", "picturable": false },
-    { "id": "starters.n", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a2", "en": "N", "vi": "chữ N", "type": "n", "icon": "N", "picturable": false },
-
-    { "id": "starters.o", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "O", "vi": "chữ O", "type": "n", "icon": "O", "picturable": false },
-    { "id": "starters.p", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "P", "vi": "chữ P", "type": "n", "icon": "P", "picturable": false },
-    { "id": "starters.q", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "Q", "vi": "chữ Q", "type": "n", "icon": "Q", "picturable": false },
-    { "id": "starters.r", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "R", "vi": "chữ R", "type": "n", "icon": "R", "picturable": false },
-    { "id": "starters.s", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "S", "vi": "chữ S", "type": "n", "icon": "S", "picturable": false },
-    { "id": "starters.t", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a3", "en": "T", "vi": "chữ T", "type": "n", "icon": "T", "picturable": false },
-
-    { "id": "starters.u", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "U", "vi": "chữ U", "type": "n", "icon": "U", "picturable": false },
-    { "id": "starters.v", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "V", "vi": "chữ V", "type": "n", "icon": "V", "picturable": false },
-    { "id": "starters.w", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "W", "vi": "chữ W", "type": "n", "icon": "W", "picturable": false },
-    { "id": "starters.x", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "X", "vi": "chữ X", "type": "n", "icon": "X", "picturable": false },
-    { "id": "starters.y", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "Y", "vi": "chữ Y", "type": "n", "icon": "Y", "picturable": false },
-    { "id": "starters.z", "levelId": "starters", "primaryThemeId": "alphabet", "primaryLessonId": "alphabet/a4", "en": "Z", "vi": "chữ Z", "type": "n", "icon": "Z", "picturable": false }
+    {
+      "id": "starters.a",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "A",
+      "vi": "chữ A",
+      "type": "n",
+      "icon": "A",
+      "picturable": false
+    },
+    {
+      "id": "starters.b",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "B",
+      "vi": "chữ B",
+      "type": "n",
+      "icon": "B",
+      "picturable": false
+    },
+    {
+      "id": "starters.c",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "C",
+      "vi": "chữ C",
+      "type": "n",
+      "icon": "C",
+      "picturable": false
+    },
+    {
+      "id": "starters.d",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "D",
+      "vi": "chữ D",
+      "type": "n",
+      "icon": "D",
+      "picturable": false
+    },
+    {
+      "id": "starters.e",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "E",
+      "vi": "chữ E",
+      "type": "n",
+      "icon": "E",
+      "picturable": false
+    },
+    {
+      "id": "starters.f",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "F",
+      "vi": "chữ F",
+      "type": "n",
+      "icon": "F",
+      "picturable": false
+    },
+    {
+      "id": "starters.g",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a1",
+      "en": "G",
+      "vi": "chữ G",
+      "type": "n",
+      "icon": "G",
+      "picturable": false
+    },
+    {
+      "id": "starters.h",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "H",
+      "vi": "chữ H",
+      "type": "n",
+      "icon": "H",
+      "picturable": false
+    },
+    {
+      "id": "starters.i",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "I",
+      "vi": "chữ I",
+      "type": "n",
+      "icon": "I",
+      "picturable": false
+    },
+    {
+      "id": "starters.j",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "J",
+      "vi": "chữ J",
+      "type": "n",
+      "icon": "J",
+      "picturable": false
+    },
+    {
+      "id": "starters.k",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "K",
+      "vi": "chữ K",
+      "type": "n",
+      "icon": "K",
+      "picturable": false
+    },
+    {
+      "id": "starters.l",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "L",
+      "vi": "chữ L",
+      "type": "n",
+      "icon": "L",
+      "picturable": false
+    },
+    {
+      "id": "starters.m",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "M",
+      "vi": "chữ M",
+      "type": "n",
+      "icon": "M",
+      "picturable": false
+    },
+    {
+      "id": "starters.n",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a2",
+      "en": "N",
+      "vi": "chữ N",
+      "type": "n",
+      "icon": "N",
+      "picturable": false
+    },
+    {
+      "id": "starters.o",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "O",
+      "vi": "chữ O",
+      "type": "n",
+      "icon": "O",
+      "picturable": false
+    },
+    {
+      "id": "starters.p",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "P",
+      "vi": "chữ P",
+      "type": "n",
+      "icon": "P",
+      "picturable": false
+    },
+    {
+      "id": "starters.q",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "Q",
+      "vi": "chữ Q",
+      "type": "n",
+      "icon": "Q",
+      "picturable": false
+    },
+    {
+      "id": "starters.r",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "R",
+      "vi": "chữ R",
+      "type": "n",
+      "icon": "R",
+      "picturable": false
+    },
+    {
+      "id": "starters.s",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "S",
+      "vi": "chữ S",
+      "type": "n",
+      "icon": "S",
+      "picturable": false
+    },
+    {
+      "id": "starters.t",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a3",
+      "en": "T",
+      "vi": "chữ T",
+      "type": "n",
+      "icon": "T",
+      "picturable": false
+    },
+    {
+      "id": "starters.u",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "U",
+      "vi": "chữ U",
+      "type": "n",
+      "icon": "U",
+      "picturable": false
+    },
+    {
+      "id": "starters.v",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "V",
+      "vi": "chữ V",
+      "type": "n",
+      "icon": "V",
+      "picturable": false
+    },
+    {
+      "id": "starters.w",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "W",
+      "vi": "chữ W",
+      "type": "n",
+      "icon": "W",
+      "picturable": false
+    },
+    {
+      "id": "starters.x",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "X",
+      "vi": "chữ X",
+      "type": "n",
+      "icon": "X",
+      "picturable": false
+    },
+    {
+      "id": "starters.y",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "Y",
+      "vi": "chữ Y",
+      "type": "n",
+      "icon": "Y",
+      "picturable": false
+    },
+    {
+      "id": "starters.z",
+      "levelId": "starters",
+      "primaryThemeId": "alphabet",
+      "primaryLessonId": "alphabet/a4",
+      "en": "Z",
+      "vi": "chữ Z",
+      "type": "n",
+      "icon": "Z",
+      "picturable": false
+    }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "alphabet/a1/memory-match",
+      "lessonId": "alphabet/a1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.a",
+        "starters.b",
+        "starters.c",
+        "starters.d"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "alphabet/a2/memory-match",
+      "lessonId": "alphabet/a2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.h",
+        "starters.i",
+        "starters.j",
+        "starters.k"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "alphabet/a3/memory-match",
+      "lessonId": "alphabet/a3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.o",
+        "starters.p",
+        "starters.q",
+        "starters.r",
+        "starters.s",
+        "starters.t"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "alphabet/a4/memory-match",
+      "lessonId": "alphabet/a4",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.u",
+        "starters.v",
+        "starters.w",
+        "starters.x",
+        "starters.y",
+        "starters.z"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "alphabet/a1/memory-match-2",
+      "lessonId": "alphabet/a1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.e",
+        "starters.f",
+        "starters.g"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "alphabet/a2/memory-match-2",
+      "lessonId": "alphabet/a2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.l",
+        "starters.m",
+        "starters.n"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "alphabet/a1/missing-letter",
+      "lessonId": "alphabet/a1",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.a",
+        "starters.b",
+        "starters.c",
+        "starters.d",
+        "starters.e",
+        "starters.f",
+        "starters.g"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "alphabet/a2/missing-letter",
+      "lessonId": "alphabet/a2",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.h",
+        "starters.i",
+        "starters.j",
+        "starters.k",
+        "starters.l",
+        "starters.m",
+        "starters.n"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "alphabet/a3/missing-letter",
+      "lessonId": "alphabet/a3",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.o",
+        "starters.p",
+        "starters.q",
+        "starters.r",
+        "starters.s",
+        "starters.t"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "alphabet/a4/missing-letter",
+      "lessonId": "alphabet/a4",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.u",
+        "starters.v",
+        "starters.w",
+        "starters.x",
+        "starters.y",
+        "starters.z"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    }
+  ]
 }

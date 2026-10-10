@@ -7,8 +7,16 @@
     "icon": "🏠",
     "sceneImage": "at-home",
     "sceneAlt": "Tranh cảnh ngôi nhà với phòng khách, phòng ngủ, nhà bếp và nhiều đồ đạc quen thuộc",
-    "unlockCondition": { "type": "coming_soon" },
-    "lessonIds": ["at-home/h1", "at-home/h2", "at-home/h3", "at-home/h4", "at-home/h5"]
+    "unlockCondition": {
+      "type": "coming_soon"
+    },
+    "lessonIds": [
+      "at-home/h1",
+      "at-home/h2",
+      "at-home/h3",
+      "at-home/h4",
+      "at-home/h5"
+    ]
   },
   "lessons": [
     {
@@ -24,7 +32,13 @@
         "starters.hall",
         "starters.room"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-home/h1/memory-match",
+        "at-home/h1/memory-match-2",
+        "at-home/h1/missing-letter",
+        "at-home/h1/listen-tap",
+        "at-home/h1/word-picture"
+      ]
     },
     {
       "id": "at-home/h2",
@@ -39,7 +53,13 @@
         "starters.box",
         "starters.mirror"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-home/h2/memory-match",
+        "at-home/h2/memory-match-2",
+        "at-home/h2/missing-letter",
+        "at-home/h2/listen-tap",
+        "at-home/h2/word-picture"
+      ]
     },
     {
       "id": "at-home/h3",
@@ -54,7 +74,13 @@
         "starters.radio",
         "starters.window"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-home/h3/memory-match",
+        "at-home/h3/memory-match-2",
+        "at-home/h3/missing-letter",
+        "at-home/h3/listen-tap",
+        "at-home/h3/word-picture"
+      ]
     },
     {
       "id": "at-home/h4",
@@ -69,7 +95,13 @@
         "starters.phone",
         "starters.flower"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-home/h4/memory-match",
+        "at-home/h4/memory-match-2",
+        "at-home/h4/missing-letter",
+        "at-home/h4/listen-tap",
+        "at-home/h4/word-picture"
+      ]
     },
     {
       "id": "at-home/h5",
@@ -83,48 +115,846 @@
         "starters.doll",
         "starters.bath"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-home/h5/memory-match",
+        "at-home/h5/missing-letter",
+        "at-home/h5/listen-tap",
+        "at-home/h5/word-picture"
+      ]
     }
   ],
   "words": [
-    { "id": "starters.bedroom", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "bedroom", "vi": "phòng ngủ", "type": "n", "icon": "🛏️🌙", "picturable": true, "phonetic": "/ˈbed.ruːm/" },
-    { "id": "starters.bathroom", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "bathroom", "vi": "phòng tắm", "type": "n", "icon": "🛁🚿", "picturable": true, "phonetic": "/ˈbɑːθ.ruːm/" },
-    { "id": "starters.kitchen", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "kitchen", "vi": "nhà bếp", "type": "n", "icon": "🍳🥘", "picturable": true, "phonetic": "/ˈkɪtʃ.ən/" },
-    { "id": "starters.living-room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "living room", "vi": "phòng khách", "type": "n", "icon": "🛋️📺", "picturable": true, "phonetic": "/ˈlɪv.ɪŋ ruːm/" },
-    { "id": "starters.dining-room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "dining room", "vi": "phòng ăn", "type": "n", "icon": "🍽️🪑", "picturable": true, "phonetic": "/ˈdaɪ.nɪŋ ruːm/" },
-    { "id": "starters.hall", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "hall", "vi": "hành lang", "type": "n", "icon": "🚪🧭", "picturable": false, "phonetic": "/hɔːl/" },
-    { "id": "starters.room", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h1", "en": "room", "vi": "căn phòng", "type": "n", "icon": "🏡", "picturable": false, "phonetic": "/ruːm/" },
-
-    { "id": "starters.chair", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "chair", "vi": "cái ghế", "type": "n", "icon": "🪑", "picturable": true, "phonetic": "/tʃeər/" },
-    { "id": "starters.table", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "table", "vi": "cái bàn", "type": "n", "icon": "🍽️", "picturable": true, "phonetic": "/ˈteɪ.bəl/" },
-    { "id": "starters.lamp", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "lamp", "vi": "đèn bàn", "type": "n", "icon": "💡", "picturable": true, "phonetic": "/læmp/" },
-    { "id": "starters.sofa", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "sofa", "vi": "ghế sô-pha", "type": "n", "icon": "🛋️", "picturable": true, "phonetic": "/ˈsəʊ.fə/" },
-    { "id": "starters.bed", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "bed", "vi": "cái giường", "type": "n", "icon": "🛏️", "picturable": true, "phonetic": "/bed/" },
-    { "id": "starters.box", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "box", "vi": "cái hộp", "type": "n", "icon": "📦", "picturable": true, "phonetic": "/bɒks/" },
-    { "id": "starters.mirror", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h2", "en": "mirror", "vi": "cái gương", "type": "n", "icon": "🪞", "picturable": true, "phonetic": "/ˈmɪr.ər/" },
-
-    { "id": "starters.bookcase", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "bookcase", "vi": "tủ sách", "type": "n", "icon": "📚", "picturable": true, "phonetic": "/ˈbʊk.keɪs/" },
-    { "id": "starters.cupboard", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "cupboard", "vi": "cái tủ", "type": "n", "icon": "🗄️", "picturable": true, "phonetic": "/ˈkʌb.əd/" },
-    { "id": "starters.armchair", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "armchair", "vi": "ghế bành", "type": "n", "icon": "💺", "picturable": true, "phonetic": "/ˈɑːm.tʃeər/" },
-    { "id": "starters.rug", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "rug", "vi": "tấm thảm", "type": "n", "icon": "🟫", "picturable": true, "phonetic": "/rʌɡ/" },
-    { "id": "starters.clock", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "clock", "vi": "cái đồng hồ", "type": "n", "icon": "🕰️", "picturable": true, "phonetic": "/klɒk/" },
-    { "id": "starters.radio", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "radio", "vi": "đài radio", "type": "n", "icon": "📻", "picturable": true, "phonetic": "/ˈreɪ.di.əʊ/" },
-    { "id": "starters.window", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h3", "en": "window", "vi": "cửa sổ", "type": "n", "icon": "🪟", "picturable": true, "phonetic": "/ˈwɪn.dəʊ/" },
-
-    { "id": "starters.door", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "door", "vi": "cửa ra vào", "type": "n", "icon": "🚪", "picturable": true, "phonetic": "/dɔːr/" },
-    { "id": "starters.wall", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "wall", "vi": "bức tường", "type": "n", "icon": "🧱", "picturable": false, "phonetic": "/wɔːl/" },
-    { "id": "starters.picture", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "picture", "vi": "bức tranh", "type": "n", "icon": "🖼️", "picturable": true, "phonetic": "/ˈpɪk.tʃər/" },
-    { "id": "starters.painting", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "painting", "vi": "bức tranh vẽ", "type": "n", "icon": "🎨", "picturable": true, "phonetic": "/ˈpeɪn.tɪŋ/" },
-    { "id": "starters.television", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "television", "vi": "tivi", "type": "n", "icon": "📺", "picturable": true, "phonetic": "/ˈtel.ɪ.vɪʒ.ən/", "alt": ["tv"] },
-    { "id": "starters.phone", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "phone", "vi": "điện thoại", "type": "n", "icon": "☎️", "picturable": true, "phonetic": "/fəʊn/" },
-    { "id": "starters.flower", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h4", "en": "flower", "vi": "bông hoa", "type": "n", "icon": "🌸", "picturable": true, "phonetic": "/ˈflaʊ.ər/" },
-
-    { "id": "starters.house", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "house", "vi": "ngôi nhà", "type": "n", "icon": "🏠", "picturable": true, "phonetic": "/haʊs/", "alt": ["home"] },
-    { "id": "starters.apartment", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "apartment", "vi": "căn hộ", "type": "n", "icon": "🏢", "picturable": true, "phonetic": "/əˈpɑːt.mənt/", "alt": ["flat"] },
-    { "id": "starters.garden", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "garden", "vi": "khu vườn", "type": "n", "icon": "🌷", "picturable": true, "phonetic": "/ˈɡɑː.dən/" },
-    { "id": "starters.cat", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "cat", "vi": "con mèo", "type": "n", "icon": "🐱", "picturable": true, "phonetic": "/kæt/" },
-    { "id": "starters.doll", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "doll", "vi": "búp bê", "type": "n", "icon": "🪆", "picturable": true, "phonetic": "/dɒl/" },
-    { "id": "starters.bath", "levelId": "starters", "primaryThemeId": "at-home", "primaryLessonId": "at-home/h5", "en": "bath", "vi": "bồn tắm", "type": "n", "icon": "🛁", "picturable": true, "phonetic": "/bɑːθ/" }
+    {
+      "id": "starters.bedroom",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "bedroom",
+      "vi": "phòng ngủ",
+      "type": "n",
+      "icon": "🛏️🌙",
+      "picturable": true,
+      "phonetic": "/ˈbed.ruːm/"
+    },
+    {
+      "id": "starters.bathroom",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "bathroom",
+      "vi": "phòng tắm",
+      "type": "n",
+      "icon": "🛁🚿",
+      "picturable": true,
+      "phonetic": "/ˈbɑːθ.ruːm/"
+    },
+    {
+      "id": "starters.kitchen",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "kitchen",
+      "vi": "nhà bếp",
+      "type": "n",
+      "icon": "🍳🥘",
+      "picturable": true,
+      "phonetic": "/ˈkɪtʃ.ən/"
+    },
+    {
+      "id": "starters.living-room",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "living room",
+      "vi": "phòng khách",
+      "type": "n",
+      "icon": "🛋️📺",
+      "picturable": true,
+      "phonetic": "/ˈlɪv.ɪŋ ruːm/"
+    },
+    {
+      "id": "starters.dining-room",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "dining room",
+      "vi": "phòng ăn",
+      "type": "n",
+      "icon": "🍽️🪑",
+      "picturable": true,
+      "phonetic": "/ˈdaɪ.nɪŋ ruːm/"
+    },
+    {
+      "id": "starters.hall",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "hall",
+      "vi": "hành lang",
+      "type": "n",
+      "icon": "🚪🧭",
+      "picturable": false,
+      "phonetic": "/hɔːl/"
+    },
+    {
+      "id": "starters.room",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h1",
+      "en": "room",
+      "vi": "căn phòng",
+      "type": "n",
+      "icon": "🏡",
+      "picturable": false,
+      "phonetic": "/ruːm/"
+    },
+    {
+      "id": "starters.chair",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "chair",
+      "vi": "cái ghế",
+      "type": "n",
+      "icon": "🪑",
+      "picturable": true,
+      "phonetic": "/tʃeər/"
+    },
+    {
+      "id": "starters.table",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "table",
+      "vi": "cái bàn",
+      "type": "n",
+      "icon": "🍽️",
+      "picturable": true,
+      "phonetic": "/ˈteɪ.bəl/"
+    },
+    {
+      "id": "starters.lamp",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "lamp",
+      "vi": "đèn bàn",
+      "type": "n",
+      "icon": "💡",
+      "picturable": true,
+      "phonetic": "/læmp/"
+    },
+    {
+      "id": "starters.sofa",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "sofa",
+      "vi": "ghế sô-pha",
+      "type": "n",
+      "icon": "🛋️",
+      "picturable": true,
+      "phonetic": "/ˈsəʊ.fə/"
+    },
+    {
+      "id": "starters.bed",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "bed",
+      "vi": "cái giường",
+      "type": "n",
+      "icon": "🛏️",
+      "picturable": true,
+      "phonetic": "/bed/"
+    },
+    {
+      "id": "starters.box",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "box",
+      "vi": "cái hộp",
+      "type": "n",
+      "icon": "📦",
+      "picturable": true,
+      "phonetic": "/bɒks/"
+    },
+    {
+      "id": "starters.mirror",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h2",
+      "en": "mirror",
+      "vi": "cái gương",
+      "type": "n",
+      "icon": "🪞",
+      "picturable": true,
+      "phonetic": "/ˈmɪr.ər/"
+    },
+    {
+      "id": "starters.bookcase",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "bookcase",
+      "vi": "tủ sách",
+      "type": "n",
+      "icon": "📚",
+      "picturable": true,
+      "phonetic": "/ˈbʊk.keɪs/"
+    },
+    {
+      "id": "starters.cupboard",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "cupboard",
+      "vi": "cái tủ",
+      "type": "n",
+      "icon": "🗄️",
+      "picturable": true,
+      "phonetic": "/ˈkʌb.əd/"
+    },
+    {
+      "id": "starters.armchair",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "armchair",
+      "vi": "ghế bành",
+      "type": "n",
+      "icon": "💺",
+      "picturable": true,
+      "phonetic": "/ˈɑːm.tʃeər/"
+    },
+    {
+      "id": "starters.rug",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "rug",
+      "vi": "tấm thảm",
+      "type": "n",
+      "icon": "🟫",
+      "picturable": true,
+      "phonetic": "/rʌɡ/"
+    },
+    {
+      "id": "starters.clock",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "clock",
+      "vi": "cái đồng hồ",
+      "type": "n",
+      "icon": "🕰️",
+      "picturable": true,
+      "phonetic": "/klɒk/"
+    },
+    {
+      "id": "starters.radio",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "radio",
+      "vi": "đài radio",
+      "type": "n",
+      "icon": "📻",
+      "picturable": true,
+      "phonetic": "/ˈreɪ.di.əʊ/"
+    },
+    {
+      "id": "starters.window",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h3",
+      "en": "window",
+      "vi": "cửa sổ",
+      "type": "n",
+      "icon": "🪟",
+      "picturable": true,
+      "phonetic": "/ˈwɪn.dəʊ/"
+    },
+    {
+      "id": "starters.door",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "door",
+      "vi": "cửa ra vào",
+      "type": "n",
+      "icon": "🚪",
+      "picturable": true,
+      "phonetic": "/dɔːr/"
+    },
+    {
+      "id": "starters.wall",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "wall",
+      "vi": "bức tường",
+      "type": "n",
+      "icon": "🧱",
+      "picturable": false,
+      "phonetic": "/wɔːl/"
+    },
+    {
+      "id": "starters.picture",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "picture",
+      "vi": "bức tranh",
+      "type": "n",
+      "icon": "🖼️",
+      "picturable": true,
+      "phonetic": "/ˈpɪk.tʃər/"
+    },
+    {
+      "id": "starters.painting",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "painting",
+      "vi": "bức tranh vẽ",
+      "type": "n",
+      "icon": "🎨",
+      "picturable": true,
+      "phonetic": "/ˈpeɪn.tɪŋ/"
+    },
+    {
+      "id": "starters.television",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "television",
+      "vi": "tivi",
+      "type": "n",
+      "icon": "📺",
+      "picturable": true,
+      "phonetic": "/ˈtel.ɪ.vɪʒ.ən/",
+      "alt": [
+        "tv"
+      ]
+    },
+    {
+      "id": "starters.phone",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "phone",
+      "vi": "điện thoại",
+      "type": "n",
+      "icon": "☎️",
+      "picturable": true,
+      "phonetic": "/fəʊn/"
+    },
+    {
+      "id": "starters.flower",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h4",
+      "en": "flower",
+      "vi": "bông hoa",
+      "type": "n",
+      "icon": "🌸",
+      "picturable": true,
+      "phonetic": "/ˈflaʊ.ər/"
+    },
+    {
+      "id": "starters.house",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "house",
+      "vi": "ngôi nhà",
+      "type": "n",
+      "icon": "🏠",
+      "picturable": true,
+      "phonetic": "/haʊs/",
+      "alt": [
+        "home"
+      ]
+    },
+    {
+      "id": "starters.apartment",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "apartment",
+      "vi": "căn hộ",
+      "type": "n",
+      "icon": "🏢",
+      "picturable": true,
+      "phonetic": "/əˈpɑːt.mənt/",
+      "alt": [
+        "flat"
+      ]
+    },
+    {
+      "id": "starters.garden",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "garden",
+      "vi": "khu vườn",
+      "type": "n",
+      "icon": "🌷",
+      "picturable": true,
+      "phonetic": "/ˈɡɑː.dən/"
+    },
+    {
+      "id": "starters.cat",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "cat",
+      "vi": "con mèo",
+      "type": "n",
+      "icon": "🐱",
+      "picturable": true,
+      "phonetic": "/kæt/"
+    },
+    {
+      "id": "starters.doll",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "doll",
+      "vi": "búp bê",
+      "type": "n",
+      "icon": "🪆",
+      "picturable": true,
+      "phonetic": "/dɒl/"
+    },
+    {
+      "id": "starters.bath",
+      "levelId": "starters",
+      "primaryThemeId": "at-home",
+      "primaryLessonId": "at-home/h5",
+      "en": "bath",
+      "vi": "bồn tắm",
+      "type": "n",
+      "icon": "🛁",
+      "picturable": true,
+      "phonetic": "/bɑːθ/"
+    }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "at-home/h1/memory-match",
+      "lessonId": "at-home/h1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.bedroom",
+        "starters.bathroom",
+        "starters.kitchen",
+        "starters.living-room"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-home/h2/memory-match",
+      "lessonId": "at-home/h2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-home/h3/memory-match",
+      "lessonId": "at-home/h3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-home/h4/memory-match",
+      "lessonId": "at-home/h4",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.door",
+        "starters.wall",
+        "starters.picture",
+        "starters.painting"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-home/h5/memory-match",
+      "lessonId": "at-home/h5",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.house",
+        "starters.apartment",
+        "starters.garden",
+        "starters.cat",
+        "starters.doll",
+        "starters.bath"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "at-home/h1/memory-match-2",
+      "lessonId": "at-home/h1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.dining-room",
+        "starters.hall",
+        "starters.room"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-home/h2/memory-match-2",
+      "lessonId": "at-home/h2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.bed",
+        "starters.box",
+        "starters.mirror"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-home/h3/memory-match-2",
+      "lessonId": "at-home/h3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.clock",
+        "starters.radio",
+        "starters.window"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-home/h4/memory-match-2",
+      "lessonId": "at-home/h4",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-home/h1/missing-letter",
+      "lessonId": "at-home/h1",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.bedroom",
+        "starters.bathroom",
+        "starters.kitchen",
+        "starters.living-room",
+        "starters.dining-room",
+        "starters.hall",
+        "starters.room"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-home/h2/missing-letter",
+      "lessonId": "at-home/h2",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa",
+        "starters.bed",
+        "starters.box",
+        "starters.mirror"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-home/h3/missing-letter",
+      "lessonId": "at-home/h3",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug",
+        "starters.clock",
+        "starters.radio",
+        "starters.window"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-home/h4/missing-letter",
+      "lessonId": "at-home/h4",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.door",
+        "starters.wall",
+        "starters.picture",
+        "starters.painting",
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-home/h5/missing-letter",
+      "lessonId": "at-home/h5",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.house",
+        "starters.apartment",
+        "starters.garden",
+        "starters.cat",
+        "starters.doll",
+        "starters.bath"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-home/h1/listen-tap",
+      "lessonId": "at-home/h1",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.bedroom",
+        "starters.bathroom",
+        "starters.kitchen",
+        "starters.living-room",
+        "starters.dining-room",
+        "starters.hall",
+        "starters.room"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-home/h1/word-picture",
+      "lessonId": "at-home/h1",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.bedroom",
+        "starters.bathroom",
+        "starters.kitchen",
+        "starters.living-room",
+        "starters.dining-room"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" }
+    },
+    {
+      "id": "at-home/h2/listen-tap",
+      "lessonId": "at-home/h2",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa",
+        "starters.bed",
+        "starters.box",
+        "starters.mirror"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-home/h2/word-picture",
+      "lessonId": "at-home/h2",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa",
+        "starters.bed",
+        "starters.box"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-home/h3/listen-tap",
+      "lessonId": "at-home/h3",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug",
+        "starters.clock",
+        "starters.radio",
+        "starters.window"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-home/h3/word-picture",
+      "lessonId": "at-home/h3",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug",
+        "starters.clock",
+        "starters.radio"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-home/h4/listen-tap",
+      "lessonId": "at-home/h4",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.door",
+        "starters.wall",
+        "starters.picture",
+        "starters.painting",
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-home/h4/word-picture",
+      "lessonId": "at-home/h4",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.door",
+        "starters.picture",
+        "starters.painting",
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-home/h5/listen-tap",
+      "lessonId": "at-home/h5",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.house",
+        "starters.apartment",
+        "starters.garden",
+        "starters.cat",
+        "starters.doll",
+        "starters.bath"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-home/h5/word-picture",
+      "lessonId": "at-home/h5",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.house",
+        "starters.apartment",
+        "starters.garden",
+        "starters.cat",
+        "starters.doll",
+        "starters.bath"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    }
+  ]
 }

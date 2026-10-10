@@ -23,7 +23,7 @@
         "starters.catch",
         "starters.hit"
       ],
-      "exerciseIds": []
+      "exerciseIds": ["at-the-beach/b1/memory-match", "at-the-beach/b1/missing-letter", "at-the-beach/b1/listen-tap", "at-the-beach/b1/word-picture"]
     },
     {
       "id": "at-the-beach/b2",
@@ -37,7 +37,7 @@
         "starters.tennis",
         "starters.sport"
       ],
-      "exerciseIds": []
+      "exerciseIds": ["at-the-beach/b2/memory-match", "at-the-beach/b2/missing-letter", "at-the-beach/b2/listen-tap", "at-the-beach/b2/word-picture"]
     },
     {
       "id": "at-the-beach/b3",
@@ -51,7 +51,7 @@
         "starters.piano",
         "starters.camera"
       ],
-      "exerciseIds": []
+      "exerciseIds": ["at-the-beach/b3/memory-match", "at-the-beach/b3/missing-letter", "at-the-beach/b3/listen-tap", "at-the-beach/b3/word-picture"]
     },
     {
       "id": "at-the-beach/b4",
@@ -65,7 +65,7 @@
         "starters.kite",
         "starters.fishing"
       ],
-      "exerciseIds": []
+      "exerciseIds": ["at-the-beach/b4/memory-match", "at-the-beach/b4/missing-letter", "at-the-beach/b4/listen-tap", "at-the-beach/b4/word-picture"]
     }
   ],
   "words": [
@@ -97,5 +97,94 @@
     { "id": "starters.kite", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "kite", "vi": "cái diều", "type": "n", "icon": "🪁", "picturable": true, "phonetic": "/kaɪt/" },
     { "id": "starters.fishing", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b4", "en": "fishing", "vi": "câu cá", "type": "n", "icon": "🎣", "picturable": true, "phonetic": "/ˈfɪʃ.ɪŋ/" }
   ],
-  "exercises": []
+  "exercises":     [
+        {
+            "id": "at-the-beach/b1/memory-match",
+            "lessonId": "at-the-beach/b1",
+            "gameType": "memory_match",
+            "wordIds": [
+                "starters.swim",
+                "starters.jump",
+                "starters.walk",
+                "starters.throw",
+                "starters.catch",
+                "starters.hit"
+            ],
+            "difficulty": 1,
+            "config": {
+                "kind": "memory_match",
+                "pairMode": "en_vi",
+                "pairs": 6
+            }
+        },
+        {
+            "id": "at-the-beach/b2/memory-match",
+            "lessonId": "at-the-beach/b2",
+            "gameType": "memory_match",
+            "wordIds": [
+                "starters.kick",
+                "starters.baseball",
+                "starters.table-tennis",
+                "starters.badminton",
+                "starters.tennis",
+                "starters.sport"
+            ],
+            "difficulty": 1,
+            "config": {
+                "kind": "memory_match",
+                "pairMode": "en_vi",
+                "pairs": 6
+            }
+        },
+        {
+            "id": "at-the-beach/b3/memory-match",
+            "lessonId": "at-the-beach/b3",
+            "gameType": "memory_match",
+            "wordIds": [
+                "starters.sing",
+                "starters.paint",
+                "starters.take",
+                "starters.guitar",
+                "starters.piano",
+                "starters.camera"
+            ],
+            "difficulty": 1,
+            "config": {
+                "kind": "memory_match",
+                "pairMode": "en_vi",
+                "pairs": 6
+            }
+        },
+        {
+            "id": "at-the-beach/b4/memory-match",
+            "lessonId": "at-the-beach/b4",
+            "gameType": "memory_match",
+            "wordIds": [
+                "starters.sand",
+                "starters.sea",
+                "starters.sun",
+                "starters.shell",
+                "starters.kite",
+                "starters.fishing"
+            ],
+            "difficulty": 1,
+            "config": {
+                "kind": "memory_match",
+                "pairMode": "en_vi",
+                "pairs": 6
+            }
+        },
+      { "id": "at-the-beach/b1/missing-letter", "lessonId": "at-the-beach/b1", "gameType": "missing_letter", "wordIds": ["starters.swim", "starters.jump", "starters.walk", "starters.throw", "starters.catch", "starters.hit"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-beach/b2/missing-letter", "lessonId": "at-the-beach/b2", "gameType": "missing_letter", "wordIds": ["starters.kick", "starters.baseball", "starters.table-tennis", "starters.badminton", "starters.tennis", "starters.sport"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-beach/b3/missing-letter", "lessonId": "at-the-beach/b3", "gameType": "missing_letter", "wordIds": ["starters.sing", "starters.paint", "starters.take", "starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-beach/b4/missing-letter", "lessonId": "at-the-beach/b4", "gameType": "missing_letter", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-beach/b1/listen-tap", "lessonId": "at-the-beach/b1", "gameType": "listen_tap", "wordIds": ["starters.swim", "starters.jump", "starters.walk", "starters.throw", "starters.catch", "starters.hit"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-beach/b1/word-picture", "lessonId": "at-the-beach/b1", "gameType": "word_picture", "wordIds": ["starters.swim", "starters.jump", "starters.walk", "starters.throw", "starters.catch", "starters.hit"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
+      { "id": "at-the-beach/b2/listen-tap", "lessonId": "at-the-beach/b2", "gameType": "listen_tap", "wordIds": ["starters.kick", "starters.baseball", "starters.table-tennis", "starters.badminton", "starters.tennis", "starters.sport"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-beach/b2/word-picture", "lessonId": "at-the-beach/b2", "gameType": "word_picture", "wordIds": ["starters.kick", "starters.baseball", "starters.table-tennis", "starters.badminton", "starters.tennis"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
+      { "id": "at-the-beach/b3/listen-tap", "lessonId": "at-the-beach/b3", "gameType": "listen_tap", "wordIds": ["starters.sing", "starters.paint", "starters.take", "starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-beach/b3/word-picture", "lessonId": "at-the-beach/b3", "gameType": "word_picture", "wordIds": ["starters.sing", "starters.paint", "starters.take", "starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
+      { "id": "at-the-beach/b4/listen-tap", "lessonId": "at-the-beach/b4", "gameType": "listen_tap", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-beach/b4/word-picture", "lessonId": "at-the-beach/b4", "gameType": "word_picture", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } }
+    ]
 }

@@ -72,9 +72,19 @@ describe('word_picture — luật nối', () => {
 describe('word_picture — trên DỮ LIỆU THẬT', () => {
   it('mọi bài word_picture: hai cột không trùng thứ tự, và mọi từ đều có emoji', () => {
     let checked = 0;
+    let eligibleLessons = 0;
 
     for (const levelId of listLevelIds()) {
       const bundle = readLevelBundle(levelId);
+
+      // Luật G2: bài có >= 4 từ VẼ ĐƯỢC HÌNH thì phải có game word_picture.
+      // Đếm kỳ vọng từ CHÍNH DỮ LIỆU (không phải số cứng) để thêm chủ đề mới không phải sửa test.
+      for (const lesson of bundle.lessons) {
+        const picturable = lesson.wordIds.filter(
+          (wordId) => bundle.wordById.get(wordId)?.picturable === true,
+        );
+        if (picturable.length >= 4) eligibleLessons += 1;
+      }
 
       for (const exercise of bundle.exercises) {
         if (exercise.gameType !== 'word_picture') continue;
@@ -96,7 +106,8 @@ describe('word_picture — trên DỮ LIỆU THẬT', () => {
       }
     }
 
-    // at-the-zoo có 3 bài word_picture.
-    expect(checked).toBe(3);
+    // Sau G2: at-the-zoo (3 bài) + 32 bài đủ 4 từ picturable ở 8 chủ đề có tranh = 35.
+    expect(eligibleLessons, 'không có bài nào đủ điều kiện — luật G2 đã bị phá').toBeGreaterThanOrEqual(3);
+    expect(checked, 'số bài word_picture phải bằng số bài đủ >= 4 từ picturable').toBe(eligibleLessons);
   });
 });

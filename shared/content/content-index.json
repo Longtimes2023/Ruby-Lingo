@@ -43,7 +43,7 @@
         "my-body/l2"
       ],
       "wordCount": 13,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -60,7 +60,7 @@
         "at-the-clothes-shop/l5"
       ],
       "wordCount": 27,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -76,7 +76,7 @@
         "my-friends-birthday/l4"
       ],
       "wordCount": 22,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -94,7 +94,7 @@
         "my-favourite-food/l6"
       ],
       "wordCount": 39,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -111,7 +111,7 @@
         "at-home/h5"
       ],
       "wordCount": 34,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -127,7 +127,7 @@
         "at-school/s4"
       ],
       "wordCount": 29,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -143,7 +143,7 @@
         "at-the-beach/b4"
       ],
       "wordCount": 24,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -158,7 +158,7 @@
         "my-street/m3"
       ],
       "wordCount": 20,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -174,7 +174,7 @@
         "alphabet/a4"
       ],
       "wordCount": 26,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }
@@ -189,7 +189,7 @@
         "numbers-1-20/n3"
       ],
       "wordCount": 20,
-      "hasGames": false,
+      "hasGames": true,
       "unlock": {
         "type": "coming_soon"
       }

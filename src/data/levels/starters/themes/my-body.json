@@ -7,8 +7,13 @@
     "icon": "🧍",
     "sceneImage": "my-body",
     "sceneAlt": "Tranh cảnh các bạn nhỏ đang chỉ vào các bộ phận trên cơ thể như đầu, mắt, mũi, miệng, tay và chân",
-    "unlockCondition": { "type": "coming_soon" },
-    "lessonIds": ["my-body/l1", "my-body/l2"]
+    "unlockCondition": {
+      "type": "coming_soon"
+    },
+    "lessonIds": [
+      "my-body/l1",
+      "my-body/l2"
+    ]
   },
   "lessons": [
     {
@@ -16,36 +21,344 @@
       "themeId": "my-body",
       "name_vi": "Các bộ phận cơ thể",
       "wordIds": [
-        "starters.leg", "starters.hair", "starters.body", "starters.head",
-        "starters.ear", "starters.eye", "starters.face"
+        "starters.leg",
+        "starters.hair",
+        "starters.body",
+        "starters.head",
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "my-body/l1/memory-match",
+        "my-body/l1/memory-match-2",
+        "my-body/l1/missing-letter",
+        "my-body/l1/listen-tap",
+        "my-body/l1/word-picture"
+      ]
     },
     {
       "id": "my-body/l2",
       "themeId": "my-body",
       "name_vi": "Mặt mũi và tay chân",
       "wordIds": [
-        "starters.nose", "starters.mouth", "starters.smile",
-        "starters.arm", "starters.hand", "starters.foot"
+        "starters.nose",
+        "starters.mouth",
+        "starters.smile",
+        "starters.arm",
+        "starters.hand",
+        "starters.foot"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "my-body/l2/memory-match",
+        "my-body/l2/missing-letter",
+        "my-body/l2/listen-tap",
+        "my-body/l2/word-picture"
+      ]
     }
   ],
   "words": [
-    { "id": "starters.leg",   "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "leg",   "vi": "cái chân",   "type": "n", "icon": "🦵", "picturable": true },
-    { "id": "starters.hair",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "hair",  "vi": "mái tóc",    "type": "n", "icon": "💇", "picturable": false },
-    { "id": "starters.body",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "body",  "vi": "cơ thể",     "type": "n", "icon": "🧍", "picturable": false },
-    { "id": "starters.head",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "head",  "vi": "cái đầu",    "type": "n", "icon": "👤", "picturable": false },
-    { "id": "starters.ear",   "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "ear",   "vi": "cái tai",    "type": "n", "icon": "👂", "picturable": true },
-    { "id": "starters.eye",   "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "eye",   "vi": "con mắt",    "type": "n", "icon": "👁️", "picturable": true },
-    { "id": "starters.face",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l1", "en": "face",  "vi": "khuôn mặt",  "type": "n", "icon": "😊", "picturable": true },
-    { "id": "starters.nose",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "nose",  "vi": "cái mũi",    "type": "n", "icon": "👃", "picturable": true },
-    { "id": "starters.mouth", "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "mouth", "vi": "cái miệng",  "type": "n", "icon": "👄", "picturable": true },
-    { "id": "starters.smile", "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "smile", "vi": "nụ cười",    "type": "n", "icon": "😁", "picturable": true },
-    { "id": "starters.arm",   "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "arm",   "vi": "cánh tay",   "type": "n", "icon": "💪", "picturable": true },
-    { "id": "starters.hand",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "hand",  "vi": "bàn tay",    "type": "n", "icon": "✋", "picturable": true },
-    { "id": "starters.foot",  "levelId": "starters", "primaryThemeId": "my-body", "primaryLessonId": "my-body/l2", "en": "foot",  "vi": "bàn chân",   "type": "n", "icon": "🦶", "picturable": true, "forms": { "plural": "feet" } }
+    {
+      "id": "starters.leg",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "leg",
+      "vi": "cái chân",
+      "type": "n",
+      "icon": "🦵",
+      "picturable": true
+    },
+    {
+      "id": "starters.hair",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "hair",
+      "vi": "mái tóc",
+      "type": "n",
+      "icon": "💇",
+      "picturable": false
+    },
+    {
+      "id": "starters.body",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "body",
+      "vi": "cơ thể",
+      "type": "n",
+      "icon": "🧍",
+      "picturable": false
+    },
+    {
+      "id": "starters.head",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "head",
+      "vi": "cái đầu",
+      "type": "n",
+      "icon": "👤",
+      "picturable": false
+    },
+    {
+      "id": "starters.ear",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "ear",
+      "vi": "cái tai",
+      "type": "n",
+      "icon": "👂",
+      "picturable": true
+    },
+    {
+      "id": "starters.eye",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "eye",
+      "vi": "con mắt",
+      "type": "n",
+      "icon": "👁️",
+      "picturable": true
+    },
+    {
+      "id": "starters.face",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l1",
+      "en": "face",
+      "vi": "khuôn mặt",
+      "type": "n",
+      "icon": "😊",
+      "picturable": true
+    },
+    {
+      "id": "starters.nose",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "nose",
+      "vi": "cái mũi",
+      "type": "n",
+      "icon": "👃",
+      "picturable": true
+    },
+    {
+      "id": "starters.mouth",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "mouth",
+      "vi": "cái miệng",
+      "type": "n",
+      "icon": "👄",
+      "picturable": true
+    },
+    {
+      "id": "starters.smile",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "smile",
+      "vi": "nụ cười",
+      "type": "n",
+      "icon": "😁",
+      "picturable": true
+    },
+    {
+      "id": "starters.arm",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "arm",
+      "vi": "cánh tay",
+      "type": "n",
+      "icon": "💪",
+      "picturable": true
+    },
+    {
+      "id": "starters.hand",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "hand",
+      "vi": "bàn tay",
+      "type": "n",
+      "icon": "✋",
+      "picturable": true
+    },
+    {
+      "id": "starters.foot",
+      "levelId": "starters",
+      "primaryThemeId": "my-body",
+      "primaryLessonId": "my-body/l2",
+      "en": "foot",
+      "vi": "bàn chân",
+      "type": "n",
+      "icon": "🦶",
+      "picturable": true,
+      "forms": {
+        "plural": "feet"
+      }
+    }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "my-body/l1/memory-match",
+      "lessonId": "my-body/l1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.leg",
+        "starters.hair",
+        "starters.body",
+        "starters.head"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "my-body/l2/memory-match",
+      "lessonId": "my-body/l2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.nose",
+        "starters.mouth",
+        "starters.smile",
+        "starters.arm",
+        "starters.hand",
+        "starters.foot"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "my-body/l1/memory-match-2",
+      "lessonId": "my-body/l1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "my-body/l1/missing-letter",
+      "lessonId": "my-body/l1",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.leg",
+        "starters.hair",
+        "starters.body",
+        "starters.head",
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "my-body/l2/missing-letter",
+      "lessonId": "my-body/l2",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.nose",
+        "starters.mouth",
+        "starters.smile",
+        "starters.arm",
+        "starters.hand",
+        "starters.foot"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "my-body/l1/listen-tap",
+      "lessonId": "my-body/l1",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.leg",
+        "starters.hair",
+        "starters.body",
+        "starters.head",
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "my-body/l1/word-picture",
+      "lessonId": "my-body/l1",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.leg",
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "my-body/l2/listen-tap",
+      "lessonId": "my-body/l2",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.nose",
+        "starters.mouth",
+        "starters.smile",
+        "starters.arm",
+        "starters.hand",
+        "starters.foot"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "my-body/l2/word-picture",
+      "lessonId": "my-body/l2",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.nose",
+        "starters.mouth",
+        "starters.smile",
+        "starters.arm",
+        "starters.hand",
+        "starters.foot"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    }
+  ]
 }

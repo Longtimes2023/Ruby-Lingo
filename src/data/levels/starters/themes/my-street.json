@@ -7,8 +7,14 @@
     "icon": "🏙️",
     "sceneImage": "my-street",
     "sceneAlt": "Tranh cảnh con phố với nhà cửa, xe cộ, công viên và hàng cây xanh",
-    "unlockCondition": { "type": "coming_soon" },
-    "lessonIds": ["my-street/m1", "my-street/m2", "my-street/m3"]
+    "unlockCondition": {
+      "type": "coming_soon"
+    },
+    "lessonIds": [
+      "my-street/m1",
+      "my-street/m2",
+      "my-street/m3"
+    ]
   },
   "lessons": [
     {
@@ -23,7 +29,12 @@
         "starters.motorbike",
         "starters.lorry"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "my-street/m1/memory-match",
+        "my-street/m1/missing-letter",
+        "my-street/m1/listen-tap",
+        "my-street/m1/word-picture"
+      ]
     },
     {
       "id": "my-street/m2",
@@ -37,7 +48,12 @@
         "starters.go",
         "starters.stop"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "my-street/m2/memory-match",
+        "my-street/m2/missing-letter",
+        "my-street/m2/listen-tap",
+        "my-street/m2/word-picture"
+      ]
     },
     {
       "id": "my-street/m3",
@@ -53,32 +69,488 @@
         "starters.shop",
         "starters.bookshop"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "my-street/m3/memory-match",
+        "my-street/m3/memory-match-2",
+        "my-street/m3/missing-letter",
+        "my-street/m3/listen-tap",
+        "my-street/m3/word-picture"
+      ]
     }
   ],
   "words": [
-    { "id": "starters.train", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "train", "vi": "tàu hỏa", "type": "n", "icon": "🚆", "picturable": true, "phonetic": "/treɪn/" },
-    { "id": "starters.bus", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "bus", "vi": "xe buýt", "type": "n", "icon": "🚌", "picturable": true, "phonetic": "/bʌs/" },
-    { "id": "starters.boat", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "boat", "vi": "con thuyền", "type": "n", "icon": "⛵", "picturable": true, "phonetic": "/bəʊt/" },
-    { "id": "starters.helicopter", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "helicopter", "vi": "trực thăng", "type": "n", "icon": "🚁", "picturable": true, "phonetic": "/ˈhel.ɪ.kɒp.tər/" },
-    { "id": "starters.motorbike", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "motorbike", "vi": "xe máy", "type": "n", "icon": "🏍️", "picturable": true, "phonetic": "/ˈməʊ.tə.baɪk/" },
-    { "id": "starters.lorry", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "lorry", "vi": "xe tải", "type": "n", "icon": "🚚", "picturable": true, "phonetic": "/ˈlɒr.i/", "alt": ["truck"] },
-
-    { "id": "starters.ride", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "ride", "vi": "đạp xe", "type": "v", "icon": "🚲", "picturable": true, "phonetic": "/raɪd/" },
-    { "id": "starters.fly", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "fly", "vi": "bay", "type": "v", "icon": "✈️", "picturable": true, "phonetic": "/flaɪ/" },
-    { "id": "starters.drive", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "drive", "vi": "lái xe", "type": "v", "icon": "🚗", "picturable": true, "phonetic": "/draɪv/" },
-    { "id": "starters.run", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "run", "vi": "chạy", "type": "v", "icon": "🏃", "picturable": true, "phonetic": "/rʌn/" },
-    { "id": "starters.go", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "go", "vi": "đi", "type": "v", "icon": "🚦", "picturable": false, "phonetic": "/ɡəʊ/" },
-    { "id": "starters.stop", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m2", "en": "stop", "vi": "dừng lại", "type": "v", "icon": "🛑", "picturable": false, "phonetic": "/stɒp/" },
-
-    { "id": "starters.tree", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "tree", "vi": "cái cây", "type": "n", "icon": "🌳", "picturable": true, "phonetic": "/triː/" },
-    { "id": "starters.park", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "park", "vi": "công viên", "type": "n", "icon": "🏞️", "picturable": true, "phonetic": "/pɑːk/" },
-    { "id": "starters.day", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "day", "vi": "ban ngày", "type": "n", "icon": "🌞", "picturable": false, "phonetic": "/deɪ/" },
-    { "id": "starters.morning", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "morning", "vi": "buổi sáng", "type": "n", "icon": "🌅", "picturable": false, "phonetic": "/ˈmɔː.nɪŋ/" },
-    { "id": "starters.afternoon", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "afternoon", "vi": "buổi chiều", "type": "n", "icon": "🌤️", "picturable": false, "phonetic": "/ˌɑːf.təˈnuːn/" },
-    { "id": "starters.evening", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "evening", "vi": "buổi tối", "type": "n", "icon": "🌙", "picturable": false, "phonetic": "/ˈiːv.nɪŋ/" },
-    { "id": "starters.shop", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "shop", "vi": "cửa hàng", "type": "n", "icon": "🏪", "picturable": true, "phonetic": "/ʃɒp/", "alt": ["store"] },
-    { "id": "starters.bookshop", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m3", "en": "bookshop", "vi": "hiệu sách", "type": "n", "icon": "🏬", "picturable": true, "phonetic": "/ˈbʊk.ʃɒp/" }
+    {
+      "id": "starters.train",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "train",
+      "vi": "tàu hỏa",
+      "type": "n",
+      "icon": "🚆",
+      "picturable": true,
+      "phonetic": "/treɪn/"
+    },
+    {
+      "id": "starters.bus",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "bus",
+      "vi": "xe buýt",
+      "type": "n",
+      "icon": "🚌",
+      "picturable": true,
+      "phonetic": "/bʌs/"
+    },
+    {
+      "id": "starters.boat",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "boat",
+      "vi": "con thuyền",
+      "type": "n",
+      "icon": "⛵",
+      "picturable": true,
+      "phonetic": "/bəʊt/"
+    },
+    {
+      "id": "starters.helicopter",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "helicopter",
+      "vi": "trực thăng",
+      "type": "n",
+      "icon": "🚁",
+      "picturable": true,
+      "phonetic": "/ˈhel.ɪ.kɒp.tər/"
+    },
+    {
+      "id": "starters.motorbike",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "motorbike",
+      "vi": "xe máy",
+      "type": "n",
+      "icon": "🏍️",
+      "picturable": true,
+      "phonetic": "/ˈməʊ.tə.baɪk/"
+    },
+    {
+      "id": "starters.lorry",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m1",
+      "en": "lorry",
+      "vi": "xe tải",
+      "type": "n",
+      "icon": "🚚",
+      "picturable": true,
+      "phonetic": "/ˈlɒr.i/",
+      "alt": [
+        "truck"
+      ]
+    },
+    {
+      "id": "starters.ride",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "ride",
+      "vi": "đạp xe",
+      "type": "v",
+      "icon": "🚲",
+      "picturable": true,
+      "phonetic": "/raɪd/"
+    },
+    {
+      "id": "starters.fly",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "fly",
+      "vi": "bay",
+      "type": "v",
+      "icon": "✈️",
+      "picturable": true,
+      "phonetic": "/flaɪ/"
+    },
+    {
+      "id": "starters.drive",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "drive",
+      "vi": "lái xe",
+      "type": "v",
+      "icon": "🚗",
+      "picturable": true,
+      "phonetic": "/draɪv/"
+    },
+    {
+      "id": "starters.run",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "run",
+      "vi": "chạy",
+      "type": "v",
+      "icon": "🏃",
+      "picturable": true,
+      "phonetic": "/rʌn/"
+    },
+    {
+      "id": "starters.go",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "go",
+      "vi": "đi",
+      "type": "v",
+      "icon": "🚦",
+      "picturable": false,
+      "phonetic": "/ɡəʊ/"
+    },
+    {
+      "id": "starters.stop",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m2",
+      "en": "stop",
+      "vi": "dừng lại",
+      "type": "v",
+      "icon": "🛑",
+      "picturable": false,
+      "phonetic": "/stɒp/"
+    },
+    {
+      "id": "starters.tree",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "tree",
+      "vi": "cái cây",
+      "type": "n",
+      "icon": "🌳",
+      "picturable": true,
+      "phonetic": "/triː/"
+    },
+    {
+      "id": "starters.park",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "park",
+      "vi": "công viên",
+      "type": "n",
+      "icon": "🏞️",
+      "picturable": true,
+      "phonetic": "/pɑːk/"
+    },
+    {
+      "id": "starters.day",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "day",
+      "vi": "ban ngày",
+      "type": "n",
+      "icon": "🌞",
+      "picturable": false,
+      "phonetic": "/deɪ/"
+    },
+    {
+      "id": "starters.morning",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "morning",
+      "vi": "buổi sáng",
+      "type": "n",
+      "icon": "🌅",
+      "picturable": false,
+      "phonetic": "/ˈmɔː.nɪŋ/"
+    },
+    {
+      "id": "starters.afternoon",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "afternoon",
+      "vi": "buổi chiều",
+      "type": "n",
+      "icon": "🌤️",
+      "picturable": false,
+      "phonetic": "/ˌɑːf.təˈnuːn/"
+    },
+    {
+      "id": "starters.evening",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "evening",
+      "vi": "buổi tối",
+      "type": "n",
+      "icon": "🌙",
+      "picturable": false,
+      "phonetic": "/ˈiːv.nɪŋ/"
+    },
+    {
+      "id": "starters.shop",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "shop",
+      "vi": "cửa hàng",
+      "type": "n",
+      "icon": "🏪",
+      "picturable": true,
+      "phonetic": "/ʃɒp/",
+      "alt": [
+        "store"
+      ]
+    },
+    {
+      "id": "starters.bookshop",
+      "levelId": "starters",
+      "primaryThemeId": "my-street",
+      "primaryLessonId": "my-street/m3",
+      "en": "bookshop",
+      "vi": "hiệu sách",
+      "type": "n",
+      "icon": "🏬",
+      "picturable": true,
+      "phonetic": "/ˈbʊk.ʃɒp/"
+    }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "my-street/m1/memory-match",
+      "lessonId": "my-street/m1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.train",
+        "starters.bus",
+        "starters.boat",
+        "starters.helicopter",
+        "starters.motorbike",
+        "starters.lorry"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "my-street/m2/memory-match",
+      "lessonId": "my-street/m2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.ride",
+        "starters.fly",
+        "starters.drive",
+        "starters.run",
+        "starters.go",
+        "starters.stop"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "my-street/m3/memory-match",
+      "lessonId": "my-street/m3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.tree",
+        "starters.park",
+        "starters.day",
+        "starters.morning"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "my-street/m3/memory-match-2",
+      "lessonId": "my-street/m3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.afternoon",
+        "starters.evening",
+        "starters.shop",
+        "starters.bookshop"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "my-street/m1/missing-letter",
+      "lessonId": "my-street/m1",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.train",
+        "starters.bus",
+        "starters.boat",
+        "starters.helicopter",
+        "starters.motorbike",
+        "starters.lorry"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "my-street/m2/missing-letter",
+      "lessonId": "my-street/m2",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.ride",
+        "starters.fly",
+        "starters.drive",
+        "starters.run",
+        "starters.go",
+        "starters.stop"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "my-street/m3/missing-letter",
+      "lessonId": "my-street/m3",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.tree",
+        "starters.park",
+        "starters.day",
+        "starters.morning",
+        "starters.afternoon",
+        "starters.evening",
+        "starters.shop",
+        "starters.bookshop"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "my-street/m1/listen-tap",
+      "lessonId": "my-street/m1",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.train",
+        "starters.bus",
+        "starters.boat",
+        "starters.helicopter",
+        "starters.motorbike",
+        "starters.lorry"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "my-street/m1/word-picture",
+      "lessonId": "my-street/m1",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.train",
+        "starters.bus",
+        "starters.boat",
+        "starters.helicopter",
+        "starters.motorbike",
+        "starters.lorry"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "my-street/m2/listen-tap",
+      "lessonId": "my-street/m2",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.ride",
+        "starters.fly",
+        "starters.drive",
+        "starters.run",
+        "starters.go",
+        "starters.stop"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "my-street/m2/word-picture",
+      "lessonId": "my-street/m2",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.ride",
+        "starters.fly",
+        "starters.drive",
+        "starters.run"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "my-street/m3/listen-tap",
+      "lessonId": "my-street/m3",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.tree",
+        "starters.park",
+        "starters.day",
+        "starters.morning",
+        "starters.afternoon",
+        "starters.evening",
+        "starters.shop",
+        "starters.bookshop"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "my-street/m3/word-picture",
+      "lessonId": "my-street/m3",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.tree",
+        "starters.park",
+        "starters.shop",
+        "starters.bookshop"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    }
+  ]
 }

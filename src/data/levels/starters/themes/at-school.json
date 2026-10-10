@@ -7,8 +7,15 @@
     "icon": "🏫",
     "sceneImage": "at-school",
     "sceneAlt": "Tranh cảnh lớp học với bảng, bàn ghế, sách vở, máy tính và các bạn nhỏ",
-    "unlockCondition": { "type": "coming_soon" },
-    "lessonIds": ["at-school/s1", "at-school/s2", "at-school/s3", "at-school/s4"]
+    "unlockCondition": {
+      "type": "coming_soon"
+    },
+    "lessonIds": [
+      "at-school/s1",
+      "at-school/s2",
+      "at-school/s3",
+      "at-school/s4"
+    ]
   },
   "lessons": [
     {
@@ -24,7 +31,13 @@
         "starters.desk",
         "starters.board"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-school/s1/memory-match",
+        "at-school/s1/memory-match-2",
+        "at-school/s1/missing-letter",
+        "at-school/s1/listen-tap",
+        "at-school/s1/word-picture"
+      ]
     },
     {
       "id": "at-school/s2",
@@ -39,7 +52,13 @@
         "starters.draw",
         "starters.drawing"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-school/s2/memory-match",
+        "at-school/s2/memory-match-2",
+        "at-school/s2/missing-letter",
+        "at-school/s2/listen-tap",
+        "at-school/s2/word-picture"
+      ]
     },
     {
       "id": "at-school/s3",
@@ -54,7 +73,13 @@
         "starters.page",
         "starters.line"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-school/s3/memory-match",
+        "at-school/s3/memory-match-2",
+        "at-school/s3/missing-letter",
+        "at-school/s3/listen-tap",
+        "at-school/s3/word-picture"
+      ]
     },
     {
       "id": "at-school/s4",
@@ -70,42 +95,714 @@
         "starters.floor",
         "starters.part"
       ],
-      "exerciseIds": []
+      "exerciseIds": [
+        "at-school/s4/memory-match",
+        "at-school/s4/memory-match-2",
+        "at-school/s4/missing-letter",
+        "at-school/s4/listen-tap",
+        "at-school/s4/word-picture"
+      ]
     }
   ],
   "words": [
-    { "id": "starters.pencil", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "pencil", "vi": "bút chì", "type": "n", "icon": "✏️", "picturable": true, "phonetic": "/ˈpen.səl/" },
-    { "id": "starters.pen", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "pen", "vi": "bút mực", "type": "n", "icon": "🖊️", "picturable": true, "phonetic": "/pen/" },
-    { "id": "starters.ruler", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "ruler", "vi": "cái thước", "type": "n", "icon": "📏", "picturable": true, "phonetic": "/ˈruː.lər/" },
-    { "id": "starters.eraser", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "eraser", "vi": "cục tẩy", "type": "n", "icon": "🧽", "picturable": true, "phonetic": "/ɪˈreɪ.zər/", "alt": ["rubber"] },
-    { "id": "starters.book", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "book", "vi": "quyển sách", "type": "n", "icon": "📚", "picturable": true, "phonetic": "/bʊk/" },
-    { "id": "starters.desk", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "desk", "vi": "bàn học", "type": "n", "icon": "🪑", "picturable": true, "phonetic": "/desk/" },
-    { "id": "starters.board", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s1", "en": "board", "vi": "cái bảng", "type": "n", "icon": "📋", "picturable": true, "phonetic": "/bɔːd/" },
-
-    { "id": "starters.football", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "football", "vi": "bóng đá", "type": "n", "icon": "⚽", "picturable": true, "phonetic": "/ˈfʊt.bɔːl/", "alt": ["soccer"] },
-    { "id": "starters.basketball", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "basketball", "vi": "bóng rổ", "type": "n", "icon": "🏀", "picturable": true, "phonetic": "/ˈbɑː.skɪt.bɔːl/" },
-    { "id": "starters.hockey", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "hockey", "vi": "khúc côn cầu", "type": "n", "icon": "🏑", "picturable": true, "phonetic": "/ˈhɒk.i/" },
-    { "id": "starters.music", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "music", "vi": "âm nhạc", "type": "n", "icon": "🎵", "picturable": false, "phonetic": "/ˈmjuː.zɪk/" },
-    { "id": "starters.computer", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "computer", "vi": "máy tính", "type": "n", "icon": "💻", "picturable": true, "phonetic": "/kəmˈpjuː.tər/" },
-    { "id": "starters.draw", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "draw", "vi": "vẽ", "type": "v", "icon": "🖍️", "picturable": true, "phonetic": "/drɔː/" },
-    { "id": "starters.drawing", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s2", "en": "drawing", "vi": "bức vẽ", "type": "n", "icon": "🎨", "picturable": true, "phonetic": "/ˈdrɔː.ɪŋ/" },
-
-    { "id": "starters.teacher", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "teacher", "vi": "cô giáo", "type": "n", "icon": "🧑‍🏫", "picturable": true, "phonetic": "/ˈtiː.tʃər/" },
-    { "id": "starters.classroom", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "classroom", "vi": "phòng học", "type": "n", "icon": "🏫", "picturable": true, "phonetic": "/ˈklɑːs.ruːm/" },
-    { "id": "starters.class", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "class", "vi": "lớp học", "type": "n", "icon": "👥", "picturable": false, "phonetic": "/klɑːs/" },
-    { "id": "starters.letter", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "letter", "vi": "chữ cái", "type": "n", "icon": "🔤", "picturable": true, "phonetic": "/ˈlet.ər/" },
-    { "id": "starters.alphabet", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "alphabet", "vi": "bảng chữ cái", "type": "n", "icon": "🔠", "picturable": false, "phonetic": "/ˈæl.fə.bet/" },
-    { "id": "starters.page", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "page", "vi": "trang sách", "type": "n", "icon": "📄", "picturable": true, "phonetic": "/peɪdʒ/" },
-    { "id": "starters.line", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s3", "en": "line", "vi": "đường kẻ", "type": "n", "icon": "➖", "picturable": false, "phonetic": "/laɪn/" },
-
-    { "id": "starters.close", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "close", "vi": "đóng lại", "type": "v", "icon": "📕", "picturable": false, "phonetic": "/kləʊz/" },
-    { "id": "starters.open", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "open", "vi": "mở ra", "type": "adj", "icon": "📖", "picturable": false, "phonetic": "/ˈəʊ.pən/" },
-    { "id": "starters.tick", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "tick", "vi": "dấu tick", "type": "n", "icon": "✅", "picturable": true, "phonetic": "/tɪk/" },
-    { "id": "starters.cross", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "cross", "vi": "dấu gạch chéo", "type": "n", "icon": "❌", "picturable": true, "phonetic": "/krɒs/" },
-    { "id": "starters.keyboard", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "keyboard", "vi": "bàn phím", "type": "n", "icon": "⌨️", "picturable": true, "phonetic": "/ˈkiː.bɔːd/" },
-    { "id": "starters.mouse-computer", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "mouse", "vi": "chuột máy tính", "type": "n", "icon": "🖱️", "picturable": true, "phonetic": "/maʊs/" },
-    { "id": "starters.floor", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "floor", "vi": "sàn nhà", "type": "n", "icon": "🟫", "picturable": false, "phonetic": "/flɔːr/" },
-    { "id": "starters.part", "levelId": "starters", "primaryThemeId": "at-school", "primaryLessonId": "at-school/s4", "en": "part", "vi": "phần", "type": "n", "icon": "🧩", "picturable": false, "phonetic": "/pɑːt/" }
+    {
+      "id": "starters.pencil",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "pencil",
+      "vi": "bút chì",
+      "type": "n",
+      "icon": "✏️",
+      "picturable": true,
+      "phonetic": "/ˈpen.səl/"
+    },
+    {
+      "id": "starters.pen",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "pen",
+      "vi": "bút mực",
+      "type": "n",
+      "icon": "🖊️",
+      "picturable": true,
+      "phonetic": "/pen/"
+    },
+    {
+      "id": "starters.ruler",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "ruler",
+      "vi": "cái thước",
+      "type": "n",
+      "icon": "📏",
+      "picturable": true,
+      "phonetic": "/ˈruː.lər/"
+    },
+    {
+      "id": "starters.eraser",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "eraser",
+      "vi": "cục tẩy",
+      "type": "n",
+      "icon": "🧽",
+      "picturable": true,
+      "phonetic": "/ɪˈreɪ.zər/",
+      "alt": [
+        "rubber"
+      ]
+    },
+    {
+      "id": "starters.book",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "book",
+      "vi": "quyển sách",
+      "type": "n",
+      "icon": "📚",
+      "picturable": true,
+      "phonetic": "/bʊk/"
+    },
+    {
+      "id": "starters.desk",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "desk",
+      "vi": "bàn học",
+      "type": "n",
+      "icon": "🪑",
+      "picturable": true,
+      "phonetic": "/desk/"
+    },
+    {
+      "id": "starters.board",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s1",
+      "en": "board",
+      "vi": "cái bảng",
+      "type": "n",
+      "icon": "📋",
+      "picturable": true,
+      "phonetic": "/bɔːd/"
+    },
+    {
+      "id": "starters.football",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "football",
+      "vi": "bóng đá",
+      "type": "n",
+      "icon": "⚽",
+      "picturable": true,
+      "phonetic": "/ˈfʊt.bɔːl/",
+      "alt": [
+        "soccer"
+      ]
+    },
+    {
+      "id": "starters.basketball",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "basketball",
+      "vi": "bóng rổ",
+      "type": "n",
+      "icon": "🏀",
+      "picturable": true,
+      "phonetic": "/ˈbɑː.skɪt.bɔːl/"
+    },
+    {
+      "id": "starters.hockey",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "hockey",
+      "vi": "khúc côn cầu",
+      "type": "n",
+      "icon": "🏑",
+      "picturable": true,
+      "phonetic": "/ˈhɒk.i/"
+    },
+    {
+      "id": "starters.music",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "music",
+      "vi": "âm nhạc",
+      "type": "n",
+      "icon": "🎵",
+      "picturable": false,
+      "phonetic": "/ˈmjuː.zɪk/"
+    },
+    {
+      "id": "starters.computer",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "computer",
+      "vi": "máy tính",
+      "type": "n",
+      "icon": "💻",
+      "picturable": true,
+      "phonetic": "/kəmˈpjuː.tər/"
+    },
+    {
+      "id": "starters.draw",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "draw",
+      "vi": "vẽ",
+      "type": "v",
+      "icon": "🖍️",
+      "picturable": true,
+      "phonetic": "/drɔː/"
+    },
+    {
+      "id": "starters.drawing",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s2",
+      "en": "drawing",
+      "vi": "bức vẽ",
+      "type": "n",
+      "icon": "🎨",
+      "picturable": true,
+      "phonetic": "/ˈdrɔː.ɪŋ/"
+    },
+    {
+      "id": "starters.teacher",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "teacher",
+      "vi": "cô giáo",
+      "type": "n",
+      "icon": "🧑‍🏫",
+      "picturable": true,
+      "phonetic": "/ˈtiː.tʃər/"
+    },
+    {
+      "id": "starters.classroom",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "classroom",
+      "vi": "phòng học",
+      "type": "n",
+      "icon": "🏫",
+      "picturable": true,
+      "phonetic": "/ˈklɑːs.ruːm/"
+    },
+    {
+      "id": "starters.class",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "class",
+      "vi": "lớp học",
+      "type": "n",
+      "icon": "👥",
+      "picturable": false,
+      "phonetic": "/klɑːs/"
+    },
+    {
+      "id": "starters.letter",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "letter",
+      "vi": "chữ cái",
+      "type": "n",
+      "icon": "🔤",
+      "picturable": true,
+      "phonetic": "/ˈlet.ər/"
+    },
+    {
+      "id": "starters.alphabet",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "alphabet",
+      "vi": "bảng chữ cái",
+      "type": "n",
+      "icon": "🔠",
+      "picturable": false,
+      "phonetic": "/ˈæl.fə.bet/"
+    },
+    {
+      "id": "starters.page",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "page",
+      "vi": "trang sách",
+      "type": "n",
+      "icon": "📄",
+      "picturable": true,
+      "phonetic": "/peɪdʒ/"
+    },
+    {
+      "id": "starters.line",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s3",
+      "en": "line",
+      "vi": "đường kẻ",
+      "type": "n",
+      "icon": "➖",
+      "picturable": false,
+      "phonetic": "/laɪn/"
+    },
+    {
+      "id": "starters.close",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "close",
+      "vi": "đóng lại",
+      "type": "v",
+      "icon": "📕",
+      "picturable": false,
+      "phonetic": "/kləʊz/"
+    },
+    {
+      "id": "starters.open",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "open",
+      "vi": "mở ra",
+      "type": "adj",
+      "icon": "📖",
+      "picturable": false,
+      "phonetic": "/ˈəʊ.pən/"
+    },
+    {
+      "id": "starters.tick",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "tick",
+      "vi": "dấu tick",
+      "type": "n",
+      "icon": "✅",
+      "picturable": true,
+      "phonetic": "/tɪk/"
+    },
+    {
+      "id": "starters.cross",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "cross",
+      "vi": "dấu gạch chéo",
+      "type": "n",
+      "icon": "❌",
+      "picturable": true,
+      "phonetic": "/krɒs/"
+    },
+    {
+      "id": "starters.keyboard",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "keyboard",
+      "vi": "bàn phím",
+      "type": "n",
+      "icon": "⌨️",
+      "picturable": true,
+      "phonetic": "/ˈkiː.bɔːd/"
+    },
+    {
+      "id": "starters.mouse-computer",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "mouse",
+      "vi": "chuột máy tính",
+      "type": "n",
+      "icon": "🖱️",
+      "picturable": true,
+      "phonetic": "/maʊs/"
+    },
+    {
+      "id": "starters.floor",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "floor",
+      "vi": "sàn nhà",
+      "type": "n",
+      "icon": "🟫",
+      "picturable": false,
+      "phonetic": "/flɔːr/"
+    },
+    {
+      "id": "starters.part",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/s4",
+      "en": "part",
+      "vi": "phần",
+      "type": "n",
+      "icon": "🧩",
+      "picturable": false,
+      "phonetic": "/pɑːt/"
+    }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "at-school/s1/memory-match",
+      "lessonId": "at-school/s1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-school/s2/memory-match",
+      "lessonId": "at-school/s2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.music"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-school/s3/memory-match",
+      "lessonId": "at-school/s3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.teacher",
+        "starters.classroom",
+        "starters.class",
+        "starters.letter"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-school/s4/memory-match",
+      "lessonId": "at-school/s4",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.close",
+        "starters.open",
+        "starters.tick",
+        "starters.cross"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-school/s1/memory-match-2",
+      "lessonId": "at-school/s1",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.book",
+        "starters.desk",
+        "starters.board"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-school/s2/memory-match-2",
+      "lessonId": "at-school/s2",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-school/s3/memory-match-2",
+      "lessonId": "at-school/s3",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.alphabet",
+        "starters.page",
+        "starters.line"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 3
+      }
+    },
+    {
+      "id": "at-school/s4/memory-match-2",
+      "lessonId": "at-school/s4",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.keyboard",
+        "starters.mouse-computer",
+        "starters.floor",
+        "starters.part"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 4
+      }
+    },
+    {
+      "id": "at-school/s1/missing-letter",
+      "lessonId": "at-school/s1",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser",
+        "starters.book",
+        "starters.desk",
+        "starters.board"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-school/s2/missing-letter",
+      "lessonId": "at-school/s2",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.music",
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-school/s3/missing-letter",
+      "lessonId": "at-school/s3",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.teacher",
+        "starters.classroom",
+        "starters.class",
+        "starters.letter",
+        "starters.alphabet",
+        "starters.page",
+        "starters.line"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-school/s4/missing-letter",
+      "lessonId": "at-school/s4",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.close",
+        "starters.open",
+        "starters.tick",
+        "starters.cross",
+        "starters.keyboard",
+        "starters.mouse-computer",
+        "starters.floor",
+        "starters.part"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-school/s1/listen-tap",
+      "lessonId": "at-school/s1",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser",
+        "starters.book",
+        "starters.desk",
+        "starters.board"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-school/s1/word-picture",
+      "lessonId": "at-school/s1",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser",
+        "starters.book",
+        "starters.desk"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-school/s2/listen-tap",
+      "lessonId": "at-school/s2",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.music",
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-school/s2/word-picture",
+      "lessonId": "at-school/s2",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-school/s3/listen-tap",
+      "lessonId": "at-school/s3",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.teacher",
+        "starters.classroom",
+        "starters.class",
+        "starters.letter",
+        "starters.alphabet",
+        "starters.page",
+        "starters.line"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-school/s3/word-picture",
+      "lessonId": "at-school/s3",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.teacher",
+        "starters.classroom",
+        "starters.letter",
+        "starters.page"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "at-school/s4/listen-tap",
+      "lessonId": "at-school/s4",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.close",
+        "starters.open",
+        "starters.tick",
+        "starters.cross",
+        "starters.keyboard",
+        "starters.mouse-computer",
+        "starters.floor",
+        "starters.part"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-school/s4/word-picture",
+      "lessonId": "at-school/s4",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.tick",
+        "starters.cross",
+        "starters.keyboard",
+        "starters.mouse-computer"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    }
+  ]
 }
