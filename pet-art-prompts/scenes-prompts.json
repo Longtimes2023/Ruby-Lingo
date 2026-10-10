@@ -1,0 +1,82 @@
+[
+  {
+    "id": "at-the-zoo",
+    "filename": "at-the-zoo.png",
+    "output": "at-the-zoo.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a cheerful, welcoming modern zoo on a sunny day, with a friendly giraffe and elephant visible in spacious, clean habitats, leafy trees, colorful flowers, a simple visitor path, and a few distant child visitors accompanied by adults. Animals look calm and cared for; no scary, aggressive, or distressed animals. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle natural lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner: keep the main recognizable subjects large and uncluttered across the central 70% of the frame, with useful scene context and clear breathing room near the edges. No readable signs, no text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/at-the-zoo.webp"
+  },
+  {
+    "id": "my-body",
+    "filename": "my-body.png",
+    "output": "my-body.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo that gently teaches body vocabulary: show one friendly child character standing naturally in a bright simple studio-like play space, full body visible, wearing ordinary modest colorful clothes, with a few soft, simple visual cues near the child indicating head, hands, knees, and feet (small unobtrusive glow dots only, no labels or arrows). Keep anatomy natural, respectful, non-medical, non-suggestive, and age-appropriate. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; central subject clear and large with uncluttered breathing room around the edges. No readable text, labels, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/my-body.webp"
+  },
+  {
+    "id": "at-the-clothes-shop",
+    "filename": "at-the-clothes-shop.png",
+    "output": "at-the-clothes-shop.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: the interior of a cheerful children's clothes shop, with neatly arranged shirts, dresses, trousers, hats, and shoes on tidy racks and shelves, a friendly shop assistant greeting a parent and child, and warm inviting window light. Clothes are ordinary, modest, age-appropriate and unbranded. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; shop context and clothing items recognizable at small size, central 70% visually clear, no clutter at edges. No readable signs, text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/at-the-clothes-shop.webp"
+  },
+  {
+    "id": "my-friends-birthday",
+    "filename": "my-friends-birthday.png",
+    "output": "my-friends-birthday.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a happy, small indoor birthday party where three diverse young children celebrate together with a friendly adult nearby, a decorated cake with candles, wrapped gifts, balloons, and simple bunting. The children smile and share the moment; the scene feels warm, inclusive, safe, and not overly busy. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle warm lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; cake and children easy to recognize in the central 70%, with breathing room around the edges. No text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/my-friends-birthday.webp"
+  },
+  {
+    "id": "my-favourite-food",
+    "filename": "my-favourite-food.png",
+    "output": "my-favourite-food.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: an inviting family picnic table displaying a colorful variety of child-friendly foods—an apple, banana, strawberries, bread, a bowl of vegetables, and a simple sandwich—with one smiling child and caregiver sharing a meal outdoors. Food looks fresh and appetizing, with no brand packaging. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle daylight, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; foods large and clearly distinguishable in the central 70%, avoid crowding the edges. No text, labels, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/my-favourite-food.webp"
+  },
+  {
+    "id": "at-home",
+    "filename": "at-home.png",
+    "output": "at-home.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a cozy, sunlit family living room at home, with a comfortable sofa, a small table, a soft rug, a house plant, a bookshelf, and a parent reading with a child. Show a welcoming everyday home, tidy but lived-in, with clear simple household objects. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle warm lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; the room and people read clearly at small size, central 70% balanced with breathing room near edges. No text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/at-home.webp"
+  },
+  {
+    "id": "at-school",
+    "filename": "at-school.png",
+    "output": "at-school.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a bright, friendly primary-school classroom with a teacher welcoming a few diverse young pupils, child-sized desks, books, pencils, a globe, and colorful artwork pinned on a board (artwork contains no writing). The classroom feels safe, inclusive, and calm, with daylight through windows. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, balanced vivid colors, gentle lighting, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; teacher, pupils, and a few school objects clearly readable in the central 70%, not cluttered. No readable writing, text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/at-school.webp"
+  },
+  {
+    "id": "at-the-beach",
+    "filename": "at-the-beach.png",
+    "output": "at-the-beach.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a peaceful sunny beach with a child and caregiver building a small sandcastle near the shore, a striped beach umbrella, gentle blue waves, seashells, and distant seagulls. The people stay safely on the sand with an adult present; calm water, no dangerous cliffs or rough surf. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle sunlight, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; people and sandcastle clearly visible in the central 70%, with a clean horizon and edge breathing room. No text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/at-the-beach.webp"
+  },
+  {
+    "id": "my-street",
+    "filename": "my-street.png",
+    "output": "my-street.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a friendly, quiet neighborhood street with colorful family houses, sidewalks, green trees, flowers, a parked bicycle, and a child walking with an adult on the sidewalk. A few distant neighbors wave; no moving traffic near the child. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle daylight, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; homes, sidewalk, and people easy to recognize at small size, central 70% balanced with clear edges. No readable house numbers or signs, no text, letters, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/my-street.webp"
+  },
+  {
+    "id": "home-scene",
+    "filename": "home-scene.png",
+    "output": "home-scene.webp",
+    "prompt": "Create one polished 3D animated children's-learning scene for RubyLingo: a warm, welcoming family home interior shown in a gentle wide view, with a living-room sofa, a small dining table, a window with daylight, a bookshelf, a house plant, and a cheerful family spending quiet time together. Make it a general home setting rather than a close-up of any single object; inviting, tidy, inclusive, and child-friendly. Original family-friendly feature-animation illustration, rounded appealing forms, soft tactile materials, gentle warm lighting, balanced vivid colors, soft shadows, crisp readable composition. Wide horizontal 3:2 landscape composition, designed as a small web lesson banner; clear central focal area and breathing room near edges. No text, letters, numbers, logos, watermark, frame, or border.",
+    "status": "generated",
+    "assetFile": "public/assets/scenes/home-scene.webp"
+  }
+]
