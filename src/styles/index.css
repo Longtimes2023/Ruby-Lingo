@@ -107,3 +107,31 @@
     border-width: 0;
   }
 }
+
+/* =============================================================================
+ * IN ẤN — "Chứng nhận in được" (Giai đoạn 9)
+ * -----------------------------------------------------------------------------
+ * Ctrl/Cmd+P trên trang chứng nhận phải cho ra MỘT trang giấy sạch: chỉ nội dung chứng nhận,
+ * không thanh điều hướng, không nút bấm.
+ *   • `header` = TopBar, `nav` = BottomNav (dựng trong `AppShell`) — ẩn CẢ HAI khi in.
+ *   • `main` bỏ lề/padding để nội dung không bị lệch lề giấy.
+ *   • Nút bấm RIÊNG của trang gắn `print:hidden` (Tailwind) tại chỗ, không cần luật ở đây.
+ *
+ * ⚠️ LUẬT NÀY CHỈ ÁP KHI IN (`@media print`) — trên màn hình, điều hướng vẫn hiện bình thường.
+ * ========================================================================== */
+@media print {
+  header,
+  nav {
+    display: none !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  /* Nền giấy trắng cho dễ đọc và tiết kiệm mực; bóng đổ không có nghĩa trên giấy. */
+  body {
+    background: #ffffff !important;
+  }
+}

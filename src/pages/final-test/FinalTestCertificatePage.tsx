@@ -10,6 +10,21 @@
  *
  * ⚠️ KHÔNG "ĐỖ/TRƯỢT". Tổng kết nói "Bé đã hoàn thành bài thi Starters!" bất kể khiên — đã bỏ
  *   công làm hết đã là một thành tựu (B5). Khiên lấy từ SERVER, không tự tính lại (B4).
+ *
+ * -----------------------------------------------------------------------------
+ * IN ĐƯỢC (Giai đoạn 9) — Ctrl/Cmd+P CHO RA MỘT TRANG GIẤY SẠCH
+ * -----------------------------------------------------------------------------
+ * ⭐ Phụ huynh in bằng lệnh in SẴN CÓ của trình duyệt; app KHÔNG dùng thư viện xuất PDF nào.
+ *   Nút "🖨️ In chứng nhận" chỉ gọi `window.print()`.
+ *
+ * ⚠️ BA THỨ PHẢI SỐNG SÓT QUA BẢN IN — và cả ba đều đã bị "quên" ở đâu đó trong các app khác:
+ *   1. **NỘI DUNG CHỨNG NHẬN.** Thanh điều hướng (`TopBar` = `<header>`, `BottomNav` = `<nav>`)
+ *      và mọi nút bấm bị ẩn khi in — luật nằm ở `@media print` trong `styles/index.css` (khung)
+ *      và `print:hidden` ngay tại nút của trang này.
+ *   2. **DÒNG MIỄN TRỪ CAMBRIDGE.** Nó nằm trong luồng in (KHÔNG `print:hidden`) — một bản in
+ *      nói "chứng nhận" mà thiếu câu này là một lời hứa sai với phụ huynh. Test khoá đúng điều đó.
+ *   3. **TÊN BÉ + SỐ KHIÊN TỪNG PHẦN + NGÀY.** Lấy NGUYÊN từ server (`bestShields`,
+ *      `lastAttemptAt`), không tự tính lại — xem quyết định B4.
  */
 
 import { useTranslation } from 'react-i18next';
@@ -21,6 +36,7 @@ import { ShieldRow } from '../../components/final-test/ShieldRow.js';
 import { sectionTitleKey } from '../../components/final-test/praise.js';
 import { useFinalTestGate } from '../../hooks/useFinalTest.js';
 import { finalTestHomePath } from '../../lib/paths.js';
+import { formatDateVi } from '../../lib/time.js';
 import { useActiveChild } from '../../store/sessionStore.js';
 
 export function FinalTestCertificatePage() {
@@ -51,6 +67,18 @@ export function FinalTestCertificatePage() {
   const allCompleted = sections.length > 0 && sections.every((section) => section.completed);
   const totalShields = sections.reduce((sum, section) => sum + (section.bestShields ?? 0), 0);
 
+  /**
+   * Ngày in trên chứng nhận = lần nộp MUỘN NHẤT trong ba phần (mốc "bé hoàn thành bài thi").
+   * `lastAttemptAt` là ISO UTC nên sắp xếp chuỗi = sắp xếp thời gian; `null` (dữ liệu cũ/chưa
+   * đọc được) chỉ khiến dòng ngày vắng mặt — KHÔNG bịa ngày hôm nay.
+   */
+  const lastAttemptAt =
+    sections
+      .map((section) => section.lastAttemptAt)
+      .filter((value): value is string => value !== null)
+      .sort()
+      .at(-1) ?? null;
+
   // --- Chưa xong cả ba phần: LỜI MỜI làm nốt, không phải lời chê ----------
   if (!allCompleted) {
     const remaining = sections.filter((section) => !section.completed);
@@ -66,12 +94,24 @@ export function FinalTestCertificatePage() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <BackHomeLink />
+    <div className="flex flex-col gap-5 print:gap-3">
+      {/* Hàng điều khiển: quay lại + in. `print:hidden` ⇒ KHÔNG xuất hiện trên giấy in. */}
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <BackHomeLink />
+        <BigButton
+          variant="secondary"
+          icon="🖨️"
+          fullWidth={false}
+          aria-label={t('finalTest.printCertificateLabel')}
+          onClick={() => window.print()}
+        >
+          {t('finalTest.printCertificate')}
+        </BigButton>
+      </div>
 
       <section
         aria-labelledby="final-test-certificate-title"
-        className="flex flex-col items-center gap-3 rounded-card border-2 border-brand bg-gradient-to-b from-brand-tint to-surface p-6 text-center shadow-kid"
+        className="flex flex-col items-center gap-3 rounded-card border-2 border-brand bg-gradient-to-b from-brand-tint to-surface p-6 text-center shadow-kid print:break-inside-avoid print:shadow-none"
       >
         <span
           role="img"
@@ -85,23 +125,32 @@ export function FinalTestCertificatePage() {
           {t('finalTest.certificateTitle')}
         </h1>
 
+        {/* Nhãn hiệu RUBYLINGO — KHÔNG phải Cambridge. Bắt buộc có trên bản in. */}
+        <p className="text-kid-sm font-bold text-brand">{t('finalTest.certificateBrand')}</p>
+
         <p className="text-kid-lg font-bold text-brand">{child.nickname}</p>
         <p className="text-kid-sm text-ink-soft">{t('finalTest.certificateIntro')}</p>
 
         <p className="text-kid-md font-bold text-ink">
           {t('finalTest.certificateTotal', { count: totalShields })}
         </p>
+
+        {lastAttemptAt !== null && (
+          <p className="text-kid-xs text-ink-soft">
+            {t('finalTest.certificateDate', { date: formatDateVi(lastAttemptAt) })}
+          </p>
+        )}
       </section>
 
       {/* Khiên TỪNG phần — lấy từ server, không tự tính lại. */}
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3 print:gap-2">
         {sections.map((section) => {
           const title = t(sectionTitleKey(section.section));
           const shields = section.bestShields;
           return (
             <li
               key={section.section}
-              className="flex items-center justify-between gap-3 rounded-card border-2 border-line bg-surface p-4"
+              className="flex items-center justify-between gap-3 rounded-card border-2 border-line bg-surface p-4 print:break-inside-avoid"
             >
               <span className="text-kid-md font-bold text-ink">{title}</span>
               {shields !== null && (
@@ -115,7 +164,7 @@ export function FinalTestCertificatePage() {
         })}
       </ul>
 
-      {/* Ràng buộc pháp lý — bắt buộc hiện. */}
+      {/* Ràng buộc pháp lý — bắt buộc hiện, VÀ bắt buộc sống sót qua bản in (KHÔNG `print:hidden`). */}
       <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-xs text-ink-soft">
         {t('finalTest.speakDisclaimer')}
       </p>

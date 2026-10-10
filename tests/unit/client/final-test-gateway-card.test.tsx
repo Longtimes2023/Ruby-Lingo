@@ -26,6 +26,7 @@ function sectionStatus(over: Partial<FinalTestSectionStatus> = {}): FinalTestSec
     bestShields: null,
     completed: false,
     attempts: 0,
+    lastAttemptAt: null,
     progress: null,
     ...over,
   };

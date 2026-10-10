@@ -639,10 +639,22 @@ export const vi = {
 
     /** Màn chứng nhận. */
     certificateTitle: 'Chứng nhận nhỏ của bé',
+    /**
+     * ⚠️ DÒNG NHÃN HIỆU BẮT BUỘC: đây là "chứng nhận" của RUBYLINGO, KHÔNG phải Cambridge.
+     *    Không logo/nhãn Cambridge, không chữ "chứng chỉ" — xem khối ghi chú đầu
+     *    `FinalTestCertificatePage.tsx`.
+     */
+    certificateBrand: 'Chứng nhận của RubyLingo',
     certificateIntro: 'Bé đã hoàn thành bài thi Starters!',
     certificateTotal: 'Tổng cộng {{count}} khiên',
+    /** Ngày hoàn thành (lần nộp gần nhất) — `date` đã định dạng `D/M/YYYY`. */
+    certificateDate: 'Ngày {{date}}',
     certificateIncomplete: 'Bé còn phần {{sections}} chưa làm. Mình làm nốt nhé!',
     certificateMedalLabel: 'Huy chương tốt nghiệp Starters',
+    /** Nhãn nút in chứng nhận (chỉ gọi `window.print()` — không xuất PDF, không thêm thư viện). */
+    printCertificate: 'In chứng nhận',
+    /** Nhãn đọc của nút in (nói rõ hành động: in ra giấy). */
+    printCertificateLabel: 'In chứng nhận ra giấy',
 
     /** Không có phần thi này / chưa tới lúc. */
     homeTitle: 'Khu vực thi Starters',
@@ -844,6 +856,23 @@ export const vi = {
     noMastered: 'Tuần này chưa có từ nào bé nhớ chắc. Bố mẹ ôn cùng con nhé!',
     /** Không đọc được báo cáo (lỗi mạng) — câu trung tính, không lộ chi tiết kỹ thuật. */
     reportLoadError: 'Chưa mở được báo cáo. Bố mẹ thử lại nhé!',
+
+    // --- Khối "Bài thi cuối khoá" trong báo cáo (Giai đoạn 9) -------------
+    /**
+     * Tiêu đề khối. Đây là CỘT MỐC của cả lộ trình (bài thi làm một lần), KHÔNG phải số của tuần
+     * — xem `ReportService.readFinalTestSections`.
+     */
+    finalTestTitle: 'Bài thi cuối khoá',
+    /**
+     * ⚠️ Bé CHƯA thi ⇒ câu này, và KHÔNG hiện dãy khiên nào. "0 khiên" đọc lên như một lời chê;
+     *    giữ trạng thái TRUNG TÍNH ("chưa làm") thay vì một con số rỗng.
+     */
+    finalTestNotTaken: 'Bé chưa làm bài thi cuối khoá.',
+    /** Ngày nộp gần nhất của một phần — ngày đã định dạng `D/M/YYYY`. */
+    finalTestLastAttempt: 'Lần gần nhất: {{date}}',
+    /** Một phần CHƯA được nộp trong khi bé đã thi phần khác — trung tính, không phán xét. */
+    finalTestNoAttempt: 'Chưa làm',
+
     settings: 'Cài đặt',
 
     // --- Màn Cài đặt phụ huynh (T074) ------------------------------------

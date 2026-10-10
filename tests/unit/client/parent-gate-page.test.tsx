@@ -68,6 +68,7 @@ function reportFixture(): ReportResponse {
     starsEarned: 0,
     strugglingWords: [],
     masteredWords: [],
+    finalTest: [],
   };
 }
 

@@ -33,6 +33,7 @@ import type { RoomPlacement } from '../schemas/room.js';
 import type {
   FinalTestGateState,
   FinalTestProgressDto,
+  FinalTestSectionStatus,
   FinalTestSubmitResult,
 } from './final-test.js';
 import type {
@@ -433,6 +434,17 @@ export interface ReportResponse {
   strugglingWords: WordAccuracyDto[];
   /** Từ bé đã nhớ chắc. */
   masteredWords: WordAccuracyDto[];
+  /**
+   * Kết quả BÀI THI CUỐI KHOÁ theo từng phần (Nghe / Đọc & Viết / Nói) — dùng CÙNG hình dạng
+   * `FinalTestSectionStatus` với màn "Khu vực thi", nhưng ở đây `progress` LUÔN `null` (tiến độ
+   * dở không phải chuyện phụ huynh cần đọc).
+   *
+   * ⭐ ĐỌC KỸ "CHƯA THI": phần bé CHƯA nộp lần nào mang `bestShields = null` và
+   *   `lastAttemptAt = null` — KHÔNG phải `0 khiên`. Con số 0 đọc lên như một lời chê ("con
+   *   được 0"), nên server CỐ Ý không bao giờ bịa nó; client hiện "bé chưa làm bài thi cuối khoá"
+   *   thay vì một dãy khiên rỗng.
+   */
+  finalTest: FinalTestSectionStatus[];
 }
 
 export type RoomPlacementsGetResponse = RoomPlacement[];

@@ -24,6 +24,7 @@ import { ApiClientError } from '@/api/client.js';
 import { reportApi } from '@/api/endpoints.js';
 import { ParentReport } from '@/pages/parent/ParentReport.js';
 import type { ChildProfileDto, ReportResponse } from '@shared/types/api.js';
+import type { FinalTestSectionStatus } from '@shared/types/final-test.js';
 
 vi.mock('@/api/endpoints.js', () => ({
   reportApi: { get: vi.fn() },
@@ -40,6 +41,23 @@ const CHILD_PROFILE: ChildProfileDto = {
   avatarId: 'rabbit',
   createdAt: '2026-10-08T08:00:00.000Z',
 };
+
+/** Một phần thi cuối khoá cho báo cáo — mặc định "chưa làm" (đúng trạng thái bé mới). */
+function finalTestSection(
+  over: Partial<FinalTestSectionStatus> = {},
+): FinalTestSectionStatus {
+  return {
+    section: 'listening',
+    autoScored: true,
+    totalItems: 20,
+    bestShields: null,
+    completed: false,
+    attempts: 0,
+    lastAttemptAt: null,
+    progress: null,
+    ...over,
+  };
+}
 
 /**
  * ⚠️ CÁC CON SỐ TỔNG CỐ Ý KHÁC TỔNG `dailyStats`.
@@ -83,6 +101,11 @@ function report(overrides: Partial<ReportResponse> = {}): ReportResponse {
     starsEarned: 321,
     strugglingWords: [],
     masteredWords: [],
+    finalTest: [
+      finalTestSection({ section: 'listening' }),
+      finalTestSection({ section: 'reading-writing', totalItems: 25 }),
+      finalTestSection({ section: 'speaking', autoScored: false, totalItems: 11 }),
+    ],
     ...overrides,
   };
 }
@@ -221,6 +244,81 @@ describe('ParentReport — từ hay nhầm / đã nhớ', () => {
     expect(
       screen.getByText('Tuần này chưa có từ nào bé nhớ chắc. Bố mẹ ôn cùng con nhé!'),
     ).toBeInTheDocument();
+  });
+});
+
+// =============================================================================
+// Nhóm 3b — khối bài thi cuối khoá (Giai đoạn 9)
+// =============================================================================
+
+describe('ParentReport — khối bài thi cuối khoá', () => {
+  it('⭐ bé CHƯA thi ⇒ câu trung tính, KHÔNG hiện khiên nào', async () => {
+    renderReport();
+    await screen.findByText('Bé Na đã học đều đặn trong tuần này.');
+
+    expect(screen.getByText('Bài thi cuối khoá')).toBeInTheDocument();
+    expect(screen.getByText('Bé chưa làm bài thi cuối khoá.')).toBeInTheDocument();
+
+    // KHÔNG có dãy khiên/label khiên nào — "0 khiên" đọc lên như một lời chê.
+    expect(screen.queryByLabelText(/bé được \d khiên/)).toBeNull();
+  });
+
+  it('⭐ đã thi một phần ⇒ hiện tên phần + khiên + ngày; phần chưa làm ⇒ "Chưa làm"', async () => {
+    getMock.mockResolvedValue(
+      report({
+        finalTest: [
+          finalTestSection({
+            section: 'listening',
+            bestShields: 4,
+            completed: true,
+            attempts: 1,
+            lastAttemptAt: '2026-10-06T09:00:00.000Z',
+          }),
+          finalTestSection({ section: 'reading-writing', totalItems: 25 }),
+          finalTestSection({ section: 'speaking', autoScored: false, totalItems: 11 }),
+        ],
+      }),
+    );
+    renderReport();
+    await screen.findByText('Bé Na đã học đều đặn trong tuần này.');
+
+    // Phần đã thi: tên + nhãn khiên đọc được + ngày gần nhất.
+    expect(screen.getByText('Nghe')).toBeInTheDocument();
+    expect(screen.getByLabelText('Nghe: bé được 4 khiên')).toBeInTheDocument();
+    expect(screen.getByText(/Lần gần nhất: \d{1,2}\/\d{1,2}\/\d{4}/)).toBeInTheDocument();
+
+    // Hai phần còn lại: trung tính "Chưa làm", KHÔNG có khiên.
+    expect(screen.getAllByText('Chưa làm')).toHaveLength(2);
+    expect(screen.queryByLabelText(/Đọc & Viết: bé được/)).toBeNull();
+    expect(screen.queryByLabelText(/Nói: bé được/)).toBeNull();
+
+    // Dòng miễn trừ Cambridge luôn có trong khối (một nguồn với màn thi).
+    expect(
+      screen.getByText('RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.'),
+    ).toBeInTheDocument();
+  });
+
+  it('⭐ làm lại điểm cao hơn ⇒ client hiện ĐÚNG khiên cao nhất server trả (không tự tính)', async () => {
+    getMock.mockResolvedValue(
+      report({
+        finalTest: [
+          finalTestSection({
+            section: 'listening',
+            // Hai lần: 3 rồi 5 khiên ⇒ server trả `bestShields = 5`, `attempts = 2`.
+            bestShields: 5,
+            completed: true,
+            attempts: 2,
+            lastAttemptAt: '2026-10-08T09:00:00.000Z',
+          }),
+          finalTestSection({ section: 'reading-writing', totalItems: 25 }),
+          finalTestSection({ section: 'speaking', autoScored: false, totalItems: 11 }),
+        ],
+      }),
+    );
+    renderReport();
+    await screen.findByText('Bé Na đã học đều đặn trong tuần này.');
+
+    expect(screen.getByLabelText('Nghe: bé được 5 khiên')).toBeInTheDocument();
   });
 });
 

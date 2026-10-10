@@ -56,6 +56,7 @@ function sectionStatus(over: Partial<FinalTestSectionStatus> = {}): FinalTestSec
     bestShields: null,
     completed: false,
     attempts: 0,
+    lastAttemptAt: null,
     progress: null,
     ...over,
   };
@@ -273,24 +274,55 @@ describe('FinalTestSectionPage — chơi hết một phần', () => {
   });
 });
 
+/** Ba phần ĐÃ hoàn thành — dùng cho màn chứng nhận. */
+function completedSections(): FinalTestSectionStatus[] {
+  return [
+    sectionStatus({ section: 'listening', totalItems: 20, bestShields: 4, completed: true, attempts: 1, lastAttemptAt: '2026-10-05T09:00:00.000Z' }),
+    sectionStatus({ section: 'reading-writing', totalItems: 25, bestShields: 5, completed: true, attempts: 1, lastAttemptAt: '2026-10-06T09:00:00.000Z' }),
+    sectionStatus({ section: 'speaking', autoScored: false, totalItems: 11, bestShields: 5, completed: true, attempts: 1, lastAttemptAt: '2026-10-07T09:00:00.000Z' }),
+  ];
+}
+
 describe('FinalTestCertificatePage', () => {
-  it('đủ ba phần ⇒ hiện tên bé, tổng khiên và dòng miễn trừ Cambridge', async () => {
-    getMock.mockResolvedValue(
-      gateState(gate({ kind: 'done' }), [
-        sectionStatus({ section: 'listening', totalItems: 20, bestShields: 4, completed: true, attempts: 1 }),
-        sectionStatus({ section: 'reading-writing', totalItems: 25, bestShields: 5, completed: true, attempts: 1 }),
-        sectionStatus({ section: 'speaking', autoScored: false, totalItems: 11, bestShields: 5, completed: true, attempts: 1 }),
-      ]),
-    );
+  it('đủ ba phần ⇒ hiện tên bé, tổng khiên, nhãn RubyLingo và dòng miễn trừ Cambridge', async () => {
+    getMock.mockResolvedValue(gateState(gate({ kind: 'done' }), completedSections()));
 
     renderAt('/final-test/certificate');
 
     expect(await screen.findByText('Chứng nhận nhỏ của bé')).toBeInTheDocument();
+    // Nhãn hiệu RUBYLINGO — KHÔNG phải Cambridge, KHÔNG "chứng chỉ".
+    expect(screen.getByText('Chứng nhận của RubyLingo')).toBeInTheDocument();
     expect(screen.getByText('Na')).toBeInTheDocument();
     expect(screen.getByText('Tổng cộng 14 khiên')).toBeInTheDocument();
     expect(
       screen.getByText('RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.'),
     ).toBeInTheDocument();
+  });
+
+  it('⭐ dòng miễn trừ Cambridge LUÔN được render (khoá lại để không ai xoá mất)', async () => {
+    getMock.mockResolvedValue(gateState(gate({ kind: 'done' }), completedSections()));
+    renderAt('/final-test/certificate');
+
+    expect(
+      await screen.findByText('RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.'),
+    ).toBeInTheDocument();
+  });
+
+  it('⭐ nút "In chứng nhận": đủ lớn (≥64px), aria-label tiếng Việt, bấm ⇒ gọi window.print', async () => {
+    getMock.mockResolvedValue(gateState(gate({ kind: 'done' }), completedSections()));
+    const printMock = vi.fn();
+    vi.stubGlobal('print', printMock);
+
+    renderAt('/final-test/certificate');
+
+    const button = await screen.findByRole('button', { name: 'In chứng nhận ra giấy' });
+    // a11y: vùng chạm `min-h-touch` (≥ 64px).
+    expect(button.className).toContain('min-h-touch');
+
+    fireEvent.click(button);
+    expect(printMock).toHaveBeenCalledTimes(1);
+
+    vi.unstubAllGlobals();
   });
 
   it('chưa xong cả ba phần ⇒ LỜI MỜI làm nốt, không phải lời chê', async () => {

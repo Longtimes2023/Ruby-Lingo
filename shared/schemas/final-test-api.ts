@@ -179,6 +179,8 @@ export const finalTestSectionStatusSchema = z.object({
   /** Đã có ≥1 lần hoàn thành phần này chưa. */
   completed: z.boolean(),
   attempts: z.number().int().min(0),
+  /** Thời điểm NỘP GẦN NHẤT (ISO UTC) — `null` nếu bé CHƯA nộp phần này lần nào. */
+  lastAttemptAt: isoUtcSchema.nullable(),
   /** Tiến độ đang dở (nếu có). */
   progress: finalTestProgressSchema.nullable(),
 });

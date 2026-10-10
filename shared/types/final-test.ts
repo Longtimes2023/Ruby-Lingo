@@ -38,6 +38,14 @@ export interface FinalTestSectionStatus {
   /** Đã có ≥1 lần hoàn thành phần này chưa. */
   completed: boolean;
   attempts: number;
+  /**
+   * Thời điểm NỘP GẦN NHẤT của phần này (ISO-8601 UTC), `null` nếu bé CHƯA nộp lần nào.
+   *
+   * ⭐ Dùng cho BÁO CÁO PHỤ HUYNH ("ngày làm gần nhất"). Lấy từ CÙNG hàng `final_test_attempt`
+   *   (`MAX(occurred_at)`) — không suy từ `progress.updatedAt` (tiến độ dở KHÔNG phải một lần
+   *   nộp, và có thể mới hơn lần nộp cuối).
+   */
+  lastAttemptAt: string | null;
   /** Tiến độ đang dở (nếu có). */
   progress: FinalTestProgressDto | null;
 }

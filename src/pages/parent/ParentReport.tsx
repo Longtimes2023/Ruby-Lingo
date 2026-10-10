@@ -27,6 +27,8 @@ import { reportApi } from '../../api/endpoints.js';
 import { BigButton } from '../../components/common/BigButton.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 import { ResponsiveGrid } from '../../components/common/ResponsiveGrid.js';
+import { sectionTitleKey } from '../../components/final-test/praise.js';
+import { formatDateVi } from '../../lib/time.js';
 
 export interface ParentReportProps {
   /** Bé cần lập báo cáo (bé ĐANG chọn). */
@@ -131,6 +133,13 @@ export function ParentReport({ childId, onGateClosed }: ParentReportProps) {
   const hasDays = report.dailyStats.length > 0;
   // Trần của biểu đồ = ngày nhiều nhất. `Math.max(1)` để không chia cho 0 khi tuần chưa có gì.
   const maxWords = Math.max(1, ...report.dailyStats.map((day: DailyStat) => day.wordsLearned));
+
+  /**
+   * Bé đã nộp dù chỉ MỘT phần thi cuối khoá chưa. Dùng để chọn giữa hai trạng thái của khối:
+   * CHƯA thi ⇒ một câu trung tính (KHÔNG dãy khiên rỗng); đã thi ⇒ liệt kê từng phần.
+   * ⚠️ `attempts > 0` (không phải `bestShields !== null`) vì đó là sự thật thô của server.
+   */
+  const hasFinalTestAttempt = report.finalTest.some((section) => section.attempts > 0);
 
   return (
     <div className="flex flex-col gap-6">
@@ -255,6 +264,65 @@ export function ParentReport({ childId, onGateClosed }: ParentReportProps) {
             ))}
           </ul>
         )}
+      </section>
+
+      {/* --- Bài thi cuối khoá --------------------------------------------- */}
+      {/*
+        ⭐ KHỐI CỘT MỐC, KHÔNG PHẢI SỐ CỦA TUẦN: bài thi cuối khoá làm MỘT lần cho cả lộ trình,
+        nên khiên/ngày ở đây KHÔNG lọc theo khoảng ngày của báo cáo (server đã trả đúng như vậy).
+
+        ⚠️ BÉ CHƯA THI ⇒ câu trung tính, KHÔNG hiện khiên. "0 khiên" đọc lên như một lời chê —
+          server trả `null` chứ không bịa 0, và client không tự suy ra con số nào.
+        ⚠️ Dòng miễn trừ Cambridge giữ NGUYÊN VĂN và DÙNG CHUNG chuỗi với màn thi (`finalTest.*`):
+          một nguồn duy nhất cho câu ràng buộc pháp lý, không chép lại để rồi lệch.
+      */}
+      <section aria-labelledby="parent-report-final-test" className="flex flex-col gap-2">
+        <h3 id="parent-report-final-test" className="text-kid-md font-bold text-ink">
+          {t('parent.finalTestTitle')}
+        </h3>
+
+        {!hasFinalTestAttempt ? (
+          <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-sm text-ink-soft">
+            {t('parent.finalTestNotTaken')}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {report.finalTest.map((section) => {
+              const title = t(sectionTitleKey(section.section));
+              const shields = section.bestShields;
+              return (
+                <li
+                  key={section.section}
+                  className="flex items-center justify-between gap-3 rounded-kid border-2 border-line bg-surface px-3 py-2"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-kid-md font-bold text-ink">{title}</span>
+                    <span className="block text-kid-xs text-ink-soft">
+                      {section.lastAttemptAt !== null
+                        ? t('parent.finalTestLastAttempt', {
+                            date: formatDateVi(section.lastAttemptAt),
+                          })
+                        : t('parent.finalTestNoAttempt')}
+                    </span>
+                  </span>
+                  {shields !== null && (
+                    <span
+                      role="img"
+                      aria-label={t('finalTest.shieldsEarnedLabel', { section: title, count: shields })}
+                      className="shrink-0 text-kid-md font-bold tabular-nums text-ink"
+                    >
+                      <span aria-hidden="true">🛡️</span> {shields}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-xs text-ink-soft">
+          {t('finalTest.speakDisclaimer')}
+        </p>
       </section>
     </div>
   );

@@ -95,6 +95,8 @@ import type { XpService } from './XpService.js';
 interface AttemptSummaryRow {
   section: string;
   best: number;
+  /** Thời điểm nộp GẦN NHẤT (`MAX(occurred_at)`) — chuỗi ISO UTC. */
+  last: string;
   n: number;
 }
 
@@ -490,11 +492,17 @@ export class FinalTestService {
     return row?.best ?? 0;
   }
 
-  /** Gộp mỗi phần: khiên cao nhất + số lần nộp. */
+  /**
+   * Gộp mỗi phần: khiên cao nhất + số lần nộp + thời điểm nộp gần nhất.
+   *
+   * ⚠️ `MAX(occurred_at)` trả về CHUỖI (cột `occurred_at` là TEXT) — so sánh này chỉ đúng vì
+   *    mọi mốc đều là ISO-8601 UTC có `Z` (schema nộp bài ép định dạng). `occurred_at` là cột
+   *    NOT NULL và nhóm chỉ có hàng khi đã nộp, nên `last` không bao giờ rỗng.
+   */
   private readAttemptSummaries(db: Db, childId: string): Map<string, AttemptSummaryRow> {
     const rows = db
       .prepare(
-        `SELECT section, MAX(shields) AS best, COUNT(*) AS n
+        `SELECT section, MAX(shields) AS best, MAX(occurred_at) AS last, COUNT(*) AS n
            FROM final_test_attempt WHERE child_id = ? GROUP BY section`,
       )
       .all(childId) as AttemptSummaryRow[];
@@ -545,6 +553,8 @@ export class FinalTestService {
         bestShields: best,
         completed: attempt !== undefined,
         attempts: attempt?.n ?? 0,
+        // Chưa nộp lần nào ⇒ `null` (KHÔNG bịa một mốc). `attempt` có hàng ⇒ `last` luôn có giá trị.
+        lastAttemptAt: attempt?.last ?? null,
         progress: progress.get(section) ?? null,
       };
     });

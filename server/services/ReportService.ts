@@ -32,15 +32,18 @@
  */
 
 import type { ReportResponse, WordAccuracyDto } from '../../shared/types/api.js';
+import type { FinalTestSectionStatus } from '../../shared/types/final-test.js';
+import type { ShieldCount } from '../../shared/final-test-scoring.js';
 import { reportQuerySchema } from '../../shared/schemas/report.js';
 import type { ReportQueryInput } from '../../shared/schemas/report.js';
+import { finalTestSectionStatusSchema } from '../../shared/schemas/final-test-api.js';
 import {
   REPORT_DEFAULT_RANGE_DAYS,
   REPORT_MAX_RANGE_DAYS,
   REPORT_WORD_LIST_LIMIT,
   STRUGGLING_MIN_WRONG,
 } from '../../shared/constants.js';
-import { getWordText } from '../../shared/content/content-index.js';
+import { getFinalTestMeta, getWordText } from '../../shared/content/content-index.js';
 import type { Db } from '../db/connection.js';
 import { getDb } from '../db/connection.js';
 import { dateKeyDaysAgo, daysBetweenDateKeys, localDateKey } from '../lib/time.js';
@@ -56,6 +59,14 @@ interface WordProgressRow {
   word_id: string;
   correct_count: number;
   wrong_count: number;
+}
+
+/** Gộp một phần thi cuối khoá: khiên cao nhất + số lần nộp + mốc nộp gần nhất. */
+interface FinalTestAttemptRow {
+  section: string;
+  best: number;
+  last: string;
+  n: number;
 }
 
 export class ReportService {
@@ -116,6 +127,7 @@ export class ReportService {
     const masteredWords = this.readMasteredWords(childId);
 
     return {
+      finalTest: this.readFinalTestSections(childId),
       child,
       summary_vi: this.buildSummary({
         activeDays,
@@ -209,6 +221,56 @@ export class ReportService {
       .prepare('SELECT COUNT(*) AS n FROM word_progress WHERE child_id = ? AND mastered = 1')
       .get(childId) as { n: number };
     return row.n;
+  }
+
+  /**
+   * Kết quả BÀI THI CUỐI KHOÁ theo từng phần — cho khối "Bài thi cuối khoá" của báo cáo.
+   *
+   * ⭐ ĐỌC THẲNG `final_test_attempt` (bảng của migration 013), CÙNG lối với `daily_stats` /
+   *   `word_progress` ở trên: `ReportService` đã kiểm SỞ HỮU một lần rồi đọc bảng thô, KHÔNG gọi
+   *   `FinalTestService` (gọi nó sẽ kéo theo cả phép tính cổng + parse hợp đồng của màn thi —
+   *   thừa cho một khối báo cáo).
+   *
+   * ⚠️ MỘT PHẦN, MỘT HÀNG GỘP: khiên cao nhất `MAX(shields)`, số lượt `COUNT(*)`, mốc gần nhất
+   *    `MAX(occurred_at)`. Ba con số này KHÔNG lọc theo khoảng ngày của báo cáo — "bài thi cuối
+   *    khoá" là cột mốc MỘT LẦN của cả lộ trình, không phải hoạt động trong tuần. Cùng lý do như
+   *    `wordsMastered` (luỹ kế), nên khối này phải được đặt NHÃN rõ ở client.
+   *
+   * ⚠️ BÉ CHƯA THI ⇒ `bestShields`/`lastAttemptAt` = `null`, KHÔNG phải `0`. "0 khiên" đọc lên
+   *    như một lời chê; `null` buộc client hiện trạng thái "chưa làm" trung tính. Duyệt theo
+   *    `meta.sections` (nguồn sự thật) chứ KHÔNG theo hàng trong DB, để phần bé chưa làm vẫn
+   *    xuất hiện trong danh sách thay vì biến mất.
+   */
+  private readFinalTestSections(childId: string): FinalTestSectionStatus[] {
+    const meta = getFinalTestMeta();
+    if (!meta) return [];
+
+    const rows = this.db
+      .prepare(
+        `SELECT section, MAX(shields) AS best, MAX(occurred_at) AS last, COUNT(*) AS n
+           FROM final_test_attempt WHERE child_id = ? GROUP BY section`,
+      )
+      .all(childId) as FinalTestAttemptRow[];
+    const bySection = new Map(rows.map((row) => [row.section, row]));
+
+    const sections: FinalTestSectionStatus[] = meta.sections.map((summary) => {
+      const attempt = bySection.get(summary.section);
+      return {
+        section: summary.section,
+        autoScored: summary.autoScored,
+        totalItems: summary.itemCount,
+        bestShields: attempt ? (attempt.best as ShieldCount) : null,
+        completed: attempt !== undefined,
+        attempts: attempt?.n ?? 0,
+        lastAttemptAt: attempt?.last ?? null,
+        // Tiến độ ĐANG DỞ không thuộc báo cáo phụ huynh — xem ghi chú ở `ReportResponse.finalTest`.
+        progress: null,
+      };
+    });
+
+    // Parse ĐẦU RA bằng schema dùng chung với màn thi: hình dạng lệch sẽ ném Ở ĐÂY, không để
+    // client nhận dữ liệu méo rồi hỏng âm thầm (cùng lối như `FinalTestService.getState`).
+    return finalTestSectionStatusSchema.array().parse(sections);
   }
 
   /**

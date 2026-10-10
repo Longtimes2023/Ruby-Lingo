@@ -138,6 +138,36 @@ function seedWord(
     .run(childId, wordId, w.mastered ? 1 : 0, w.correct, w.wrong, AT, AT);
 }
 
+/**
+ * Ghi một hàng `final_test_attempt` (migration 013) — một LẦN nộp một phần thi.
+ *
+ * ⚠️ `shields` phải 1–5 (CHECK của DB). Test nào cần "chưa thi" thì KHÔNG gọi helper này —
+ *    và đó cũng là điều đang được kiểm: thiếu hàng ⇒ `bestShields = null`, KHÔNG phải 0.
+ */
+function seedFinalTestAttempt(
+  childId: string,
+  section: string,
+  attempt: { shields: number; occurredAt: string; clientEventId: string; totalItems?: number },
+): void {
+  getDb()
+    .prepare(
+      `INSERT INTO final_test_attempt
+         (id, child_id, section, client_event_id, occurred_at, total_items, correct_first_try, shields, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .run(
+      `fta_${attempt.clientEventId}`,
+      childId,
+      section,
+      attempt.clientEventId,
+      attempt.occurredAt,
+      attempt.totalItems ?? 20,
+      attempt.totalItems ?? 20,
+      attempt.shields,
+      AT,
+    );
+}
+
 /** Mở cổng PIN cho phiên này (khi tài khoản CHƯA có PIN, mọi PIN 4 số đều mở — xem T072). */
 function openGate(cookie: string): Promise<LightMyRequestResponse> {
   return app.inject({
@@ -363,5 +393,77 @@ describe('⭐ hai danh sách từ: rời nhau, và gọi tên được từ', ()
     const res = await getReport(cookie, childId, '?from=2026-10-01&to=2026-10-07');
     expect(res.statusCode, res.body).toBe(200);
     expect(reportBody(res).strugglingWords.map((w) => w.wordId)).toEqual(['starters.a']);
+  });
+});
+
+// =============================================================================
+// Khối "Bài thi cuối khoá" (Giai đoạn 9)
+// =============================================================================
+
+describe('báo cáo — khối bài thi cuối khoá', () => {
+  it('⭐ bé CHƯA thi ⇒ ba phần, mọi `bestShields`/`lastAttemptAt` = null (KHÔNG bịa 0 khiên)', async () => {
+    const cookie = await signup('rep-ft-empty@example.com');
+    const childId = await createChild(cookie, 'Na');
+
+    const { finalTest } = reportBody(await getReport(cookie, childId, '?from=2026-10-01&to=2026-10-07'));
+
+    // Đủ BA phần theo danh mục đề — phần chưa làm vẫn xuất hiện (nút "chưa làm"), không biến mất.
+    expect(finalTest.map((s) => s.section)).toEqual(['listening', 'reading-writing', 'speaking']);
+    for (const section of finalTest) {
+      expect(section.bestShields).toBeNull();
+      expect(section.lastAttemptAt).toBeNull();
+      expect(section.attempts).toBe(0);
+      expect(section.completed).toBe(false);
+    }
+  });
+
+  it('⭐ thi MỘT phần ⇒ đúng khiên + đúng ngày gần nhất; hai phần kia vẫn null', async () => {
+    const cookie = await signup('rep-ft-one@example.com');
+    const childId = await createChild(cookie, 'Na');
+
+    seedFinalTestAttempt(childId, 'listening', {
+      shields: 4,
+      occurredAt: '2026-10-06T09:00:00.000Z',
+      clientEventId: 'ft_one_1',
+    });
+
+    const { finalTest } = reportBody(await getReport(cookie, childId, '?from=2026-10-01&to=2026-10-07'));
+    const listening = finalTest.find((s) => s.section === 'listening');
+    const reading = finalTest.find((s) => s.section === 'reading-writing');
+
+    expect(listening).toMatchObject({
+      bestShields: 4,
+      attempts: 1,
+      completed: true,
+      lastAttemptAt: '2026-10-06T09:00:00.000Z',
+    });
+    expect(reading).toMatchObject({ bestShields: null, attempts: 0, lastAttemptAt: null });
+  });
+
+  it('⭐ làm LẠI điểm cao hơn ⇒ khiên lấy MAX, ngày lấy lần nộp MUỘN NHẤT, đếm đủ số lượt', async () => {
+    const cookie = await signup('rep-ft-redo@example.com');
+    const childId = await createChild(cookie, 'Na');
+
+    // Lần đầu 3 khiên (sớm), lần sau 5 khiên (muộn) ⇒ kỳ lục 5, mốc là lần MUỘN.
+    seedFinalTestAttempt(childId, 'listening', {
+      shields: 3,
+      occurredAt: '2026-10-03T08:00:00.000Z',
+      clientEventId: 'ft_redo_1',
+    });
+    seedFinalTestAttempt(childId, 'listening', {
+      shields: 5,
+      occurredAt: '2026-10-08T08:00:00.000Z',
+      clientEventId: 'ft_redo_2',
+    });
+
+    const { finalTest } = reportBody(await getReport(cookie, childId, '?from=2026-10-01&to=2026-10-07'));
+    const listening = finalTest.find((s) => s.section === 'listening');
+
+    expect(listening).toMatchObject({
+      bestShields: 5,
+      attempts: 2,
+      completed: true,
+      lastAttemptAt: '2026-10-08T08:00:00.000Z',
+    });
   });
 });
