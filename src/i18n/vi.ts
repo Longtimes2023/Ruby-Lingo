@@ -535,6 +535,50 @@ export const vi = {
   },
 
   /**
+   * --- Bài thi cuối khoá (Final Test) -----------------------------------
+   * Chuỗi của các COMPONENT tương tác từng câu (`src/components/final-test/`). Màn hình/route là
+   * việc của giai đoạn sau — ở đây chỉ có chữ của một câu.
+   *
+   * Nguyên tắc như mọi chuỗi khác của app: KHÔNG có từ phán xét ("sai", "kém", "chưa đạt").
+   * Trả lời chưa đúng ⇒ "Bé thử lại nhé!". Chữ tiếng Anh của đề (promptEn, options…) KHÔNG nằm ở
+   * đây — nó là NỘI DUNG đề, đến từ JSON, và không bao giờ đi qua `t()`.
+   */
+  finalTest: {
+    /** Nhãn đọc của ô nhập đáp án (bé gõ 1 từ). */
+    answerInputLabel: 'Ô viết câu trả lời bằng tiếng Anh',
+    /** Nút kiểm tra đáp án bé vừa gõ. */
+    checkAnswer: 'Kiểm tra',
+    /** Lời động viên sau một lần trả lời CHƯA đúng — KHÔNG phải lời chê. */
+    tryAgain: 'Bé thử lại nhé!',
+    /** Gợi ý hiện sau khi bé đã thử đủ số lần — vẫn không mắng, chỉ đưa đáp án. */
+    showAnswer: 'Bé xem đáp án nhé: {{answer}}',
+    /** Nhãn đọc của nút ✓ (đánh dấu "đúng" ở Reading P1). */
+    tickYes: 'Đánh dấu đúng',
+    /** Nhãn đọc của nút ✗ (đánh dấu "không đúng"). */
+    tickNo: 'Đánh dấu không đúng',
+    /** Nhãn đọc của cả dãy chữ cái đang xếp dở (gộp để screen reader đọc MỘT lần). */
+    arrangeWordLabel: 'Từ bé đang xếp',
+    /** Nút xoá hết chữ đã xếp để xếp lại. */
+    arrangeClear: 'Xoá hết',
+    /** Nhắc cách chơi dạng xếp chữ. */
+    arrangeHint: 'Chạm các chữ cái để xếp thành từ nhé!',
+    /** Nhãn đọc của ô chỗ trống trong câu điền khuyết. */
+    gapBlank: 'chỗ trống',
+    /** Nhắc cách chơi dạng điền khuyết. */
+    gapFillHint: 'Chọn từ đúng để điền vào chỗ trống nhé!',
+    /** Nút hành động của phần Nói — bé tự nói xong thì bấm. KHÔNG ghi âm, KHÔNG chấm điểm. */
+    speakDone: 'Nói rồi!',
+    /** Nhãn đọc của nút Nói — nói rõ đây là bé tự nói, máy không nghe. */
+    speakDoneLabel: 'Bé đã nói xong câu này',
+    /**
+     * ⚠️ CÂU BẮT BUỘC HIỂN THỊ Ở PHẦN NÓI (ràng buộc pháp lý + trung thực với phụ huynh).
+     *   RubyLingo KHÔNG phải kỳ thi Cambridge và kết quả ở đây không được chứng nhận.
+     */
+    speakDisclaimer:
+      'RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.',
+  },
+
+  /**
    * --- Điều hướng chính (BottomNav) --------------------------------------
    * Nhãn NGẮN, tối đa 2 từ: mỗi mục chỉ rộng ~1/4 màn hình điện thoại, nhãn dài sẽ bị cắt
    * hoặc ép chữ nhỏ lại — mà chữ nhỏ là thứ không được phép có trong app này.
