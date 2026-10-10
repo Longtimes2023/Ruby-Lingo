@@ -248,7 +248,15 @@ export type BadgeCriteria =
   | { kind: 'streak_days'; days: number }
   | { kind: 'reach_level'; level: number }
   | { kind: 'earn_currency'; currency: CurrencyKind; amount: number }
-  | { kind: 'win_game'; gameType: string; count: number };
+  | { kind: 'win_game'; gameType: string; count: number }
+  /**
+   * Hoàn thành CẢ bài thi cuối khoá (mọi phần đều có ≥1 lần nộp) — huy chương TỐT NGHIỆP.
+   *
+   * ⚠️ KHÔNG có tham số: "bài thi cuối khoá" là một thứ duy nhất của level đang dùng. Khi có
+   *    Movers/Flyers, tiêu chí này sẽ cần một `levelId` — nhưng thêm bây giờ là thêm một trường
+   *    chưa ai đọc (nguyên tắc "chỉ chép thứ server cần" của chỉ mục nội dung).
+   */
+  | { kind: 'complete_final_test' };
 
 /**
  * Huy hiệu — định nghĩa TĨNH ở `shared/content/badges.json` (T068).
@@ -306,7 +314,15 @@ export type QuestCriteria =
   | { kind: 'unlock_theme'; count: number }
   | { kind: 'complete_theme'; themeId: string }
   | { kind: 'collect_stickers'; count: number }
-  | { kind: 'reach_level'; level: number };
+  | { kind: 'reach_level'; level: number }
+  /**
+   * Hoàn thành CẢ bài thi cuối khoá (mọi phần đều có ≥1 lần nộp) — nhiệm vụ MỐC tốt nghiệp.
+   *
+   * ⚠️ Là tiêu chí SUY DIỄN (đọc `final_test_attempt`), KHÔNG phải đếm: `QuestService` tính lại
+   *    từ dữ liệu bền vững mỗi lần chạy, nên không có nguy cơ "gửi lại một sự kiện là cộng hai
+   *    lần". `questTarget` trả 1 (một việc, hai trạng thái).
+   */
+  | { kind: 'complete_final_test' };
 
 /**
  * Tiến độ một nhiệm vụ trong kỳ hiện tại.

@@ -71,6 +71,7 @@ import type { XpService } from './XpService.js';
  *    khởi động được.
  */
 import { applyDailyStatInTx } from './dailyStats.js';
+import { hasCompletedFinalTest } from './finalTestCompletion.js';
 import { activeQuests, getQuest, questTarget } from '../../shared/content/quests.js';
 import { splitRewards, toRewardBundle } from '../../shared/content/rewards.js';
 import { DEFAULT_CONTENT_LEVEL_ID, getThemeIndex, themeIdsWithGames } from '../../shared/content/content-index.js';
@@ -100,7 +101,16 @@ export type QuestEvent =
   /** Bé vừa chơi xong một ván game. `count` mặc định 1. */
   | { kind: 'game_played'; count?: number }
   /** Bé vừa trả lời đúng `count` câu NGAY LẦN ĐẦU trong một ván. */
-  | { kind: 'correct_answers'; count: number };
+  | { kind: 'correct_answers'; count: number }
+  /**
+   * Bé vừa nộp xong MỘT phần của bài thi cuối khoá (G6). Sự kiện này KHÔNG cộng số nào — nó chỉ
+   * báo cho `QuestService` biết "trạng thái bài thi vừa đổi, hãy tính lại nhiệm vụ tốt nghiệp".
+   *
+   * ⚠️ VÌ SAO CẦN MỘT SỰ KIỆN RIÊNG thay vì bắn `game_played`: nhiệm vụ `complete_final_test` là
+   *    tiêu chí SUY DIỄN (đọc `final_test_attempt`), nên nó chỉ cần một cú hích để được tính lại.
+   *    Bắn `game_played` sẽ vô tình cộng tiến độ nhiệm vụ "chơi 3 game" — một sự thật khác hẳn.
+   */
+  | { kind: 'final_test_completed' };
 
 // =============================================================================
 // Luật THUẦN (không DB) — kiểm được trong vài mili giây
@@ -570,6 +580,14 @@ export class QuestService {
 
       case 'unlock_theme':
         return this.countPlayableThemes();
+
+      /**
+       * ⭐ NHIỆM VỤ TỐT NGHIỆP (G6) — SUY DIỄN từ `final_test_attempt`, KHÔNG đếm.
+       *    `questTarget` trả 1 (một việc, hai trạng thái: 0 hoặc 1). Câu hỏi "đã nộp đủ mọi
+       *    phần chưa" sống ở `finalTestCompletion.ts` vì `BadgeService` cũng hỏi đúng nó.
+       */
+      case 'complete_final_test':
+        return hasCompletedFinalTest(db, childId) ? 1 : 0;
 
       default:
         return 0;

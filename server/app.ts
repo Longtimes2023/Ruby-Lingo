@@ -26,6 +26,7 @@ import { rewardsRoutes } from './routes/rewards.js';
 import { questsRoutes } from './routes/quests.js';
 import { parentRoutes } from './routes/parent.js';
 import { reportsRoutes } from './routes/reports.js';
+import { finalTestRoutes } from './routes/final-test.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CLIENT_DIST = join(ROOT, 'dist');
@@ -73,6 +74,7 @@ export async function buildApp() {
   await app.register(questsRoutes);
   await app.register(parentRoutes);
   await app.register(reportsRoutes);
+  await app.register(finalTestRoutes);
 
   // --- Tài nguyên tĩnh --------------------------------------------------
   // Tranh cảnh / âm thanh: phục vụ riêng để không lẫn với bản build frontend.

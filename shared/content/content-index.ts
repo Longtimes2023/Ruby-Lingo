@@ -23,6 +23,7 @@
 
 import raw from './content-index.json';
 import { contentIndexFileSchema } from '../schemas/content.js';
+import type { FinalTestIndexEntry } from '../schemas/final-test.js';
 import type { UnlockCondition } from '../types/content.js';
 
 const parsed = contentIndexFileSchema.safeParse(raw);
@@ -121,4 +122,40 @@ export function themeIdsWithGames(levelId: string = DEFAULT_CONTENT_LEVEL_ID): s
   return themesForLevel(levelId)
     .filter((theme) => theme.hasGames)
     .map((theme) => theme.id);
+}
+
+// =============================================================================
+// Bài thi cuối khoá — cho SERVER chấm & tự kiểm điều kiện mở khoá
+// =============================================================================
+
+/**
+ * Mọi id BÀI của một cấp (mọi chủ đề CÓ BÀI), theo thứ tự bản đồ.
+ *
+ * ⭐ DÙNG BỞI luật mở khoá bài thi (`resolveFinalTestAccess`): nó cần MẪU SỐ tường minh "level
+ *   có bao nhiêu bài" — nếu chỉ nhìn `lesson_progress` (chỉ có hàng cho bài bé đã chạm) thì một
+ *   máy vừa cài sẽ mở cổng thi ngay vì "mọi bài trong sổ đều xong" (sổ rỗng). Xem đầu
+ *   `shared/final-test-access.ts`.
+ */
+export function levelRequiredLessonIds(levelId: string = DEFAULT_CONTENT_LEVEL_ID): string[] {
+  const ids: string[] = [];
+  for (const theme of themesForLevel(levelId)) ids.push(...theme.lessonIds);
+  return ids;
+}
+
+/** Mọi id exercise CHƠI ĐƯỢC của một cấp (mẫu số của "chơi hết"). */
+export function levelRequiredExerciseIds(levelId: string = DEFAULT_CONTENT_LEVEL_ID): string[] {
+  return LEVELS.find((level) => level.id === levelId)?.requiredExerciseIds ?? [];
+}
+
+/**
+ * Tóm tắt bài thi cuối khoá của một cấp (đọc từ khối `finalTest` của chỉ mục), hoặc `null` nếu
+ * cấp chưa có đề.
+ *
+ * ⚠️ Server KHÔNG đọc được `src/data/` (xem khối ghi chú đầu `contentIndexFileSchema`), nên khối
+ *    `finalTest` trong chỉ mục là NGUỒN DUY NHẤT cho "bài thi mấy phần, mỗi phần mấy câu, phần
+ *    nào chấm tự động". Server dùng đúng con số này để tính `totalItems` khi chấm — KHÔNG nhận
+ *    con số do client khai.
+ */
+export function getFinalTestMeta(levelId: string = DEFAULT_CONTENT_LEVEL_ID): FinalTestIndexEntry | null {
+  return LEVELS.find((level) => level.id === levelId)?.finalTest ?? null;
 }

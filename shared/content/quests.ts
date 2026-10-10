@@ -102,6 +102,7 @@ export function questTarget(criteria: QuestCriteria): number {
       return criteria.count;
     case 'complete_lesson':
     case 'complete_theme':
+    case 'complete_final_test':
       return 1;
     case 'reach_level':
       return criteria.level;
@@ -119,7 +120,7 @@ export function questTarget(criteria: QuestCriteria): number {
  */
 export function isQuestProgressCountable(criteria: QuestCriteria): boolean {
   return criteria.kind !== 'reach_level' && criteria.kind !== 'complete_lesson'
-    && criteria.kind !== 'complete_theme';
+    && criteria.kind !== 'complete_theme' && criteria.kind !== 'complete_final_test';
 }
 
 /**

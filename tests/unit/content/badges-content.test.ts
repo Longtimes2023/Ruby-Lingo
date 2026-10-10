@@ -153,8 +153,8 @@ describe('danh mục sưu tầm — tra cứu', () => {
     expect(getSticker('sticker-khong-ton-tai')).toBeUndefined();
   });
 
-  it('`badgesForPhase("mvp")` trả ĐÚNG 6 huy hiệu MVP theo kế hoạch', () => {
-    expect(badgesForPhase('mvp').length).toBe(6);
+  it('`badgesForPhase("mvp")` trả ĐÚNG 7 huy hiệu MVP theo kế hoạch', () => {
+    expect(badgesForPhase('mvp').length).toBe(7);
   });
 
   it('`stickersForPhase` lọc đúng theo giai đoạn', () => {
@@ -229,7 +229,7 @@ describe('mọi món sưu tầm MVP phải có ĐƯỜNG KIẾM thật', () => {
   });
 
   it('mỗi huy hiệu MVP: có một loại tiêu chí mà `BadgeService` đánh giá được', () => {
-    // 7 `kind` này PHẢI khớp union `BadgeCriteria` mà `BadgeService.meets` xử lý.
+    // 8 `kind` này PHẢI khớp union `BadgeCriteria` mà `BadgeService.meets` xử lý.
     const handled = new Set<string>([
       'complete_lesson',
       'complete_theme',
@@ -238,6 +238,7 @@ describe('mọi món sưu tầm MVP phải có ĐƯỜNG KIẾM thật', () => {
       'reach_level',
       'earn_currency',
       'win_game',
+      'complete_final_test',
     ]);
     const orphans = badgesForPhase('mvp')
       .filter((badge) => !handled.has(badge.criteria.kind))

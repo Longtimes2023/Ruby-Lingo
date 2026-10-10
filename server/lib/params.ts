@@ -61,3 +61,15 @@ export function questIdFromParams(req: { params: unknown }): string {
 export function itemIdFromParams(req: { params: unknown }): string {
   return pathParam(req, 'itemId');
 }
+
+/**
+ * Lấy `:section` từ tham số đường dẫn
+ * (`POST …/final-test/:section/submit`).
+ *
+ * ⚠️ `section` NẰM TRÊN ĐƯỜNG DẪN, KHÔNG Ở TRONG BODY — cùng luật như `itemId` ngay trên.
+ *    Hai nguồn cho cùng một sự thật chỉ cần lệch nhau một lần là nộp nhầm phần thi. Xem ghi chú
+ *    đầu `shared/schemas/final-test-api.ts`.
+ */
+export function finalTestSectionFromParams(req: { params: unknown }): string {
+  return pathParam(req, 'section');
+}

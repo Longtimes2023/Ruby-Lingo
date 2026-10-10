@@ -7,6 +7,7 @@
     { "id": "badge-letter-writer", "name_vi": "Thợ viết chữ", "icon": "✏️", "description_vi": "Điền đúng chữ cái 20 lần", "criteria": { "kind": "win_game", "gameType": "missing_letter", "count": 20 }, "phase": "mvp" },
     { "id": "badge-streak-7", "name_vi": "Bền bỉ", "icon": "🔥", "description_vi": "Học 7 ngày liên tiếp", "criteria": { "kind": "streak_days", "days": 7 }, "phase": "mvp" },
     { "id": "badge-perfect", "name_vi": "Hoàn hảo", "icon": "🏆", "description_vi": "Đạt 3 sao ở 3 bài", "criteria": { "kind": "perfect_lessons", "count": 3 }, "phase": "mvp" },
+    { "id": "badge-graduate", "name_vi": "Tốt nghiệp Starters", "icon": "🎓", "description_vi": "Hoàn thành bài thi cuối khoá Starters", "criteria": { "kind": "complete_final_test" }, "phase": "mvp" },
 
     { "id": "badge-forest-friend", "name_vi": "Người bạn của thú rừng", "icon": "🌿", "description_vi": "Đạt cấp 2", "criteria": { "kind": "reach_level", "level": 2 }, "phase": "p1" },
     { "id": "badge-zoo-keeper", "name_vi": "Người chăm vườn thú", "icon": "🪣", "description_vi": "Kiếm được 1000 Sao", "criteria": { "kind": "earn_currency", "currency": "stars", "amount": 1000 }, "phase": "p1" },

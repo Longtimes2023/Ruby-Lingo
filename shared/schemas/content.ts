@@ -403,6 +403,8 @@ export const questCriteriaSchema = z.union([
   z.object({ kind: z.literal('complete_theme'), themeId: z.string().min(1) }),
   z.object({ kind: z.literal('collect_stickers'), count: z.number().int().min(1) }),
   z.object({ kind: z.literal('reach_level'), level: z.number().int().min(1) }),
+  /** Hoàn thành cả bài thi cuối khoá — không tham số (xem `QuestCriteria`). */
+  z.object({ kind: z.literal('complete_final_test') }),
 ]);
 
 export const questsFileSchema = z.object({
@@ -513,6 +515,8 @@ export const badgeCriteriaSchema = z.union([
     amount: z.number().int().min(1),
   }),
   z.object({ kind: z.literal('win_game'), gameType: z.string().min(1), count: z.number().int().min(1) }),
+  /** Hoàn thành cả bài thi cuối khoá (mọi phần đều có ≥1 lần nộp) — xem `BadgeCriteria`. */
+  z.object({ kind: z.literal('complete_final_test') }),
 ]);
 
 export const badgesFileSchema = z.object({

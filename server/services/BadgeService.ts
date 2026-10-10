@@ -63,6 +63,7 @@ import { BADGES } from '../../shared/content/badges.js';
 import { getThemeIndex } from '../../shared/content/content-index.js';
 import { rewardService } from './RewardService.js';
 import type { RewardService } from './RewardService.js';
+import { hasCompletedFinalTest } from './finalTestCompletion.js';
 
 // =============================================================================
 // Service
@@ -106,7 +107,7 @@ export class BadgeService {
     return newlyEarned;
   }
 
-  /** Bé có thoả một tiêu chí không. Bảy nhánh, đúng bằng bảy `kind` trong `BadgeCriteria`. */
+  /** Bé có thoả một tiêu chí không. TÁM nhánh, đúng bằng tám `kind` trong `BadgeCriteria`. */
   private meets(db: Db, childId: string, criteria: BadgeCriteria): boolean {
     switch (criteria.kind) {
       case 'complete_lesson':
@@ -149,6 +150,15 @@ export class BadgeService {
 
       case 'win_game':
         return this.countGameRuns(db, childId, criteria.gameType) >= criteria.count;
+
+      /**
+       * ⭐ HUY CHƯƠNG TỐT NGHIỆP (G6) — bé đã nộp đủ MỌI phần của bài thi cuối khoá.
+       *
+       * ⚠️ Câu hỏi này sống ở `finalTestCompletion.ts` (module lá) vì `QuestService` cũng hỏi
+       *    đúng nó. Hai bản SQL cho cùng một sự thật thì sớm muộn cũng lệch.
+       */
+      case 'complete_final_test':
+        return hasCompletedFinalTest(db, childId);
     }
   }
 

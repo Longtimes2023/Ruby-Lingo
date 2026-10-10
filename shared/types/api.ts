@@ -29,6 +29,16 @@ import type {
   XpState,
 } from './reward.js';
 import type { LevelBundle } from './content.js';
+import type { RoomPlacement } from '../schemas/room.js';
+import type {
+  FinalTestGateState,
+  FinalTestProgressDto,
+  FinalTestSubmitResult,
+} from './final-test.js';
+import type {
+  FinalTestProgressSaveInput,
+  FinalTestSubmissionInput,
+} from '../schemas/final-test-api.js';
 
 // =============================================================================
 // Mã lỗi — dùng chung, UI dịch sang câu tiếng Việt thân thiện
@@ -56,6 +66,8 @@ export const API_ERROR_CODES = [
   'QUEST_NOT_COMPLETE',
   'ALREADY_CLAIMED',
   'NOT_ENOUGH_HAPPINESS',
+  /** Cổng vào bài thi cuối khoá chưa mở (chưa học hết / chơi hết) — xem `resolveFinalTestAccess`. */
+  'FINAL_TEST_LOCKED',
   // 429
   'RATE_LIMITED',
   // 500
@@ -422,6 +434,23 @@ export interface ReportResponse {
   /** Từ bé đã nhớ chắc. */
   masteredWords: WordAccuracyDto[];
 }
+
+export type RoomPlacementsGetResponse = RoomPlacement[];
+export type RoomPlacementsSaveRequest = RoomPlacement[];
+export type RoomPlacementsSaveResponse = RoomPlacement[];
+
+// =============================================================================
+// Bài thi cuối khoá (G6)
+// =============================================================================
+
+/** `GET /api/children/:id/final-test` — trạng thái cổng + tiến độ + kết quả đã có. */
+export type FinalTestGetResponse = FinalTestGateState;
+/** `POST /api/children/:id/final-test/:section/submit` — body CHỈ sự thật thô (không khiên/điểm). */
+export type FinalTestSubmitRequest = FinalTestSubmissionInput;
+export type FinalTestSubmitResponse = FinalTestSubmitResult;
+/** `PUT /api/children/:id/final-test/progress` — lưu tiến độ đang dở của MỘT phần. */
+export type FinalTestProgressSaveRequest = FinalTestProgressSaveInput;
+export type FinalTestProgressSaveResponse = FinalTestProgressDto;
 
 export interface SettingsDto {
   soundEnabled: boolean;

@@ -58,6 +58,14 @@ export const errors = {
     new AppError('INSUFFICIENT_FUNDS', 'Bé chưa đủ tiền để mua món này', 409),
   alreadyClaimed: () => new AppError('ALREADY_CLAIMED', 'Phần thưởng này đã được nhận rồi', 409),
   questNotComplete: () => new AppError('QUEST_NOT_COMPLETE', 'Nhiệm vụ chưa hoàn thành', 409),
+  /**
+   * Cổng vào bài thi cuối khoá CHƯA MỞ (bé chưa học hết / chưa chơi hết).
+   *
+   * ⚠️ Câu chữ KHÔNG mắng bé và KHÔNG nói "con còn thiếu X" — client đã có `gate.requirement`
+   *    để nói con số một cách nhẹ nhàng. Đây chỉ là câu chung khi ai đó gọi thẳng API.
+   */
+  finalTestLocked: () =>
+    new AppError('FINAL_TEST_LOCKED', 'Khu vực thi chưa mở — bé cần học và chơi hết trước nhé', 409),
   invalidPin: () => new AppError('INVALID_PIN', 'Mã PIN không đúng', 403),
   parentGateRequired: () => new AppError('PARENT_GATE_REQUIRED', 'Cần nhập mã PIN phụ huynh', 403),
   rateLimited: () => new AppError('RATE_LIMITED', 'Bố mẹ thử lại sau một lát nhé', 429),
@@ -104,6 +112,7 @@ const STATUS_BY_CODE: Readonly<Record<ApiErrorCode, number>> = {
   QUEST_NOT_COMPLETE: 409,
   ALREADY_CLAIMED: 409,
   NOT_ENOUGH_HAPPINESS: 409,
+  FINAL_TEST_LOCKED: 409,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
   DB_ERROR: 500,

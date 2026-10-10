@@ -152,6 +152,19 @@
         { "kind": "sticker", "refId": "sticker-unicorn" }
       ],
       "phase": "mvp"
+    },
+    {
+      "id": "qm-07",
+      "tier": "milestone",
+      "description_vi": "Tốt nghiệp — hoàn thành bài thi cuối khoá Starters",
+      "icon": "🏁",
+      "criteria": { "kind": "complete_final_test" },
+      "rewards": [
+        { "kind": "stars", "amount": 200 },
+        { "kind": "acorns", "amount": 10 },
+        { "kind": "badge", "refId": "badge-graduate" }
+      ],
+      "phase": "mvp"
     }
   ]
 }
