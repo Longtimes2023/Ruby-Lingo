@@ -5,7 +5,7 @@
  *   • `ItemAudioButton` — nút 🔊 đọc câu mẫu TIẾNG ANH;
  *   • `ItemPrompt`      — câu lệnh tiếng Anh hiện bằng CHỮ;
  *   • `WordPicture`     — hình của từ (cho dạng tranh);
- *   • `PictureChoice`   — nút lựa chọn dạng TRANH (hình từ + nhãn chữ, dạng `choose_picture`);
+ *   • `PictureChoice`   — nút lựa chọn dạng TRANH (chỉ HÌNH + nhãn đọc tiếng Việt, dạng `choose_picture`);
  *   • `ChoiceButton` / `RevealNote` / `ContinueButton` — nút chọn + lời đưa đáp án + nút đi tiếp.
  *
  * ⚠️ TÁCH RA CHỨ KHÔNG COPY-PASTE 9 LẦN: đây là những chỗ mà một bản sao lệch sẽ tạo ra trải
@@ -118,16 +118,21 @@ export function ChoiceButton({ children, ariaLabel, state, onClick }: ChoiceButt
 }
 
 /**
- * Nút lựa chọn dạng TRANH: HÌNH của từ + NHÃN CHỮ tiếng Anh ở dưới.
+ * Nút lựa chọn dạng TRANH: HÌNH của từ (KHÔNG có mặt chữ nhìn thấy được).
  *
  * ⭐ VÌ SAO CẦN RIÊNG MỘT BIẾN THỂ CỦA `ChoiceButton` (không nhồi vào `ChoiceButton`):
- *   `ChoiceButton` chỉ nhận `children` là chữ. Tranh cần thêm hai thứ mà nút chữ không có: khung
- *   `.wi-frame`/`.wi-fill` để HÌNH ăn theo BỀ RỘNG khung (xem `WordIcon`), và một `aria-label` mô
- *   tả ý nghĩa tiếng Việt — vì ảnh là `aria-hidden`, trình đọc màn hình không "thấy" nó.
+ *   `ChoiceButton` chỉ nhận `children` là chữ. Tranh cần khung `.wi-frame`/`.wi-fill` để HÌNH ăn
+ *   theo BỀ RỘNG khung (xem `WordIcon`), và một `aria-label` mô tả ý nghĩa tiếng Việt — vì ảnh là
+ *   `aria-hidden`, trình đọc màn hình không "thấy" nó.
+ *
+ * ⚠️⚠️ KHÔNG HIỆN CHỮ TIẾNG ANH DƯỚI HÌNH (cố ý) — đây là bài NGHE (`choose_picture`, Listening
+ *    P3/P4). Hiện mặt chữ thì bé chỉ cần ĐỌC và đối chiếu chữ với câu vừa nghe, biến bài nghe
+ *    thành bài đọc và phá mục tiêu. Cùng lý do `listen-tap` không hiện chữ dưới hình.
  *
  * ⚠️ ĐƯỜNG LÙI KHI KHÔNG CÓ HÌNH (bắt buộc): `word === null` (không tra được từ / chuỗi lựa chọn
- *    mơ hồ) ⇒ CHỈ hiện nhãn chữ, KHÔNG vẽ `<img>`. `WordIcon` tự lo nhánh "từ có thật nhưng chưa
- *    sinh ảnh" ⇒ trả emoji. Cả hai nhánh đều KHÔNG bao giờ để bé thấy biểu tượng ảnh hỏng.
+ *    mơ hồ) ⇒ hiện CHUỖI của đề làm chữ (không có hình lẫn nghĩa để vẽ), KHÔNG vẽ `<img>`.
+ *    `WordIcon` tự lo nhánh "từ có thật nhưng chưa sinh ảnh" ⇒ trả emoji. Cả hai nhánh đều KHÔNG
+ *    bao giờ để bé thấy biểu tượng ảnh hỏng.
  */
 export function PictureChoice({
   option,
@@ -140,24 +145,25 @@ export function PictureChoice({
   state: ChoiceState;
   onClick: () => void;
 }) {
-  // Nhãn đọc: có nghĩa tiếng Việt của từ ⇒ bé khiếm thị hiểu mình đang chọn gì. Kèm cả chữ tiếng
-  // Anh để nhãn đọc vẫn CHỨA mặt chữ đang hiện (yêu cầu 2.5.3 "nhãn trong tên" của WCAG).
+  // Nhãn đọc: nghĩa tiếng Việt của từ ⇒ bé khiếm thị hiểu mình đang chọn gì (ảnh là aria-hidden).
+  // Kèm cả chữ tiếng Anh của từ để nhãn đọc vẫn định danh được lựa chọn nào là lựa chọn nào.
   const ariaLabel = word !== null ? `${option} — ${word.vi}` : option;
+
+  if (word === null) {
+    // Không tra được từ ⇒ chỉ có chuỗi của đề để hiện; tuyệt đối không dựng ảnh từ chuỗi đó.
+    return (
+      <ChoiceButton ariaLabel={ariaLabel} state={state} onClick={onClick}>
+        <span className="text-kid-md font-bold">{option}</span>
+      </ChoiceButton>
+    );
+  }
 
   return (
     <ChoiceButton ariaLabel={ariaLabel} state={state} onClick={onClick}>
-      <span className="flex flex-col items-center gap-1">
-        {word !== null && (
-          <span
-            aria-hidden="true"
-            className="wi-frame flex size-[96px] items-center justify-center"
-          >
-            <span className="wi-fill">
-              <WordIcon wordId={word.id} fallback={word.icon} />
-            </span>
-          </span>
-        )}
-        <span className="text-kid-xs font-bold">{option}</span>
+      <span aria-hidden="true" className="wi-frame flex size-[112px] items-center justify-center">
+        <span className="wi-fill">
+          <WordIcon wordId={word.id} fallback={word.icon} />
+        </span>
       </span>
     </ChoiceButton>
   );

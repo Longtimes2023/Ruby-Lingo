@@ -364,8 +364,31 @@ describe('final-test — hình của từ (Giai đoạn 10)', () => {
     expect(onAnswered).toHaveBeenCalledWith({ itemId: item.id, firstTry: false, wrongAttempts: 1 });
   });
 
-  it('story_answer: từ có asset ⇒ <img> gợi ý; từ chưa có asset ⇒ emoji, không <img>', () => {
-    const withAsset = makeItem({
+  it('story_answer: KHÔNG BAO GIỜ vẽ hình của ĐÁP ÁN (chống lộ đáp án)', () => {
+    // `wordId` là ĐÁP ÁN và CÓ asset (boy) — nhưng KHÔNG khai `imageKey` (không tranh truyện).
+    const item = makeItem({
+      id: 'starters.final-test.reading-writing.p5.q1',
+      interaction: 'story_answer',
+      wordId: 'starters.boy',
+      promptEn: 'Who is in the park?',
+      answer: 'boy',
+    });
+
+    const { container } = render(
+      <StoryAnswerGame
+        item={item}
+        word={contentRepository.getWord('starters.boy')}
+        onAnswered={vi.fn()}
+      />,
+    );
+
+    // Không tranh truyện ⇒ KHÔNG ảnh nào, và tuyệt đối không phải hình của đáp án.
+    expect(imgSrcs(container)).toHaveLength(0);
+    expect(imgSrcs(container)).not.toContain(wordAssetUrlOrNull('starters.boy'));
+  });
+
+  it('story_answer: có tranh truyện THẬT ⇒ hiện TRANH TRUYỆN, không phải hình đáp án', () => {
+    const item = makeItem({
       id: 'starters.final-test.reading-writing.p5.q1',
       interaction: 'story_answer',
       wordId: 'starters.boy',
@@ -373,33 +396,38 @@ describe('final-test — hình của từ (Giai đoạn 10)', () => {
       imageKey: 'story-park',
       answer: 'boy',
     });
-    const first = render(
+
+    const { container } = render(
       <StoryAnswerGame
-        item={withAsset}
+        item={item}
         word={contentRepository.getWord('starters.boy')}
         onAnswered={vi.fn()}
       />,
     );
-    expect(imgSrcs(first.container)).toEqual([wordAssetUrlOrNull('starters.boy')]);
-    first.unmount();
 
-    const noAsset = makeItem({
-      id: 'starters.final-test.reading-writing.p5.q4',
+    expect(imgSrcs(container)).toEqual(['/assets/scenes/story-park.webp']);
+    expect(imgSrcs(container)).not.toContain(wordAssetUrlOrNull('starters.boy'));
+  });
+
+  it('story_answer: `imageKey` trỏ tới tranh KHÔNG có thật ⇒ KHÔNG vẽ ảnh (không ảnh vỡ)', () => {
+    const item = makeItem({
+      id: 'starters.final-test.reading-writing.p5.q1',
       interaction: 'story_answer',
-      wordId: 'starters.two',
-      promptEn: 'How many children are in the story?',
-      imageKey: 'story-park',
-      answer: 'two',
+      wordId: 'starters.boy',
+      promptEn: 'Who is in the park?',
+      imageKey: 'khong-co-tranh-nay',
+      answer: 'boy',
     });
-    const second = render(
+
+    const { container } = render(
       <StoryAnswerGame
-        item={noAsset}
-        word={contentRepository.getWord('starters.two')}
+        item={item}
+        word={contentRepository.getWord('starters.boy')}
         onAnswered={vi.fn()}
       />,
     );
-    expect(imgSrcs(second.container)).toHaveLength(0);
-    expect(screen.getByText('2️⃣')).toBeInTheDocument();
+
+    expect(imgSrcs(container)).toHaveLength(0);
   });
 
   it('KHÔNG có lựa chọn/wordId nào của đề render <img> với src SAI (đối chiếu manifest asset)', () => {
