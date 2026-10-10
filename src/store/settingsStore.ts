@@ -89,6 +89,19 @@ export interface SettingsState {
   reducedMotion: ReducedMotionPreference;
   /** Kiểu giọng đọc tiếng Anh mong muốn — mặc định giọng nữ trẻ trung. */
   voicePreference: VoicePreference;
+  /**
+   * Bật tầng "Nghe lại giọng con" ở phần Nói của bài thi cuối khoá (TẦNG 3 — xem
+   * `useVoicePlayback` và `docs/ke-hoach/phan-noi-bai-thi.md`).
+   *
+   * ⚠️⚠️ MẶC ĐỊNH `false` — CỐ Ý, KHÔNG ĐỔI MÀ KHÔNG HỎI CHỦ DỰ ÁN.
+   *   Chủ dự án đã chốt "không ghi âm". Tầng này tồn tại như một lựa chọn có ý thức của PHỤ HUYNH:
+   *   bật thì bản ghi vẫn HOÀN TOÀN CỤC BỘ (không gửi, không lưu), nhưng nó vẫn là micro — nên
+   *   không được tự bật cho mọi người.
+   *
+   * ⚠️ CỜ NÀY KHÔNG ĐỒNG BỘ SERVER: đây là sở thích của THIẾT BỊ (như `soundEnabled`), không phải
+   *   dữ liệu học tập. Không nằm trong `SettingsDto`/`UpdateSettingsRequest`.
+   */
+  voicePlaybackEnabled: boolean;
 
   setSoundEnabled: (enabled: boolean) => void;
   toggleSound: () => void;
@@ -98,6 +111,11 @@ export interface SettingsState {
   setHapticsEnabled: (enabled: boolean) => void;
   setReducedMotion: (preference: ReducedMotionPreference) => void;
   setVoicePreference: (preference: VoicePreference) => void;
+  /**
+   * Bật/tắt tầng "Nghe lại giọng con". Lưu cục bộ, KHÔNG gửi lên server.
+   * Chỉ hiện trong khu vực phụ huynh (sau cổng PIN) — xem `ParentSettingsPage`.
+   */
+  setVoicePlaybackEnabled: (enabled: boolean) => void;
   resetToDefaults: () => void;
 }
 
@@ -108,6 +126,8 @@ const DEFAULTS = {
   hapticsEnabled: true,
   reducedMotion: null,
   voicePreference: 'female-young',
+  /** TẮT mặc định — xem ghi chú ở `voicePlaybackEnabled`. */
+  voicePlaybackEnabled: false,
 } as const satisfies Omit<
   SettingsState,
   | 'setSoundEnabled'
@@ -118,6 +138,7 @@ const DEFAULTS = {
   | 'setHapticsEnabled'
   | 'setReducedMotion'
   | 'setVoicePreference'
+  | 'setVoicePlaybackEnabled'
   | 'resetToDefaults'
 >;
 
@@ -144,6 +165,7 @@ type PersistedSettings = Pick<
   | 'hapticsEnabled'
   | 'reducedMotion'
   | 'voicePreference'
+  | 'voicePlaybackEnabled'
 >;
 
 /**
@@ -180,6 +202,11 @@ function loadPersisted(): PersistedSettings {
           : DEFAULTS.hapticsEnabled,
       reducedMotion,
       voicePreference: normalizeVoicePreference(record['voicePreference']),
+      // ⚠️ `false` là giá trị THẬT — chỉ rơi về mặc định khi ô trong máy không phải boolean.
+      voicePlaybackEnabled:
+        typeof record['voicePlaybackEnabled'] === 'boolean'
+          ? record['voicePlaybackEnabled']
+          : DEFAULTS.voicePlaybackEnabled,
     };
   } catch {
     // Chế độ riêng tư, JSON hỏng, hết dung lượng — tất cả đều dẫn về mặc định.
@@ -196,6 +223,7 @@ function persist(state: SettingsState): void {
       hapticsEnabled: state.hapticsEnabled,
       reducedMotion: state.reducedMotion,
       voicePreference: state.voicePreference,
+      voicePlaybackEnabled: state.voicePlaybackEnabled,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
@@ -225,6 +253,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => {
     setReducedMotion: (preference) => write({ reducedMotion: preference }),
     setVoicePreference: (preference) =>
       write({ voicePreference: normalizeVoicePreference(preference) }),
+    setVoicePlaybackEnabled: (enabled) => write({ voicePlaybackEnabled: enabled }),
 
     resetToDefaults: () => {
       set({ ...DEFAULTS });

@@ -577,6 +577,41 @@ export const vi = {
     speakDisclaimer:
       'RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.',
 
+    // --- Phần Nói, TẦNG 2: "Máy nghe thử" (tuỳ chọn, chỉ khi trình duyệt hỗ trợ) ----------
+    /**
+     * ⚠️ Nhãn nút "Máy nghe thử". Nút chỉ HIỆN khi `hasSpeechRecognition()` trả true; ở
+     *   Safari/iOS/Firefox nút bị ẨN HẲN (không hiện rồi báo lỗi). Xem `useSpeechCheck`.
+     */
+    speakCheck: 'Máy nghe thử',
+    /** Nhãn đọc của nút — nói rõ đây là trò vui, không phải điểm phát âm. */
+    speakCheckLabel: 'Bật máy nghe thử giọng bé (chỉ để vui, không phải điểm)',
+    speakCheckListening: 'Máy đang nghe bé nói...',
+    /** Nghe RA ⇒ câu khen. Không bao giờ nói "sai". */
+    speakCheckHeard: 'Máy nghe thấy rồi! 🎉',
+    /** CHƯA nghe ra ⇒ lời mời nói lại, KHÔNG phải lời chê. */
+    speakCheckUnclear: 'Máy chưa nghe rõ — bé thử nói to hơn một chút nhé!',
+    /** Nói rõ đây là "máy nghe giúp vui", không phải điểm phát âm của bé. */
+    speakCheckNote: 'Đây là máy nghe giúp vui, không phải điểm phát âm của bé.',
+
+    // --- Phần Nói, TẦNG 3: "Nghe lại giọng con" (tuỳ chọn, MẶC ĐỊNH TẮT) ------------------
+    /**
+     * ⚠️⚠️ TẦNG NÀY MẶC ĐỊNH TẮT. Chỉ hiện khi phụ huynh chủ động bật cờ `voicePlaybackEnabled`
+     *   trong khu vực phụ huynh (`parent.voicePlayback`). Bản ghi HOÀN TOÀN CỤC BỘ: không gửi,
+     *   không lưu, bị huỷ ngay sau khi nghe. Lý do ở `docs/ke-hoach/phan-noi-bai-thi.md`.
+     */
+    voicePlayback: 'Nghe lại giọng con',
+    voicePlaybackLabel: 'Bắt đầu ghi giọng bé để nghe lại ngay trên máy này',
+    voicePlaybackStop: 'Bé nói xong rồi',
+    voicePlaybackStopLabel: 'Kết thúc ghi để nghe lại giọng bé',
+    voicePlaybackReady: 'Bé bấm để nghe lại giọng mình nhé!',
+    voicePlaybackPlay: 'Nghe lại giọng con',
+    voicePlaybackDiscard: 'Xoá bản vừa nói',
+    /**
+     * ⚠️ Nói thật về quyền riêng tư. Bản ghi nằm trong bộ nhớ tạm của tab và bị xoá khi rời câu.
+     */
+    voicePlaybackNote:
+      'Bản ghi chỉ nằm trong máy này và bị xoá ngay. RubyLingo không lưu và không gửi đi đâu cả.',
+
     // --- Màn hình khu vực thi (Giai đoạn 7) --------------------------------
     /** Tiêu đề thẻ cổng ở bản đồ hành trình + màn khu vực thi. */
     title: 'Khu vực thi',
@@ -915,6 +950,42 @@ export const vi = {
     music: 'Nhạc nền',
     speechRate: 'Tốc độ đọc',
     reducedMotion: 'Giảm hiệu ứng chuyển động',
+    /**
+     * ⚠️ TẦNG 3 — "Nghe lại giọng con" ở phần Nói. MẶC ĐỊNH TẮT, lưu CỤC BỘ (không đồng bộ
+     *   server). Chủ dự án đã chốt "không ghi âm"; cờ này là lựa chọn có ý thức của phụ huynh,
+     *   và bản ghi chỉ nằm trong máy. Xem `docs/ke-hoach/phan-noi-bai-thi.md`.
+     */
+    voicePlayback: 'Nghe lại giọng con (chỉ trên máy này)',
+    voicePlaybackHint:
+      'Khi bật, ở phần Nói bé có thể ghi một đoạn ngắn để nghe lại ngay. Bản ghi chỉ nằm trong máy này và bị xoá ngay — RubyLingo không lưu và không gửi đi đâu cả.',
+
+    // --- TẦNG 4: phụ huynh xác nhận phần Nói bằng rubric (đáng tin nhất) -----------------
+    openSpeaking: 'Xác nhận phần Nói của con',
+    speakingTitle: 'Phần Nói — bố mẹ nghe con nói và xác nhận',
+    /**
+     * ⚠️ Nói THẬT: máy không chấm phát âm. Đây là cách đáng tin nhất ở giai đoạn này.
+     */
+    speakingIntro:
+      'RubyLingo không chấm phát âm bằng máy (máy nghe giọng trẻ chưa đáng tin). Bố mẹ nghe con nói rồi tự đánh dấu giúp con nhé. Mỗi mục chỉ là gợi ý quan sát, không phải điểm số.',
+    speakingSaved: 'Đã lưu lựa chọn của bố mẹ.',
+    /** Rubric 4 phần Nói — mô tả HÀNH VI quan sát được, không phải thang điểm. */
+    speakingItem1: 'Bé làm theo chỉ dẫn: chỉ vào tranh hoặc đặt đồ vật đúng chỗ khi nghe tiếng Anh.',
+    speakingItem2: 'Bé nói được một câu ngắn về bức tranh.',
+    speakingItem3: 'Bé nói được tên đồ vật khi được hỏi.',
+    speakingItem4: 'Bé trả lời được câu hỏi về bản thân (tuổi, gia đình, sở thích).',
+    /** Nhãn một mục chưa được đánh dấu. */
+    speakingUnmarked: 'Chưa xác nhận',
+    /** Nút đánh dấu "bé đã làm được". */
+    speakingDone: 'Bé đã làm được',
+    /** Nút đánh dấu "mình ôn thêm" — KHÔNG phải lời chê. */
+    speakingNotYet: 'Mình ôn thêm nhé',
+    /**
+     * ⚠️ Nói rõ giới hạn hiện tại: lựa chọn chưa được đồng bộ lên server. Ẩn đi là nói dối
+     *   phụ huynh — không được bỏ.
+     */
+    speakingLocalNote:
+      'Lựa chọn này chỉ lưu trên thiết bị này, chưa đồng bộ lên máy chủ — nếu đổi máy sẽ không thấy.',
+
     deleteAccount: 'Xoá tài khoản và toàn bộ dữ liệu',
     deleteWarning:
       'Thao tác này XOÁ VĨNH VIỄN tài khoản của bố mẹ và toàn bộ dữ liệu học tập của các bé. Không thể khôi phục.',

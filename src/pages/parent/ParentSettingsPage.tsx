@@ -99,6 +99,13 @@ export function ParentSettingsPage({ onGateClosed }: ParentSettingsPageProps) {
   const setMusicEnabled = useSettingsStore((s) => s.setMusicEnabled);
   const setSpeechRate = useSettingsStore((s) => s.setSpeechRate);
   const setReducedMotion = useSettingsStore((s) => s.setReducedMotion);
+  /*
+    ⚠️ "Nghe lại giọng con" là cờ CỤC BỘ, KHÔNG đồng bộ server (khác bốn cài đặt trên). Nó điều
+    khiển micro ở phần Nói, mặc định TẮT, và chỉ có hiệu lực trên chính thiết bị này — nên nó
+    nằm thẳng trong `settingsStore`, không đi qua `settingsApi`.
+  */
+  const voicePlaybackEnabled = useSettingsStore((s) => s.voicePlaybackEnabled);
+  const setVoicePlaybackEnabled = useSettingsStore((s) => s.setVoicePlaybackEnabled);
 
   const signOut = useSignOut();
   const updateChild = useUpdateChild();
@@ -251,6 +258,18 @@ export function ParentSettingsPage({ onGateClosed }: ParentSettingsPageProps) {
           checked={settings.reducedMotion}
           onChange={(next) => saveSetting({ reducedMotion: next })}
         />
+
+        {/*
+          TẦNG 3 — "Nghe lại giọng con" ở phần Nói. MẶC ĐỊNH TẮT.
+          ⚠️ Ghi thẳng vào `settingsStore` (cục bộ), KHÔNG gọi `saveSetting` — cờ này không có
+          trên server và không nên có: nó là cài đặt micro của THIẾT BỊ.
+        */}
+        <Toggle
+          label={t('parent.voicePlayback')}
+          checked={voicePlaybackEnabled}
+          onChange={setVoicePlaybackEnabled}
+        />
+        <p className="text-kid-xs text-ink-soft">{t('parent.voicePlaybackHint')}</p>
 
         <label className="flex min-h-touch flex-col gap-2 rounded-kid border-2 border-line bg-surface px-4 py-3">
           <span className="flex items-center justify-between gap-3">

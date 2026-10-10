@@ -35,6 +35,7 @@ import { isApiClientError } from '../../api/client.js';
 import { parentApi } from '../../api/endpoints.js';
 import { apiErrorMessage } from '../../api/errorMessage.js';
 import { BigButton } from '../../components/common/BigButton.js';
+import { ParentSpeakingChecklist } from '../../components/final-test/ParentSpeakingChecklist.js';
 import { useActiveChild } from '../../store/sessionStore.js';
 import { ParentReport } from './ParentReport.js';
 import { ParentSettingsPage } from './ParentSettingsPage.js';
@@ -92,8 +93,8 @@ export function ParentGatePage() {
   const [gate, setGate] = useState<GateState>('loading');
   /** Đọc trạng thái cổng THẤT BẠI ⇒ hiện một câu trung tính (vẫn giữ cổng ĐÓNG — xem quyết định 2). */
   const [gateLoadFailed, setGateLoadFailed] = useState(false);
-  /** Màn đang hiện trong `/parent`: nhập PIN · quên PIN · báo cáo · cài đặt (KHÔNG route riêng). */
-  const [view, setView] = useState<'gate' | 'forgot' | 'report' | 'settings'>('gate');
+  /** Màn đang hiện trong `/parent`: nhập PIN · quên PIN · báo cáo · cài đặt · xác nhận Nói. */
+  const [view, setView] = useState<'gate' | 'forgot' | 'report' | 'settings' | 'speaking'>('gate');
   /**
    * Câu trung tính hiện Ở MÀN NHẬP PIN khi ta vừa bị đẩy về đây vì cổng hết hạn (403).
    * Không có nó thì phụ huynh đột nhiên thấy màn nhập PIN mà không hiểu vì sao.
@@ -397,8 +398,18 @@ export function ParentGatePage() {
         </>
       )}
 
+      {/* --- Cổng đã mở: XÁC NHẬN PHẦN NÓI (TẦNG 4) -------------------------- */}
+      {gate === 'open' && view === 'speaking' && childId !== null && (
+        <>
+          <ParentSpeakingChecklist childId={childId} />
+          <BigButton variant="secondary" icon="↩️" onClick={() => setView('gate')}>
+            {t('parent.backToParentArea')}
+          </BigButton>
+        </>
+      )}
+
       {/* --- Cổng đã mở: khu vực phụ huynh (đặt PIN + lối vào báo cáo/cài đặt) */}
-      {gate === 'open' && view !== 'report' && view !== 'settings' && (
+      {gate === 'open' && view !== 'report' && view !== 'settings' && view !== 'speaking' && (
         <>
           <section className="rounded-kid border-2 border-line bg-surface-raised p-6 text-center">
             <p className="text-kid-md text-ink">✅ {t('parent.openTitle')}</p>
@@ -406,14 +417,18 @@ export function ParentGatePage() {
           </section>
 
           {/*
-            Lối vào BÁO CÁO TUẦN và CÀI ĐẶT. Cả hai là VIEW trong `/parent` (không phải route
-            riêng) nên cổng đóng là không chạm tới được — đúng luật "cổng chắn mọi thứ sau nó".
+            Lối vào BÁO CÁO TUẦN, CÀI ĐẶT và XÁC NHẬN PHẦN NÓI. Cả ba là VIEW trong `/parent`
+            (không phải route riêng) nên cổng đóng là không chạm tới được — đúng luật "cổng chắn
+            mọi thứ sau nó".
           */}
           <BigButton icon="📊" onClick={() => setView('report')}>
             {t('parent.openReport')}
           </BigButton>
           <BigButton icon="⚙️" onClick={() => setView('settings')}>
             {t('parent.openSettings')}
+          </BigButton>
+          <BigButton icon="🗣️" onClick={() => setView('speaking')}>
+            {t('parent.openSpeaking')}
           </BigButton>
 
           <form

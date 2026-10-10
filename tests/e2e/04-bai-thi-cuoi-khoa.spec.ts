@@ -133,7 +133,22 @@ test.describe('Bài thi cuối khoá — cổng và luồng một phần', () =>
     await page.getByRole('link', { name: 'Bắt đầu' }).nth(2).click();
     await expect(page.getByText('Câu 1/11')).toBeVisible();
 
-    // Chơi hết 11 câu: mỗi câu bấm "Nói rồi!".
+    /*
+      Giai đoạn 8 — phần Nói có ba tầng TUỲ CHỌN, nhưng LUỒNG MẶC ĐỊNH KHÔNG ĐỔI:
+        • "Máy nghe thử" (TẦNG 2) chỉ hiện khi trình duyệt hỗ trợ `SpeechRecognition`. Ta kiểm
+          theo NĂNG LỰC THẬT của trình duyệt (không hardcode) — KHÔNG bấm, vì bấm sẽ xin quyền
+          micro thật và không ảnh hưởng gì tới việc nộp bài.
+        • "Nghe lại giọng con" (TẦNG 3) MẶC ĐỊNH TẮT ⇒ KHÔNG được có.
+    */
+    const supportsRecognition = await page.evaluate(
+      () => 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window,
+    );
+    if (supportsRecognition) {
+      await expect(page.getByText('Máy nghe thử')).toBeVisible();
+    }
+    await expect(page.getByText('Nghe lại giọng con')).toHaveCount(0);
+
+    // Chơi hết 11 câu: mỗi câu bấm "Nói rồi!" (hành vi mặc định, KHÔNG cần tầng tuỳ chọn nào).
     for (let index = 0; index < 11; index += 1) {
       await page.getByRole('button', { name: 'Bé đã nói xong câu này' }).click();
     }

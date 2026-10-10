@@ -89,15 +89,114 @@ export function hasSpeechSynthesis(): boolean {
 }
 
 /**
+ * HÌNH DẠNG TỐI THIỂU của Web Speech API phần NHẬN DIỆN mà RubyLingo dùng.
+ *
+ * ⚠️ VÌ SAO TỰ KHAI THAY VÌ DÙNG KIỂU CÓ SẴN CỦA DOM:
+ *   `SpeechRecognition` là API KHÔNG CHUẨN HOÁ. Tuỳ phiên bản TypeScript/lib.dom, nó có thể có
+ *   hoặc KHÔNG có trong lib — dùng kiểu của lib sẽ khiến build đỏ ở phiên bản này và xanh ở
+ *   phiên bản khác. Ta chỉ cần một hợp đồng nhỏ, tự khai, đúng bằng phần mình gọi (giống cách
+ *   `AudioSfxService` tự khai `AudioContextLike`).
+ */
+export interface SpeechRecognitionAlternativeLike {
+  readonly transcript: string;
+  readonly confidence?: number;
+}
+
+export interface SpeechRecognitionResultLike {
+  readonly length: number;
+  readonly isFinal?: boolean;
+  item(index: number): SpeechRecognitionAlternativeLike;
+  readonly [index: number]: SpeechRecognitionAlternativeLike;
+}
+
+export interface SpeechRecognitionResultListLike {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResultLike;
+  readonly [index: number]: SpeechRecognitionResultLike;
+}
+
+export interface SpeechRecognitionEventLike {
+  readonly results: SpeechRecognitionResultListLike;
+}
+
+export interface SpeechRecognitionErrorEventLike {
+  readonly error: string;
+}
+
+export interface SpeechRecognitionLike {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+}
+
+export type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
+
+/**
+ * Lấy HÀM TẠO `SpeechRecognition` của trình duyệt, hoặc `null` nếu không có.
+ *
+ * ⚠️ TRẢ HÀM TẠO, KHÔNG PHẢI MỘT INSTANCE DÙNG CHUNG: mỗi lần bé bấm "Máy nghe thử" cần một
+ *   phiên nhận diện MỚI. Tạo sẵn một instance ở tầng module sẽ khoá vòng đời của nó vào vòng đời
+ *   của trang — bấm lần thứ hai sẽ lỗi `InvalidStateError` mà không rõ vì sao.
+ *
+ * Hàm này là NGUỒN DUY NHẤT của `hasSpeechRecognition()` (bên dưới) — để "có hỗ trợ hay không"
+ * và "lấy được hàm tạo hay không" không bao giờ lệch nhau.
+ */
+export function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
+  if (typeof window === 'undefined') return null;
+  const w = window as unknown as Record<string, unknown>;
+  const ctor = w['SpeechRecognition'] ?? w['webkitSpeechRecognition'];
+  return typeof ctor === 'function' ? (ctor as SpeechRecognitionCtor) : null;
+}
+
+/**
  * Trình duyệt có NHẬN DIỆN giọng nói không.
  *
  * Chrome/Edge/Samsung Internet: có (tiền tố `webkit`). Safari/iOS: KHÔNG.
  * Firefox: KHÔNG.
  */
 export function hasSpeechRecognition(): boolean {
-  if (typeof window === 'undefined') return false;
+  return getSpeechRecognitionCtor() !== null;
+}
+
+/**
+ * HÌNH DẠNG TỐI THIỂU của `MediaRecorder` — dùng cho "Nghe lại giọng con" (hoàn toàn cục bộ).
+ * Tự khai cùng lý do như `SpeechRecognitionLike`: giữ hợp đồng nhỏ và ổn định qua các phiên bản lib.
+ */
+export interface MediaRecorderLike {
+  readonly state: string;
+  start(): void;
+  stop(): void;
+  ondataavailable: ((event: { readonly data: Blob }) => void) | null;
+  onstop: (() => void) | null;
+  onerror: (() => void) | null;
+}
+
+export type MediaRecorderCtor = new (stream: MediaStream) => MediaRecorderLike;
+
+/** Lấy hàm tạo `MediaRecorder` của trình duyệt, hoặc `null` nếu không có. */
+export function getMediaRecorderCtor(): MediaRecorderCtor | null {
+  if (typeof window === 'undefined') return null;
   const w = window as unknown as Record<string, unknown>;
-  return Boolean(w['SpeechRecognition'] ?? w['webkitSpeechRecognition']);
+  const ctor = w['MediaRecorder'];
+  return typeof ctor === 'function' ? (ctor as MediaRecorderCtor) : null;
+}
+
+/**
+ * Trình duyệt có GHI ÂM cục bộ được không (có `MediaRecorder` và API micro).
+ * ⚠️ "Có" KHÔNG có nghĩa là nên bật: tầng "Nghe lại giọng con" vẫn MẶC ĐỊNH TẮT.
+ */
+export function hasMediaRecorder(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const mediaDevices = (navigator as Navigator & { mediaDevices?: unknown }).mediaDevices;
+  return getMediaRecorderCtor() !== null && mediaDevices !== undefined;
 }
 
 /** Trình duyệt có rung được không (phản hồi khi bé chạm đúng). */
