@@ -45,7 +45,10 @@ import type { GameType } from '../shared/types/content.js';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LEVELS_DIR = join(ROOT, 'src', 'data', 'levels');
 const CONTENT_DIR = join(ROOT, 'shared', 'content');
-const SCENES_DIR = join(ROOT, 'assets', 'scenes');
+// ⚠️ Tranh cảnh được TRACK và phục vụ từ `public/assets/scenes/` (Vite phục vụ thư mục
+// `public/` ở gốc `/`, và bản build copy sang `dist/assets/scenes/`). Trước đây trỏ nhầm
+// `assets/scenes` (không tồn tại) nên MỌI tranh đều bị báo thiếu file ⇒ cảnh báo sai (V12/V17).
+const SCENES_DIR = join(ROOT, 'public', 'assets', 'scenes');
 
 type Severity = 'error' | 'warning';
 interface Issue {
