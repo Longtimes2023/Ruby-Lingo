@@ -27,6 +27,7 @@ import { shieldsForSection, shieldsForSpeaking } from '@shared/final-test-scorin
 import { BigButton } from '../../components/common/BigButton.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 import { finalTestRequirementText } from '../../components/final-test/gate.js';
+import { buildWordsByEn } from '../../components/final-test/optionWords.js';
 import { ShieldRow } from '../../components/final-test/ShieldRow.js';
 import { praiseKeyForShields, sectionTitleKey } from '../../components/final-test/praise.js';
 import { getFinalTestComponent } from '../../components/final-test/registry.js';
@@ -175,6 +176,10 @@ function SectionRunner({
 
   const items = useMemo(() => flattenItems(section), [section]);
 
+  // Bảng tra `en` → `Word` để các LỰA CHỌN dạng tranh (`choose_picture`) vẽ được HÌNH của chính
+  // từ đó — lựa chọn trong đề chỉ là CHUỖI tiếng Anh, không phải `wordId` (xem `optionWords.ts`).
+  const wordsByEn = useMemo(() => buildWordsByEn(level), [level]);
+
   const start = useFinalTestSessionStore((s) => s.start);
   const record = useFinalTestSessionStore((s) => s.record);
   const answers = useFinalTestSessionStore((s) => s.answers);
@@ -316,6 +321,7 @@ function SectionRunner({
         key={item.id}
         item={item}
         word={word}
+        wordsByEn={wordsByEn}
         onAnswered={(answered) =>
           handleAnswered(answered.itemId, answered.firstTry, answered.wrongAttempts)
         }

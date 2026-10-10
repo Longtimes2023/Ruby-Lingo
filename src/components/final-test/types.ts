@@ -39,6 +39,12 @@ export interface FinalTestItemProps {
    * Có thể thiếu nếu id không tra được; component phải chịu được (`undefined`/`null`).
    */
   word?: Word | null;
+  /**
+   * Bảng tra `en` (chữ thường) → `Word` của level — dùng để vẽ HÌNH cho LỰA CHỌN chỉ là CHUỖI
+   * tiếng Anh (dạng `choose_picture`; xem `optionWords.ts`). Là THAM SỐ CHỌN: thiếu ⇒ component
+   * chỉ hiện chữ, không vẽ ảnh — không bao giờ để bé thấy ô ảnh vỡ.
+   */
+  wordsByEn?: ReadonlyMap<string, Word>;
   /** Gọi ĐÚNG MỘT LẦN khi câu kết thúc (đúng, hoặc đã lộ đáp án và bé bấm Tiếp). */
   onAnswered: (result: FinalTestItemResult) => void;
 }

@@ -13,6 +13,9 @@
  * thật, không dựng một hình dạng song song có thể lệch.
  */
 
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,16 +25,28 @@ import { WriteWordGame } from '@/components/final-test/WriteWordGame.js';
 import { ArrangeLettersGame } from '@/components/final-test/ArrangeLettersGame.js';
 import { ChoosePictureGame } from '@/components/final-test/ChoosePictureGame.js';
 import { GapFillGame } from '@/components/final-test/GapFillGame.js';
+import { findWordForOption, buildWordsByEn } from '@/components/final-test/optionWords.js';
 import { PickNameGame } from '@/components/final-test/PickNameGame.js';
 import { StoryAnswerGame } from '@/components/final-test/StoryAnswerGame.js';
 import { TickCrossGame } from '@/components/final-test/TickCrossGame.js';
 import { YesNoGame } from '@/components/final-test/YesNoGame.js';
+import { wordAssetUrlOrNull } from '@/data/index.js';
+import { contentRepository } from '@/services/ContentRepository.js';
 import { __resetSettingsForTests, useSettingsStore } from '@/store/settingsStore.js';
 import { finalTestItemSchema, type FinalTestItem } from '@shared/schemas/final-test.js';
+import type { Word } from '@shared/types/content.js';
 
 function makeItem(raw: Record<string, unknown>): FinalTestItem {
   return finalTestItemSchema.parse(raw);
 }
+
+/** Bảng tra `en` → `Word` từ nội dung THẬT của level starters (dùng cho dạng `choose_picture`). */
+const WORDS_BY_EN: ReadonlyMap<string, Word> = buildWordsByEn(
+  contentRepository.loadLevel('starters'),
+);
+
+/** Thư mục nội dung đề THẬT — đọc để đối chiếu (không dựng hình dạng song song). */
+const FINAL_TEST_DIR = join(process.cwd(), 'src/data/levels/starters/final-test');
 
 beforeEach(() => {
   __resetSettingsForTests();
@@ -84,7 +99,7 @@ describe('final-test — câu dạng chọn', () => {
     expect(onAnswered).toHaveBeenCalledWith({ itemId: item.id, firstTry: false, wrongAttempts: 1 });
   });
 
-  it('choose_picture: 3 lựa chọn, chọn đúng ⇒ báo lên trên', () => {
+  it('choose_picture: 3 lựa chọn, chọn đúng ⇒ báo lên trên (luật trả lời KHÔNG đổi)', () => {
     const onAnswered = vi.fn();
     const item = makeItem({
       id: 'starters.final-test.listening.p3.q1',
@@ -96,8 +111,9 @@ describe('final-test — câu dạng chọn', () => {
       answer: 'kite',
     });
 
-    render(<ChoosePictureGame item={item} onAnswered={onAnswered} />);
-    fireEvent.click(screen.getByRole('button', { name: 'kite' }));
+    render(<ChoosePictureGame item={item} wordsByEn={WORDS_BY_EN} onAnswered={onAnswered} />);
+    // Nhãn đọc nay kèm nghĩa tiếng Việt ⇒ tra bằng regex cho phần chữ tiếng Anh.
+    fireEvent.click(screen.getByRole('button', { name: /^kite/ }));
 
     expect(onAnswered).toHaveBeenCalledWith({ itemId: item.id, firstTry: true, wrongAttempts: 0 });
   });
@@ -247,6 +263,179 @@ describe('final-test — câu dạng viết 1 từ', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Kiểm tra' }));
 
     expect(onAnswered).toHaveBeenCalledWith({ itemId: item.id, firstTry: true, wrongAttempts: 0 });
+  });
+});
+
+// =============================================================================
+// Giai đoạn 10 — HÌNH của từ: có asset ⇒ <img>, thiếu asset ⇒ emoji, KHÔNG ảnh vỡ
+// =============================================================================
+
+/** Mọi `choose_picture` THẬT trong đề (đọc từ JSON, KHÔNG dựng hình dạng song song). */
+function realChoosePictureRaw(): Record<string, unknown>[] {
+  const out: Record<string, unknown>[] = [];
+  const walk = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      value.forEach(walk);
+      return;
+    }
+    if (value !== null && typeof value === 'object') {
+      const record = value as Record<string, unknown>;
+      if (record['interaction'] === 'choose_picture') out.push(record);
+      Object.values(record).forEach(walk);
+    }
+  };
+  for (const file of readdirSync(FINAL_TEST_DIR)) {
+    if (!file.endsWith('.json')) continue;
+    walk(JSON.parse(readFileSync(join(FINAL_TEST_DIR, file), 'utf8')));
+  }
+  return out;
+}
+
+/** Đọc `src` của mọi `<img>` trong một `container` (đã render). */
+function imgSrcs(container: HTMLElement): string[] {
+  return [...container.querySelectorAll('img')].map((img) => img.getAttribute('src') ?? '');
+}
+
+describe('final-test — hình của từ (Giai đoạn 10)', () => {
+  it('choose_picture: từ CÓ asset ⇒ render <img> đúng src + nhãn đọc tiếng Việt', () => {
+    const item = makeItem({
+      id: 'starters.final-test.listening.p3.q1',
+      interaction: 'choose_picture',
+      wordId: 'starters.kite',
+      promptEn: 'Choose the right picture.',
+      audioTextEn: 'Look! The kite is in the sky.',
+      options: ['kite', 'balloon', 'boat'],
+      answer: 'kite',
+    });
+
+    const { container } = render(
+      <ChoosePictureGame item={item} wordsByEn={WORDS_BY_EN} onAnswered={vi.fn()} />,
+    );
+
+    expect(imgSrcs(container).sort()).toEqual(
+      [
+        wordAssetUrlOrNull('starters.kite'),
+        wordAssetUrlOrNull('starters.balloon'),
+        wordAssetUrlOrNull('starters.boat'),
+      ].sort(),
+    );
+    // Nhãn tiếng Việt cho trình đọc màn hình (kèm chữ tiếng Anh đang hiện).
+    expect(screen.getByRole('button', { name: 'kite — cái diều' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^boat/ })).toBeInTheDocument();
+  });
+
+  it('choose_picture: từ CHƯA có asset ⇒ emoji, TUYỆT ĐỐI không render <img>', () => {
+    const item = makeItem({
+      id: 'starters.final-test.listening.p3.q9',
+      interaction: 'choose_picture',
+      wordId: 'starters.two',
+      promptEn: 'Choose the right picture.',
+      audioTextEn: 'Two cats.',
+      options: ['two', 'three', 'four'],
+      answer: 'two',
+    });
+
+    const { container } = render(
+      <ChoosePictureGame item={item} wordsByEn={WORDS_BY_EN} onAnswered={vi.fn()} />,
+    );
+
+    expect(imgSrcs(container)).toHaveLength(0);
+    // Emoji của từ vẫn hiện (đường lùi cho ảnh chưa sinh).
+    expect(screen.getByText('2️⃣')).toBeInTheDocument();
+  });
+
+  it('choose_picture: lựa chọn vẫn bấm được và trả về ĐÚNG chuỗi của đề', () => {
+    const onAnswered = vi.fn();
+    const item = makeItem({
+      id: 'starters.final-test.listening.p3.q1',
+      interaction: 'choose_picture',
+      wordId: 'starters.kite',
+      promptEn: 'Choose the right picture.',
+      options: ['kite', 'balloon', 'boat'],
+      answer: 'kite',
+    });
+
+    render(<ChoosePictureGame item={item} wordsByEn={WORDS_BY_EN} onAnswered={onAnswered} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /^boat/ }));
+    expect(onAnswered).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /^kite/ }));
+    expect(onAnswered).toHaveBeenCalledWith({ itemId: item.id, firstTry: false, wrongAttempts: 1 });
+  });
+
+  it('story_answer: từ có asset ⇒ <img> gợi ý; từ chưa có asset ⇒ emoji, không <img>', () => {
+    const withAsset = makeItem({
+      id: 'starters.final-test.reading-writing.p5.q1',
+      interaction: 'story_answer',
+      wordId: 'starters.boy',
+      promptEn: 'Who is in the park?',
+      imageKey: 'story-park',
+      answer: 'boy',
+    });
+    const first = render(
+      <StoryAnswerGame
+        item={withAsset}
+        word={contentRepository.getWord('starters.boy')}
+        onAnswered={vi.fn()}
+      />,
+    );
+    expect(imgSrcs(first.container)).toEqual([wordAssetUrlOrNull('starters.boy')]);
+    first.unmount();
+
+    const noAsset = makeItem({
+      id: 'starters.final-test.reading-writing.p5.q4',
+      interaction: 'story_answer',
+      wordId: 'starters.two',
+      promptEn: 'How many children are in the story?',
+      imageKey: 'story-park',
+      answer: 'two',
+    });
+    const second = render(
+      <StoryAnswerGame
+        item={noAsset}
+        word={contentRepository.getWord('starters.two')}
+        onAnswered={vi.fn()}
+      />,
+    );
+    expect(imgSrcs(second.container)).toHaveLength(0);
+    expect(screen.getByText('2️⃣')).toBeInTheDocument();
+  });
+
+  it('KHÔNG có lựa chọn/wordId nào của đề render <img> với src SAI (đối chiếu manifest asset)', () => {
+    const raws = realChoosePictureRaw();
+    // Cổng không được rỗng: nếu 0 item thì vòng lặp dưới không chạy và test "xanh giả".
+    expect(raws.length).toBeGreaterThanOrEqual(10);
+
+    for (const raw of raws) {
+      const item = finalTestItemSchema.parse(raw);
+      if (item.interaction !== 'choose_picture') continue;
+
+      const { container, unmount } = render(
+        <ChoosePictureGame item={item} wordsByEn={WORDS_BY_EN} onAnswered={vi.fn()} />,
+      );
+
+      for (const src of imgSrcs(container)) {
+        const match = /^\/assets\/words\/(.+)\.webp$/.exec(src);
+        expect(match, `src ảnh không đúng dạng chuẩn: ${src}`).not.toBeNull();
+        const wordId = match![1]!;
+        // `wordAssetUrlOrNull` trả `null` khi id KHÔNG có trong manifest ⇒ lệch nghĩa là src sai.
+        expect(src, `src ảnh trỏ tới từ KHÔNG có asset: ${wordId}`).toBe(
+          wordAssetUrlOrNull(wordId),
+        );
+      }
+
+      // Với mỗi lựa chọn: CÓ asset ⇒ đúng 1 <img>; KHÔNG có asset ⇒ không <img> nào cho nó.
+      for (const option of item.options ?? []) {
+        const word = findWordForOption(WORDS_BY_EN, option);
+        expect(word, `lựa chọn "${option}" không tra được từ trong level`).not.toBeNull();
+        const expectedSrc = wordAssetUrlOrNull(word!.id);
+        const srcsForWord = imgSrcs(container).filter((s) => s === expectedSrc);
+        expect(srcsForWord.length).toBe(expectedSrc === null ? 0 : 1);
+      }
+
+      unmount();
+    }
   });
 });
 

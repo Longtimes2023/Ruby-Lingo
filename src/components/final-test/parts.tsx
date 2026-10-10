@@ -1,10 +1,11 @@
 /**
  * RubyLingo — MẢNH DÙNG CHUNG của các component bài thi cuối khoá.
  *
- * Gồm bốn thứ xuất hiện ở gần như mọi dạng câu:
+ * Gồm những thứ xuất hiện ở gần như mọi dạng câu:
  *   • `ItemAudioButton` — nút 🔊 đọc câu mẫu TIẾNG ANH;
  *   • `ItemPrompt`      — câu lệnh tiếng Anh hiện bằng CHỮ;
  *   • `WordPicture`     — hình của từ (cho dạng tranh);
+ *   • `PictureChoice`   — nút lựa chọn dạng TRANH (hình từ + nhãn chữ, dạng `choose_picture`);
  *   • `ChoiceButton` / `RevealNote` / `ContinueButton` — nút chọn + lời đưa đáp án + nút đi tiếp.
  *
  * ⚠️ TÁCH RA CHỨ KHÔNG COPY-PASTE 9 LẦN: đây là những chỗ mà một bản sao lệch sẽ tạo ra trải
@@ -14,6 +15,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import type { Word } from '@shared/types/content.js';
 
 import { useSpeech } from '../../hooks/useSpeech.js';
 import { cn } from '../../lib/cn.js';
@@ -114,6 +117,52 @@ export function ChoiceButton({ children, ariaLabel, state, onClick }: ChoiceButt
   );
 }
 
+/**
+ * Nút lựa chọn dạng TRANH: HÌNH của từ + NHÃN CHỮ tiếng Anh ở dưới.
+ *
+ * ⭐ VÌ SAO CẦN RIÊNG MỘT BIẾN THỂ CỦA `ChoiceButton` (không nhồi vào `ChoiceButton`):
+ *   `ChoiceButton` chỉ nhận `children` là chữ. Tranh cần thêm hai thứ mà nút chữ không có: khung
+ *   `.wi-frame`/`.wi-fill` để HÌNH ăn theo BỀ RỘNG khung (xem `WordIcon`), và một `aria-label` mô
+ *   tả ý nghĩa tiếng Việt — vì ảnh là `aria-hidden`, trình đọc màn hình không "thấy" nó.
+ *
+ * ⚠️ ĐƯỜNG LÙI KHI KHÔNG CÓ HÌNH (bắt buộc): `word === null` (không tra được từ / chuỗi lựa chọn
+ *    mơ hồ) ⇒ CHỈ hiện nhãn chữ, KHÔNG vẽ `<img>`. `WordIcon` tự lo nhánh "từ có thật nhưng chưa
+ *    sinh ảnh" ⇒ trả emoji. Cả hai nhánh đều KHÔNG bao giờ để bé thấy biểu tượng ảnh hỏng.
+ */
+export function PictureChoice({
+  option,
+  word,
+  state,
+  onClick,
+}: {
+  option: string;
+  word: Word | null;
+  state: ChoiceState;
+  onClick: () => void;
+}) {
+  // Nhãn đọc: có nghĩa tiếng Việt của từ ⇒ bé khiếm thị hiểu mình đang chọn gì. Kèm cả chữ tiếng
+  // Anh để nhãn đọc vẫn CHỨA mặt chữ đang hiện (yêu cầu 2.5.3 "nhãn trong tên" của WCAG).
+  const ariaLabel = word !== null ? `${option} — ${word.vi}` : option;
+
+  return (
+    <ChoiceButton ariaLabel={ariaLabel} state={state} onClick={onClick}>
+      <span className="flex flex-col items-center gap-1">
+        {word !== null && (
+          <span
+            aria-hidden="true"
+            className="wi-frame flex size-[96px] items-center justify-center"
+          >
+            <span className="wi-fill">
+              <WordIcon wordId={word.id} fallback={word.icon} />
+            </span>
+          </span>
+        )}
+        <span className="text-kid-xs font-bold">{option}</span>
+      </span>
+    </ChoiceButton>
+  );
+}
+
 /** Lời đưa đáp án sau khi bé đã thử đủ số lần — KHÔNG mắng, chỉ cho xem đáp án. */
 export function RevealNote({ answer }: { answer: string }) {
   const { t } = useTranslation();
@@ -185,4 +234,3 @@ export function AnswerTextField({
     </form>
   );
 }
-

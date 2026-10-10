@@ -1,24 +1,33 @@
 /**
  * RubyLingo — câu dạng `choose_picture` (Listening P3/P4): nghe → chọn 1 trong 3 tranh A/B/C.
  *
- * Giai đoạn này hiện NHÃN CHỮ của tranh (đề tự soạn chưa gắn khoá ảnh cho từng lựa chọn). Bé nghe
- * câu mẫu tiếng Anh rồi chọn đúng từ — vẫn đúng bản chất "nghe hiểu", và không phụ thuộc asset
- * chưa có. Khi đề gắn `imageKeys`, chỉ cần nâng cấp phần hiển thị, không đổi luật trả lời.
+ * ⭐ GIAI ĐOẠN 10 — ĐÃ HIỆN HÌNH THẬT (trước chỉ hiện nhãn chữ):
+ *   Mỗi lựa chọn nay là HÌNH của chính từ đó + nhãn chữ tiếng Anh ở dưới (xem `PictureChoice`).
+ *   Hình tái dùng ảnh minh hoạ từ vựng đã có (`public/assets/words/<wordId>.webp`) qua `WordIcon`.
+ *
+ * ⚠️ VÌ SAO PHẢI TRA TỪ THEO CHỮ, KHÔNG GHÉP `starters.<chữ>`: `options` của đề là CHUỖI tiếng Anh,
+ *    không phải `wordId` (xem `optionWords.ts` — `orange-n` vs `orange-adj`).
+ *
+ * ⚠️ ĐƯỜNG LÙI (bắt buộc): từ chưa có asset ⇒ `WordIcon` trả EMOJI; chuỗi lựa chọn không tra được
+ *    từ ⇒ chỉ hiện chữ, KHÔNG vẽ `<img>`. Không bao giờ để bé thấy ô ảnh vỡ.
+ *
+ * ⚠️ KHÔNG ĐỔI LUẬT TRẢ LỜI: vẫn `submit(option)` với ĐÚNG chuỗi của đề, `answer`/khiên không đụng.
  */
 
 import { choiceStateFor } from './choice.js';
+import { findWordForOption } from './optionWords.js';
 import {
-  ChoiceButton,
   ContinueButton,
   ItemAudioButton,
   ItemPrompt,
+  PictureChoice,
   RevealNote,
   TryAgainNote,
 } from './parts.js';
 import type { FinalTestItemProps } from './types.js';
 import { useFinalTestItem } from './useFinalTestItem.js';
 
-export function ChoosePictureGame({ item, onAnswered }: FinalTestItemProps) {
+export function ChoosePictureGame({ item, wordsByEn, onAnswered }: FinalTestItemProps) {
   const answer = 'answer' in item ? item.answer : '';
   const { submit, revealed, done, wrongPicks, wrongAttempts, finish } = useFinalTestItem(
     item.id,
@@ -39,14 +48,14 @@ export function ChoosePictureGame({ item, onAnswered }: FinalTestItemProps) {
       <ul className="flex flex-col gap-3">
         {options.map((option) => (
           <li key={option}>
-            <ChoiceButton
+            <PictureChoice
+              option={option}
+              word={findWordForOption(wordsByEn, option)}
               state={choiceStateFor(option, item.answer, wrongPicks, finished)}
               onClick={() => {
                 submit(option);
               }}
-            >
-              {option}
-            </ChoiceButton>
+            />
           </li>
         ))}
       </ul>

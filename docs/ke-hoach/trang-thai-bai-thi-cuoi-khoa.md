@@ -1,6 +1,7 @@
 # RubyLingo — TRẠNG THÁI BÀI THI CUỐI KHOÁ (phần CLIENT)
 
-> **Loại tài liệu:** TRẠNG THÁI TRIỂN KHAI (Giai đoạn 7 — client) · **Ngày:** 2026-10-10.
+> **Loại tài liệu:** TRẠNG THÁI TRIỂN KHAI (Giai đoạn 7 — client; cập nhật Giai đoạn 10) ·
+> **Ngày:** 2026-10-10.
 > **Phạm vi:** chỉ mô tả phần CLIENT (trang / route / luồng cho bé). Server, nội dung đề, luật mở
 > khoá và thang khiên thuộc Giai đoạn 4–6 (đã xong, đã khoá).
 > **Thiết kế gốc:** `docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md` (đọc trước tài liệu này).
@@ -83,7 +84,44 @@ không chấm tự động**; hiện dòng miễn trừ *"RubyLingo không phả
 
 ---
 
-## 5. Điều CHƯA làm (và lý do)
+## 5. Hình của từ trong hai dạng câu tranh (Giai đoạn 10)
+
+Trước đây hai dạng câu dưới đây chỉ hiện **NHÃN CHỮ** (hoặc không hình) vì chưa ghép được asset. Nay
+dùng **ảnh minh hoạ từ vựng đã có sẵn** — KHÔNG sinh ảnh mới, KHÔNG tải ảnh từ mạng.
+
+### `choose_picture` (Listening P3/P4) — chọn 1 trong 3 TRANH
+
+- **Hình dạng THẬT của đề:** `options` là **MẢNG CHUỖI tiếng Anh** (`["kite","balloon","boat"]`),
+  **KHÔNG** phải `wordId`. Đề hiện **không** dùng `imageKeys` (schema có cho phép nhưng nội dung không có).
+- **Cách làm:** mỗi lựa chọn được TRA TỪ theo chữ (`en`) qua `src/components/final-test/optionWords.ts`
+  (`buildWordsByEn` / `findWordForOption`), rồi vẽ bằng `WordIcon` (tái dùng `wordAssetUrlOrNull`).
+  KHÔNG tự ghép `starters.<chữ>` — `orange-n` (quả) và `orange-adj` (màu) cùng viết "orange", ghép
+  chuỗi sẽ gán nhầm hình; khoá MƠ HỒ bị loại khỏi bảng tra.
+- **Hiển thị:** nút `PictureChoice` = HÌNH của từ (khung `.wi-frame`/`.wi-fill`) + **nhãn chữ tiếng Anh**
+  ở dưới + `aria-label` tiếng Việt (`"kite — cái diều"`) cho trình đọc màn hình (ảnh là `aria-hidden`).
+- **Luật trả lời KHÔNG đổi:** vẫn `submit(option)` với ĐÚNG chuỗi của đề; `answer`/khiên không đụng.
+
+### `story_answer` (Reading P5) — trả lời 1 từ về truyện
+
+- **Hình dạng THẬT:** có `wordId` (bắt buộc) + `imageKey: "story-park"` cho CẢ 5 câu + `answer` = từ mục tiêu.
+- **Cách làm:** hiện HÌNH của **TỪ MỤC TIÊU** (`wordId`) làm gợi ý qua `WordPicture`; ô nhập 1 từ giữ nguyên.
+- ⚠️ **`imageKey` KHÔNG dùng được:** `story-park` KHÔNG có file trong `public/assets/scenes/` và không có
+  manifest cảnh để kiểm tồn tại ⇒ vẽ ra sẽ là **ảnh vỡ 404**. Khi nào có tranh truyện thật thì đổi
+  nguồn hình sang tranh đó (một chỗ), KHÔNG đổi luật trả lời.
+- ⚠️ **Trade-off đã ghi nhận:** hình từ mục tiêu là **ĐÁP ÁN**, nên gợi ý khá mạnh (component cũ cố
+  tình né). Đây là lựa chọn hiện thời theo yêu cầu; cách "đúng sư phạm" là tranh truyện, chưa có asset.
+
+### Chống ảnh vỡ (bắt buộc, đã kiểm bằng test)
+
+- Từ **chưa có asset** ⇒ `WordIcon` trả **EMOJI** (`word.icon`), KHÔNG render `<img>`.
+- Chuỗi lựa chọn **không tra được từ** ⇒ chỉ hiện chữ, KHÔNG vẽ ảnh.
+- Test (`tests/unit/client/final-test-components.test.tsx`) canh: có asset ⇒ `<img>` đúng `src`;
+  thiếu asset ⇒ emoji + 0 `<img>`; và DUYỆT MỌI câu `choose_picture` THẬT, khẳng định mọi `<img>` có
+  `src = wordAssetUrlOrNull(id)` (id nằm trong manifest asset) — không có ảnh vỡ.
+
+---
+
+## 6. Điều CHƯA làm (và lý do)
 
 - **Xuất PDF "Chứng nhận":** KHÔNG làm. Cần review bản quyền/nhãn hiệu riêng (Q7) — chưa được duyệt.
   Trang `/final-test/certificate` chỉ render TRONG APP.
@@ -97,7 +135,7 @@ không chấm tự động**; hiện dòng miễn trừ *"RubyLingo không phả
 
 ---
 
-## 6. Tự kiểm chứng
+## 7. Tự kiểm chứng
 
 ```bash
 npx vitest run tests/unit/client          # unit/component cho 3 trang + store + thẻ cổng
@@ -111,6 +149,9 @@ npx playwright test tests/e2e/04-bai-thi-cuoi-khoa.spec.ts   # E2E (chặn API b
   lỗi mạng không lộ chi tiết kỹ thuật; **khôi phục tiến độ dở** từ localStorage; a11y (`min-h-touch`, `text-kid-*`).
 - `tests/unit/client/final-test-session-store.test.ts` — lưu/đọc theo `childId`, phiên bản lạ ⇒ rỗng,
   `record` đẩy server đúng `{itemId, value}`, lỗi mạng không ném.
+- `tests/unit/client/final-test-components.test.tsx` — **Giai đoạn 10**: `choose_picture` có asset ⇒
+  `<img>` đúng `src` + nhãn đọc tiếng Việt; thiếu asset ⇒ emoji + 0 `<img>`; `story_answer` có/không
+  asset tương tự; **duyệt mọi câu `choose_picture` THẬT** khẳng định không `<img>` nào trỏ tới từ thiếu asset.
 
 ⚠️ Nếu môi trường **không chạy được trình duyệt**, E2E sẽ không chạy — khi đó phải báo TRUNG THỰC là
 "chưa chạy được", KHÔNG nói đã xanh (xem báo cáo bàn giao).
