@@ -37,7 +37,7 @@
         "starters.tennis",
         "starters.sport"
       ],
-      "exerciseIds": ["at-the-beach/b2/memory-match", "at-the-beach/b2/missing-letter", "at-the-beach/b2/listen-tap", "at-the-beach/b2/word-picture"]
+      "exerciseIds": ["at-the-beach/b2/memory-match", "at-the-beach/b2/missing-letter", "at-the-beach/b2/listen-tap", "at-the-beach/b2/word-picture", "at-the-beach/b2/prepositions"]
     },
     {
       "id": "at-the-beach/b3",
@@ -51,7 +51,7 @@
         "starters.piano",
         "starters.camera"
       ],
-      "exerciseIds": ["at-the-beach/b3/memory-match", "at-the-beach/b3/missing-letter", "at-the-beach/b3/listen-tap", "at-the-beach/b3/word-picture"]
+      "exerciseIds": ["at-the-beach/b3/memory-match", "at-the-beach/b3/missing-letter", "at-the-beach/b3/listen-tap", "at-the-beach/b3/word-picture", "at-the-beach/b3/prepositions"]
     },
     {
       "id": "at-the-beach/b4",
@@ -65,7 +65,7 @@
         "starters.kite",
         "starters.fishing"
       ],
-      "exerciseIds": ["at-the-beach/b4/memory-match", "at-the-beach/b4/missing-letter", "at-the-beach/b4/listen-tap", "at-the-beach/b4/word-picture"]
+      "exerciseIds": ["at-the-beach/b4/memory-match", "at-the-beach/b4/missing-letter", "at-the-beach/b4/listen-tap", "at-the-beach/b4/word-picture", "at-the-beach/b4/prepositions"]
     }
   ],
   "words": [
@@ -185,6 +185,9 @@
       { "id": "at-the-beach/b3/listen-tap", "lessonId": "at-the-beach/b3", "gameType": "listen_tap", "wordIds": ["starters.sing", "starters.paint", "starters.take", "starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
       { "id": "at-the-beach/b3/word-picture", "lessonId": "at-the-beach/b3", "gameType": "word_picture", "wordIds": ["starters.sing", "starters.paint", "starters.take", "starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
       { "id": "at-the-beach/b4/listen-tap", "lessonId": "at-the-beach/b4", "gameType": "listen_tap", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
-      { "id": "at-the-beach/b4/word-picture", "lessonId": "at-the-beach/b4", "gameType": "word_picture", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } }
+      { "id": "at-the-beach/b4/word-picture", "lessonId": "at-the-beach/b4", "gameType": "word_picture", "wordIds": ["starters.sand", "starters.sea", "starters.sun", "starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
+      { "id": "at-the-beach/b2/prepositions", "lessonId": "at-the-beach/b2", "gameType": "prepositions", "wordIds": ["starters.baseball", "starters.badminton"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The baseball is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The badminton is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The baseball is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
+      { "id": "at-the-beach/b3/prepositions", "lessonId": "at-the-beach/b3", "gameType": "prepositions", "wordIds": ["starters.guitar", "starters.piano", "starters.camera"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The guitar is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The piano is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The camera is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
+      { "id": "at-the-beach/b4/prepositions", "lessonId": "at-the-beach/b4", "gameType": "prepositions", "wordIds": ["starters.shell", "starters.kite", "starters.fishing"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The shell is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The kite is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The fishing is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } }
     ]
 }

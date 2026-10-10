@@ -45,7 +45,7 @@
         "starters.clothes", "starters.jacket", "starters.skirt",
         "starters.shirt", "starters.dress", "starters.t-shirt"
       ],
-      "exerciseIds": ["at-the-clothes-shop/l3/memory-match", "at-the-clothes-shop/l3/missing-letter", "at-the-clothes-shop/l3/listen-tap", "at-the-clothes-shop/l3/word-picture"]
+      "exerciseIds": ["at-the-clothes-shop/l3/memory-match", "at-the-clothes-shop/l3/missing-letter", "at-the-clothes-shop/l3/listen-tap", "at-the-clothes-shop/l3/word-picture", "at-the-clothes-shop/l3/prepositions"]
     },
     {
       "id": "at-the-clothes-shop/l4",
@@ -55,7 +55,7 @@
         "starters.trousers", "starters.jeans", "starters.shoe",
         "starters.sock", "starters.hat"
       ],
-      "exerciseIds": ["at-the-clothes-shop/l4/memory-match", "at-the-clothes-shop/l4/missing-letter", "at-the-clothes-shop/l4/listen-tap", "at-the-clothes-shop/l4/word-picture"]
+      "exerciseIds": ["at-the-clothes-shop/l4/memory-match", "at-the-clothes-shop/l4/missing-letter", "at-the-clothes-shop/l4/listen-tap", "at-the-clothes-shop/l4/word-picture", "at-the-clothes-shop/l4/prepositions"]
     },
     {
       "id": "at-the-clothes-shop/l5",
@@ -65,7 +65,7 @@
         "starters.glasses", "starters.bag", "starters.handbag",
         "starters.watch", "starters.angry"
       ],
-      "exerciseIds": ["at-the-clothes-shop/l5/memory-match", "at-the-clothes-shop/l5/missing-letter", "at-the-clothes-shop/l5/listen-tap", "at-the-clothes-shop/l5/word-picture"]
+      "exerciseIds": ["at-the-clothes-shop/l5/memory-match", "at-the-clothes-shop/l5/missing-letter", "at-the-clothes-shop/l5/listen-tap", "at-the-clothes-shop/l5/word-picture", "at-the-clothes-shop/l5/prepositions"]
     }
   ],
   "words": [
@@ -204,6 +204,9 @@
       { "id": "at-the-clothes-shop/l4/listen-tap", "lessonId": "at-the-clothes-shop/l4", "gameType": "listen_tap", "wordIds": ["starters.trousers", "starters.jeans", "starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
       { "id": "at-the-clothes-shop/l4/word-picture", "lessonId": "at-the-clothes-shop/l4", "gameType": "word_picture", "wordIds": ["starters.trousers", "starters.jeans", "starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
       { "id": "at-the-clothes-shop/l5/listen-tap", "lessonId": "at-the-clothes-shop/l5", "gameType": "listen_tap", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
-      { "id": "at-the-clothes-shop/l5/word-picture", "lessonId": "at-the-clothes-shop/l5", "gameType": "word_picture", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } }
+      { "id": "at-the-clothes-shop/l5/word-picture", "lessonId": "at-the-clothes-shop/l5", "gameType": "word_picture", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
+      { "id": "at-the-clothes-shop/l3/prepositions", "lessonId": "at-the-clothes-shop/l3", "gameType": "prepositions", "wordIds": ["starters.jacket", "starters.skirt", "starters.shirt", "starters.t-shirt"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 4, "slots": [{ "sentenceEn": "The jacket is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The skirt is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The shirt is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The T-shirt is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }] } },
+      { "id": "at-the-clothes-shop/l4/prepositions", "lessonId": "at-the-clothes-shop/l4", "gameType": "prepositions", "wordIds": ["starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The shoe is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The sock is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The hat is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
+      { "id": "at-the-clothes-shop/l5/prepositions", "lessonId": "at-the-clothes-shop/l5", "gameType": "prepositions", "wordIds": ["starters.bag", "starters.handbag"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The bag is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The handbag is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The bag is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } }
     ]
 }

@@ -18,8 +18,8 @@
  *   - G1 (đã xong): mọi bài ≥ 2 loại game (thêm `missing_letter`).
  *   - G2 (đã xong): thêm `listen_tap` + `word_picture` cho bài có ≥ 4 từ `picturable`;
  *     nâng `THEME_FLOOR` lên đúng ma trận mục tiêu trong `docs/ke-hoach/game-phu-moi-chu-de.md`.
- *   - G3 (chưa làm): thêm `prepositions` cho bài hợp ngữ nghĩa.
- *   Khi làm G3, hãy nâng `THEME_FLOOR` sang con số mới — đừng xoá test này.
+ *   - G3 (đã xong): thêm `prepositions` cho 24 bài hợp ngữ nghĩa; 8 chủ đề có tranh đạt 5/5 loại game.
+ *   Khi thêm game mới, hãy nâng `THEME_FLOOR` và mở rộng test tương ứng — đừng xoá test này.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -39,26 +39,27 @@ const bundle = readLevelBundle('starters');
 const NO_PICTURE_THEMES = new Set(['alphabet', 'numbers-1-20']);
 
 /**
- * ⭐ NGƯỠNG SỐ LOẠI GAME KHÁC NHAU CỦA MỖI CHỦ ĐỀ — ma trận G2 (đọc từ chính dữ liệu).
+ * ⭐ NGƯỠNG SỐ LOẠI GAME KHÁC NHAU CỦA MỖI CHỦ ĐỀ — ma trận G3 (đọc từ chính dữ liệu).
  *
- * Ổ khoá này là một BẢNG KỲ VỌNG cụ thể, KHÔNG phải "≥ 2 cho mọi chủ đề" như thời G1:
- *   - `at-the-zoo` đạt 5 (listen_tap, missing_letter, prepositions, memory_match, word_picture).
- *   - 7 chủ đề có tranh còn lại đạt 4 (memory_match + missing_letter + listen_tap + word_picture).
- *   - `alphabet` / `numbers-1-20` (0 từ picturable) đạt 2 — trần tự nhiên.
+ * BẢNG KỲ VỌNG cụ thể, KHÔNG phải "≥ 2 cho mọi chủ đề" như thời G1:
+ *   - 8 chủ đề có tranh đạt 5/5 loại game (`at-the-zoo` + `at-home`, `at-school`, `at-the-beach`,
+ *     `at-the-clothes-shop`, `my-favourite-food`, `my-friends-birthday`, `my-street`).
+ *   - `my-body` đạt 4 — bộ phận cơ thể không thể "núp dưới hộp" nên KHÔNG có `prepositions`.
+ *   - `alphabet` / `numbers-1-20` (0 từ picturable, không có danh từ) đạt 2 — trần tự nhiên.
  *
- * Dùng `>=` (ngưỡng) chứ không phải `===`: G3 sẽ thêm `prepositions` và nâng số này lên,
- * nhưng KHÔNG chủ đề nào được phép TỤT xuống dưới ngưỡng đã cam kết — đó là điều test canh.
+ * Dùng `>=` (ngưỡng) chứ không phải `===`: game mới sẽ nâng số này lên, nhưng KHÔNG chủ đề nào
+ * được phép TỤT xuống dưới ngưỡng đã cam kết — đó là điều test canh.
  */
 const THEME_FLOOR: Record<string, number> = {
   'at-the-zoo': 5,
+  'at-home': 5,
+  'at-school': 5,
+  'at-the-beach': 5,
+  'at-the-clothes-shop': 5,
+  'my-favourite-food': 5,
+  'my-friends-birthday': 5,
+  'my-street': 5,
   'my-body': 4,
-  'at-the-clothes-shop': 4,
-  'my-friends-birthday': 4,
-  'my-favourite-food': 4,
-  'at-home': 4,
-  'at-school': 4,
-  'at-the-beach': 4,
-  'my-street': 4,
   alphabet: 2,
   'numbers-1-20': 2,
 };
@@ -70,7 +71,7 @@ const THEME_FLOOR: Record<string, number> = {
  */
 const LESSON_FLOOR_EXEMPT = new Set(['my-friends-birthday/l3']);
 
-describe('Phủ game theo bài (G2)', () => {
+describe('Phủ game theo bài (G3)', () => {
   it('mọi bài có ÍT NHẤT 2 loại game khác nhau', () => {
     const offenders: string[] = [];
 
@@ -157,6 +158,53 @@ describe('Phủ game theo bài (G2)', () => {
     }
 
     expect(offenders, `word_picture dùng từ không có hình:\n${offenders.join('\n')}`).toEqual([]);
+  });
+
+  it('mọi exercise prepositions: câu đúng mẫu, chủ ngữ có thật trong wordIds, correctSlot nằm trong slots', () => {
+    const prepositionsExercises = bundle.exercises.filter((e) => e.gameType === 'prepositions');
+    expect(
+      prepositionsExercises.length,
+      'không có exercise prepositions nào — game Thú cưng trốn ở đâu? biến mất khỏi nội dung',
+    ).toBeGreaterThan(0);
+
+    // ⚠️ Mẫu câu CỐ ĐỊNH: "The {noun} is {prep} the box." — riêng "between" dùng "the boxes.".
+    //    (Bản gốc đề xuất `the boxes?\.` là SAI: `boxes?` = "boxe" + "s?" nên KHÔNG khớp "box.";
+    //     sửa thành `box(?:es)?` để khớp cả "box." lẫn "boxes.".)
+    const sentencePattern = /^The .+ is (in|on|under|behind|next to|between) the box(?:es)?\.$/;
+    const problems: string[] = [];
+
+    for (const exercise of prepositionsExercises) {
+      if (exercise.config.kind !== 'prepositions') continue;
+
+      // Chủ ngữ trong câu PHẢI là `en` của một từ trong CHÍNH exercise — nếu không, cảnh sẽ
+      // hiện icon 🐾 chung chung (subjectIcon không tra được) và bé không biết chạm vào đâu.
+      const subjectEns = new Set(
+        exercise.wordIds
+          .map((id) => bundle.wordById.get(id)?.en)
+          .filter((en): en is string => typeof en === 'string'),
+      );
+
+      for (const slot of exercise.config.slots) {
+        if (!sentencePattern.test(slot.sentenceEn)) {
+          problems.push(
+            `${exercise.id}: câu "${slot.sentenceEn}" không khớp mẫu "The {noun} is {prep} the box."`,
+          );
+        }
+        const subject = slot.sentenceEn.slice('The '.length, slot.sentenceEn.indexOf(' is '));
+        if (!subjectEns.has(subject)) {
+          problems.push(
+            `${exercise.id}: chủ ngữ "${subject}" không phải "en" của từ nào trong wordIds [${exercise.wordIds.join(', ')}]`,
+          );
+        }
+        if (!slot.slots.includes(slot.correctSlot)) {
+          problems.push(
+            `${exercise.id}: correctSlot "${slot.correctSlot}" không nằm trong slots [${slot.slots.join(', ')}]`,
+          );
+        }
+      }
+    }
+
+    expect(problems, problems.join('\n')).toEqual([]);
   });
 
   it('mọi exercise dùng game ĐÃ CÓ component chơi được (không khai game "trên giấy")', () => {

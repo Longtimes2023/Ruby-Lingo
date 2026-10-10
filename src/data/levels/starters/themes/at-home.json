@@ -58,7 +58,8 @@
         "at-home/h2/memory-match-2",
         "at-home/h2/missing-letter",
         "at-home/h2/listen-tap",
-        "at-home/h2/word-picture"
+        "at-home/h2/word-picture",
+        "at-home/h2/prepositions"
       ]
     },
     {
@@ -79,7 +80,8 @@
         "at-home/h3/memory-match-2",
         "at-home/h3/missing-letter",
         "at-home/h3/listen-tap",
-        "at-home/h3/word-picture"
+        "at-home/h3/word-picture",
+        "at-home/h3/prepositions"
       ]
     },
     {
@@ -100,7 +102,8 @@
         "at-home/h4/memory-match-2",
         "at-home/h4/missing-letter",
         "at-home/h4/listen-tap",
-        "at-home/h4/word-picture"
+        "at-home/h4/word-picture",
+        "at-home/h4/prepositions"
       ]
     },
     {
@@ -119,7 +122,8 @@
         "at-home/h5/memory-match",
         "at-home/h5/missing-letter",
         "at-home/h5/listen-tap",
-        "at-home/h5/word-picture"
+        "at-home/h5/word-picture",
+        "at-home/h5/prepositions"
       ]
     }
   ],
@@ -955,6 +959,91 @@
       ],
       "difficulty": 1,
       "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "at-home/h2/prepositions",
+      "lessonId": "at-home/h2",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.chair",
+        "starters.table",
+        "starters.lamp",
+        "starters.sofa"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The chair is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The table is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The lamp is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The sofa is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "at-home/h3/prepositions",
+      "lessonId": "at-home/h3",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.bookcase",
+        "starters.cupboard",
+        "starters.armchair",
+        "starters.rug"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The bookcase is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The cupboard is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The armchair is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The rug is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "at-home/h4/prepositions",
+      "lessonId": "at-home/h4",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.picture",
+        "starters.painting",
+        "starters.television",
+        "starters.phone"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The picture is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The painting is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The television is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The phone is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "at-home/h5/prepositions",
+      "lessonId": "at-home/h5",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.cat",
+        "starters.doll"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 3,
+        "slots": [
+          { "sentenceEn": "The cat is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The doll is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The cat is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
     }
   ]
 }

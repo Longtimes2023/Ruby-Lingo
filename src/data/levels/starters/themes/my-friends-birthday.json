@@ -36,7 +36,8 @@
         "my-friends-birthday/l1/memory-match-2",
         "my-friends-birthday/l1/missing-letter",
         "my-friends-birthday/l1/listen-tap",
-        "my-friends-birthday/l1/word-picture"
+        "my-friends-birthday/l1/word-picture",
+        "my-friends-birthday/l1/prepositions"
       ]
     },
     {
@@ -54,7 +55,8 @@
         "my-friends-birthday/l2/memory-match",
         "my-friends-birthday/l2/missing-letter",
         "my-friends-birthday/l2/listen-tap",
-        "my-friends-birthday/l2/word-picture"
+        "my-friends-birthday/l2/word-picture",
+        "my-friends-birthday/l2/prepositions"
       ]
     },
     {
@@ -70,7 +72,8 @@
       ],
       "exerciseIds": [
         "my-friends-birthday/l3/memory-match",
-        "my-friends-birthday/l3/missing-letter"
+        "my-friends-birthday/l3/missing-letter",
+        "my-friends-birthday/l3/prepositions"
       ]
     },
     {
@@ -88,7 +91,8 @@
         "my-friends-birthday/l4/memory-match",
         "my-friends-birthday/l4/missing-letter",
         "my-friends-birthday/l4/listen-tap",
-        "my-friends-birthday/l4/word-picture"
+        "my-friends-birthday/l4/word-picture",
+        "my-friends-birthday/l4/prepositions"
       ]
     }
   ],
@@ -615,6 +619,91 @@
       ],
       "difficulty": 1,
       "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "my-friends-birthday/l1/prepositions",
+      "lessonId": "my-friends-birthday/l1",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.dad",
+        "starters.mum",
+        "starters.brother",
+        "starters.sister"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The dad is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The mum is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The brother is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The sister is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-friends-birthday/l2/prepositions",
+      "lessonId": "my-friends-birthday/l2",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.man",
+        "starters.woman",
+        "starters.child",
+        "starters.baby"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The man is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The woman is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The child is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The baby is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-friends-birthday/l3/prepositions",
+      "lessonId": "my-friends-birthday/l3",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.boy",
+        "starters.girl"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 3,
+        "slots": [
+          { "sentenceEn": "The boy is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The girl is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The boy is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-friends-birthday/l4/prepositions",
+      "lessonId": "my-friends-birthday/l4",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.robot",
+        "starters.monster",
+        "starters.balloon",
+        "starters.alien"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The robot is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The monster is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The balloon is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The alien is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
     }
   ]
 }

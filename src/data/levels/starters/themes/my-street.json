@@ -33,7 +33,8 @@
         "my-street/m1/memory-match",
         "my-street/m1/missing-letter",
         "my-street/m1/listen-tap",
-        "my-street/m1/word-picture"
+        "my-street/m1/word-picture",
+        "my-street/m1/prepositions"
       ]
     },
     {
@@ -551,6 +552,28 @@
       ],
       "difficulty": 1,
       "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "my-street/m1/prepositions",
+      "lessonId": "my-street/m1",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.train",
+        "starters.boat",
+        "starters.helicopter",
+        "starters.motorbike"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The train is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The boat is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The helicopter is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The motorbike is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
     }
   ]
 }

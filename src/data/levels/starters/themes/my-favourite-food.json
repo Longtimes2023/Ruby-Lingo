@@ -36,7 +36,8 @@
         "my-favourite-food/l1/memory-match",
         "my-favourite-food/l1/missing-letter",
         "my-favourite-food/l1/listen-tap",
-        "my-favourite-food/l1/word-picture"
+        "my-favourite-food/l1/word-picture",
+        "my-favourite-food/l1/prepositions"
       ]
     },
     {
@@ -55,7 +56,8 @@
         "my-favourite-food/l2/memory-match",
         "my-favourite-food/l2/missing-letter",
         "my-favourite-food/l2/listen-tap",
-        "my-favourite-food/l2/word-picture"
+        "my-favourite-food/l2/word-picture",
+        "my-favourite-food/l2/prepositions"
       ]
     },
     {
@@ -76,7 +78,8 @@
         "my-favourite-food/l3/memory-match-2",
         "my-favourite-food/l3/missing-letter",
         "my-favourite-food/l3/listen-tap",
-        "my-favourite-food/l3/word-picture"
+        "my-favourite-food/l3/word-picture",
+        "my-favourite-food/l3/prepositions"
       ]
     },
     {
@@ -97,7 +100,8 @@
         "my-favourite-food/l4/memory-match-2",
         "my-favourite-food/l4/missing-letter",
         "my-favourite-food/l4/listen-tap",
-        "my-favourite-food/l4/word-picture"
+        "my-favourite-food/l4/word-picture",
+        "my-favourite-food/l4/prepositions"
       ]
     },
     {
@@ -118,7 +122,8 @@
         "my-favourite-food/l5/memory-match-2",
         "my-favourite-food/l5/missing-letter",
         "my-favourite-food/l5/listen-tap",
-        "my-favourite-food/l5/word-picture"
+        "my-favourite-food/l5/word-picture",
+        "my-favourite-food/l5/prepositions"
       ]
     },
     {
@@ -137,7 +142,8 @@
         "my-favourite-food/l6/memory-match",
         "my-favourite-food/l6/missing-letter",
         "my-favourite-food/l6/listen-tap",
-        "my-favourite-food/l6/word-picture"
+        "my-favourite-food/l6/word-picture",
+        "my-favourite-food/l6/prepositions"
       ]
     }
   ],
@@ -1043,6 +1049,133 @@
       ],
       "difficulty": 1,
       "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" }
+    },
+    {
+      "id": "my-favourite-food/l1/prepositions",
+      "lessonId": "my-favourite-food/l1",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.apple",
+        "starters.banana",
+        "starters.orange-n",
+        "starters.lemon"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The apple is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The banana is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The orange is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The lemon is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-favourite-food/l2/prepositions",
+      "lessonId": "my-favourite-food/l2",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.lime",
+        "starters.mango",
+        "starters.pineapple",
+        "starters.coconut"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The lime is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The mango is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The pineapple is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The coconut is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-favourite-food/l3/prepositions",
+      "lessonId": "my-favourite-food/l3",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.tomato",
+        "starters.onion",
+        "starters.potato",
+        "starters.carrot"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The tomato is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The onion is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The potato is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The carrot is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-favourite-food/l4/prepositions",
+      "lessonId": "my-favourite-food/l4",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.bread",
+        "starters.egg"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 3,
+        "slots": [
+          { "sentenceEn": "The bread is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The egg is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The bread is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-favourite-food/l5/prepositions",
+      "lessonId": "my-favourite-food/l5",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.fish",
+        "starters.sausage",
+        "starters.burger",
+        "starters.chicken-meat"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The fish is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The sausage is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The burger is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The chicken is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "my-favourite-food/l6/prepositions",
+      "lessonId": "my-favourite-food/l6",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.candy",
+        "starters.chocolate",
+        "starters.ice-cream"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 3,
+        "slots": [
+          { "sentenceEn": "The candy is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The chocolate is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The ice cream is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
     }
   ]
 }

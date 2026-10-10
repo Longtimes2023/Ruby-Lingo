@@ -36,7 +36,8 @@
         "at-school/s1/memory-match-2",
         "at-school/s1/missing-letter",
         "at-school/s1/listen-tap",
-        "at-school/s1/word-picture"
+        "at-school/s1/word-picture",
+        "at-school/s1/prepositions"
       ]
     },
     {
@@ -57,7 +58,8 @@
         "at-school/s2/memory-match-2",
         "at-school/s2/missing-letter",
         "at-school/s2/listen-tap",
-        "at-school/s2/word-picture"
+        "at-school/s2/word-picture",
+        "at-school/s2/prepositions"
       ]
     },
     {
@@ -100,7 +102,8 @@
         "at-school/s4/memory-match-2",
         "at-school/s4/missing-letter",
         "at-school/s4/listen-tap",
-        "at-school/s4/word-picture"
+        "at-school/s4/word-picture",
+        "at-school/s4/prepositions"
       ]
     }
   ],
@@ -803,6 +806,69 @@
       ],
       "difficulty": 1,
       "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" }
+    },
+    {
+      "id": "at-school/s1/prepositions",
+      "lessonId": "at-school/s1",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.pencil",
+        "starters.pen",
+        "starters.ruler",
+        "starters.eraser"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The pencil is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The pen is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The ruler is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The eraser is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "at-school/s2/prepositions",
+      "lessonId": "at-school/s2",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.football",
+        "starters.basketball",
+        "starters.hockey",
+        "starters.computer"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 4,
+        "slots": [
+          { "sentenceEn": "The football is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The basketball is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The hockey is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The computer is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
+    },
+    {
+      "id": "at-school/s4/prepositions",
+      "lessonId": "at-school/s4",
+      "gameType": "prepositions",
+      "wordIds": [
+        "starters.keyboard",
+        "starters.mouse-computer"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "prepositions",
+        "rounds": 3,
+        "slots": [
+          { "sentenceEn": "The keyboard is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The mouse is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] },
+          { "sentenceEn": "The keyboard is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
+        ]
+      }
     }
   ]
 }
