@@ -18,7 +18,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { GameType } from '@shared/types/content.js';
-import { MVP_GAME_TYPES } from '@shared/types/content.js';
+import { MVP_GAME_TYPES, PLAYABLE_GAME_TYPES } from '@shared/types/content.js';
 import { GAME_HEARTS } from '@shared/game-scoring.js';
 
 import { GAME_COMPONENTS, isGamePlayable } from '@/components/games/shared/registry.js';
@@ -163,5 +163,12 @@ describe('GAME_COMPONENTS — nguồn chân lý duy nhất cho "game đã chơi 
     for (const gameType of registeredGameTypes) {
       expect(MVP_GAME_TYPES, `${gameType} ngoài phạm vi MVP`).toContain(gameType);
     }
+  });
+
+  it('⭐ `PLAYABLE_GAME_TYPES` (shared) KHỚP bảng registry — nếu lệch, cổng mở khoá bài thi sẽ đòi bé chơi một trò chưa có', () => {
+    // `scripts/gen-content-index.ts` dùng `PLAYABLE_GAME_TYPES` để tính `requiredExerciseIds` (server
+    // đọc để kiểm điều kiện mở khoá bài thi) vì nó KHÔNG import được registry (JSX/src/). Đây là cổng
+    // giữ hai danh sách không lệch nhau — cùng tinh thần "hai đường, một đáp số".
+    expect([...registeredGameTypes].sort()).toEqual([...PLAYABLE_GAME_TYPES].sort());
   });
 });

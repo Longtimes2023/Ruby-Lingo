@@ -1,0 +1,118 @@
+{
+  "note": "⚠️ NỘI DUNG TỰ SOẠN. PHẦN NÓI KHÔNG CHẤM TỰ ĐỘNG — bé nghe mẫu tiếng Anh rồi tự nói, KHÔNG ghi âm. Xem docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md §3.4 và §10.",
+  "section": "speaking",
+  "title_vi": "Phần Nói",
+  "autoScored": false,
+  "maxShields": 5,
+  "parts": [
+    {
+      "id": "starters.final-test.speaking.p1",
+      "index": 1,
+      "title_vi": "Phần 1 — Làm theo chỉ dẫn",
+      "instruction_vi": "Nghe chỉ dẫn bằng tiếng Anh rồi làm theo (chỉ vào tranh hoặc đặt đồ vật).",
+      "items": [
+        {
+          "id": "starters.final-test.speaking.p1.q1",
+          "interaction": "speak_prompt",
+          "promptEn": "Point to the door.",
+          "audioTextEn": "Point to the door.",
+          "imageKey": "home-scene"
+        },
+        {
+          "id": "starters.final-test.speaking.p1.q2",
+          "interaction": "speak_prompt",
+          "wordId": "starters.cat",
+          "promptEn": "Point to the cat.",
+          "audioTextEn": "Point to the cat.",
+          "imageKey": "at-home"
+        },
+        {
+          "id": "starters.final-test.speaking.p1.q3",
+          "interaction": "speak_prompt",
+          "wordId": "starters.book",
+          "promptEn": "Put the book on the table.",
+          "audioTextEn": "Put the book on the table.",
+          "imageKey": "at-school"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.speaking.p2",
+      "index": 2,
+      "title_vi": "Phần 2 — Nói về tranh",
+      "instruction_vi": "Nghe câu hỏi về bức tranh rồi trả lời.",
+      "items": [
+        {
+          "id": "starters.final-test.speaking.p2.q1",
+          "interaction": "speak_prompt",
+          "promptEn": "Tell me about the zoo.",
+          "audioTextEn": "Tell me about the zoo.",
+          "imageKey": "at-the-zoo"
+        },
+        {
+          "id": "starters.final-test.speaking.p2.q2",
+          "interaction": "speak_prompt",
+          "promptEn": "What can you see at the beach?",
+          "audioTextEn": "What can you see at the beach?",
+          "imageKey": "at-the-beach"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.speaking.p3",
+      "index": 3,
+      "title_vi": "Phần 3 — Nói về đồ vật",
+      "instruction_vi": "Nghe câu hỏi về đồ vật rồi trả lời.",
+      "items": [
+        {
+          "id": "starters.final-test.speaking.p3.q1",
+          "interaction": "speak_prompt",
+          "wordId": "starters.hat",
+          "promptEn": "What colour is the hat?",
+          "audioTextEn": "What colour is the hat?"
+        },
+        {
+          "id": "starters.final-test.speaking.p3.q2",
+          "interaction": "speak_prompt",
+          "wordId": "starters.banana",
+          "promptEn": "What is this?",
+          "audioTextEn": "What is this?"
+        },
+        {
+          "id": "starters.final-test.speaking.p3.q3",
+          "interaction": "speak_prompt",
+          "wordId": "starters.eye",
+          "promptEn": "What do you do with your eyes?",
+          "audioTextEn": "What do you do with your eyes?"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.speaking.p4",
+      "index": 4,
+      "title_vi": "Phần 4 — Nói về bé",
+      "instruction_vi": "Nghe câu hỏi về chính bé rồi trả lời.",
+      "items": [
+        {
+          "id": "starters.final-test.speaking.p4.q1",
+          "interaction": "speak_prompt",
+          "promptEn": "How old are you?",
+          "audioTextEn": "How old are you?"
+        },
+        {
+          "id": "starters.final-test.speaking.p4.q2",
+          "interaction": "speak_prompt",
+          "promptEn": "Tell me about your family.",
+          "audioTextEn": "Tell me about your family."
+        },
+        {
+          "id": "starters.final-test.speaking.p4.q3",
+          "interaction": "speak_prompt",
+          "wordId": "starters.football",
+          "promptEn": "Can you play football?",
+          "audioTextEn": "Can you play football?"
+        }
+      ]
+    }
+  ]
+}

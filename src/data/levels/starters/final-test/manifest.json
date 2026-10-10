@@ -1,0 +1,12 @@
+{
+  "note": "⚠️ NỘI DUNG TỰ SOẠN cho bài thi cuối khoá RubyLingo (Starters). KHÔNG dán đề/wordlist/audio/ảnh Cambridge vào đây — xem docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md §10. RubyLingo KHÔNG phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.",
+  "id": "starters.final-test",
+  "levelId": "starters",
+  "version": "1.0.0",
+  "source": "original",
+  "sections": [
+    { "section": "listening", "partCount": 4, "itemCount": 20, "autoScored": true },
+    { "section": "reading-writing", "partCount": 5, "itemCount": 25, "autoScored": true },
+    { "section": "speaking", "partCount": 4, "itemCount": 11, "autoScored": false }
+  ]
+}

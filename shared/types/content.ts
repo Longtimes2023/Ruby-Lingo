@@ -61,6 +61,31 @@ export const MVP_GAME_TYPES: readonly GameType[] = [
 ] as const;
 
 /**
+ * Game ĐÃ CÓ COMPONENT — tức là bé bấm vào chơi được NGAY BÂY GIỜ.
+ *
+ * ⚠️⚠️ ĐÂY LÀ BẢN SAO của khoá trong `GAME_COMPONENTS` (`src/components/games/shared/registry.ts`).
+ *   Nguồn chân lý của "game đã chơi được chưa" vẫn là REGISTRY — nhưng registry import component
+ *   React (JSX), mà `scripts/gen-content-index.ts` và `scripts/validate-content.ts` chạy bằng
+ *   `tsx`/`node` và KHÔNG import được `src/`. Nên cần một bản thuần dữ liệu ở `shared/` cho server
+ *   và script build đọc.
+ *
+ *   ⚠️ KHÁC `MVP_GAME_TYPES`: `MVP_GAME_TYPES` là một tuyên bố về KẾ HOẠCH ("5 game này thuộc phạm vi
+ *      MVP"). Danh sách này là SỰ THẬT VỀ MÃ NGUỒN ("đã có component"). Khi Nhóm 5 làm dở, hai danh
+ *      sách lệch nhau — lúc đó dùng nhầm `MVP_GAME_TYPES` sẽ khiến cổng mở khoá bài thi đòi bé chơi
+ *      một trò chưa tồn tại.
+ *
+ *   ⚠️ Lệch với registry ⇒ `tests/unit/client/game-routing.test.ts` ĐỎ (cổng đối chiếu hai bên,
+ *      chạy trong `npm run ci`). Sửa danh sách này CHỈ khi thêm/bớt component thật.
+ */
+export const PLAYABLE_GAME_TYPES: readonly GameType[] = [
+  'listen_tap',
+  'missing_letter',
+  'prepositions',
+  'memory_match',
+  'word_picture',
+] as const;
+
+/**
  * Game có yêu cầu từ phải VẼ ĐƯỢC HÌNH (`Word.picturable === true`).
  * Validator phải chặn: game thuộc nhóm này cần >= 4 từ picturable.
  */

@@ -1,0 +1,221 @@
+{
+  "note": "⚠️ NỘI DUNG TỰ SOẠN. KHÔNG dán đề/wordlist/audio Cambridge vào đây — xem docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md §10.",
+  "section": "listening",
+  "title_vi": "Phần Nghe",
+  "autoScored": true,
+  "maxShields": 5,
+  "parts": [
+    {
+      "id": "starters.final-test.listening.p1",
+      "index": 1,
+      "title_vi": "Phần 1 — Nối tên với người",
+      "instruction_vi": "Nghe rồi nối tên với đúng người trong tranh.",
+      "items": [
+        {
+          "id": "starters.final-test.listening.p1.q1",
+          "interaction": "pick_name",
+          "wordId": "starters.boy",
+          "promptEn": "Who is it?",
+          "audioTextEn": "This is a boy. He is happy.",
+          "options": ["boy", "girl", "man", "woman", "baby"],
+          "answer": "boy"
+        },
+        {
+          "id": "starters.final-test.listening.p1.q2",
+          "interaction": "pick_name",
+          "wordId": "starters.girl",
+          "promptEn": "Who is it?",
+          "audioTextEn": "This is a girl. She has a red hat.",
+          "options": ["boy", "girl", "man", "woman", "baby"],
+          "answer": "girl"
+        },
+        {
+          "id": "starters.final-test.listening.p1.q3",
+          "interaction": "pick_name",
+          "wordId": "starters.man",
+          "promptEn": "Who is it?",
+          "audioTextEn": "This is a man. He is my dad.",
+          "options": ["boy", "girl", "man", "woman", "baby"],
+          "answer": "man"
+        },
+        {
+          "id": "starters.final-test.listening.p1.q4",
+          "interaction": "pick_name",
+          "wordId": "starters.woman",
+          "promptEn": "Who is it?",
+          "audioTextEn": "This is a woman. She is a teacher.",
+          "options": ["boy", "girl", "man", "woman", "baby"],
+          "answer": "woman"
+        },
+        {
+          "id": "starters.final-test.listening.p1.q5",
+          "interaction": "pick_name",
+          "wordId": "starters.baby",
+          "promptEn": "Who is it?",
+          "audioTextEn": "This is a baby. The baby is small.",
+          "options": ["boy", "girl", "man", "woman", "baby"],
+          "answer": "baby"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.listening.p2",
+      "index": 2,
+      "title_vi": "Phần 2 — Nghe và viết",
+      "instruction_vi": "Nghe rồi viết số hoặc chữ cái vào ô trống.",
+      "items": [
+        {
+          "id": "starters.final-test.listening.p2.q1",
+          "interaction": "write_word",
+          "wordId": "starters.seven",
+          "promptEn": "Write the number.",
+          "audioTextEn": "Number seven.",
+          "answer": "seven"
+        },
+        {
+          "id": "starters.final-test.listening.p2.q2",
+          "interaction": "write_word",
+          "wordId": "starters.three",
+          "promptEn": "Write the number.",
+          "audioTextEn": "Number three.",
+          "answer": "three"
+        },
+        {
+          "id": "starters.final-test.listening.p2.q3",
+          "interaction": "write_word",
+          "wordId": "starters.twelve",
+          "promptEn": "Write the number.",
+          "audioTextEn": "Number twelve.",
+          "answer": "twelve"
+        },
+        {
+          "id": "starters.final-test.listening.p2.q4",
+          "interaction": "write_word",
+          "wordId": "starters.b",
+          "promptEn": "Write the letter.",
+          "audioTextEn": "The letter B.",
+          "answer": "b"
+        },
+        {
+          "id": "starters.final-test.listening.p2.q5",
+          "interaction": "write_word",
+          "wordId": "starters.m",
+          "promptEn": "Write the letter.",
+          "audioTextEn": "The letter M.",
+          "answer": "m"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.listening.p3",
+      "index": 3,
+      "title_vi": "Phần 3 — Nghe và chọn tranh",
+      "instruction_vi": "Nghe rồi chọn bức tranh đúng.",
+      "items": [
+        {
+          "id": "starters.final-test.listening.p3.q1",
+          "interaction": "choose_picture",
+          "wordId": "starters.kite",
+          "promptEn": "Choose the right picture.",
+          "audioTextEn": "Look! The kite is in the sky.",
+          "options": ["kite", "balloon", "boat"],
+          "answer": "kite"
+        },
+        {
+          "id": "starters.final-test.listening.p3.q2",
+          "interaction": "choose_picture",
+          "wordId": "starters.banana",
+          "promptEn": "Choose the right picture.",
+          "audioTextEn": "I eat a banana every day.",
+          "options": ["banana", "apple", "grapes"],
+          "answer": "banana"
+        },
+        {
+          "id": "starters.final-test.listening.p3.q3",
+          "interaction": "choose_picture",
+          "wordId": "starters.elephant",
+          "promptEn": "Choose the right picture.",
+          "audioTextEn": "The elephant is very big.",
+          "options": ["elephant", "giraffe", "hippo"],
+          "answer": "elephant"
+        },
+        {
+          "id": "starters.final-test.listening.p3.q4",
+          "interaction": "choose_picture",
+          "wordId": "starters.train",
+          "promptEn": "Choose the right picture.",
+          "audioTextEn": "The train is fast.",
+          "options": ["train", "bus", "boat"],
+          "answer": "train"
+        },
+        {
+          "id": "starters.final-test.listening.p3.q5",
+          "interaction": "choose_picture",
+          "wordId": "starters.guitar",
+          "promptEn": "Choose the right picture.",
+          "audioTextEn": "I can play the guitar.",
+          "options": ["guitar", "piano", "camera"],
+          "answer": "guitar"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.listening.p4",
+      "index": 4,
+      "title_vi": "Phần 4 — Nghe và chọn màu",
+      "instruction_vi": "Nghe câu nói rồi chọn đúng màu của đồ vật.",
+      "items": [
+        {
+          "id": "starters.final-test.listening.p4.q1",
+          "interaction": "choose_picture",
+          "wordId": "starters.blue",
+          "promptEn": "Listen and choose the colour.",
+          "audioTextEn": "The boat is blue.",
+          "imageKey": "boat",
+          "options": ["blue", "red", "green"],
+          "answer": "blue"
+        },
+        {
+          "id": "starters.final-test.listening.p4.q2",
+          "interaction": "choose_picture",
+          "wordId": "starters.red",
+          "promptEn": "Listen and choose the colour.",
+          "audioTextEn": "The hat is red.",
+          "imageKey": "hat",
+          "options": ["red", "yellow", "black"],
+          "answer": "red"
+        },
+        {
+          "id": "starters.final-test.listening.p4.q3",
+          "interaction": "choose_picture",
+          "wordId": "starters.yellow",
+          "promptEn": "Listen and choose the colour.",
+          "audioTextEn": "The balloon is yellow.",
+          "imageKey": "balloon",
+          "options": ["yellow", "pink", "blue"],
+          "answer": "yellow"
+        },
+        {
+          "id": "starters.final-test.listening.p4.q4",
+          "interaction": "choose_picture",
+          "wordId": "starters.pink",
+          "promptEn": "Listen and choose the colour.",
+          "audioTextEn": "The flower is pink.",
+          "imageKey": "flower",
+          "options": ["pink", "brown", "green"],
+          "answer": "pink"
+        },
+        {
+          "id": "starters.final-test.listening.p4.q5",
+          "interaction": "choose_picture",
+          "wordId": "starters.green",
+          "promptEn": "Listen and choose the colour.",
+          "audioTextEn": "The chair is green.",
+          "imageKey": "chair",
+          "options": ["green", "grey", "purple"],
+          "answer": "green"
+        }
+      ]
+    }
+  ]
+}

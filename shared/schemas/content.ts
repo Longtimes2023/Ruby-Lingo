@@ -16,6 +16,7 @@
 import { z } from 'zod';
 import { ACCESSORY_SLOTS, DECORATION_SLOTS } from '../pet-slots.js';
 import { MVP_GAME_TYPES } from '../types/content.js';
+import { finalTestIndexEntrySchema } from './final-test.js';
 
 // =============================================================================
 // Nội dung học
@@ -644,6 +645,19 @@ export const contentIndexFileSchema = z.object({
       id: idString,
       /** Thứ tự chủ đề trên bản đồ — nguồn chân lý cho luật `previous_theme`. */
       themeIds: z.array(idString),
+      /**
+       * Id MỌI exercise "chơi được" của cấp (gameType ∈ `PLAYABLE_GAME_TYPES`) — DÙNG BỞI SERVER để
+       * tự kiểm điều kiện mở khoá bài thi cuối khoá trước khi chấm (client chỉ là rào UX, gõ thẳng
+       * API phải bị chặn). Trường này tồn tại vì server KHÔNG đọc được `src/data/` (xem khối comment
+       * đầu `contentIndexFileSchema`), mà luật mở khoá lại cần biết bài nào chơi được.
+       */
+      requiredExerciseIds: z.array(idString),
+      /**
+       * Tóm tắt bài thi cuối khoá của cấp (đọc từ `final-test/manifest.json`) — hoặc `null` nếu cấp
+       * chưa có đề. Server đọc để biết bài thi gồm mấy phần, mỗi phần mấy câu, phần nào chấm tự động.
+       * ⚠️ KHÔNG chép toàn bộ đề vào đây (đề nặng, server không cần từng item).
+       */
+      finalTest: finalTestIndexEntrySchema.nullable(),
     }),
   ),
   themes: z.array(

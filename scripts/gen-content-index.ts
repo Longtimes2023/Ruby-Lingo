@@ -38,6 +38,10 @@ import { fileURLToPath } from 'node:url';
 
 import { contentIndexFileSchema, levelSchema, themeFileSchema } from '../shared/schemas/content.js';
 import type { ContentIndexFile, ThemeFile } from '../shared/schemas/content.js';
+import { finalTestManifestSchema, finalTestSectionFileSchema } from '../shared/schemas/final-test.js';
+import type { FinalTestIndexEntry, FinalTestSectionId } from '../shared/schemas/final-test.js';
+import { PLAYABLE_GAME_TYPES } from '../shared/types/content.js';
+import type { GameType } from '../shared/types/content.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LEVELS_DIR = join(ROOT, 'src', 'data', 'levels');
@@ -73,6 +77,50 @@ function stableStringify(value: unknown): string {
     return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableStringify(v)}`).join(',')}}`;
   }
   return JSON.stringify(value) ?? 'null';
+}
+
+/** 3 section của bài thi cuối khoá — ĐÚNG thứ tự này trong `manifest.sections` (V21 kiểm). */
+const FINAL_TEST_SECTIONS: readonly FinalTestSectionId[] = ['listening', 'reading-writing', 'speaking'];
+
+/**
+ * Dựng tóm tắt bài thi cuối khoá của MỘT cấp, đọc từ `final-test/`. Trả `null` nếu cấp chưa có đề.
+ *
+ * ⚠️ Số part/item tính TỪ CHÍNH CÁC FILE SECTION (không tin số trong manifest) — index phải phản ánh
+ *    SỰ THẬT trên đĩa. `manifest.sections` lệch với file là lỗi V21, do validator bắt.
+ */
+function buildFinalTestEntry(levelDirName: string): FinalTestIndexEntry | null {
+  const dir = join(LEVELS_DIR, levelDirName, 'final-test');
+  const manifestPath = join(dir, 'manifest.json');
+  if (!existsSync(manifestPath)) return null;
+
+  const manifest = finalTestManifestSchema.safeParse(readJson(manifestPath));
+  if (!manifest.success) {
+    fail(
+      `src/data/levels/${levelDirName}/final-test/manifest.json không hợp lệ: ` +
+        manifest.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; '),
+    );
+  }
+
+  const sections = FINAL_TEST_SECTIONS.map((section) => {
+    const filePath = join(dir, `${section}.json`);
+    const parsedFile = finalTestSectionFileSchema.safeParse(readJson(filePath));
+    if (!parsedFile.success) {
+      fail(
+        `src/data/levels/${levelDirName}/final-test/${section}.json không hợp lệ: ` +
+          parsedFile.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; '),
+      );
+    }
+    const file = parsedFile.data;
+    const itemCount = file.parts.reduce((sum, part) => sum + part.items.length, 0);
+    return {
+      section,
+      partCount: file.parts.length,
+      itemCount,
+      autoScored: file.autoScored,
+    };
+  });
+
+  return { id: manifest.data.id, version: manifest.data.version, sections };
 }
 
 /** Quét `src/data/levels/*` và dựng chỉ mục. Thứ tự đầu ra là XÁC ĐỊNH (không phụ thuộc đĩa). */
@@ -126,7 +174,9 @@ function buildIndex(): ContentIndexFile {
 
   for (const level of levelDirs) {
     const parsed = levelSchema.parse(readJson(level.path));
-    levels.push({ id: parsed.id, themeIds: [...parsed.themeIds] });
+
+    /** Mọi exercise của cấp — để suy `requiredExerciseIds` (chỉ giữ game CHƠI ĐƯỢC). */
+    const exercises: Array<{ id: string; gameType: GameType }> = [];
 
     const themesDir = join(LEVELS_DIR, level.dirName, 'themes');
     if (!existsSync(themesDir)) fail(`không tìm thấy thư mục chủ đề: ${themesDir}`);
@@ -144,6 +194,9 @@ function buildIndex(): ContentIndexFile {
         );
       }
       byThemeId.set(themeParsed.data.theme.id, themeParsed.data);
+      for (const exercise of themeParsed.data.exercises) {
+        exercises.push({ id: exercise.id, gameType: exercise.gameType });
+      }
 
       /**
        * ⭐ Gom chữ của từ + KHỬ TRÙNG THEO `id`. Hai nơi định nghĩa cùng `id` mà `en`/`vi` KHÁC
@@ -199,6 +252,20 @@ function buildIndex(): ContentIndexFile {
         hasGames: file.exercises.length > 0,
         unlock: file.theme.unlockCondition,
       });
+    });
+
+    // Chỉ giữ exercise có game CHƠI ĐƯỢC (có component). Đòi bé "chơi hết" một trò chưa tồn tại
+    // sẽ khiến cổng mở khoá bài thi BẤT KHẢ THI — xem `PLAYABLE_GAME_TYPES`.
+    const requiredExerciseIds = exercises
+      .filter((exercise) => PLAYABLE_GAME_TYPES.includes(exercise.gameType))
+      .map((exercise) => exercise.id)
+      .sort();
+
+    levels.push({
+      id: parsed.id,
+      themeIds: [...parsed.themeIds],
+      requiredExerciseIds,
+      finalTest: buildFinalTestEntry(level.dirName),
     });
   }
 

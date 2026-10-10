@@ -1,0 +1,254 @@
+{
+  "note": "⚠️ NỘI DUNG TỰ SOẠN. KHÔNG dán đề/wordlist/ảnh Cambridge vào đây — xem docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md §10.",
+  "section": "reading-writing",
+  "title_vi": "Phần Đọc và Viết",
+  "autoScored": true,
+  "maxShields": 5,
+  "parts": [
+    {
+      "id": "starters.final-test.reading-writing.p1",
+      "index": 1,
+      "title_vi": "Phần 1 — Đúng hay sai",
+      "instruction_vi": "Nhìn tranh, đọc câu rồi chọn dấu tick nếu câu đúng, dấu gạch chéo nếu câu sai.",
+      "items": [
+        {
+          "id": "starters.final-test.reading-writing.p1.q1",
+          "interaction": "tick_cross",
+          "wordId": "starters.cat",
+          "promptEn": "This is a cat.",
+          "options": ["tick", "cross"],
+          "answer": "tick"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p1.q2",
+          "interaction": "tick_cross",
+          "wordId": "starters.dog",
+          "promptEn": "This is a fish.",
+          "options": ["tick", "cross"],
+          "answer": "cross"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p1.q3",
+          "interaction": "tick_cross",
+          "wordId": "starters.apple",
+          "promptEn": "This is an apple.",
+          "options": ["tick", "cross"],
+          "answer": "tick"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p1.q4",
+          "interaction": "tick_cross",
+          "wordId": "starters.book",
+          "promptEn": "This is a bus.",
+          "options": ["tick", "cross"],
+          "answer": "cross"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p1.q5",
+          "interaction": "tick_cross",
+          "wordId": "starters.hat",
+          "promptEn": "This is a hat.",
+          "options": ["tick", "cross"],
+          "answer": "tick"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.reading-writing.p2",
+      "index": 2,
+      "title_vi": "Phần 2 — Trả lời yes/no",
+      "instruction_vi": "Nhìn tranh, đọc câu rồi chọn yes nếu câu đúng, no nếu câu sai.",
+      "items": [
+        {
+          "id": "starters.final-test.reading-writing.p2.q1",
+          "interaction": "yes_no",
+          "wordId": "starters.banana",
+          "promptEn": "The banana is yellow.",
+          "options": ["yes", "no"],
+          "answer": "yes"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p2.q2",
+          "interaction": "yes_no",
+          "wordId": "starters.frog",
+          "promptEn": "The frog is green.",
+          "options": ["yes", "no"],
+          "answer": "yes"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p2.q3",
+          "interaction": "yes_no",
+          "wordId": "starters.tiger",
+          "promptEn": "The tiger is pink.",
+          "options": ["yes", "no"],
+          "answer": "no"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p2.q4",
+          "interaction": "yes_no",
+          "wordId": "starters.cat",
+          "promptEn": "The cat is in the garden.",
+          "options": ["yes", "no"],
+          "answer": "yes"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p2.q5",
+          "interaction": "yes_no",
+          "wordId": "starters.cow",
+          "promptEn": "The cow is in the sea.",
+          "options": ["yes", "no"],
+          "answer": "no"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.reading-writing.p3",
+      "index": 3,
+      "title_vi": "Phần 3 — Xếp chữ cái thành từ",
+      "instruction_vi": "Nhìn tranh rồi xếp các chữ cái thành từ đúng.",
+      "items": [
+        {
+          "id": "starters.final-test.reading-writing.p3.q1",
+          "interaction": "arrange_letters",
+          "wordId": "starters.cat",
+          "promptEn": "Look at the picture. Make the word.",
+          "options": ["t", "c", "a"],
+          "hintMask": "c__",
+          "answer": "cat"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p3.q2",
+          "interaction": "arrange_letters",
+          "wordId": "starters.frog",
+          "promptEn": "Look at the picture. Make the word.",
+          "options": ["o", "g", "f", "r"],
+          "hintMask": "f___",
+          "answer": "frog"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p3.q3",
+          "interaction": "arrange_letters",
+          "wordId": "starters.apple",
+          "promptEn": "Look at the picture. Make the word.",
+          "options": ["p", "l", "e", "a", "p"],
+          "hintMask": "a____",
+          "answer": "apple"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p3.q4",
+          "interaction": "arrange_letters",
+          "wordId": "starters.hat",
+          "promptEn": "Look at the picture. Make the word.",
+          "options": ["t", "a", "h"],
+          "hintMask": "h__",
+          "answer": "hat"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p3.q5",
+          "interaction": "arrange_letters",
+          "wordId": "starters.kite",
+          "promptEn": "Look at the picture. Make the word.",
+          "options": ["i", "e", "k", "t"],
+          "hintMask": "k___",
+          "answer": "kite"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.reading-writing.p4",
+      "index": 4,
+      "title_vi": "Phần 4 — Điền từ vào chỗ trống",
+      "instruction_vi": "Đọc câu rồi chọn từ trong khung để điền vào chỗ trống.",
+      "items": [
+        {
+          "id": "starters.final-test.reading-writing.p4.q1",
+          "interaction": "gap_fill",
+          "wordId": "starters.hat",
+          "promptEn": "I have a new ___ on my head.",
+          "wordBox": ["hat", "book", "shoe"],
+          "answer": "hat"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p4.q2",
+          "interaction": "gap_fill",
+          "wordId": "starters.milk",
+          "promptEn": "I drink ___ in the morning.",
+          "wordBox": ["milk", "cake", "rice"],
+          "answer": "milk"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p4.q3",
+          "interaction": "gap_fill",
+          "wordId": "starters.book",
+          "promptEn": "I read a ___ at school.",
+          "wordBox": ["book", "desk", "clock"],
+          "answer": "book"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p4.q4",
+          "interaction": "gap_fill",
+          "wordId": "starters.apple",
+          "promptEn": "The ___ is red and round.",
+          "wordBox": ["apple", "banana", "lemon"],
+          "answer": "apple"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p4.q5",
+          "interaction": "gap_fill",
+          "wordId": "starters.guitar",
+          "promptEn": "I play the ___ at home.",
+          "wordBox": ["guitar", "piano", "radio"],
+          "answer": "guitar"
+        }
+      ]
+    },
+    {
+      "id": "starters.final-test.reading-writing.p5",
+      "index": 5,
+      "title_vi": "Phần 5 — Trả lời câu hỏi về truyện",
+      "instruction_vi": "Đọc truyện tranh rồi trả lời mỗi câu bằng một từ.",
+      "items": [
+        {
+          "id": "starters.final-test.reading-writing.p5.q1",
+          "interaction": "story_answer",
+          "wordId": "starters.boy",
+          "promptEn": "Who is in the park?",
+          "imageKey": "story-park",
+          "answer": "boy"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p5.q2",
+          "interaction": "story_answer",
+          "wordId": "starters.park",
+          "promptEn": "Where are the children?",
+          "imageKey": "story-park",
+          "answer": "park"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p5.q3",
+          "interaction": "story_answer",
+          "wordId": "starters.kite",
+          "promptEn": "What is in the sky?",
+          "imageKey": "story-park",
+          "answer": "kite"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p5.q4",
+          "interaction": "story_answer",
+          "wordId": "starters.two",
+          "promptEn": "How many children are in the story?",
+          "imageKey": "story-park",
+          "answer": "two"
+        },
+        {
+          "id": "starters.final-test.reading-writing.p5.q5",
+          "interaction": "story_answer",
+          "wordId": "starters.red",
+          "promptEn": "What colour is the kite?",
+          "imageKey": "story-park",
+          "answer": "red"
+        }
+      ]
+    }
+  ]
+}

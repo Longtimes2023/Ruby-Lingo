@@ -37,7 +37,10 @@ import {
 } from '../../../shared/content/content-index.js';
 import { levelSchema, themeFileSchema } from '../../../shared/schemas/content.js';
 import type { ContentIndexFile, ThemeFile } from '../../../shared/schemas/content.js';
-import type { UnlockCondition } from '../../../shared/types/content.js';
+import { finalTestManifestSchema, finalTestSectionFileSchema } from '../../../shared/schemas/final-test.js';
+import type { FinalTestIndexEntry, FinalTestSectionId } from '../../../shared/schemas/final-test.js';
+import { PLAYABLE_GAME_TYPES } from '../../../shared/types/content.js';
+import type { GameType, UnlockCondition } from '../../../shared/types/content.js';
 
 /**
  * Gốc repo `rubylingo/`.
@@ -61,8 +64,39 @@ interface ExpectedTheme {
   unlock: UnlockCondition;
 }
 
+/** Một cấp như chỉ mục PHẢI ghi — đúng bốn trường. */
+interface ExpectedLevel {
+  id: string;
+  themeIds: string[];
+  requiredExerciseIds: string[];
+  finalTest: FinalTestIndexEntry | null;
+}
+
+/** 3 section bài thi — ĐÚNG thứ tự này trong `manifest.sections`. */
+const FINAL_TEST_SECTIONS: readonly FinalTestSectionId[] = ['listening', 'reading-writing', 'speaking'];
+
 function readJson(path: string): unknown {
   return JSON.parse(readFileSync(path, 'utf8')) as unknown;
+}
+
+/**
+ * Dựng kỳ vọng cho khối `finalTest` của một cấp — ĐỘC LẬP với `gen-content-index.ts`.
+ * Số part/item tính TỪ CHÍNH CÁC FILE SECTION (không tin số khai trong manifest), đúng như bộ sinh.
+ */
+function scanFinalTest(levelDirName: string): FinalTestIndexEntry | null {
+  const dir = join(LEVELS_DIR, levelDirName, 'final-test');
+  if (!existsSync(join(dir, 'manifest.json'))) return null;
+  const manifest = finalTestManifestSchema.parse(readJson(join(dir, 'manifest.json')));
+  const sections = FINAL_TEST_SECTIONS.map((section) => {
+    const file = finalTestSectionFileSchema.parse(readJson(join(dir, `${section}.json`)));
+    return {
+      section,
+      partCount: file.parts.length,
+      itemCount: file.parts.reduce((sum, part) => sum + part.items.length, 0),
+      autoScored: file.autoScored,
+    };
+  });
+  return { id: manifest.id, version: manifest.version, sections };
 }
 
 /**
@@ -76,7 +110,7 @@ function readJson(path: string): unknown {
  *   • `hasGames` = chủ đề có ít nhất một `exercise` (đây là tín hiệu cho `unlock_theme`).
  */
 function scanSource(): {
-  levels: ContentIndexFile['levels'];
+  levels: ExpectedLevel[];
   themes: ExpectedTheme[];
   words: Array<{ id: string; en: string; vi: string }>;
 } {
@@ -91,7 +125,7 @@ function scanSource(): {
     }))
     .sort((a, b) => a.level.order - b.level.order || a.level.id.localeCompare(b.level.id));
 
-  const levels: ContentIndexFile['levels'] = [];
+  const levels: ExpectedLevel[] = [];
   const themes: ExpectedTheme[] = [];
 
   /**
@@ -104,7 +138,7 @@ function scanSource(): {
   const wordById = new Map<string, { id: string; en: string; vi: string }>();
 
   for (const { dirName, level } of levelDirs) {
-    levels.push({ id: level.id, themeIds: [...level.themeIds] });
+    const exercises: Array<{ id: string; gameType: GameType }> = [];
 
     const themesDir = join(LEVELS_DIR, dirName, 'themes');
     if (!existsSync(themesDir)) throw new Error(`không tìm thấy thư mục chủ đề: ${themesDir}`);
@@ -115,6 +149,9 @@ function scanSource(): {
       if (!fileName.endsWith('.json')) continue;
       const parsed = themeFileSchema.parse(readJson(join(themesDir, fileName)));
       byThemeId.set(parsed.theme.id, parsed);
+      for (const exercise of parsed.exercises) {
+        exercises.push({ id: exercise.id, gameType: exercise.gameType });
+      }
 
       for (const word of parsed.words) {
         const previous = wordById.get(word.id);
@@ -151,6 +188,18 @@ function scanSource(): {
         hasGames: file.exercises.length > 0,
         unlock: file.theme.unlockCondition,
       });
+    });
+
+    const requiredExerciseIds = exercises
+      .filter((exercise) => PLAYABLE_GAME_TYPES.includes(exercise.gameType))
+      .map((exercise) => exercise.id)
+      .sort();
+
+    levels.push({
+      id: level.id,
+      themeIds: [...level.themeIds],
+      requiredExerciseIds,
+      finalTest: scanFinalTest(dirName),
     });
   }
 
@@ -200,10 +249,10 @@ describe('content-index.json — bản chiếu của src/data/ phải khớp T�
     }
   });
 
-  it('⑥ `hasGames` phải là tín hiệu THẬT: có cả chủ đề có game lẫn chưa có', () => {
-    // Nếu mọi giá trị đều `false` thì `unlock_theme` không bao giờ xong — và test ④ vẫn xanh.
-    expect(expected.themes.some((entry) => entry.hasGames)).toBe(true);
-    expect(expected.themes.some((entry) => !entry.hasGames)).toBe(true);
+  it('⑥ `hasGames` phải là tín hiệu THẬT: mọi chủ đề có exercise đều được đánh dấu', () => {
+    // Starters 所有主题均已挂载已注册游戏，索引必须忠实反映这一点。
+    expect(expected.themes.length).toBeGreaterThan(0);
+    expect(expected.themes.every((entry) => entry.hasGames)).toBe(true);
   });
 
   it('⑦ `lessonIds` không rỗng ở mọi chủ đề — danh sách rỗng làm `complete_theme` bất khả thi', () => {
@@ -223,6 +272,33 @@ describe('content-index.json — bản chiếu của src/data/ phải khớp T�
   it('⑨ mỗi `id` từ chỉ xuất hiện MỘT lần trong chỉ mục (khử trùng đã xảy ra ở bộ sinh)', () => {
     const ids = onDisk.words.map((word) => word.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('⑩ `requiredExerciseIds` mỗi cấp = ĐÚNG các exercise có game CHƠI ĐƯỢC, đã sắp xếp', () => {
+    for (const entry of onDisk.levels) {
+      const want = expected.levels.find((level) => level.id === entry.id)?.requiredExerciseIds ?? [];
+      expect(entry.requiredExerciseIds, entry.id).toEqual(want);
+      // Không trùng id, và đã sắp xếp (thứ tự XÁC ĐỊNH).
+      expect(new Set(entry.requiredExerciseIds).size, entry.id).toBe(entry.requiredExerciseIds.length);
+      expect(entry.requiredExerciseIds, entry.id).toEqual([...entry.requiredExerciseIds].sort());
+    }
+    // Tín hiệu phải CÓ THẬT: nếu rỗng thì luật "chơi hết" vô nghĩa.
+    expect(onDisk.levels.some((level) => level.requiredExerciseIds.length > 0)).toBe(true);
+  });
+
+  it('⑪ khối `finalTest` khớp TỪNG section với `final-test/*.json` (part/item/autoScored)', () => {
+    for (const entry of onDisk.levels) {
+      const want = expected.levels.find((level) => level.id === entry.id)?.finalTest ?? null;
+      expect(entry.finalTest, entry.id).toEqual(want);
+    }
+    const ft = onDisk.levels.find((level) => level.id === DEFAULT_CONTENT_LEVEL_ID)?.finalTest;
+    expect(ft, 'khối finalTest của starters').toBeTruthy();
+    // Số liệu CHUẨN của bài thi Digital — sai là server chấm thiếu/thừa câu.
+    expect(ft?.sections).toEqual([
+      { section: 'listening', partCount: 4, itemCount: 20, autoScored: true },
+      { section: 'reading-writing', partCount: 5, itemCount: 25, autoScored: true },
+      { section: 'speaking', partCount: 4, itemCount: 11, autoScored: false },
+    ]);
   });
 });
 

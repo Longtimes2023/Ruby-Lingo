@@ -36,6 +36,9 @@ import {
 } from '../shared/schemas/content.js';
 // `ThemeFile` = z.infer<typeof themeFileSchema> ⇒ sống ở schemas, KHÔNG phải types.
 import type { ThemeFile } from '../shared/schemas/content.js';
+import { finalTestManifestSchema, finalTestSectionFileSchema } from '../shared/schemas/final-test.js';
+import type { FinalTestSectionId } from '../shared/schemas/final-test.js';
+import { auditFinalTestCambridge, auditFinalTestItem } from '../shared/final-test-rules.js';
 import { PICTURE_GAME_TYPES, MVP_GAME_TYPES } from '../shared/types/content.js';
 import type { GameType } from '../shared/types/content.js';
 
@@ -288,23 +291,41 @@ function validateLevels() {
         }
       }
 
+      // --- V20: aggregate exercise coverage ------------------------------
+      for (const lesson of b.lessons) {
+        const covered = new Set(
+          b.exercises.filter((exercise) => exercise.lessonId === lesson.id).flatMap((exercise) => exercise.wordIds),
+        );
+        const missing = lesson.wordIds.filter((wordId) => !covered.has(wordId));
+        if (missing.length > 0) {
+          err(
+            'V20',
+            `themes/${file}: bài "${lesson.id}" có từ không tham gia bất kỳ exercise nào: ${missing.join(', ')}`,
+          );
+        }
+      }
+
       // --- V11: game dạng hình cần >= 4 từ picturable -------------------
       const wordById = new Map(b.words.map((w) => [w.id, w]));
       for (const e of b.exercises) {
-        if (!PICTURE_GAME_TYPES.includes(e.gameType)) continue;
-        const picturable = e.wordIds.filter((id) => wordById.get(id)?.picturable === true);
-        if (picturable.length < 4) {
-          err(
-            'V11',
-            `themes/${file}: exercise "${e.id}" (${e.gameType}) chỉ có ${picturable.length} từ picturable (cần >= 4). ` +
-              'Từ trừu tượng không có hình để bé chạm.',
-          );
+        const usesVietnameseText =
+          e.gameType === 'memory_match' && e.config.kind === 'memory_match' && e.config.pairMode === 'en_vi';
+        if (PICTURE_GAME_TYPES.includes(e.gameType) && !usesVietnameseText) {
+          const picturable = e.wordIds.filter((id) => wordById.get(id)?.picturable === true);
+          if (picturable.length < 4) {
+            err(
+              'V11',
+              `themes/${file}: exercise "${e.id}" (${e.gameType}) chỉ có ${picturable.length} từ picturable (cần >= 4). ` +
+                'Từ trừu tượng không có hình để bé chạm.',
+            );
+          }
         }
         for (const id of e.wordIds) {
           if (!wordById.has(id)) {
             err('V9', `themes/${file}: exercise "${e.id}" tham chiếu từ "${id}" không có trong theme này`);
           }
         }
+
       }
 
       // --- V12: tranh cảnh ---------------------------------------------
@@ -366,6 +387,175 @@ function validateLevels() {
           '(bình thường ở giai đoạn này — sẽ gắn khi làm nhóm Game)',
       );
     }
+  }
+}
+
+// =============================================================================
+// 1b. BÀI THI CUỐI KHOÁ (V21–V27) — TÁCH RIÊNG khỏi luật nội dung học V1–V20
+// =============================================================================
+//
+// ⚠️ Mọi luật ở đây là LỖI (không phải cảnh báo): lệch ⇒ server chấm thiếu/thừa câu, khiên sai, hoặc
+//    bé không thể giành được đáp án. V27 là ràng buộc BẢN QUYỀN cứng (đề phải TỰ SOẠN).
+//
+//   V21  manifest khớp đúng 3 section + số part/item THẬT trong từng file
+//   V22  id item duy nhất toàn level, và đúng quy ước "…p<part>.q<n>"
+//   V23  answer/wordId hợp lệ (đáp án phải chọn được, wordId phải có thật)
+//   V24  arrange_letters: hintMask + tập chữ cái xáo trộn khớp answer
+//   V25  audioTextEn/promptEn CHỈ tiếng Anh (không dấu tiếng Việt)
+//   V26  trần khiên = 5, và autoScored đúng theo từng phần (Speaking: false)
+//   V27  source = "original" + không chuỗi nhận dạng đề Cambridge
+//
+// Luật V23–V25, V27 nằm trong `shared/final-test-rules.ts` (hàm THUẦN) để test gọi lại được —
+// một mã, hai nơi dùng (xem đầu file luật đó).
+
+const FINAL_TEST_SECTIONS: readonly FinalTestSectionId[] = ['listening', 'reading-writing', 'speaking'];
+
+/** Tập id từ CÓ THẬT của một level (đọc mọi file theme). */
+function collectLevelWordIds(levelDir: string): Set<string> {
+  const ids = new Set<string>();
+  const themesDir = join(levelDir, 'themes');
+  if (!existsSync(themesDir)) return ids;
+  for (const f of readdirSync(themesDir).filter((x) => x.endsWith('.json'))) {
+    try {
+      const d = JSON.parse(readFileSync(join(themesDir, f), 'utf8')) as {
+        words?: Array<{ id: string }>;
+      };
+      for (const w of d.words ?? []) ids.add(w.id);
+    } catch {
+      /* lỗi parse đã báo ở validateLevels */
+    }
+  }
+  return ids;
+}
+
+/** Mọi chuỗi HIỂN THỊ/ĐỌC của một item — dùng cho V27 (không gồm `note`). */
+function itemTexts(item: Record<string, unknown>): string[] {
+  const out: string[] = [];
+  for (const value of Object.values(item)) {
+    if (typeof value === 'string') out.push(value);
+    else if (Array.isArray(value)) {
+      for (const v of value) if (typeof v === 'string') out.push(v);
+    }
+  }
+  return out;
+}
+
+function validateFinalTest() {
+  if (!existsSync(LEVELS_DIR)) return; // V1 đã báo.
+
+  for (const levelDirName of readdirSync(LEVELS_DIR)) {
+    const levelDir = join(LEVELS_DIR, levelDirName);
+    const ftDir = join(levelDir, 'final-test');
+    if (!existsSync(ftDir)) continue;
+
+    const rawManifest = readJson<unknown>(join(ftDir, 'manifest.json'));
+    if (!rawManifest) continue;
+    const parsedManifest = finalTestManifestSchema.safeParse(rawManifest);
+    if (!parsedManifest.success) {
+      formatZod(`levels/${levelDirName}/final-test/manifest.json`, parsedManifest.error);
+      continue;
+    }
+    const manifest = parsedManifest.data;
+
+    // V27: KHẲNG ĐỊNH bản quyền — đề phải TỰ SOẠN.
+    if (manifest.source !== 'original') {
+      err('V27', `levels/${levelDirName}/final-test/manifest.json: source "${manifest.source}" — bắt buộc "original"`);
+    }
+
+    // V21: đúng 3 section, ĐÚNG THỨ TỰ.
+    const order = manifest.sections.map((s) => s.section);
+    if (order.join(',') !== FINAL_TEST_SECTIONS.join(',')) {
+      err(
+        'V21',
+        `levels/${levelDirName}/final-test: manifest.sections phải là [${FINAL_TEST_SECTIONS.join(', ')}] theo đúng thứ tự, đang là [${order.join(', ')}]`,
+      );
+    }
+
+    const wordIds = collectLevelWordIds(levelDir);
+    const allItemIds = new Set<string>();
+    const cambridgeTexts: string[] = [];
+    let autoScoredItems = 0;
+
+    for (const section of FINAL_TEST_SECTIONS) {
+      const relFile = `levels/${levelDirName}/final-test/${section}.json`;
+      const raw = readJson<unknown>(join(ftDir, `${section}.json`));
+      if (!raw) continue;
+      const parsed = finalTestSectionFileSchema.safeParse(raw);
+      if (!parsed.success) {
+        formatZod(relFile, parsed.error);
+        continue;
+      }
+      const file = parsed.data;
+
+      // V21: file.section phải khớp tên; số part/item khớp manifest.
+      if (file.section !== section) {
+        err('V21', `${relFile}: section "${file.section}" không khớp tên file "${section}"`);
+      }
+      const summary = manifest.sections.find((s) => s.section === section);
+      const itemCount = file.parts.reduce((sum, part) => sum + part.items.length, 0);
+      if (!summary) {
+        err('V21', `levels/${levelDirName}/final-test/manifest.json: thiếu section "${section}"`);
+      } else {
+        if (summary.partCount !== file.parts.length) {
+          err('V21', `${relFile}: manifest khai ${summary.partCount} part nhưng file có ${file.parts.length}`);
+        }
+        if (summary.itemCount !== itemCount) {
+          err('V21', `${relFile}: manifest khai ${summary.itemCount} câu nhưng file có ${itemCount}`);
+        }
+        if (summary.autoScored !== file.autoScored) {
+          err('V21', `${relFile}: manifest.autoScored=${summary.autoScored} nhưng file.autoScored=${file.autoScored}`);
+        }
+      }
+
+      // V26: chỉ Listening & Reading-Writing chấm tự động; Speaking thì KHÔNG; trần khiên = 5.
+      const wantAuto = section !== 'speaking';
+      if (file.autoScored !== wantAuto) {
+        err('V26', `${relFile}: autoScored phải là ${wantAuto} cho phần "${section}"`);
+      }
+      if (file.maxShields !== 5) {
+        err('V26', `${relFile}: maxShields phải = 5 (trần khiên), đang là ${file.maxShields}`);
+      }
+
+      file.parts.forEach((part, partIndex) => {
+        // V22: id part + thứ tự.
+        if (part.index !== partIndex + 1) {
+          err('V22', `${relFile}: part "${part.id}" có index=${part.index} nhưng phải là ${partIndex + 1}`);
+        }
+        const expectedPartId = `${manifest.id}.${section}.p${part.index}`;
+        if (part.id !== expectedPartId) {
+          err('V22', `${relFile}: part id "${part.id}" sai quy ước — phải là "${expectedPartId}"`);
+        }
+        part.items.forEach((item, itemIndex) => {
+          // V22: id item + duy nhất toàn level.
+          const expectedItemId = `${expectedPartId}.q${itemIndex + 1}`;
+          if (item.id !== expectedItemId) {
+            err('V22', `${relFile}: item id "${item.id}" sai quy ước — phải là "${expectedItemId}"`);
+          }
+          if (allItemIds.has(item.id)) {
+            err('V22', `${relFile}: item id "${item.id}" bị TRÙNG — id phải duy nhất toàn bài thi`);
+          }
+          allItemIds.add(item.id);
+
+          // V23–V25: luật thuần dùng chung với test.
+          for (const v of auditFinalTestItem(item, wordIds)) {
+            err(v.rule, `${relFile} → ${v.message}`);
+          }
+
+          cambridgeTexts.push(...itemTexts(item as unknown as Record<string, unknown>));
+        });
+        cambridgeTexts.push(part.title_vi, part.instruction_vi);
+      });
+
+      if (file.autoScored) autoScoredItems += itemCount;
+    }
+
+    // V27: không chuỗi nhận dạng Cambridge ở bất kỳ nội dung nào (trừ `note`).
+    for (const v of auditFinalTestCambridge(cambridgeTexts)) {
+      err('V27', `levels/${levelDirName}/final-test: ${v.message}`);
+    }
+
+    const levelLabel = levelDirName.charAt(0).toUpperCase() + levelDirName.slice(1);
+    console.log(`\n🎓 Bài thi ${levelLabel}: ${FINAL_TEST_SECTIONS.length} phần · ${autoScoredItems} câu`);
   }
 }
 
@@ -708,6 +898,7 @@ function validateAvatars() {
 console.log('🔍 RubyLingo — kiểm tra nội dung\n' + '='.repeat(60));
 
 validateLevels();
+validateFinalTest();
 validateRewardContent();
 validateGlobalScenes();
 validateAvatars();
