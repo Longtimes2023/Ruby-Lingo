@@ -18,16 +18,25 @@
  * Momo một món đồ mới.
  */
 
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import '@/i18n/index.js';
 import { PetAvatar } from '@/components/common/PetAvatar.js';
+import { petArtworkUrl } from '@/lib/petArtwork.js';
 import { EVOLUTION_STAGES, stageDefinition } from '@shared/content/levels.js';
 import { PET_DEFINITIONS, petEmojiFor } from '@shared/content/pets.js';
-import { accessorySlotOf, decorationSlotOf, getShopItem, SHOP_ITEMS } from '@shared/content/shop.js';
+import {
+  accessorySlotOf,
+  decorationSlotOf,
+  getShopItem,
+  SHOP_ITEMS,
+} from '@shared/content/shop.js';
 import { shopItemsFileSchema } from '@shared/schemas/content.js';
 import type { EvolutionStage, ShopItem } from '@shared/types/reward.js';
+import { shopArtworkOf } from '@/lib/shopArtworkManifest.js';
 
 /** Vật phẩm THẬT đọc từ danh mục — cùng lý do như `shop-item-card.test.tsx`. */
 function item(id: string): ShopItem {
@@ -136,21 +145,104 @@ describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
 // =============================================================================
 
 describe('PetAvatar — vẽ', () => {
-  it('chưa có gì ⇒ vẫn có Momo (không bao giờ là khung rỗng)', () => {
-    renderAvatar();
-    expect(screen.getByText('🐵')).toBeInTheDocument();
+  it('ánh xạ đủ mọi phụ kiện và đồ trang trí sang WebP; đồ ăn tiếp tục dùng emoji', () => {
+    const artItems = SHOP_ITEMS.filter(
+      (shopItem) => shopItem.category === 'accessory' || shopItem.category === 'decoration',
+    );
+    expect(artItems).toHaveLength(20);
+    for (const shopItem of artItems) {
+      const artwork = shopArtworkOf(shopItem);
+      expect(artwork, `${shopItem.id} artwork mapping`).toContain('/assets/pets/shop/');
+      expect(existsSync(join(process.cwd(), 'public', artwork!.slice(1))), artwork).toBe(true);
+    }
+    const foodItems = SHOP_ITEMS.filter((shopItem) => shopItem.category === 'food');
+    expect(foodItems.length).toBeGreaterThan(0);
+    for (const foodItem of foodItems) expect(shopArtworkOf(foodItem)).toBeUndefined();
+    const expectedBehind = ['acc-backpack', 'acc-cape', 'acc-wings'];
+    for (const id of expectedBehind) expect(accessorySlotOf(item(id))).toBe('back');
+    for (const shopItem of artItems.filter(
+      (candidate) => candidate.id.startsWith('acc-') && !expectedBehind.includes(candidate.id),
+    )) {
+      expect(accessorySlotOf(shopItem)).not.toBe('back');
+    }
   });
 
-  it('mặc mũ ⇒ chiếc mũ có mặt trong khung cảnh', () => {
-    renderAvatar([item('acc-hat')]);
-    expect(screen.getByText('🎩')).toBeInTheDocument();
+  it('đủ ảnh đứng cho mọi pet × stage và component dùng đúng từng URL', () => {
+    const publicDir = join(process.cwd(), 'public');
+    for (const pet of PET_DEFINITIONS) {
+      for (const stage of EVOLUTION_STAGES) {
+        const url = petArtworkUrl(pet.id, stage.stage);
+        expect(url, `${pet.id} × ${stage.stage} URL`).toBeDefined();
+        expect(existsSync(join(publicDir, url!.slice(1))), url).toBe(true);
+        const { container, unmount } = renderAvatar([], stage.stage, pet.id);
+        expect(container.querySelector(`img[src="${url}"]`), `${pet.id} × ${stage.stage}`).toBeInTheDocument();
+        expect(container.querySelector('span[hidden]')).toBeInTheDocument();
+        unmount();
+      }
+    }
   });
 
-  it('nhiều món CÙNG một vị trí thì hiện ĐỦ (bé không bị mất món nào)', () => {
-    // Server không cấm mặc hai món cùng vị trí, và cấm là trái luật "không lấy gì của bé".
-    renderAvatar([item('acc-bow'), item('acc-crown')]);
-    expect(screen.getByText('🎀')).toBeInTheDocument();
-    expect(screen.getByText('👑')).toBeInTheDocument();
+  it('图片载入失败时保留表情符号回退', () => {
+    const { container } = renderAvatar();
+    const image = container.querySelector<HTMLImageElement>('img[src="/assets/pets/monkey-baby.webp"]');
+    expect(image).toBeInTheDocument();
+    image!.dispatchEvent(new Event('error'));
+    expect(image).toHaveProperty('hidden', true);
+    expect(container.querySelector('span[hidden]')).not.toBeInTheDocument();
+    expect(screen.getByText(petEmojiFor('monkey', 'baby'))).toBeInTheDocument();
+  });
+
+  it('mặc mũ ⇒ ảnh WebP được vẽ ở slot head, emoji chỉ làm fallback ẩn', () => {
+    const { container } = renderAvatar([item('acc-hat')]);
+    const artwork = container.querySelector('img[src="/assets/pets/shop/acc-hat.webp"]');
+    expect(artwork).toBeInTheDocument();
+    expect(artwork?.closest('.absolute')?.parentElement?.className).toContain('top-[-60%]');
+    expect(container.querySelector('span[hidden]')).toBeInTheDocument();
+  });
+
+  it('cả 9 ảnh đều hiện và wrapper stacking giữ mọi món back sau pet, slot trước pet', () => {
+    const accessoryIds = [
+      'acc-bow',
+      'acc-hat',
+      'acc-glasses',
+      'acc-scarf',
+      'acc-shoes',
+      'acc-backpack',
+      'acc-crown',
+      'acc-cape',
+      'acc-wings',
+    ];
+    for (const pet of PET_DEFINITIONS) {
+      const wornItems = accessoryIds.map(item);
+      for (const stage of EVOLUTION_STAGES) {
+      const { container, unmount } = renderAvatar(wornItems, stage.stage, pet.id);
+      expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(9);
+      const backWrapper = container.querySelector('[data-accessory-layer="behind"]');
+      const frontWrapper = container.querySelector('[data-accessory-layer="front"]');
+      const petLayer = container.querySelector('.z-\\[2\\]');
+      expect(backWrapper).toHaveClass('absolute', 'inset-0', 'z-[1]');
+      expect(frontWrapper).toHaveClass('absolute', 'inset-0', 'z-[3]');
+      expect(petLayer).toHaveClass('relative', 'z-[2]');
+      expect(backWrapper?.querySelector('.z-\\[1\\]')).toBeNull();
+      expect(backWrapper?.contains(petLayer)).toBe(false);
+      unmount();
+      }
+    }
+  });
+
+  it('nhiều món CÙNG một vị trí thì chồng lệch có giới hạn và giữ đủ nội dung', () => {
+    renderAvatar([item('acc-bow'), item('acc-hat'), item('acc-crown')]);
+    const headLayers = document.querySelectorAll('[data-accessory-id^="acc-"]');
+    expect(headLayers).toHaveLength(3);
+    expect(document.querySelector('[data-accessory-id="acc-bow"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-accessory-id="acc-hat"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-accessory-id="acc-crown"]')).toBeInTheDocument();
+    for (const layer of headLayers) {
+      expect(layer).toHaveClass('absolute', 'inset-0');
+    }
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Khỉ Momo đang dùng: Nơ, Mũ, Vương miện',
+    );
   });
 
   it('trang trí bầu trời và mặt đất cùng hiện', () => {
@@ -215,16 +307,11 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
 // =============================================================================
 
 describe('PetAvatar — tiến hoá (T066 · T04)', () => {
-  it('⭐ canh giữ DỮ LIỆU: MỌI con × MỌI bậc ⇒ đúng emoji khai trong `pets.json`', () => {
-    // Nếu ai đó sửa `pets.json` (hoặc `petEmojiFor`) mà lệch bậc, test này đỏ NGAY — thay vì để
-    // một bé nào đó thấy con mình "biến hình" sai. Chạy trên TOÀN BỘ danh mục, không chỉ một con.
+  it('⭐ 每个pet × stage仍保留正确的表情回退', () => {
     for (const pet of PET_DEFINITIONS) {
       for (const stage of EVOLUTION_STAGES) {
-        const { unmount } = renderAvatar([], stage.stage, pet.id);
-        expect(
-          screen.getByText(petEmojiFor(pet.id, stage.stage)),
-          `${pet.id} × ${stage.stage}`,
-        ).toBeInTheDocument();
+        const { container, unmount } = renderAvatar([], stage.stage, pet.id);
+        expect(container.querySelector('span[hidden]')).toHaveTextContent(petEmojiFor(pet.id, stage.stage));
         unmount();
       }
     }
@@ -354,12 +441,84 @@ describe('PetAvatar — cổng dữ liệu: shopItemsFileSchema từ chối danh
   });
 
   it('⚠️ đồ ăn có vị trí ⇒ TỪ CHỐI (quả chuối không đội lên đầu ai)', () => {
-    expect(shopItemsFileSchema.safeParse(fileWith({ category: 'food', slot: 'head' })).success).toBe(
-      false,
-    );
+    expect(
+      shopItemsFileSchema.safeParse(fileWith({ category: 'food', slot: 'head' })).success,
+    ).toBe(false);
   });
 
   it('đồ ăn KHÔNG có vị trí ⇒ qua (đó mới là trạng thái đúng)', () => {
     expect(shopItemsFileSchema.safeParse(fileWith({ category: 'food' })).success).toBe(true);
+  });
+});
+
+// =============================================================================
+// 6. Canh giữ TỆP ẢNH — manifest và đĩa phải khớp NHAU theo CẢ HAI CHIỀU
+// =============================================================================
+
+/**
+ * ⚠️ VÌ SAO KHÔNG CHỈ "existsSync trên manifest là đủ":
+ *   `existsSync` bắt được "manifest trỏ tới tệp không tồn tại", nhưng KHÔNG bắt được chiều ngược
+ *   lại — thêm một tệp ảnh mới vào đĩa mà quên khai vào manifest (ảnh không bao giờ hiện trên Momo),
+ *   hoặc xoá tệp nhưng manifest còn sót. Hai lượt kiểm dưới so khớp TẬP HỢP hai chiều, nên mọi
+ *   sai lệch đều ĐỎ. Chúng cũng chốt định dạng `.webp`: quay lại `.png` là đỏ ngay, vì app đã
+ *   chuyển sang WebP 512px (trước đây PNG 1024px nặng ~48 MB cho 38 ảnh).
+ */
+describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => {
+  const publicDir = join(process.cwd(), 'public');
+  const abs = (url: string) => join(publicDir, url.slice(1));
+  const basenamesIn = (dir: string, ext: string) =>
+    readdirSync(join(publicDir, dir)).filter((f) => f.endsWith(ext)).sort();
+
+  function petArtworkUrls(): string[] {
+    const urls: string[] = [];
+    for (const pet of PET_DEFINITIONS) {
+      for (const stage of EVOLUTION_STAGES) {
+        const url = petArtworkUrl(pet.id, stage.stage);
+        expect(url, `${pet.id} × ${stage.stage} thiếu URL`).toBeDefined();
+        urls.push(url!);
+      }
+    }
+    return urls;
+  }
+
+  function shopArtworkUrls(): string[] {
+    return SHOP_ITEMS.filter(
+      (i) => i.category === 'accessory' || i.category === 'decoration',
+    ).map((i) => {
+      const url = shopArtworkOf(i);
+      expect(url, `${i.id} thiếu URL artwork`).toBeDefined();
+      return url!;
+    });
+  }
+
+  it('MỌI URL thú cưng là .webp và trỏ tới tệp CÓ THẬT', () => {
+    const urls = petArtworkUrls();
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls) {
+      expect(url, `${url} phải là .webp`).toMatch(/\.webp$/);
+      expect(existsSync(abs(url)), `${url} KHÔNG tồn tại trên đĩa`).toBe(true);
+    }
+  });
+
+  it('MỌI URL cửa hàng là .webp và trỏ tới tệp CÓ THẬT', () => {
+    const urls = shopArtworkUrls();
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls) {
+      expect(url, `${url} phải là .webp`).toMatch(/\.webp$/);
+      expect(existsSync(abs(url)), `${url} KHÔNG tồn tại trên đĩa`).toBe(true);
+    }
+  });
+
+  it('⚠️ đĩa và manifest KHỚP từng tên (không thừa, không thiếu)', () => {
+    const petManifest = petArtworkUrls().map((u) => u.split('/').pop()!).sort();
+    expect(basenamesIn('assets/pets', '.webp')).toEqual(petManifest);
+
+    const shopManifest = shopArtworkUrls().map((u) => u.split('/').pop()!).sort();
+    expect(basenamesIn('assets/pets/shop', '.webp')).toEqual(shopManifest);
+  });
+
+  it('⚠️ KHÔNG còn tệp .png sót lại trong thư mục pets (đã chuyển hẳn sang WebP)', () => {
+    expect(basenamesIn('assets/pets', '.png')).toEqual([]);
+    expect(basenamesIn('assets/pets/shop', '.png')).toEqual([]);
   });
 });
