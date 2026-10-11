@@ -20,7 +20,7 @@ Yêu cầu trực tiếp của chủ dự án (2026-10-10):
 | 1 | Nghe mẫu en-GB → bé tự nói → "🎤 Nói rồi!" | LUÔN có | Mọi trình duyệt | Không | Không | Không (chỉ độ tham gia) |
 | 2 | "🎧 Máy nghe thử" (Web Speech API) | Opt-in (chỉ khi bấm) | Chỉ khi `hasSpeechRecognition()` = true | Không lưu | **Có** (âm thanh gửi tới nhà cung cấp trình duyệt) | Không |
 | 3 | "Nghe lại giọng con" (MediaRecorder) | **BẬT** (chỉ hiện nút) | Chỉ khi cờ bật + có `MediaRecorder` | Có, **chỉ trong máy** | Không | Không |
-| 4 | Phụ huynh xác nhận bằng rubric | LUÔN có (trong khu vực phụ huynh) | Sau cổng PIN | Không | Không (lưu `localStorage`) | Không |
+| 4 | Phụ huynh xác nhận bằng rubric | LUÔN có (trong khu vực phụ huynh) | Sau cổng PIN | Không | **Có** (`PUT /api/children/:id/parent-speaking`, bảng `parent_speaking_confirm`) | Không |
 
 **Hành vi mặc định:** nếu bé không đụng gì tới tầng 2/3, câu Nói vẫn kết thúc **chỉ** khi bé bấm
 "🎤 Nói rồi!" — y như trước Giai đoạn 8. Tầng 2/3 không bao giờ tự bật.
@@ -123,9 +123,14 @@ mở từ nút **"Xác nhận phần Nói của con"** trong `/parent`.
   4. Bé trả lời được câu hỏi về bản thân (tuổi, gia đình, sở thích).
 - Mỗi mục hai lựa chọn: **"Bé đã làm được"** / **"Mình ôn thêm nhé"** (vế sau là lời mời ôn cùng
   con, KHÔNG phải lời chê). Bấm lại lựa chọn cũ ⇒ bỏ đánh dấu.
-- **Lưu cục bộ (`localStorage`), TÁCH THEO TỪNG BÉ** — khoá `rubylingo.parent.speaking-check.<childId>`.
-- ⚠️ **CHƯA ĐỒNG BỘ LÊN SERVER.** Đồng bộ cần thêm bảng + route phía server (ngoài phạm vi giai
-  đoạn này). UI NÓI THẬT điều đó với phụ huynh (`parent.speakingLocalNote`) — ẩn đi là nói dối họ.
+- **Lưu lên SERVER, tách theo từng bé** (chủ dự án chốt 2026-10-11: *"gọi mạng thì gọi mạng"*):
+  `GET`/`PUT /api/children/:id/parent-speaking` ⇒ bảng `parent_speaking_confirm` (migration `014`).
+  Kết quả cũng đi kèm báo cáo phụ huynh qua `ReportResponse.parentSpeaking`.
+- **Đường lùi khi mất mạng**: bấm là ghi `localStorage` NGAY (khoá `rubylingo.parent.speaking-check.<childId>`)
+  rồi mới gọi `PUT`; mất mạng ⇒ giữ cờ "đang chờ đồng bộ" + hiện câu trung tính, và **tự gửi bù**
+  khi có mạng trở lại (nghe sự kiện `online`, và lần nạp sau). Không lộ mã lỗi kỹ thuật cho phụ huynh.
+- Nhãn cũ `parent.speakingLocalNote` ("mới lưu trên máy") đã bị GỠ — nói vậy là nói sai sự thật sau
+  khi có đồng bộ server.
 
 **Đây là cách trả lời trực tiếp câu hỏi của chủ dự án:** người nghe tốt nhất — và duy nhất đáng tin
 — là phụ huynh/giáo viên ngồi cạnh bé. Tầng 4 cho họ một rubric để quan sát và xác nhận.
