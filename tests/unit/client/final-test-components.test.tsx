@@ -468,6 +468,84 @@ describe('final-test — hình của từ (Giai đoạn 10)', () => {
 });
 
 // =============================================================================
+// Tranh cảnh gợi ý bối cảnh (P1 ở cấp ITEM, P4 ở cấp PART)
+// =============================================================================
+
+describe('final-test — tranh cảnh gợi ý bối cảnh', () => {
+  /** Câu `pick_name` của P1 — có `imageKey` trỏ tranh cảnh (công viên 5 người). */
+  function p1Item(overrides: Record<string, unknown> = {}): FinalTestItem {
+    return makeItem({
+      id: 'starters.final-test.listening.p1.q1',
+      interaction: 'pick_name',
+      wordId: 'starters.boy',
+      promptEn: 'Who is it?',
+      audioTextEn: 'This is a boy.',
+      imageKey: 'listen-p1-scene',
+      options: ['boy', 'girl'],
+      answer: 'boy',
+      ...overrides,
+    });
+  }
+
+  /** Câu `choose_picture` của P4 — `imageKey` là TÊN ĐỒ VẬT, tranh cảnh ở cấp part. */
+  function p4Item(): FinalTestItem {
+    return makeItem({
+      id: 'starters.final-test.listening.p4.q1',
+      interaction: 'choose_picture',
+      wordId: 'starters.blue',
+      promptEn: 'Listen and choose the colour.',
+      audioTextEn: 'The boat is blue.',
+      imageKey: 'boat',
+      options: ['blue', 'red', 'green'],
+      answer: 'blue',
+    });
+  }
+
+  it('pick_name (P1): có tranh cảnh THẬT ⇒ hiện TRANH CẢNH', () => {
+    const { container } = render(<PickNameGame item={p1Item()} onAnswered={vi.fn()} />);
+    expect(imgSrcs(container)).toEqual(['/assets/scenes/listen-p1-scene.webp']);
+  });
+
+  it('pick_name: `imageKey` trỏ tranh KHÔNG có thật ⇒ KHÔNG vẽ ảnh (không ảnh vỡ)', () => {
+    const { container } = render(
+      <PickNameGame item={p1Item({ imageKey: 'khong-co-tranh-nay' })} onAnswered={vi.fn()} />,
+    );
+    expect(imgSrcs(container)).toHaveLength(0);
+  });
+
+  it('choose_picture (P4): tranh cảnh cấp PART ⇒ hiện tranh; KHÔNG khai ⇒ KHÔNG tranh cảnh', () => {
+    const withScene = render(
+      <ChoosePictureGame
+        item={p4Item()}
+        wordsByEn={WORDS_BY_EN}
+        sceneImageKey="listen-p4-scene"
+        onAnswered={vi.fn()}
+      />,
+    );
+    expect(imgSrcs(withScene.container)).toContain('/assets/scenes/listen-p4-scene.webp');
+    withScene.unmount();
+
+    // P3 KHÔNG khai `sceneImageKey` ⇒ chỉ có ảnh của 3 lựa chọn, KHÔNG có tranh cảnh nào.
+    const withoutScene = render(
+      <ChoosePictureGame item={p4Item()} wordsByEn={WORDS_BY_EN} onAnswered={vi.fn()} />,
+    );
+    expect(imgSrcs(withoutScene.container).some((s) => s.includes('/assets/scenes/'))).toBe(false);
+  });
+
+  it('choose_picture: `sceneImageKey` trỏ tranh KHÔNG có thật ⇒ KHÔNG vẽ tranh cảnh', () => {
+    const { container } = render(
+      <ChoosePictureGame
+        item={p4Item()}
+        wordsByEn={WORDS_BY_EN}
+        sceneImageKey="khong-co-tranh-nay"
+        onAnswered={vi.fn()}
+      />,
+    );
+    expect(imgSrcs(container).some((s) => s.includes('/assets/scenes/'))).toBe(false);
+  });
+});
+
+// =============================================================================
 // Phần Nói
 // =============================================================================
 

@@ -229,7 +229,7 @@
           "interaction": "story_answer",
           "wordId": "starters.kite",
           "promptEn": "What is in the sky?",
-          "imageKey": "story-park",
+          "imageKey": "story-park-2",
           "answer": "kite"
         },
         {
@@ -237,7 +237,7 @@
           "interaction": "story_answer",
           "wordId": "starters.two",
           "promptEn": "How many children are in the story?",
-          "imageKey": "story-park",
+          "imageKey": "story-park-3",
           "answer": "two"
         },
         {
@@ -245,7 +245,7 @@
           "interaction": "story_answer",
           "wordId": "starters.red",
           "promptEn": "What colour is the kite?",
-          "imageKey": "story-park",
+          "imageKey": "story-park-3",
           "answer": "red"
         }
       ]

@@ -11,7 +11,7 @@
  *    `tsx` (script build) lẫn Vitest.
  */
 
-import type { FinalTestItem } from './schemas/final-test.js';
+import type { FinalTestInteraction, FinalTestItem } from './schemas/final-test.js';
 
 export interface FinalTestViolation {
   /** Mã luật, khớp với `scripts/validate-content.ts` (V23/V24/V25/V27). */
@@ -200,5 +200,64 @@ export function auditFinalTestCambridge(texts: readonly string[]): FinalTestViol
       }
     }
   }
+  return out;
+}
+
+/**
+ * Dạng câu coi `item.imageKey` là khoá TRANH CẢNH (tra `public/assets/scenes/<key>.webp`).
+ *
+ * ⚠️ `choose_picture` KHÔNG nằm trong đây: với dạng đó `item.imageKey` là TÊN ĐỒ VẬT (P4 giữ
+ *    `boat`/`hat`/… làm khoá ngữ nghĩa, KHÔNG phải tệp tranh cảnh — tranh cảnh của P4 nằm ở cấp part
+ *    qua `sceneImageKey`). Kiểm `imageKey` của `choose_picture` như khoá tranh cảnh sẽ BÁO OAN.
+ */
+export const SCENE_KEY_INTERACTIONS: readonly FinalTestInteraction[] = [
+  'pick_name',
+  'story_answer',
+];
+
+/** Một part tối thiểu để kiểm khoá tranh cảnh — chỉ cần `id` + `sceneImageKey` (nếu có). */
+export interface FinalTestSceneRefPart {
+  id: string;
+  sceneImageKey?: string | undefined;
+}
+
+/**
+ * V28 — mọi khoá TRANH CẢNH khai trong đề phải ứng với một TỆP CÓ THẬT.
+ *
+ * Gồm hai nguồn:
+ *   • `part.sceneImageKey` (tranh cảnh chung cả part — P4);
+ *   • `item.imageKey` cho các dạng câu coi nó là tranh cảnh (`SCENE_KEY_INTERACTIONS`).
+ *
+ * ⚠️ `hasScene(key)` được TIÊM từ ngoài (module này KHÔNG đọc đĩa) — build truyền hàm kiểm tệp thật,
+ *    test truyền hàm giả lập. Nhờ vậy luật chạy được ở cả hai nơi mà không cần import `node:fs`.
+ *
+ * ⚠️ UI đã có đường lùi "thiếu tệp ⇒ KHÔNG vẽ ảnh" (không bao giờ ảnh vỡ), nhưng lùi im lặng cũng
+ *    nghĩa là MẤT TRANH mà không ai biết. V28 biến "gõ sai khoá" thành LỖI BUILD.
+ */
+export function auditFinalTestSceneKeys(
+  part: FinalTestSceneRefPart,
+  items: readonly FinalTestItem[],
+  hasScene: (key: string) => boolean,
+): FinalTestViolation[] {
+  const out: FinalTestViolation[] = [];
+
+  if (part.sceneImageKey !== undefined && !hasScene(part.sceneImageKey)) {
+    out.push({
+      rule: 'V28',
+      message: `part "${part.id}": sceneImageKey "${part.sceneImageKey}" không có tệp trong public/assets/scenes/`,
+    });
+  }
+
+  for (const item of items) {
+    if (!SCENE_KEY_INTERACTIONS.includes(item.interaction)) continue;
+    const key = 'imageKey' in item ? item.imageKey : undefined;
+    if (key !== undefined && !hasScene(key)) {
+      out.push({
+        rule: 'V28',
+        message: `item "${item.id}": imageKey "${key}" không có tệp trong public/assets/scenes/`,
+      });
+    }
+  }
+
   return out;
 }

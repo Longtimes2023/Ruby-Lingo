@@ -18,7 +18,7 @@
  *    Dùng `process.cwd()` như `content-index.test.ts`.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -28,11 +28,16 @@ import {
   finalTestSectionFileSchema,
 } from '../../../shared/schemas/final-test.js';
 import type { FinalTestItem, FinalTestSectionFile } from '../../../shared/schemas/final-test.js';
-import { auditFinalTestCambridge, auditFinalTestItem } from '../../../shared/final-test-rules.js';
+import {
+  auditFinalTestCambridge,
+  auditFinalTestItem,
+  auditFinalTestSceneKeys,
+} from '../../../shared/final-test-rules.js';
 
 const ROOT = `${process.cwd()}/`;
 const THEMES_DIR = join(ROOT, 'src/data/levels/starters/themes');
 const FINAL_TEST_DIR = join(ROOT, 'src/data/levels/starters/final-test');
+const SCENES_DIR = join(ROOT, 'public/assets/scenes');
 
 function readJson(path: string): unknown {
   return JSON.parse(readFileSync(path, 'utf8')) as unknown;
@@ -222,5 +227,80 @@ describe('tiếng Anh sạch dấu + không có chuỗi nhận dạng Cambridge'
       bad.map((v) => v.message),
       bad.map((v) => v.message).join('\n'),
     ).toEqual([]);
+  });
+});
+
+// =============================================================================
+// 5. TRANH CẢNH của đề — mọi khoá phải có TỆP THẬT (V28, chống ảnh vỡ)
+// =============================================================================
+
+/** Khoá tranh cảnh này có tệp `.webp` thật trong `public/assets/scenes/` không. */
+function sceneExists(key: string): boolean {
+  return existsSync(join(SCENES_DIR, `${key}.webp`));
+}
+
+describe('tranh cảnh của đề — mọi khoá phải có TỆP THẬT', () => {
+  it('mọi khoá tranh cảnh khai trong đề đều có tệp trong public/assets/scenes/ (V28)', () => {
+    const bad: string[] = [];
+    for (const section of sections) {
+      for (const part of section.parts) {
+        for (const v of auditFinalTestSceneKeys(part, part.items, sceneExists)) {
+          bad.push(`[${v.rule}] ${v.message}`);
+        }
+      }
+    }
+    expect(bad, `khoá tranh cảnh thiếu tệp:\n${bad.join('\n')}`).toEqual([]);
+  });
+
+  it('cổng KHÔNG rỗng: đề CÓ khai tranh cảnh ở P1 (cấp item), P4 (cấp part), P5 (cấp item)', () => {
+    // Nếu ai đó gỡ hết `imageKey`/`sceneImageKey` thì test V28 ở trên XANH GIẢ ⇒ chốt riêng ở đây.
+    const partSceneKeys = sections.flatMap((s) => s.parts.map((p) => p.sceneImageKey));
+    expect(partSceneKeys).toContain('listen-p4-scene');
+
+    const p1Keys = itemsOf(listening)
+      .slice(0, 5)
+      .map((i) => ('imageKey' in i ? i.imageKey : undefined));
+    expect(p1Keys).toEqual([
+      'listen-p1-scene',
+      'listen-p1-scene',
+      'listen-p1-scene',
+      'listen-p1-scene',
+      'listen-p1-scene',
+    ]);
+
+    const p5Keys = itemsOf(readingWriting)
+      .slice(-5)
+      .map((i) => ('imageKey' in i ? i.imageKey : undefined));
+    expect(p5Keys).toEqual([
+      'story-park',
+      'story-park',
+      'story-park-2',
+      'story-park-3',
+      'story-park-3',
+    ]);
+  });
+
+  it('Reading P5 đi theo thứ tự KHUNG truyện TĂNG DẦN (không nhảy lui)', () => {
+    const frameNumber: Record<string, number> = {
+      'story-park': 1,
+      'story-park-2': 2,
+      'story-park-3': 3,
+    };
+    const keys = itemsOf(readingWriting)
+      .slice(-5)
+      .map((i) => ('imageKey' in i ? i.imageKey : undefined));
+
+    const frames = keys.map((k) => (k !== undefined ? frameNumber[k] : undefined));
+    expect(
+      frames.every((n) => n !== undefined),
+      `P5 có câu thiếu khoá khung truyện: ${keys.join(', ')}`,
+    ).toBe(true);
+
+    for (let i = 1; i < frames.length; i++) {
+      expect(
+        frames[i]!,
+        `khung nhảy lui ở câu ${i + 1}: ${keys[i - 1]} → ${keys[i]}`,
+      ).toBeGreaterThanOrEqual(frames[i - 1]!);
+    }
   });
 });

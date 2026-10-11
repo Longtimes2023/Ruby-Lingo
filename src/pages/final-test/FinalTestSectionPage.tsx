@@ -176,6 +176,16 @@ function SectionRunner({
 
   const items = useMemo(() => flattenItems(section), [section]);
 
+  // Bảng tra itemId → tranh cảnh CẤP PART (`sceneImageKey`), để câu P4 hiện được bức tranh chung
+  // (đủ 5 đồ vật) mà KHÔNG nhân bản khoá vào từng item. P3 không khai ⇒ `undefined` ⇒ không vẽ ảnh.
+  const sceneKeyByItemId = useMemo(() => {
+    const map = new Map<string, string | undefined>();
+    for (const part of section.parts) {
+      for (const partItem of part.items) map.set(partItem.id, part.sceneImageKey);
+    }
+    return map;
+  }, [section]);
+
   // Bảng tra `en` → `Word` để các LỰA CHỌN dạng tranh (`choose_picture`) vẽ được HÌNH của chính
   // từ đó — lựa chọn trong đề chỉ là CHUỖI tiếng Anh, không phải `wordId` (xem `optionWords.ts`).
   const wordsByEn = useMemo(() => buildWordsByEn(level), [level]);
@@ -322,6 +332,7 @@ function SectionRunner({
         item={item}
         word={word}
         wordsByEn={wordsByEn}
+        sceneImageKey={sceneKeyByItemId.get(item.id)}
         onAnswered={(answered) =>
           handleAnswered(answered.itemId, answered.firstTry, answered.wrongAttempts)
         }

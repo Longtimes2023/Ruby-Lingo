@@ -24,11 +24,15 @@ export const SCENE_KEYS: ReadonlySet<string> = new Set([
   'at-the-clothes-shop',
   'at-the-zoo',
   'home-scene',
+  'listen-p1-scene',
+  'listen-p4-scene',
   'my-body',
   'my-favourite-food',
   'my-friends-birthday',
   'my-street',
   'story-park',
+  'story-park-2',
+  'story-park-3',
 ]);
 
 /**

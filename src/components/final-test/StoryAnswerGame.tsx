@@ -15,8 +15,14 @@
  * ⚠️ KHÔNG ĐỔI LUẬT TRẢ LỜI: vẫn ô nhập 1 từ + `submit` so khớp như cũ.
  */
 
-import { sceneAssetUrlIfExistsOrNull } from '../../data/scene-assets.js';
-import { AnswerTextField, ContinueButton, ItemPrompt, RevealNote, TryAgainNote } from './parts.js';
+import {
+  AnswerTextField,
+  ContinueButton,
+  ItemPrompt,
+  RevealNote,
+  SceneHint,
+  TryAgainNote,
+} from './parts.js';
 import type { FinalTestItemProps } from './types.js';
 import { useFinalTestItem } from './useFinalTestItem.js';
 
@@ -30,21 +36,10 @@ export function StoryAnswerGame({ item, onAnswered }: FinalTestItemProps) {
 
   if (item.interaction !== 'story_answer') return null;
 
-  // Tranh truyện theo `imageKey` — `null` (không khai, hoặc khai mà thiếu tệp) ⇒ không vẽ gì.
-  const sceneSrc = item.imageKey !== undefined ? sceneAssetUrlIfExistsOrNull(item.imageKey) : null;
-
   return (
     <div className="flex flex-col gap-4">
-      {sceneSrc !== null && (
-        <img
-          src={sceneSrc}
-          // Trang trí: câu hỏi vẫn trả lời được bằng chữ; ảnh chỉ giúp bé hình dung bối cảnh.
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className="mx-auto aspect-[3/2] w-full max-w-md rounded-kid border-4 border-line object-cover select-none"
-        />
-      )}
+      {/* Tranh truyện theo `imageKey` — thiếu tệp ⇒ `SceneHint` không vẽ gì (không bao giờ ảnh vỡ). */}
+      <SceneHint sceneKey={item.imageKey} />
 
       <ItemPrompt text={item.promptEn} />
 

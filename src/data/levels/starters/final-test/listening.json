@@ -17,6 +17,7 @@
           "wordId": "starters.boy",
           "promptEn": "Who is it?",
           "audioTextEn": "This is a boy. He is happy.",
+          "imageKey": "listen-p1-scene",
           "options": ["boy", "girl", "man", "woman", "baby"],
           "answer": "boy"
         },
@@ -26,6 +27,7 @@
           "wordId": "starters.girl",
           "promptEn": "Who is it?",
           "audioTextEn": "This is a girl. She has a red hat.",
+          "imageKey": "listen-p1-scene",
           "options": ["boy", "girl", "man", "woman", "baby"],
           "answer": "girl"
         },
@@ -35,6 +37,7 @@
           "wordId": "starters.man",
           "promptEn": "Who is it?",
           "audioTextEn": "This is a man. He is my dad.",
+          "imageKey": "listen-p1-scene",
           "options": ["boy", "girl", "man", "woman", "baby"],
           "answer": "man"
         },
@@ -44,6 +47,7 @@
           "wordId": "starters.woman",
           "promptEn": "Who is it?",
           "audioTextEn": "This is a woman. She is a teacher.",
+          "imageKey": "listen-p1-scene",
           "options": ["boy", "girl", "man", "woman", "baby"],
           "answer": "woman"
         },
@@ -53,6 +57,7 @@
           "wordId": "starters.baby",
           "promptEn": "Who is it?",
           "audioTextEn": "This is a baby. The baby is small.",
+          "imageKey": "listen-p1-scene",
           "options": ["boy", "girl", "man", "woman", "baby"],
           "answer": "baby"
         }
@@ -164,6 +169,7 @@
       "index": 4,
       "title_vi": "Phần 4 — Nghe và chọn màu",
       "instruction_vi": "Nghe câu nói rồi chọn đúng màu của đồ vật.",
+      "sceneImageKey": "listen-p4-scene",
       "items": [
         {
           "id": "starters.final-test.listening.p4.q1",

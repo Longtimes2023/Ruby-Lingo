@@ -17,7 +17,11 @@ import {
   finalTestSectionFileSchema,
 } from '../../../shared/schemas/final-test.js';
 import type { FinalTestItem } from '../../../shared/schemas/final-test.js';
-import { auditFinalTestCambridge, auditFinalTestItem } from '../../../shared/final-test-rules.js';
+import {
+  auditFinalTestCambridge,
+  auditFinalTestItem,
+  auditFinalTestSceneKeys,
+} from '../../../shared/final-test-rules.js';
 
 /** Tập từ "có thật" giả lập cho test luật. */
 const WORD_IDS = new Set([
@@ -237,5 +241,63 @@ describe('luật V23/V24/V25: TIÊM DỮ LIỆU SAI và bắt buộc phải kêu
 
   it('V27: câu tiếng Anh bình thường ⇒ KHÔNG kêu (chống cổng rỗng/kêu oan)', () => {
     expect(auditFinalTestCambridge(['This is a boy. He is happy.'])).toEqual([]);
+  });
+});
+
+describe('luật V28: khoá TRANH CẢNH phải có tệp thật', () => {
+  const hasScene = (key: string): boolean => key === 'story-park' || key === 'listen-p4-scene';
+
+  it('`sceneImageKey` cấp part KHÔNG có tệp ⇒ báo lỗi', () => {
+    const bad = auditFinalTestSceneKeys({ id: 'x.p4', sceneImageKey: 'khong-co' }, [], hasScene);
+    expect(bad.map((v) => v.rule)).toContain('V28');
+  });
+
+  it('`imageKey` của `pick_name` / `story_answer` KHÔNG có tệp ⇒ báo lỗi', () => {
+    const pickName = {
+      id: 'x.q1',
+      interaction: 'pick_name',
+      wordId: 'starters.boy',
+      options: ['boy', 'girl'],
+      answer: 'boy',
+      imageKey: 'khong-co',
+    } as unknown as FinalTestItem;
+    const story = {
+      id: 'x.q2',
+      interaction: 'story_answer',
+      wordId: 'starters.boy',
+      promptEn: 'Who?',
+      answer: 'boy',
+      imageKey: 'cung-khong-co',
+    } as unknown as FinalTestItem;
+
+    const bad = auditFinalTestSceneKeys({ id: 'x.p1' }, [pickName, story], hasScene);
+    expect(bad.map((v) => v.rule)).toEqual(['V28', 'V28']);
+  });
+
+  it('`imageKey` của `choose_picture` (tên ĐỒ VẬT) KHÔNG bị kiểm ⇒ KHÔNG kêu oan', () => {
+    const item = {
+      id: 'x.q1',
+      interaction: 'choose_picture',
+      wordId: 'starters.blue',
+      promptEn: 'Listen and choose the colour.',
+      options: ['blue', 'red', 'green'],
+      answer: 'blue',
+      imageKey: 'boat', // KHÔNG phải khoá tranh cảnh — P4 để tranh ở cấp part.
+    } as unknown as FinalTestItem;
+    expect(auditFinalTestSceneKeys({ id: 'x.p4' }, [item], hasScene)).toEqual([]);
+  });
+
+  it('khoá CÓ tệp ⇒ KHÔNG kêu (chống cổng kêu oan)', () => {
+    const item = {
+      id: 'x.q1',
+      interaction: 'story_answer',
+      wordId: 'starters.boy',
+      promptEn: 'Who?',
+      answer: 'boy',
+      imageKey: 'story-park',
+    } as unknown as FinalTestItem;
+    expect(
+      auditFinalTestSceneKeys({ id: 'x.p5', sceneImageKey: 'listen-p4-scene' }, [item], hasScene),
+    ).toEqual([]);
   });
 });

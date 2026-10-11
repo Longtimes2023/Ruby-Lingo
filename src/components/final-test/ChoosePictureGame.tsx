@@ -12,6 +12,9 @@
  *    từ ⇒ chỉ hiện chữ, KHÔNG vẽ `<img>`. Không bao giờ để bé thấy ô ảnh vỡ.
  *
  * ⚠️ KHÔNG ĐỔI LUẬT TRẢ LỜI: vẫn `submit(option)` với ĐÚNG chuỗi của đề, `answer`/khiên không đụng.
+ *
+ * ⭐ TRANH CẢNH CẤP PART (P4): part có thể khai `sceneImageKey` (tranh có đủ 5 đồ vật rải rác).
+ *   Trang cha truyền xuống qua prop `sceneImageKey`; thiếu/không khai ⇒ KHÔNG vẽ ảnh.
  */
 
 import { choiceStateFor } from './choice.js';
@@ -22,12 +25,18 @@ import {
   ItemPrompt,
   PictureChoice,
   RevealNote,
+  SceneHint,
   TryAgainNote,
 } from './parts.js';
 import type { FinalTestItemProps } from './types.js';
 import { useFinalTestItem } from './useFinalTestItem.js';
 
-export function ChoosePictureGame({ item, wordsByEn, onAnswered }: FinalTestItemProps) {
+export function ChoosePictureGame({
+  item,
+  wordsByEn,
+  sceneImageKey,
+  onAnswered,
+}: FinalTestItemProps) {
   const answer = 'answer' in item ? item.answer : '';
   const { submit, revealed, done, wrongPicks, wrongAttempts, finish } = useFinalTestItem(
     item.id,
@@ -42,6 +51,14 @@ export function ChoosePictureGame({ item, wordsByEn, onAnswered }: FinalTestItem
 
   return (
     <div className="flex flex-col gap-4">
+      {/*
+        Tranh cảnh CẤP PART (P4: thuyền/mũ/bóng bay/hoa/ghế rải rác). Chỉ P4 khai `sceneImageKey`;
+        P3 không khai ⇒ `SceneHint` không vẽ gì. Thiếu tệp ⇒ cũng không vẽ (không bao giờ ảnh vỡ).
+        ⚠️ KHÔNG dùng `item.imageKey` ở đây: với `choose_picture` nó là tên ĐỒ VẬT, không phải khoá
+        tranh cảnh — xem `sceneImageKey` trong `shared/schemas/final-test.ts`.
+      */}
+      <SceneHint sceneKey={sceneImageKey} />
+
       <ItemPrompt text={item.promptEn} />
       <ItemAudioButton text={item.audioTextEn} />
 

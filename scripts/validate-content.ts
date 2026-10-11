@@ -38,7 +38,7 @@ import {
 import type { ThemeFile } from '../shared/schemas/content.js';
 import { finalTestManifestSchema, finalTestSectionFileSchema } from '../shared/schemas/final-test.js';
 import type { FinalTestSectionId } from '../shared/schemas/final-test.js';
-import { auditFinalTestCambridge, auditFinalTestItem } from '../shared/final-test-rules.js';
+import { auditFinalTestCambridge, auditFinalTestItem, auditFinalTestSceneKeys } from '../shared/final-test-rules.js';
 import { PICTURE_GAME_TYPES, MVP_GAME_TYPES } from '../shared/types/content.js';
 import type { GameType } from '../shared/types/content.js';
 
@@ -407,6 +407,8 @@ function validateLevels() {
 //   V25  audioTextEn/promptEn CHỈ tiếng Anh (không dấu tiếng Việt)
 //   V26  trần khiên = 5, và autoScored đúng theo từng phần (Speaking: false)
 //   V27  source = "original" + không chuỗi nhận dạng đề Cambridge
+//   V28  mọi khoá TRANH CẢNH khai trong đề (`part.sceneImageKey`, và `item.imageKey` ở dạng câu coi
+//        nó là tranh cảnh) phải có TỆP THẬT trong `public/assets/scenes/`
 //
 // Luật V23–V25, V27 nằm trong `shared/final-test-rules.ts` (hàm THUẦN) để test gọi lại được —
 // một mã, hai nơi dùng (xem đầu file luật đó).
@@ -479,6 +481,9 @@ function validateFinalTest() {
     const cambridgeTexts: string[] = [];
     let autoScoredItems = 0;
 
+    /** Khoá tranh cảnh này có TỆP THẬT trong `public/assets/scenes/` không (dùng cho V28). */
+    const hasScene = (key: string): boolean => existsSync(join(SCENES_DIR, `${key}.webp`));
+
     for (const section of FINAL_TEST_SECTIONS) {
       const relFile = `levels/${levelDirName}/final-test/${section}.json`;
       const raw = readJson<unknown>(join(ftDir, `${section}.json`));
@@ -546,6 +551,12 @@ function validateFinalTest() {
 
           cambridgeTexts.push(...itemTexts(item as unknown as Record<string, unknown>));
         });
+
+        // V28: mọi khoá TRANH CẢNH (cấp part + item ở dạng câu hiển thị tranh cảnh) phải có tệp thật.
+        for (const v of auditFinalTestSceneKeys(part, part.items, hasScene)) {
+          err(v.rule, `${relFile} → ${v.message}`);
+        }
+
         cambridgeTexts.push(part.title_vi, part.instruction_vi);
       });
 

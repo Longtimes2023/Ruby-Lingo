@@ -132,6 +132,22 @@ export const finalTestPartSchema = z.object({
   title_vi: z.string().min(1),
   /** Tiếng Việt: CHỈ hiển thị (B7) — không bao giờ đưa vào `audioTextEn`. */
   instruction_vi: z.string().min(1),
+  /**
+   * Khoá TRANH CẢNH chung cho cả part (TUỲ CHỌN, kiểu ADDITIVE).
+   *
+   * ⭐ VÌ SAO CẦN Ở CẤP PART, KHÔNG PHẢI CẤP ITEM: Listening P4 là dạng "nghe rồi chọn MÀU của
+   *   đồ vật". Mỗi item vẫn giữ `imageKey` = tên ĐỒ VẬT (`boat`, `hat`, …) — đó là khoá ngữ nghĩa
+   *   cũ, KHÔNG phải khoá tranh cảnh. Bức tranh minh hoạ (một khung cảnh có đủ 5 đồ vật rải rác)
+   *   là của CẢ part, nên nó nằm ở đây chứ không nhân bản vào từng item.
+   *
+   * ⚠️ KHÁC `item.imageKey`: trường đó (với `pick_name`/`story_answer`) LÀ khoá tranh cảnh; còn ở
+   *   `choose_picture` nó là tên đồ vật (không tra vào `public/assets/scenes/`). Vì vậy luật V28
+   *   chỉ kiểm `sceneImageKey` (và `imageKey` của item có hiển thị tranh cảnh) — xem `validate-content.ts`.
+   *
+   * ⚠️ Nếu khai thì file PHẢI tồn tại trong `public/assets/scenes/` (V28) — client lùi về KHÔNG ảnh
+   *   khi thiếu tệp, nhưng một khoá gõ sai sẽ IM LẶNG mất tranh nếu không có cổng build.
+   */
+  sceneImageKey: z.string().min(1).optional(),
   items: z.array(finalTestItemSchema).min(1),
 });
 

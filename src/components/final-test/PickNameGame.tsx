@@ -15,6 +15,7 @@ import {
   ItemAudioButton,
   ItemPrompt,
   RevealNote,
+  SceneHint,
   TryAgainNote,
 } from './parts.js';
 import type { FinalTestItemProps } from './types.js';
@@ -35,6 +36,9 @@ export function PickNameGame({ item, onAnswered }: FinalTestItemProps) {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Tranh cảnh (P1: công viên có 5 người) — bé nhìn tranh để nối tên. Thiếu tệp ⇒ không vẽ. */}
+      <SceneHint sceneKey={item.imageKey} />
+
       <ItemPrompt text={item.promptEn} />
       <ItemAudioButton text={item.audioTextEn} />
 

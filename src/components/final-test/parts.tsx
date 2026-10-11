@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { Word } from '@shared/types/content.js';
 
+import { sceneAssetUrlIfExistsOrNull } from '../../data/scene-assets.js';
 import { useSpeech } from '../../hooks/useSpeech.js';
 import { cn } from '../../lib/cn.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
@@ -71,6 +72,36 @@ export function WordPicture({ wordId, fallback }: { wordId: string; fallback: st
         <WordIcon wordId={wordId} fallback={fallback} />
       </span>
     </div>
+  );
+}
+
+/**
+ * TRANH CẢNH gợi ý bối cảnh cho một câu (hoặc cả một part) bài thi.
+ *
+ * ⭐ VÌ SAO DÙNG CHUNG MỘT COMPONENT: `pick_name` (P1), `choose_picture` (P4, tranh ở cấp PART) và
+ *   `story_answer` (P5) đều cần ĐÚNG một hành vi: tra khoá → có tệp thì vẽ, thiếu/khai sai thì
+ *   KHÔNG vẽ gì. Tách ra đây để ba chỗ không lệch nhau (một bản sao lệch sẽ tạo ra một chỗ vỡ ảnh).
+ *
+ * ⚠️⚠️ ĐƯỜNG LÙI BẮT BUỘC: `sceneAssetUrlIfExistsOrNull` trả `null` khi khoá rỗng/không có tệp
+ *    (danh sách `SCENE_KEYS` khớp đĩa nhờ `tests/unit/client/scene-assets.test.ts`). `null` ⇒ trả
+ *    `null`, TUYỆT ĐỐI KHÔNG dựng `<img src>` sai ⇒ không bao giờ để bé thấy biểu tượng ảnh hỏng.
+ *
+ * ⚠️ `alt=""` + `aria-hidden`: tranh chỉ minh hoạ bối cảnh, KHÔNG phải nội dung cần đọc — câu hỏi
+ *    vẫn trả lời được bằng chữ/âm thanh nên trình đọc màn hình bỏ qua tranh là đúng.
+ */
+export function SceneHint({ sceneKey }: { sceneKey?: string | undefined }) {
+  if (sceneKey === undefined) return null;
+  const src = sceneAssetUrlIfExistsOrNull(sceneKey);
+  if (src === null) return null;
+
+  return (
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className="mx-auto aspect-[3/2] w-full max-w-md rounded-kid border-4 border-line object-cover select-none"
+    />
   );
 }
 

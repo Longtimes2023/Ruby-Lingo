@@ -34,6 +34,14 @@ describe('scene-assets — danh sách khoá tranh cảnh', () => {
     expect(sceneKeysOnDisk()).toContain('story-park');
   });
 
+  it('4 tranh minh hoạ bài thi cuối khoá CÓ thật trên đĩa và tra được URL', () => {
+    const keys = ['listen-p1-scene', 'listen-p4-scene', 'story-park-2', 'story-park-3'];
+    for (const key of keys) {
+      expect(sceneKeysOnDisk(), key).toContain(key);
+      expect(sceneAssetUrlIfExistsOrNull(key)).toBe(`/assets/scenes/${key}.webp`);
+    }
+  });
+
   it('`sceneAssetUrlIfExistsOrNull`: có tệp ⇒ URL, thiếu/rỗng ⇒ null (không ảnh vỡ)', () => {
     expect(sceneAssetUrlIfExistsOrNull('story-park')).toBe('/assets/scenes/story-park.webp');
     expect(sceneAssetUrlIfExistsOrNull('  story-park  ')).toBe('/assets/scenes/story-park.webp');

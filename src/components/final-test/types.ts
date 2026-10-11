@@ -45,6 +45,14 @@ export interface FinalTestItemProps {
    * chỉ hiện chữ, không vẽ ảnh — không bao giờ để bé thấy ô ảnh vỡ.
    */
   wordsByEn?: ReadonlyMap<string, Word>;
+  /**
+   * Khoá TRANH CẢNH của CẢ PART chứa câu này (nếu part khai `sceneImageKey`). Trang cha
+   * (`FinalTestSectionPage`) tra part của câu hiện tại rồi truyền xuống; `undefined` ⇒ không vẽ ảnh.
+   *
+   * ⚠️ Tách khỏi `item.imageKey`: `item.imageKey` là khoá của TỪNG câu (tranh cảnh cho `pick_name`/
+   *    `story_answer`, hoặc tên đồ vật với `choose_picture`), còn đây là tranh chung cả part (P4).
+   */
+  sceneImageKey?: string | undefined;
   /** Gọi ĐÚNG MỘT LẦN khi câu kết thúc (đúng, hoặc đã lộ đáp án và bé bấm Tiếp). */
   onAnswered: (result: FinalTestItemResult) => void;
 }
