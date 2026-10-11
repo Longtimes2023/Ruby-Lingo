@@ -92,19 +92,28 @@ describe('memory_match — luật so cặp', () => {
 
 describe('memory_match — trên DỮ LIỆU THẬT', () => {
   it('mọi bài memory_match dựng ra bộ bài chẵn, đủ cặp, không trùng thẻ', () => {
-    let checked = 0;
+    const checkedLessons = new Set<string>();
+    let totalLessons = 0;
 
     for (const levelId of listLevelIds()) {
       const bundle = readLevelBundle(levelId);
+      totalLessons += bundle.lessons.length;
 
       for (const exercise of bundle.exercises) {
         if (exercise.gameType !== 'memory_match') continue;
-        checked += 1;
+        checkedLessons.add(exercise.lessonId);
 
         const exerciseWords = exercise.wordIds
           .map((id) => bundle.wordById.get(id))
           .filter((w): w is Word => w !== undefined);
         const config = exercise.config as { pairMode: 'en_icon' | 'en_vi'; pairs: number };
+        const usableWords = exerciseWords.slice(0, config.pairs);
+        if (config.pairMode === 'en_vi') {
+          expect(usableWords.every((word) => word.vi !== word.en), `${exercise.id}: 重复的中英卡片`).toBe(true);
+          expect(new Set(usableWords.map((word) => word.vi)).size, `${exercise.id}: 中文释义重复`).toBe(
+            usableWords.length,
+          );
+        }
         const deck = buildDeck(
           exerciseWords,
           config,
@@ -123,7 +132,7 @@ describe('memory_match — trên DỮ LIỆU THẬT', () => {
       }
     }
 
-    // at-the-zoo có 3 bài memory_match.
-    expect(checked).toBe(3);
+    // Mọi bài thuộc các chủ đề hiện đã được gắn memory_match.
+    expect(checkedLessons.size).toBe(totalLessons);
   });
 });

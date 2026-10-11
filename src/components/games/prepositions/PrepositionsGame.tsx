@@ -50,21 +50,31 @@ function Scene({ layout, petIcon }: { layout: SceneLayout; petIcon: string }) {
   return (
     // `aria-hidden` vì cảnh này là HÌNH TRANG TRÍ: ý nghĩa của nó đã nằm ở `aria-label` của nút
     // bao quanh. Để screen reader đọc thì bé chỉ nghe "📦 📦 🐵" — vô nghĩa và dài dòng.
-    <div aria-hidden="true" className="relative size-full">
+    <div
+      aria-hidden="true"
+      className="relative size-full"
+      style={{ containerType: 'inline-size' }}
+    >
       {layout.boxes.map((box, index) => (
         <span
           key={index}
-          className="absolute text-[34px] leading-none"
-          style={{ left: `${box.left}%`, top: `${box.top}%`, zIndex: 1 }}
+          className="absolute leading-none"
+          style={{
+            left: `${box.left}%`,
+            top: `${box.top}%`,
+            zIndex: 1,
+            fontSize: 'clamp(34px, 29cqi, 72px)',
+          }}
         >
           📦
         </span>
       ))}
       <span
-        className="absolute text-[38px] leading-none"
+        className="absolute leading-none"
         style={{
           left: `${layout.pet.left}%`,
           top: `${layout.pet.top}%`,
+          fontSize: 'clamp(38px, 32cqi, 80px)',
           transform: `scale(${layout.pet.scale})`,
           // `behind` cần con vật nằm SAU hộp; mọi giới từ khác nằm trước.
           zIndex: layout.pet.front ? 2 : 0,
@@ -162,6 +172,7 @@ export function PrepositionsGame({ exercise, words, engine }: GameComponentProps
     <>
       <BigButton
         variant="secondary"
+        className="min-h-touch"
         icon="🔊"
         onClick={() => {
           hasInteracted.current = true;
@@ -193,7 +204,7 @@ export function PrepositionsGame({ exercise, words, engine }: GameComponentProps
         </p>
       )}
 
-      <ul className="grid grid-cols-2 gap-3">
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {slot.slots.map((label) => {
           const isWrong = chosen === label && !solved;
           const isAnswer = solved && label === slot.correctSlot;

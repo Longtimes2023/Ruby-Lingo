@@ -106,6 +106,39 @@ describe('readLevelBundle("starters")', () => {
     }
   });
 
+  it('memory_match en_vi cover đầy đủ từ của lesson, cho phép chia thành nhiều exercise', () => {
+    const exercises = bundle.exercises.filter(
+      (exercise) =>
+        exercise.gameType === 'memory_match' &&
+        exercise.config.kind === 'memory_match' &&
+        exercise.config.pairMode === 'en_vi',
+    );
+    expect(exercises.length).toBeGreaterThan(0);
+    for (const lesson of bundle.lessons) {
+      const lessonExercises = exercises.filter((exercise) => exercise.lessonId === lesson.id);
+      if (lessonExercises.length === 0) continue;
+      const covered = new Set(lessonExercises.flatMap((exercise) => exercise.wordIds));
+      expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
+      for (const exercise of lessonExercises) {
+        expect(exercise.config.kind).toBe('memory_match');
+        if (exercise.config.kind !== 'memory_match') continue;
+        expect(exercise.wordIds.length).toBeLessThanOrEqual(exercise.config.pairs);
+        expect(exercise.config.pairs).toBeLessThanOrEqual(6);
+      }
+    }
+  });
+
+  it('mọi từ bài học đều xuất hiện trong ít nhất một exercise của bài đó', () => {
+    for (const lesson of bundle.lessons) {
+      const covered = new Set(
+        bundle.exercises
+          .filter((exercise) => exercise.lessonId === lesson.id)
+          .flatMap((exercise) => exercise.wordIds),
+      );
+      expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
+    }
+  });
+
   it('mọi từ đều có picturable là boolean (thiếu ⇒ game Nghe & Chạm không có hình)', () => {
     const bad = bundle.words.filter((w) => typeof w.picturable !== 'boolean');
     expect(bad.map((w) => w.id)).toEqual([]);
@@ -205,8 +238,18 @@ describe('sliceTheme', () => {
     }
   });
 
-  it('at-the-zoo đã có bài tập cho game MVP (không còn chủ đề trắng)', () => {
-    const slice = sliceTheme(bundle, 'at-the-zoo');
-    expect(slice?.exercises.length ?? 0).toBeGreaterThan(0);
+  it('mọi bài ngoài at-the-zoo đều có exercise memory_match', () => {
+    const themesWithoutGames = bundle.themes.filter((theme) => theme.id !== 'at-the-zoo');
+    for (const theme of themesWithoutGames) {
+      for (const lessonId of theme.lessonIds) {
+        const lesson = bundle.lessonById.get(lessonId);
+        expect(lesson, `${lessonId}: thiếu lesson`).toBeDefined();
+        expect(lesson?.exerciseIds.length, `${lessonId}: thiếu bài tập`).toBeGreaterThan(0);
+        expect(
+          lesson?.exerciseIds.some((exerciseId) => bundle.exerciseById.get(exerciseId)?.gameType === 'memory_match'),
+          `${lessonId}: thiếu memory_match`,
+        ).toBe(true);
+      }
+    }
   });
 });

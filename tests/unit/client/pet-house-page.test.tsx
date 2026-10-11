@@ -26,12 +26,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 
 import '@/i18n/index.js';
 import { ApiClientError } from '@/api/client.js';
-import { rewardsApi } from '@/api/endpoints.js';
+import { rewardsApi, roomApi } from '@/api/endpoints.js';
 import { PetHousePage } from '@/pages/pet/PetHousePage.js';
 import { __resetRewardStoreForTests, useRewardStore } from '@/store/rewardStore.js';
 import { useSessionStore } from '@/store/sessionStore.js';
 import { __resetShopStoreForTests } from '@/store/shopStore.js';
+import { __resetRoomPlacementStoreForTests } from '@/store/roomPlacementStore.js';
 import { getShopItem } from '@shared/content/shop.js';
+import type { RoomPlacement } from '@shared/schemas/room.js';
 import type { ChildProfileDto } from '@shared/types/api.js';
 import type {
   InventoryItem,
@@ -44,12 +46,15 @@ import type {
 
 vi.mock('@/api/endpoints.js', () => ({
   rewardsApi: { get: vi.fn(), buy: vi.fn(), feed: vi.fn(), equip: vi.fn() },
+  roomApi: { getPlacements: vi.fn(), savePlacements: vi.fn() },
 }));
 
 const getMock = vi.mocked(rewardsApi.get);
 const buyMock = vi.mocked(rewardsApi.buy);
 const feedMock = vi.mocked(rewardsApi.feed);
 const equipMock = vi.mocked(rewardsApi.equip);
+const getRoomMock = vi.mocked(roomApi.getPlacements);
+const saveRoomMock = vi.mocked(roomApi.savePlacements);
 
 const CHILD = 'chi_na';
 const NOW = '2026-10-08T08:00:00.000Z';
@@ -183,8 +188,11 @@ function renderPage() {
 beforeEach(() => {
   __resetRewardStoreForTests();
   __resetShopStoreForTests();
+  __resetRoomPlacementStoreForTests();
   useSessionStore.setState({ children: [CHILD_PROFILE], activeChildId: CHILD });
   vi.clearAllMocks();
+  getRoomMock.mockResolvedValue([]);
+  saveRoomMock.mockImplementation(async (_childId, placements) => placements);
 
   /**
    * ⚠️ MẶC ĐỊNH: MỌI VÒNG MẠNG THÀNH CÔNG NGAY — KHÔNG dùng promise treo.
@@ -486,12 +494,13 @@ describe('PetHousePage — Momo mặc đồ bé đã mua (T065)', () => {
     expect(within(momo).queryByText('🎩')).not.toBeInTheDocument();
   });
 
-  it('trang trí đang bày ⇒ hiện trong cảnh quanh nhà', () => {
-    seed({ inventory: [inventoryItem('dec-balloon', { equipped: true })] });
+  it('trang trí đang bày ⇒ hiện trong cảnh quanh nhà', async () => {
+    seed({ inventory: [inventoryItem('dec-balloon')] });
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-balloon', x: 30, y: 40, hidden: false }]);
     renderPage();
 
-    const momo = screen.getByRole('img', { name: 'Quanh nhà có Bóng bay' });
-    expect(within(momo).getByText('🎈')).toBeInTheDocument();
+    const room = screen.getByRole('region', { name: 'Góc phòng của bé' });
+    expect(await within(room).findByRole('button', { name: /Bóng bay, vị trí 30%, 40%/ })).toBeInTheDocument();
   });
 
   it('⚠️ đồ ăn lỡ có `equipped = true` ⇒ KHÔNG lên người con vật, nhãn cũng không nhắc tới', () => {
@@ -505,20 +514,55 @@ describe('PetHousePage — Momo mặc đồ bé đã mua (T065)', () => {
     expect(within(momo).queryByText('🍌')).not.toBeInTheDocument();
   });
 
-  it('nhiều món cùng lúc: mặc + bày ⇒ nhãn đọc lên đủ cả hai vế', () => {
+  it('nhiều món cùng lúc: mặc + bày hiện ở đúng khu vực', async () => {
     seed({
-      inventory: [
-        inventoryItem('acc-scarf', { equipped: true }),
-        inventoryItem('dec-plant', { equipped: true }),
-      ],
+      inventory: [inventoryItem('acc-scarf', { equipped: true }), inventoryItem('dec-plant')],
     });
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-plant', x: 50, y: 65, hidden: false }]);
     renderPage();
 
-    const momo = screen.getByRole('img', {
-      name: 'Khỉ Momo đang dùng: Khăn quàng. Quanh nhà có Chậu cây',
-    });
+    const momo = screen.getByRole('img', { name: 'Khỉ Momo đang dùng: Khăn quàng' });
     expect(within(momo).getByText('🧣')).toBeInTheDocument();
-    expect(within(momo).getByText('🪴')).toBeInTheDocument();
+    const room = screen.getByRole('region', { name: 'Góc phòng của bé' });
+    expect(await within(room).findByRole('button', { name: /Chậu cây, vị trí 50%, 65%/ })).toBeInTheDocument();
+  });
+
+  it('mũi tên bàn phím cập nhật vị trí và chỉ lưu một lần', async () => {
+    seed({ inventory: [inventoryItem('dec-balloon')] });
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-balloon', x: 30, y: 40, hidden: false }]);
+    renderPage();
+
+    const room = screen.getByRole('region', { name: 'Góc phòng của bé' });
+    const decoration = await within(room).findByRole('button', { name: /Bóng bay, vị trí 30%, 40%/ });
+    fireEvent.keyDown(decoration, { key: 'ArrowRight' });
+
+    await waitFor(() => expect(saveRoomMock).toHaveBeenCalledTimes(1));
+    expect(saveRoomMock).toHaveBeenLastCalledWith(CHILD, [
+      { itemId: 'dec-balloon', x: 32, y: 40, hidden: false },
+    ]);
+  });
+
+  it('nhiều thay đổi trong lúc lưu tuần tự ghi snapshot mới nhất', async () => {
+    seed({ inventory: [inventoryItem('dec-balloon')] });
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-balloon', x: 30, y: 40, hidden: false }]);
+    let finishFirst!: (value: RoomPlacement[]) => void;
+    saveRoomMock.mockImplementationOnce(
+      () => new Promise((resolve) => { finishFirst = resolve; }),
+    );
+    renderPage();
+
+    const room = screen.getByRole('region', { name: 'Góc phòng của bé' });
+    const decoration = await within(room).findByRole('button', { name: /Bóng bay, vị trí 30%, 40%/ });
+    fireEvent.keyDown(decoration, { key: 'ArrowRight' });
+    await waitFor(() => expect(saveRoomMock).toHaveBeenCalledTimes(1));
+    fireEvent.keyDown(decoration, { key: 'ArrowRight' });
+    expect(saveRoomMock).toHaveBeenCalledTimes(1);
+
+    finishFirst([{ itemId: 'dec-balloon', x: 32, y: 40, hidden: false }]);
+    await waitFor(() => expect(saveRoomMock).toHaveBeenCalledTimes(2));
+    expect(saveRoomMock).toHaveBeenLastCalledWith(CHILD, [
+      { itemId: 'dec-balloon', x: 34, y: 40, hidden: false },
+    ]);
   });
 
   it('T066 — hình con vật và tên giai đoạn đi theo `snapshot.pet.evolutionStage`', () => {

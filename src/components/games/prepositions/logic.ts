@@ -43,7 +43,7 @@ const FALLBACK: SceneLayout = {
 /**
  * Bố cục cho từng giới từ. Khoá là chữ THƯỜNG, đã gộp khoảng trắng.
  *
- * Kích thước vẽ: hộp 46px, con vật 38px trong khung ~160px ⇒ 46px ≈ 29% và 38px ≈ 24%.
+ * Cỡ emoji trong `PrepositionsGame` tỷ lệ theo chiều rộng khung (`cqi`); tọa độ dưới đây vẫn là %.
  */
 const LAYOUTS: Readonly<Record<string, SceneLayout>> = {
   // Gọn bên trong hộp, nhỏ hơn một chút.

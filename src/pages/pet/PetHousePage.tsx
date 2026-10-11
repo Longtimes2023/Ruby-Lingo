@@ -21,11 +21,12 @@
  *    nếu không thì mỗi lần rời màn rồi quay lại, thông báo bé đang đọc bị xoá sạch).
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
+import { decorationSlotOf, getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
+import type { RoomPlacement } from '@shared/schemas/room.js';
 import { petNameVi } from '@shared/content/pets.js';
 import type {
   CurrencyKind,
@@ -42,8 +43,11 @@ import { MOMO_ICON, PetAvatar } from '../../components/common/PetAvatar.js';
 import { ResponsiveGrid } from '../../components/common/ResponsiveGrid.js';
 import { ShopItemCard } from '../../components/common/ShopItemCard.js';
 import { useRewards } from '../../hooks/useRewards.js';
+import { useRoomPlacements } from '../../hooks/useRoomPlacements.js';
 import { useShop } from '../../hooks/useShop.js';
 import { cn } from '../../lib/cn.js';
+import { ShopArtwork } from '../../lib/shopArtwork.js';
+import { petArtworkUrl } from '../../lib/petArtwork.js';
 import { wasPetChooseSkipped } from '../../lib/petChooseSkip.js';
 import { useRewardStore } from '../../store/rewardStore.js';
 
@@ -99,6 +103,16 @@ export function PetHousePage() {
   const reload = useRewardStore((s) => s.reload);
 
   const [tab, setTab] = useState<ShopItemCategory>('food');
+  const room = useRoomPlacements();
+  const activeChildIdRef = useRef(childId);
+  activeChildIdRef.current = childId;
+  const roomReady = childId !== null && room.childId === childId && room.placements !== null && !room.isLoading;
+  const [roomDraft, setRoomDraft] = useState<RoomPlacement[]>([]);
+  const roomDraftRef = useRef<RoomPlacement[]>([]);
+  const saveChainRef = useRef(Promise.resolve());
+  const queuedSavesRef = useRef(0);
+  const [roomDraftVersion, setRoomDraftVersion] = useState(0);
+  const dragStartRef = useRef<{ itemId: string; x: number; y: number } | null>(null);
 
   /**
    * Tự mở màn chọn con khi bé CHƯA từng chọn con (`!petChosen`) và chưa bấm "Để sau" trong phiên.
@@ -123,6 +137,22 @@ export function PetHousePage() {
   }, [isHydrated, snapshot, navigate]);
 
   const inventory = snapshot?.inventory ?? EMPTY_INVENTORY;
+
+  const ownedDecorations = useMemo(() => {
+    return inventory.flatMap((entry) => {
+      if (entry.quantity <= 0) return [];
+      const item = getShopItem(entry.itemId);
+      return item && decorationSlotOf(item) !== null ? [item] : [];
+    });
+  }, [inventory]);
+
+  useEffect(() => {
+    if (!roomReady || room.placements === null || queuedSavesRef.current > 0) return;
+    const allowed = new Set(ownedDecorations.map((item) => item.id));
+    const next = room.placements.filter((placement) => allowed.has(placement.itemId));
+    roomDraftRef.current = next;
+    setRoomDraft(next);
+  }, [roomReady, room.placements, ownedDecorations, roomDraftVersion]);
 
   /** Tra cứu túi đồ theo `itemId` — mỗi thẻ cần biết bé đã có món đó chưa, đang mặc chưa. */
   const ownedById = useMemo(() => {
@@ -160,10 +190,47 @@ export function PetHousePage() {
     for (const owned of inventory) {
       if (!owned.equipped) continue;
       const item = getShopItem(owned.itemId);
-      if (item !== undefined && isEquippable(item)) list.push(item);
+      if (item !== undefined && isEquippable(item) && decorationSlotOf(item) === null) list.push(item);
     }
     return list;
   }, [inventory]);
+
+  const updateRoomDraft = (next: RoomPlacement[]) => {
+    roomDraftRef.current = next;
+    setRoomDraft(next);
+    setRoomDraftVersion((version) => version + 1);
+  };
+
+  const enqueueRoomSave = () => {
+    const targetChildId = childId;
+    if (!targetChildId) return;
+    queuedSavesRef.current += 1;
+    saveChainRef.current = saveChainRef.current
+      .catch(() => undefined)
+      .then(() => {
+        if (activeChildIdRef.current !== targetChildId) return;
+        return room.save(roomDraftRef.current, targetChildId);
+      })
+      .finally(() => {
+        queuedSavesRef.current -= 1;
+        if (queuedSavesRef.current === 0) setRoomDraftVersion((version) => version + 1);
+      });
+  };
+
+  const saveRoomDraft = () => {
+    if (roomReady) enqueueRoomSave();
+  };
+
+  const moveDecoration = (itemId: string, x: number, y: number, persist = true) => {
+    const existing = roomDraftRef.current.find((placement) => placement.itemId === itemId);
+    const next = existing
+      ? roomDraftRef.current.map((placement) =>
+          placement.itemId === itemId ? { ...placement, x, y } : placement,
+        )
+      : [...roomDraftRef.current, { itemId, x, y, hidden: false }];
+    updateRoomDraft(next);
+    if (persist && roomReady) enqueueRoomSave();
+  };
 
   // --- Chưa nạp xong ---------------------------------------------------------
   //
@@ -266,6 +333,114 @@ export function PetHousePage() {
           {t('pet.changeCompanion')}
         </BigButton>
       </div>
+
+      <section aria-labelledby="pet-room-title" className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <h2 id="pet-room-title" className="text-kid-md font-bold text-ink">Góc phòng của bé</h2>
+          {(room.isLoading || room.isSaving) && (
+            <span role="status" className="text-kid-xs text-ink-soft">
+              {room.isLoading ? 'Đang tải vị trí…' : 'Đang lưu…'}
+            </span>
+          )}
+        </div>
+        <div
+          aria-label="Phòng của thú cưng; kéo đồ trang trí để sắp xếp"
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-card border-2 border-line bg-gradient-to-b from-sky-100 via-amber-50 to-amber-100"
+          onPointerMove={(event) => {
+            const draggingId = event.currentTarget.dataset.dragging;
+            if (!draggingId) return;
+            const rect = event.currentTarget.getBoundingClientRect();
+            moveDecoration(
+              draggingId,
+              Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
+              Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+              false,
+            );
+          }}
+          aria-busy={!roomReady || room.isLoading}
+          onPointerUp={(event) => {
+            if (!event.currentTarget.dataset.dragging) return;
+            delete event.currentTarget.dataset.dragging;
+            dragStartRef.current = null;
+            saveRoomDraft();
+          }}
+          onPointerCancel={(event) => {
+            delete event.currentTarget.dataset.dragging;
+            const start = dragStartRef.current;
+            if (start) moveDecoration(start.itemId, start.x, start.y, false);
+            dragStartRef.current = null;
+          }}
+        >
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-emerald-100 to-emerald-200" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-end justify-center pb-[8%]">
+            <span className="text-[clamp(72px,24vw,144px)] leading-none">
+              <img
+                src={petArtworkUrl(snapshot.pet.petType, snapshot.pet.evolutionStage)}
+                alt=""
+                className="h-[1em] w-[1em] object-contain"
+              />
+            </span>
+          </div>
+          {roomReady && ownedDecorations.map((item) => {
+            const placement = roomDraft.find((entry) => entry.itemId === item.id);
+            if (!placement || placement.hidden) return null;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-label={`${item.name_vi}, vị trí ${Math.round(placement.x)}%, ${Math.round(placement.y)}%. Dùng phím mũi tên để di chuyển.`}
+                className="absolute z-10 flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid text-4xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand"
+                style={{ left: `${placement.x}%`, top: `${placement.y}%` }}
+                onPointerDown={(event) => {
+                  if (!roomReady) return;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  const current = roomDraftRef.current.find((entry) => entry.itemId === item.id);
+                  dragStartRef.current = current ? { itemId: item.id, x: current.x, y: current.y } : null;
+                  event.currentTarget.parentElement!.dataset.dragging = item.id;
+                }}
+                onKeyDown={(event) => {
+                  if (!roomReady) return;
+                  const step = event.shiftKey ? 10 : 2;
+                  const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
+                  if (!delta) return;
+                  event.preventDefault();
+                  const current = roomDraftRef.current.find((entry) => entry.itemId === item.id) ?? placement;
+                  moveDecoration(item.id, Math.max(0, Math.min(100, current.x + (delta[0] ?? 0))), Math.max(0, Math.min(100, current.y + (delta[1] ?? 0))), false);
+                  saveRoomDraft();
+                }}
+              >
+                <ShopArtwork item={item} className="mr-1 inline-block size-6 align-middle object-contain" />
+              </button>
+            );
+          })}
+        </div>
+        {ownedDecorations.length > 0 && (
+          <div role="group" aria-label="Đồ trang trí đang có" className="flex flex-wrap gap-2">
+            {ownedDecorations.map((item) => {
+              const placed = roomDraft.some((entry) => entry.itemId === item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  disabled={placed || !roomReady || room.isLoading || room.placements === null}
+                  aria-label={`Đặt ${item.name_vi} vào phòng`}
+                  onClick={() => moveDecoration(item.id, 50, 65)}
+                  className="min-h-touch rounded-kid border-2 border-line bg-surface px-3 text-kid-sm disabled:opacity-60"
+                >
+                  <ShopArtwork item={item} className="mr-1 inline-block size-6 align-middle object-contain" />{item.name_vi}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {room.error && (
+          <div className="flex items-center gap-2 rounded-card border-2 border-danger bg-danger-soft px-3 py-2">
+            <p role="alert" className="flex-1 text-kid-xs text-ink">Không lưu được cách sắp xếp. Vị trí vẫn được giữ trên màn hình.</p>
+            <button type="button" onClick={saveRoomDraft} className="min-h-touch rounded-kid bg-surface px-3 text-kid-xs font-bold">Thử lưu lại</button>
+            {room.placements === null && <button type="button" onClick={() => void room.reload()} className="min-h-touch rounded-kid bg-surface px-3 text-kid-xs font-bold">Tải lại</button>}
+          </div>
+        )}
+      </section>
 
       {noticeText !== null && (
         <div className="flex items-center gap-3 rounded-card border-2 border-brand bg-brand-soft px-4 py-3">

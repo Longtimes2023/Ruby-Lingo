@@ -93,6 +93,8 @@ import type {
 } from '@shared/types/reward.js';
 
 import { cn } from '../../lib/cn.js';
+import { petArtworkUrl } from '../../lib/petArtwork.js';
+import { ShopArtwork } from '../../lib/shopArtwork.js';
 
 /**
  * Momo "mặc định" — dùng làm hình ĐẠI DIỆN cho trạng thái CHƯA BIẾT gì (đang nạp).
@@ -120,45 +122,18 @@ const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
 };
 
 /**
- * Vị trí của từng lớp phụ kiện, tính theo `%` của **HỘP `1em` CỦA CON VẬT** (không phải khung).
+ * 通用穿戴锚点按宠物 `1em × 1em` 画布定位；全身 PNG 的墨迹边界因物种与阶段而异，以下取共享视觉折中值。
+ * Chromium 解码的18张图均为 1024×1024；非透明像素约宽44–73%、高95–100%。
  *
- * ⭐ VÌ SAO NEO THEO HỘP `1em`: cỡ phụ kiện tính bằng `em`, và `em` ăn theo `font-size` — mà
- *   `font-size` ĐỔI THEO BẬC (84 / 104 / 124px). Neo theo khung thì vị trí đứng yên trong khi con
- *   vật lớn dần ⇒ mũ đúng ở `baby` sẽ tụt xuống ngang mắt ở `super`. Neo theo hộp `1em` khiến vị
- *   trí và kích cỡ cùng lớn lên, nên **một bảng số dùng được cho cả ba bậc**.
- *
- * ⚠️ MỌI VỊ TRÍ DÙNG `left-1/2 -translate-x-1/2` để tự căn giữa, TRỪ `back`: áo choàng / cánh /
- *   ba lô nằm LỆCH VỀ MỘT BÊN, vì chúng vẽ SAU con vật trong DOM (⇒ nằm trên) — để chính giữa thì
- *   chúng che mất mặt bạn ấy.
- *
- * ⚠️ Một `<span>` cho MỖI VỊ TRÍ (không phải mỗi món): nhiều món cùng vị trí thì `flex gap-0.5`
- *    tự xếp cạnh nhau — giữ nguyên cơ chế cũ, và KHÔNG BAO GIỜ bỏ món nào của bé.
- *
- * ⚠️ Vài giá trị ÂM (`top-[-13%]`, `left-[-15%]`) là CỐ Ý: mũ phải nhô LÊN TRÊN đỉnh đầu, ba lô
- *    phải thò RA NGOÀI sườn trái. Hộp `1em` là ô chữ của con vật, không phải một cái hộp phải
- *    nhốt mọi thứ vào trong.
- *
- * ⭐ CÁC CON SỐ TRÊN ĐƯỢC ĐỐI CHIẾU VỚI HỘP MỰC ĐO ĐƯỢC (Playwright/Chromium, phân tích điểm ảnh
- *   ở `deviceScaleFactor: 4`, đã ẩn phụ kiện và bóng) — `%` của KHUNG 200×200:
- *
- *   | bậc | emoji | fs | mực y | mực x | (mực cao / fs) |
- *   |---|---|---|---|---|---|
- *   | `baby`  | 🐵 | 84px  | 33,4 → 68,8 | 27,9 → 72,1 | 0,84 |
- *   | `adult` | 🐈 | 104px | 24,8 → 74,2 | 24,4 → 75,6 | 0,95 |
- *   | `super` | 🐒 | 124px | 17,5 → 77,9 | 20,1 → 80,9 | 0,97 |
- *
- *   ⚠️ **Tỉ lệ `mực / font-size` KHÔNG hằng số (0,84 → 0,97)** — nó phụ thuộc HÌNH DÁNG của từng
- *      emoji (con khỉ ít "đầy ô chữ" hơn con mèo). Vì vậy KHÔNG có bộ số nào đúng tuyệt đối cho
- *      mọi con; các neo dưới đây là điểm cân bằng tốt nhất cho cả ba bậc, sai số ±2–4% khung
- *      (≈ 4–8px trên khung 200px).
- *   ⭐ Tâm mực theo trục NGANG luôn ≈ 50% ⇒ canh giữa hoạt động đúng; chỉ trục DỌC mới phải tính.
+ * 尺寸和位置随阶段字号（84 / 104 / 124px）同步缩放。负坐标是有意的；背部槽偏左并置于宠物后，其余槽居中并置于前。
+ * 各物种脸部细节不完全一致，共用锚点可能存在轻微个体偏差；同槽多件仍由一个容器稳定错位排列，不会丢失已装备物品。
  */
 const ACCESSORY_ANCHOR: Record<AccessorySlot, string> = {
-  back: 'left-[-15%] top-[34%]',
-  feet: 'left-1/2 top-[86%] -translate-x-1/2',
-  head: 'left-1/2 top-[-13%] -translate-x-1/2',
-  neck: 'left-1/2 top-[65%] -translate-x-1/2',
-  face: 'left-1/2 top-[28%] -translate-x-1/2',
+  back: 'left-[-15%] top-[-20%]',
+  feet: 'left-1/2 top-[23%] -translate-x-1/2',
+  head: 'left-1/2 top-[-60%] -translate-x-1/2',
+  neck: 'left-1/2 top-[-33%] -translate-x-1/2',
+  face: 'left-1/2 top-[-45%] -translate-x-1/2',
 };
 
 /** Cỡ từng lớp, theo `em` của hộp con vật (⇒ ăn theo bậc tiến hoá). Mũ to hơn kính, giày nhỏ hơn. */
@@ -178,11 +153,11 @@ const ACCESSORY_TEXT_SIZE: Record<AccessorySlot, string> = {
  *   `face` (món DUY NHẤT phải nằm TRƯỚC mặt) bị con vật che mất. Trên màn hình điều đó đọc ra là
  *   "bé mặc kính rồi mà không thấy kính", và không cổng nào bắt được: jsdom không tính `z-index`.
  *
- *   Bảng dưới đây chia 3 tầng: sau lưng con vật (`back`) < con vật < mọi thứ đeo TRƯỚC người
- *   (`feet`/`head`/`neck`), và `face` trên cùng (kính luôn phủ mặt).
+ *   外层 stacking context 明确划分为：背部配饰 < 宠物 < 前景配饰；每个槽位内再由商品顺序
+ *   决定遮挡关系。背部槽位本身不设 z-index，避免内层 z-index 越过背部 wrapper。
  */
 const ACCESSORY_Z: Record<AccessorySlot, string> = {
-  back: 'z-[1]',
+  back: '',
   feet: 'z-[3]',
   head: 'z-[3]',
   neck: 'z-[3]',
@@ -358,8 +333,17 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
               className="absolute bottom-[0%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
             />
 
-            {/* Phụ kiện ĐEO SAU LƯNG (áo choàng / cánh / ba lô) — vẽ trước con vật. */}
-            <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" />
+            {/*
+              Wrapper duy nhất tạo stacking context cho phụ kiện sau lưng. Slot `back` bên trong
+              không có z-index riêng, để z-index từng món chỉ quyết định thứ tự trong cùng slot.
+            */}
+            <div
+              aria-hidden="true"
+              data-accessory-layer="behind"
+              className="pointer-events-none absolute inset-0 z-[1]"
+            >
+              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" />
+            </div>
 
             {/*
               Con vật. Cỡ = `font-size` của khung cha (84/104/124px), emoji thừa hưởng.
@@ -367,11 +351,17 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
                  hiệu lực (trên `back`, dưới `feet/head/neck/face`).
             */}
             <span aria-hidden="true" className={cn('relative leading-none', PET_Z)}>
-              {petIcon}
+              <PetArtwork petType={petType} evolutionStage={evolutionStage} fallback={petIcon} />
             </span>
 
             {/* Phụ kiện ĐEO TRƯỚC NGƯỜI (giày, mũ, khăn, kính). */}
-            <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" />
+            <div
+              aria-hidden="true"
+              data-accessory-layer="front"
+              className="pointer-events-none absolute inset-0 z-[3]"
+            >
+              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" />
+            </div>
 
             {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
                 `animate-pulse` đã bị tắt sẵn dưới `prefers-reduced-motion` (xem `tokens.css`). */}
@@ -414,6 +404,35 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
  * ⚠️ Một `<span>` cho MỖI VỊ TRÍ (không phải mỗi món): nhiều món cùng vị trí thì `flex gap-0.5`
  *    tự xếp cạnh nhau — giữ nguyên cơ chế cũ, và KHÔNG BAO GIỜ bỏ món nào của bé.
  */
+function PetArtwork({
+  petType,
+  evolutionStage,
+  fallback,
+}: {
+  petType: PetType;
+  evolutionStage: EvolutionStage;
+  fallback: string;
+}) {
+  const source = petArtworkUrl(petType, evolutionStage);
+  if (!source) return <>{fallback}</>;
+
+  return (
+    <>
+      <img
+        src={source}
+        alt=""
+        draggable={false}
+        className="pointer-events-none h-[1em] w-[1em] select-none object-contain"
+        onError={(event) => {
+          event.currentTarget.hidden = true;
+          event.currentTarget.nextElementSibling?.removeAttribute('hidden');
+        }}
+      />
+      <span hidden>{fallback}</span>
+    </>
+  );
+}
+
 function AccessoryLayers({
   slots,
   worn,
@@ -437,18 +456,27 @@ function AccessoryLayers({
             key={slot}
             aria-hidden="true"
             className={cn(
-              // `absolute` + `flex`: nhiều món cùng vị trí tự xếp cạnh nhau, không tính toán.
-              'absolute flex items-center justify-center gap-0.5 leading-none',
+              'absolute flex h-[1.35em] w-[1.65em] items-center justify-center leading-none',
               ACCESSORY_ANCHOR[slot],
               ACCESSORY_TEXT_SIZE[slot],
               ACCESSORY_Z[slot],
             )}
           >
-            {list.map((item) => (
-              <span key={item.id} className="leading-none">
-                {item.icon}
-              </span>
-            ))}
+            {list.map((item, index) => {
+              const offset = index - (list.length - 1) / 2;
+              const zIndex = list.length - index;
+              return (
+                <span
+                  key={item.id}
+                  aria-hidden="true"
+                  data-accessory-id={item.id}
+                  className="absolute inset-0 flex items-center justify-center leading-none"
+                  style={{ transform: `translateX(${offset * 0.16}em) translateY(${Math.abs(offset) * 0.08}em)`, zIndex }}
+                >
+                  <ShopArtwork item={item} className="h-full w-full object-contain" />
+                </span>
+              );
+            })}
           </span>
         );
       })}
@@ -476,8 +504,11 @@ function SceneryRow({
       className={cn('flex flex-wrap items-end justify-center gap-2', className)}
     >
       {(items ?? []).map((item) => (
-        <li key={item.id} className="text-[28px] leading-none">
-          {item.icon}
+        <li
+          key={item.id}
+          className="flex h-9 w-10 items-center justify-center text-[28px] leading-none"
+        >
+          <ShopArtwork item={item} className="h-full w-full object-contain" />
         </li>
       ))}
     </ul>

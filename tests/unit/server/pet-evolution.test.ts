@@ -27,7 +27,7 @@ import { rewardService } from '../../../server/services/RewardService.js';
 import { dateKeyDaysAgo, localDateKey } from '../../../server/lib/time.js';
 import { clearAllData, setupTestDb } from './helpers/testDb.js';
 
-const NOW = '2026-10-08T08:00:00.000Z';
+const NOW = new Date().toISOString();
 
 let db: Db;
 

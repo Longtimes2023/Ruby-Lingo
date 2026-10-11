@@ -32,6 +32,7 @@ import { SHOP_CURRENCIES, isEquippable, isFood } from '@shared/content/shop.js';
 import type { ShopItem } from '@shared/types/reward.js';
 
 import { cn } from '../../lib/cn.js';
+import { ShopArtwork } from '../../lib/shopArtwork.js';
 import { BigButton } from './BigButton.js';
 import { CounterChip } from './CounterChip.js';
 
@@ -105,8 +106,11 @@ export function ShopItemCard({
       )}
     >
       <div className="flex items-start gap-3">
-        <span aria-hidden="true" className="text-[40px] leading-none">
-          {item.icon}
+        <span
+          aria-hidden="true"
+          className="flex size-[56px] shrink-0 items-center justify-center text-[40px] leading-none"
+        >
+          <ShopArtwork item={item} className="h-full w-full object-contain" />
         </span>
 
         <div className="min-w-0 flex-1">

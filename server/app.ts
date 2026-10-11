@@ -26,6 +26,7 @@ import { rewardsRoutes } from './routes/rewards.js';
 import { questsRoutes } from './routes/quests.js';
 import { parentRoutes } from './routes/parent.js';
 import { reportsRoutes } from './routes/reports.js';
+import { roomRoutes } from './routes/room.js';
 import { finalTestRoutes } from './routes/final-test.js';
 import { parentSpeakingRoutes } from './routes/parent-speaking.js';
 
@@ -75,6 +76,7 @@ export async function buildApp() {
   await app.register(questsRoutes);
   await app.register(parentRoutes);
   await app.register(reportsRoutes);
+  await app.register(roomRoutes);
   await app.register(finalTestRoutes);
   await app.register(parentSpeakingRoutes);
 

@@ -291,6 +291,7 @@ export function GamePage() {
   return (
     <GameShell
       gameType={exercise.gameType}
+      className={exercise.gameType === 'prepositions' ? 'gap-2' : undefined}
       lessonName={lesson.name_vi}
       exitTo={exitTo}
       state={engine.state}
