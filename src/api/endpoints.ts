@@ -41,6 +41,9 @@ import type {
   ProgressSyncResponse,
   QuestsGetResponse,
   ReportResponse,
+  RoomPlacementsGetResponse,
+  RoomPlacementsSaveRequest,
+  RoomPlacementsSaveResponse,
   ResetPasswordRequest,
   ResetPinRequest,
   SessionResponse,
@@ -226,6 +229,16 @@ export const finalTestApi = {
 //    dựng lên một ranh giới mà server không hề có, và ranh giới sai chỗ là thứ khiến người sửa
 //    sau này đi tìm "service nào giữ tiền" ở hai nơi. Xem ghi chú đầu `server/routes/rewards.ts`
 //    về việc kế hoạch từng ghi `routes/shop.ts` + `ShopService.ts` và vì sao KHÔNG làm vậy.
+
+export const roomApi = {
+  getPlacements: (childId: string): Promise<RoomPlacementsGetResponse> =>
+    api.get(`/children/${encodeURIComponent(childId)}/room/placements`),
+  savePlacements: (
+    childId: string,
+    body: RoomPlacementsSaveRequest,
+  ): Promise<RoomPlacementsSaveResponse> =>
+    api.put(`/children/${encodeURIComponent(childId)}/room/placements`, body),
+};
 
 // =============================================================================
 // Xác nhận phần Nói của phụ huynh — `/api/children/:id/parent-speaking`

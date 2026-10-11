@@ -130,7 +130,7 @@ async function readJson(res: Response): Promise<unknown> {
 
 /** Gọi một endpoint và trả về `data` đã bóc vỏ. Ném `ApiClientError` cho mọi trường hợp lỗi. */
 async function request<T>(
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
   path: string,
   body?: unknown,
   options: RequestOptions = {},
@@ -212,6 +212,8 @@ export const api = {
     request<T>('POST', path, body, options),
   patch: <T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> =>
     request<T>('PATCH', path, body, options),
+  put: <T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> =>
+    request<T>('PUT', path, body, options),
   del: <T>(path: string, options?: RequestOptions): Promise<T> =>
     request<T>('DELETE', path, undefined, options),
 };
