@@ -121,6 +121,12 @@ asset-src/words/source/
 #    `shots-parent-filled/`, `shots-parent-l5fixed/`.
 /docs/qa-t082/shots*/
 
+# ⚠️ Cùng lý do như trên: ảnh chụp QA của G4 "Thú cưng trốn ở đâu?" (9 tệp PNG, trước ở gốc repo
+#    dưới tên `.g4-before*.png` / `.g4-after*.png`) — đo lại được bất cứ lúc nào bằng Playwright.
+#    Đã gom vào `docs/qa-g4-prepositions/shots/` cho gọn gốc repo; KHÔNG commit ảnh.
+#    (Mẫu có `/` đầu ⇒ neo vào GỐC repo.)
+/docs/qa-g4-prepositions/shots*/
+
 # --- Trình soạn thảo / hệ điều hành ---
 .vscode/*
 !.vscode/extensions.json
