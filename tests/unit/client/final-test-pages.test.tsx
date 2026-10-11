@@ -308,19 +308,22 @@ describe('FinalTestCertificatePage', () => {
     ).toBeInTheDocument();
   });
 
-  it('⭐ nút "In chứng nhận": đủ lớn (≥64px), aria-label tiếng Việt, bấm ⇒ gọi window.print', async () => {
+  it('⭐ CHỈ TRONG APP: KHÔNG có nút in và KHÔNG gọi window.print (quyết định 2026-10-11)', async () => {
     getMock.mockResolvedValue(gateState(gate({ kind: 'done' }), completedSections()));
     const printMock = vi.fn();
     vi.stubGlobal('print', printMock);
 
-    renderAt('/final-test/certificate');
+    const { container } = renderAt('/final-test/certificate');
 
-    const button = await screen.findByRole('button', { name: 'In chứng nhận ra giấy' });
-    // a11y: vùng chạm `min-h-touch` (≥ 64px).
-    expect(button.className).toContain('min-h-touch');
+    // Chờ trang render xong nội dung chứng nhận, rồi mới khẳng định về tính năng in.
+    await screen.findByText(
+      'RubyLingo không phải kỳ thi Cambridge; kết quả ở đây không có giá trị chứng nhận.',
+    );
 
-    fireEvent.click(button);
-    expect(printMock).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: /in chứng nhận/i })).toBeNull();
+    // Không còn lớp tiện ích `print:*` nào — tức là nhánh "chỉ hiện khi in" đã bị gỡ hẳn.
+    expect(container.innerHTML).not.toMatch(/\bprint:/);
+    expect(printMock).not.toHaveBeenCalled();
 
     vi.unstubAllGlobals();
   });

@@ -12,25 +12,24 @@
  *   công làm hết đã là một thành tựu (B5). Khiên lấy từ SERVER, không tự tính lại (B4).
  *
  * -----------------------------------------------------------------------------
- * IN ĐƯỢC (Giai đoạn 9) — Ctrl/Cmd+P CHO RA MỘT TRANG GIẤY SẠCH
+ * CHỈ TRONG APP — KHÔNG IN, KHÔNG XUẤT TỆP
  * -----------------------------------------------------------------------------
- * ⭐ Phụ huynh in bằng lệnh in SẴN CÓ của trình duyệt; app KHÔNG dùng thư viện xuất PDF nào.
- *   Nút "🖨️ In chứng nhận" chỉ gọi `window.print()`.
+ * ⚠️ QUYẾT ĐỊNH CỦA CHỦ DỰ ÁN (2026-10-11): "chứng nhận hoàn thành chỉ trong nội bộ trang web,
+ *   không cần in". Nên đã GỠ nút "🖨️ In chứng nhận" và luật `@media print` toàn cục.
  *
- * ⚠️ BA THỨ PHẢI SỐNG SÓT QUA BẢN IN — và cả ba đều đã bị "quên" ở đâu đó trong các app khác:
- *   1. **NỘI DUNG CHỨNG NHẬN.** Thanh điều hướng (`TopBar` = `<header>`, `BottomNav` = `<nav>`)
- *      và mọi nút bấm bị ẩn khi in — luật nằm ở `@media print` trong `styles/index.css` (khung)
- *      và `print:hidden` ngay tại nút của trang này.
- *   2. **DÒNG MIỄN TRỪ CAMBRIDGE.** Nó nằm trong luồng in (KHÔNG `print:hidden`) — một bản in
- *      nói "chứng nhận" mà thiếu câu này là một lời hứa sai với phụ huynh. Test khoá đúng điều đó.
- *   3. **TÊN BÉ + SỐ KHIÊN TỪNG PHẦN + NGÀY.** Lấy NGUYÊN từ server (`bestShields`,
+ *   Đừng thêm lại tính năng in/xuất PDF mà không hỏi: bản in luôn phải kèm dòng miễn trừ
+ *   Cambridge, và một tờ giấy rời khỏi app thì ta không kiểm soát được nó bị dùng thế nào.
+ *
+ * ⚠️ HAI THỨ PHẢI LUÔN CÒN TRÊN MÀN HÌNH, dù chỉ hiển thị trong app:
+ *   1. **DÒNG MIỄN TRỪ CAMBRIDGE.** Ghi "chứng nhận" mà thiếu câu này là một lời hứa sai với
+ *      phụ huynh. Test khoá đúng điều đó.
+ *   2. **TÊN BÉ + SỐ KHIÊN TỪNG PHẦN + NGÀY.** Lấy NGUYÊN từ server (`bestShields`,
  *      `lastAttemptAt`), không tự tính lại — xem quyết định B4.
  */
 
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { BigButton } from '../../components/common/BigButton.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 import { ShieldRow } from '../../components/final-test/ShieldRow.js';
 import { sectionTitleKey } from '../../components/final-test/praise.js';
@@ -94,24 +93,15 @@ export function FinalTestCertificatePage() {
   }
 
   return (
-    <div className="flex flex-col gap-5 print:gap-3">
-      {/* Hàng điều khiển: quay lại + in. `print:hidden` ⇒ KHÔNG xuất hiện trên giấy in. */}
-      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+    <div className="flex flex-col gap-5">
+      {/* Hàng điều khiển: chỉ còn nút quay lại (tính năng in đã gỡ theo quyết định 2026-10-11). */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <BackHomeLink />
-        <BigButton
-          variant="secondary"
-          icon="🖨️"
-          fullWidth={false}
-          aria-label={t('finalTest.printCertificateLabel')}
-          onClick={() => window.print()}
-        >
-          {t('finalTest.printCertificate')}
-        </BigButton>
       </div>
 
       <section
         aria-labelledby="final-test-certificate-title"
-        className="flex flex-col items-center gap-3 rounded-card border-2 border-brand bg-gradient-to-b from-brand-tint to-surface p-6 text-center shadow-kid print:break-inside-avoid print:shadow-none"
+        className="flex flex-col items-center gap-3 rounded-card border-2 border-brand bg-gradient-to-b from-brand-tint to-surface p-6 text-center shadow-kid"
       >
         <span
           role="img"
@@ -125,7 +115,7 @@ export function FinalTestCertificatePage() {
           {t('finalTest.certificateTitle')}
         </h1>
 
-        {/* Nhãn hiệu RUBYLINGO — KHÔNG phải Cambridge. Bắt buộc có trên bản in. */}
+        {/* Nhãn hiệu RUBYLINGO — KHÔNG phải Cambridge. Luôn hiện, cả trên màn hình. */}
         <p className="text-kid-sm font-bold text-brand">{t('finalTest.certificateBrand')}</p>
 
         <p className="text-kid-lg font-bold text-brand">{child.nickname}</p>
@@ -143,14 +133,14 @@ export function FinalTestCertificatePage() {
       </section>
 
       {/* Khiên TỪNG phần — lấy từ server, không tự tính lại. */}
-      <ul className="flex flex-col gap-3 print:gap-2">
+      <ul className="flex flex-col gap-3">
         {sections.map((section) => {
           const title = t(sectionTitleKey(section.section));
           const shields = section.bestShields;
           return (
             <li
               key={section.section}
-              className="flex items-center justify-between gap-3 rounded-card border-2 border-line bg-surface p-4 print:break-inside-avoid"
+              className="flex items-center justify-between gap-3 rounded-card border-2 border-line bg-surface p-4"
             >
               <span className="text-kid-md font-bold text-ink">{title}</span>
               {shields !== null && (
@@ -164,7 +154,7 @@ export function FinalTestCertificatePage() {
         })}
       </ul>
 
-      {/* Ràng buộc pháp lý — bắt buộc hiện, VÀ bắt buộc sống sót qua bản in (KHÔNG `print:hidden`). */}
+      {/* Ràng buộc pháp lý — BẮT BUỘC luôn hiện trên màn hình chứng nhận, không được gỡ. */}
       <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-xs text-ink-soft">
         {t('finalTest.speakDisclaimer')}
       </p>

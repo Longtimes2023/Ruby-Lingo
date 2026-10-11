@@ -686,10 +686,6 @@ export const vi = {
     certificateDate: 'Ngày {{date}}',
     certificateIncomplete: 'Bé còn phần {{sections}} chưa làm. Mình làm nốt nhé!',
     certificateMedalLabel: 'Huy chương tốt nghiệp Starters',
-    /** Nhãn nút in chứng nhận (chỉ gọi `window.print()` — không xuất PDF, không thêm thư viện). */
-    printCertificate: 'In chứng nhận',
-    /** Nhãn đọc của nút in (nói rõ hành động: in ra giấy). */
-    printCertificateLabel: 'In chứng nhận ra giấy',
 
     /** Không có phần thi này / chưa tới lúc. */
     homeTitle: 'Khu vực thi Starters',
