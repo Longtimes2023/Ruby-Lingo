@@ -30,6 +30,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+import { BigButton } from '../../components/common/BigButton.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 import { ShieldRow } from '../../components/final-test/ShieldRow.js';
 import { sectionTitleKey } from '../../components/final-test/praise.js';
