@@ -21,6 +21,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { DailyStat, ReportResponse, WordAccuracyDto } from '@shared/types/api.js';
+import { PARENT_SPEAKING_ITEM_COUNT } from '@shared/schemas/parent-speaking.js';
 
 import { isApiClientError } from '../../api/client.js';
 import { reportApi } from '../../api/endpoints.js';
@@ -323,6 +324,31 @@ export function ParentReport({ childId, onGateClosed }: ParentReportProps) {
         <p className="rounded-card border-2 border-line bg-surface-raised px-4 py-3 text-kid-xs text-ink-soft">
           {t('finalTest.speakDisclaimer')}
         </p>
+
+        {/*
+          --- Xác nhận PHẦN NÓI của bố mẹ (TẦNG 4) -------------------------
+          ⭐ Số lấy NGUYÊN từ server (`report.parentSpeaking`), KHÔNG tự đếm ở client.
+          ⚠️ Chưa xác nhận (items rỗng) ⇒ câu TRUNG TÍNH, KHÔNG hiện "0/4" như một lời chê.
+            `done` đếm cả mục "mình ôn thêm nhé" — đó vẫn là một lựa chọn bố mẹ đã xác nhận.
+        */}
+        <div className="flex flex-col gap-1 rounded-card border-2 border-line bg-surface px-4 py-3">
+          <p className="text-kid-md font-bold text-ink">{t('parent.speakingReportTitle')}</p>
+          <p className="text-kid-sm text-ink-soft">
+            {report.parentSpeaking.items.length === 0
+              ? t('parent.speakingReportNone')
+              : t('parent.speakingReportConfirmed', {
+                  done: report.parentSpeaking.items.length,
+                  total: PARENT_SPEAKING_ITEM_COUNT,
+                })}
+          </p>
+          {report.parentSpeaking.updatedAt !== null && (
+            <p className="text-kid-xs text-ink-faint">
+              {t('parent.speakingReportUpdated', {
+                date: formatDateVi(report.parentSpeaking.updatedAt),
+              })}
+            </p>
+          )}
+        </div>
       </section>
     </div>
   );

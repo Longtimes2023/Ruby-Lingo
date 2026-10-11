@@ -69,6 +69,7 @@ function reportFixture(): ReportResponse {
     strugglingWords: [],
     masteredWords: [],
     finalTest: [],
+    parentSpeaking: { items: [], updatedAt: null },
   };
 }
 

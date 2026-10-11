@@ -33,10 +33,15 @@
 
 import type { ReportResponse, WordAccuracyDto } from '../../shared/types/api.js';
 import type { FinalTestSectionStatus } from '../../shared/types/final-test.js';
+import type { ParentSpeakingState } from '../../shared/schemas/parent-speaking.js';
 import type { ShieldCount } from '../../shared/final-test-scoring.js';
 import { reportQuerySchema } from '../../shared/schemas/report.js';
 import type { ReportQueryInput } from '../../shared/schemas/report.js';
 import { finalTestSectionStatusSchema } from '../../shared/schemas/final-test-api.js';
+import {
+  parentSpeakingStateSchema,
+  parseParentSpeakingMarks,
+} from '../../shared/schemas/parent-speaking.js';
 import {
   REPORT_DEFAULT_RANGE_DAYS,
   REPORT_MAX_RANGE_DAYS,
@@ -128,6 +133,7 @@ export class ReportService {
 
     return {
       finalTest: this.readFinalTestSections(childId),
+      parentSpeaking: this.readParentSpeaking(childId),
       child,
       summary_vi: this.buildSummary({
         activeDays,
@@ -271,6 +277,31 @@ export class ReportService {
     // Parse ĐẦU RA bằng schema dùng chung với màn thi: hình dạng lệch sẽ ném Ở ĐÂY, không để
     // client nhận dữ liệu méo rồi hỏng âm thầm (cùng lối như `FinalTestService.getState`).
     return finalTestSectionStatusSchema.array().parse(sections);
+  }
+
+  /**
+   * Xác nhận PHẦN NÓI của phụ huynh (TẦNG 4) cho khối "Bài thi cuối khoá" của báo cáo.
+   *
+   * ⭐ ĐỌC THẲNG `parent_speaking_confirm` (bảng của migration 014), CÙNG lối với
+   *   `readFinalTestSections` ở trên: `ReportService` đã kiểm SỞ HỮU một lần rồi đọc bảng thô,
+   *   KHÔNG gọi `ParentSpeakingService` (gọi nó sẽ kéo theo cả parse hợp đồng API — thừa cho một
+   *   khối báo cáo). Việc parse `marks_json` dùng CHUNG hàm ở `shared/` với service để hai nơi
+   *   không thể đọc JSON theo hai cách khác nhau.
+   *
+   * ⚠️ BÉ CHƯA ĐƯỢC XÁC NHẬN ⇒ `{ items: [], updatedAt: null }`, KHÔNG bịa mốc, KHÔNG bịa "0/4".
+   *    Client hiện câu trung tính — "0/4" đọc lên như một lời chê.
+   */
+  private readParentSpeaking(childId: string): ParentSpeakingState {
+    const row = this.db
+      .prepare('SELECT marks_json, updated_at FROM parent_speaking_confirm WHERE child_id = ?')
+      .get(childId) as { marks_json: string; updated_at: string } | undefined;
+
+    if (!row) return { items: [], updatedAt: null };
+
+    return parentSpeakingStateSchema.parse({
+      items: parseParentSpeakingMarks(row.marks_json),
+      updatedAt: row.updated_at,
+    });
   }
 
   /**

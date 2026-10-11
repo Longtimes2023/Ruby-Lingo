@@ -976,11 +976,20 @@ export const vi = {
     /** Nút đánh dấu "mình ôn thêm" — KHÔNG phải lời chê. */
     speakingNotYet: 'Mình ôn thêm nhé',
     /**
-     * ⚠️ Nói rõ giới hạn hiện tại: lựa chọn chưa được đồng bộ lên server. Ẩn đi là nói dối
-     *   phụ huynh — không được bỏ.
+     * ⚠️ Câu TRUNG TÍNH khi chưa đồng bộ được lên server (thường là mất mạng). Nói THẬT: lựa chọn
+     *   vẫn được giữ trên máy này và sẽ tự gửi lại — KHÔNG lộ mã lỗi kỹ thuật cho phụ huynh.
      */
-    speakingLocalNote:
-      'Lựa chọn này chỉ lưu trên thiết bị này, chưa đồng bộ lên máy chủ — nếu đổi máy sẽ không thấy.',
+    speakingSyncPending:
+      'Chưa đồng bộ được lên máy chủ. Lựa chọn của bố mẹ vẫn được giữ trên thiết bị này và sẽ tự đồng bộ lại khi có mạng.',
+
+    /** Khối xác nhận phần Nói trong BÁO CÁO phụ huynh. */
+    speakingReportTitle: 'Phần Nói — xác nhận của bố mẹ',
+    /** Bố mẹ đã đánh dấu một số mục (kể cả "ôn thêm" cũng là một lựa chọn đã xác nhận). */
+    speakingReportConfirmed: 'Bố mẹ đã xác nhận {{done}}/{{total}} mục.',
+    /** Bố mẹ chưa đánh dấu mục nào — trung tính, không phán xét. */
+    speakingReportNone: 'Bố mẹ chưa xác nhận phần Nói.',
+    /** Mốc cập nhật gần nhất (ngày đã định dạng). */
+    speakingReportUpdated: 'Cập nhật: {{date}}',
 
     deleteAccount: 'Xoá tài khoản và toàn bộ dữ liệu',
     deleteWarning:

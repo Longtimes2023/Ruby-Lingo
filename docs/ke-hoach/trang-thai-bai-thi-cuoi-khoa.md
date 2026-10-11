@@ -1,7 +1,7 @@
 # RubyLingo — TRẠNG THÁI BÀI THI CUỐI KHOÁ (phần CLIENT)
 
-> **Loại tài liệu:** TRẠNG THÁI TRIỂN KHAI (Giai đoạn 7 — client; cập nhật Giai đoạn 10) ·
-> **Ngày:** 2026-10-10.
+> **Loại tài liệu:** TRẠNG THÁI TRIỂN KHAI (Giai đoạn 7 — client; cập nhật Giai đoạn 11) ·
+> **Ngày:** 2026-10-11.
 > **Phạm vi:** chỉ mô tả phần CLIENT (trang / route / luồng cho bé). Server, nội dung đề, luật mở
 > khoá và thang khiên thuộc Giai đoạn 4–6 (đã xong, đã khoá).
 > **Thiết kế gốc:** `docs/ke-hoach/thiet-ke-bai-thi-cuoi-khoa.md` (đọc trước tài liệu này).
@@ -129,15 +129,11 @@ Trước đây hai dạng câu dưới đây chỉ hiện **NHÃN CHỮ** (hoặ
 
 ## 6. Điều CHƯA làm (và lý do)
 
-- **Xuất PDF "Chứng nhận":** KHÔNG làm. Cần review bản quyền/nhãn hiệu riêng (Q7) — chưa được duyệt.
-  Trang `/final-test/certificate` chỉ render TRONG APP.
-- **Khối "Bài thi cuối khoá" ở báo cáo PHỤ HUYNH:** **CHƯA làm.** Hai lý do:
-  1. `ReportResponse` (`shared/types/api.ts`) **không có** trường `finalTest`, và hợp đồng
-     `FinalTestSectionStatus` hiện **không mang `lastAttemptAt`** (ngày làm) ⇒ muốn hiện "khiên mỗi
-     phần + ngày làm" phải SỬA SERVER (`ReportService` + DTO) — ngoài phạm vi Giai đoạn 7 (server đã khoá).
-  2. Khu vực phụ huynh nằm sau cổng PIN; thêm một lượt gọi mạng thứ hai ở đó là rủi ro không cần thiết
-     khi chưa có hợp đồng dữ liệu đầy đủ.
-  ⇒ Ghi nhận LÀ CHƯA LÀM, không nhét bừa một khối nửa vời. Bé vẫn thấy đủ khiên ở `/final-test`.
+- **Khối "Bài thi cuối khoá" ở báo cáo PHỤ HUYNH:** ✅ **ĐÃ làm** (Giai đoạn 9, bổ sung ở Giai
+  đoạn 11). `ReportResponse.finalTest` liệt kê khiên cao nhất/ngày mỗi phần; trường ADDITIVE
+  `ReportResponse.parentSpeaking` (Giai đoạn 11) cho biết bố mẹ đã xác nhận mấy mục phần Nói.
+  Ghi chú cũ ("chưa có trường `finalTest`") nay không còn đúng — giữ lại đây chỉ để đối chiếu lịch sử.
+- **Xuất PDF "Chứng nhận":** KHÔNG làm (xem trên).
 
 ---
 
@@ -164,3 +160,34 @@ npx playwright test tests/e2e/04-bai-thi-cuoi-khoa.spec.ts   # E2E (chặn API b
 
 ⚠️ Nếu môi trường **không chạy được trình duyệt**, E2E sẽ không chạy — khi đó phải báo TRUNG THỰC là
 "chưa chạy được", KHÔNG nói đã xanh (xem báo cáo bàn giao).
+
+---
+
+## 8. Xác nhận phần Nói của phụ huynh — ĐÃ ĐỒNG BỘ SERVER (Giai đoạn 11)
+
+⭐ **VÌ SAO:** trước đây rubric 4 mục Nói chỉ nằm trong `localStorage` (`parent.speakingLocalNote`
+thú nhận điều đó). Đổi máy là mất, và anh/chị/em trong nhà không thấy xác nhận của nhau. Nay nó là
+dữ liệu CỦA HỒ SƠ BÉ (chủ dự án cho phép gọi API).
+
+**Server**
+- Migration `014_parent_speaking.sql`: bảng `parent_speaking_confirm` — `child_id` PK (FK CASCADE),
+  `marks_json` (JSON array `[{id,done}]`), `updated_at`. Một bé = MỘT hàng (upsert).
+  ⚠️ Vì sao cột JSON chứ không 4 cột boolean: danh mục mục Nói là NỘI DUNG, có thể đổi số part;
+  cột JSON khớp thẳng với schema Zod và giữ được BA trạng thái (đã làm được / ôn thêm / chưa xác nhận).
+- `shared/schemas/parent-speaking.ts`: danh mục TĨNH `PARENT_SPEAKING_ITEM_IDS = ['p1'..'p4']` +
+  schema `.parse()` ở CẢ route và service. Hình dạng `{ items: [{id,done}], updatedAt: string|null }`.
+- `GET`/`PUT /api/children/:id/parent-speaking` (`server/routes/parent-speaking.ts` →
+  `ParentSpeakingService`). Quyền suy từ `child_profile.parent_id` (bé nhà khác ⇒ `CHILD_NOT_FOUND`).
+  Không đụng ví/XP/happiness/khiên — chỉ là ghi nhận của người lớn.
+- `ReportResponse.parentSpeaking` (trường ADDITIVE): `ReportService` đọc thẳng bảng, cùng lối
+  `finalTest`. Khối "Bài thi cuối khoá" trong báo cáo hiện "Bố mẹ đã xác nhận x/4 mục" + ngày.
+
+**Client**
+- `src/store/parentSpeakingStore.ts`: ghi `localStorage` NGAY khi bấm (chống mất mạng), rồi đẩy server;
+  mất mạng ⇒ giữ cờ `pending` + câu trung tính (`parent.speakingSyncPending`), tự GỬI BÙ khi trình
+  duyệt phát sự kiện `online` (`src/hooks/useParentSpeaking.ts`). KHÔNG lộ mã lỗi kỹ thuật.
+- Bỏ khoá `parent.speakingLocalNote` (nay đã lưu server — UI không nói sai sự thật).
+
+**Chống lệch danh mục:** `tests/unit/shared/parent-speaking-schema.test.ts` đọc TRỰC TIẾP
+`src/data/levels/starters/final-test/speaking.json` và khẳng định số part + thứ tự `index` khớp danh
+mục tĩnh — sửa đề mà quên danh mục ⇒ test ĐỎ.

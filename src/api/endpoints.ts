@@ -33,6 +33,9 @@ import type {
   LoginRequest,
   ParentGateRequest,
   ParentGateResponse,
+  ParentSpeakingGetResponse,
+  ParentSpeakingSaveRequest,
+  ParentSpeakingSaveResponse,
   ProgressGetResponse,
   ProgressSyncRequest,
   ProgressSyncResponse,
@@ -223,6 +226,31 @@ export const finalTestApi = {
 //    dựng lên một ranh giới mà server không hề có, và ranh giới sai chỗ là thứ khiến người sửa
 //    sau này đi tìm "service nào giữ tiền" ở hai nơi. Xem ghi chú đầu `server/routes/rewards.ts`
 //    về việc kế hoạch từng ghi `routes/shop.ts` + `ShopService.ts` và vì sao KHÔNG làm vậy.
+
+// =============================================================================
+// Xác nhận phần Nói của phụ huynh — `/api/children/:id/parent-speaking`
+// =============================================================================
+
+/**
+ * Rubric 4 mục Nói do bố/mẹ tự xác nhận — GHI NHẬN CỦA NGƯỜI LỚN, không phải điểm máy chấm.
+ *
+ * ⚠️ ĐỌC/GHI qua server (trước đây chỉ `localStorage`, đổi máy là mất). Bản cục bộ vẫn được giữ
+ *    làm ĐỆM chống mất mạng — xem `src/store/parentSpeakingStore.ts`.
+ */
+export const parentSpeakingApi = {
+  get: (childId: string, options?: RequestOptions): Promise<ParentSpeakingGetResponse> =>
+    api.get(`/children/${encodeURIComponent(childId)}/parent-speaking`, options),
+
+  /**
+   * Ghi đè trạng thái 4 mục. Body CHỈ có `{ items }` — server tự đóng dấu `updatedAt` (đồng hồ
+   * client có thể lệch). Mục vắng mặt = "chưa xác nhận"; `done:false` = "mình ôn thêm nhé".
+   */
+  save: (
+    childId: string,
+    body: ParentSpeakingSaveRequest,
+  ): Promise<ParentSpeakingSaveResponse> =>
+    api.put(`/children/${encodeURIComponent(childId)}/parent-speaking`, body),
+};
 
 export const rewardsApi = {
   /**

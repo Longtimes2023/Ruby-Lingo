@@ -40,6 +40,7 @@ import type {
   FinalTestProgressSaveInput,
   FinalTestSubmissionInput,
 } from '../schemas/final-test-api.js';
+import type { ParentSpeakingSaveInput, ParentSpeakingState } from '../schemas/parent-speaking.js';
 
 // =============================================================================
 // Mã lỗi — dùng chung, UI dịch sang câu tiếng Việt thân thiện
@@ -445,11 +446,34 @@ export interface ReportResponse {
    *   thay vì một dãy khiên rỗng.
    */
   finalTest: FinalTestSectionStatus[];
+  /**
+   * ⭐ XÁC NHẬN PHẦN NÓI CỦA PHỤ HUYNH (TẦNG 4) — trạng thái rubric 4 mục bố/mẹ tự đánh dấu.
+   *
+   * ⚠️ `items` rỗng + `updatedAt = null` nghĩa là "chưa xác nhận", KHÔNG phải lỗi. Client hiện
+   *    câu trung tính thay vì một dãy 0/4 nghe như lời chê. Đây là GHI NHẬN CỦA NGƯỜI LỚN, không
+   *    phải kết quả máy chấm — không đi vào khiên/điểm.
+   *
+   * ⚠️ VÌ SAO ĐI KÈM BÁO CÁO thay vì một endpoint riêng: màn báo cáo đã gọi `GET /report`; thêm
+   *    một request nữa chỉ để lấy một con số nhỏ là thêm một trạng thái tải, một lỗi mạng có thể
+   *    xảy ra riêng, và một chỗ nữa để số hiển thị lệch với phần còn lại của báo cáo. `ReportService`
+   *    đọc thẳng bảng `parent_speaking_confirm` — đúng lối nó vẫn đọc `final_test_attempt`.
+   */
+  parentSpeaking: ParentSpeakingState;
 }
 
 export type RoomPlacementsGetResponse = RoomPlacement[];
 export type RoomPlacementsSaveRequest = RoomPlacement[];
 export type RoomPlacementsSaveResponse = RoomPlacement[];
+
+// =============================================================================
+// Xác nhận phần Nói của phụ huynh (Giai đoạn 11)
+// =============================================================================
+
+/** `GET /api/children/:id/parent-speaking` — trạng thái rubric 4 mục Nói của bé. */
+export type ParentSpeakingGetResponse = ParentSpeakingState;
+/** `PUT /api/children/:id/parent-speaking` — body chỉ có `items` (server tự đóng dấu thời gian). */
+export type ParentSpeakingSaveRequest = ParentSpeakingSaveInput;
+export type ParentSpeakingSaveResponse = ParentSpeakingState;
 
 // =============================================================================
 // Bài thi cuối khoá (G6)

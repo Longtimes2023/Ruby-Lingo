@@ -106,6 +106,8 @@ function report(overrides: Partial<ReportResponse> = {}): ReportResponse {
       finalTestSection({ section: 'reading-writing', totalItems: 25 }),
       finalTestSection({ section: 'speaking', autoScored: false, totalItems: 11 }),
     ],
+    // Mặc định "chưa xác nhận Nói" — test nào cần thì truyền `overrides`.
+    parentSpeaking: { items: [], updatedAt: null },
     ...overrides,
   };
 }
@@ -319,6 +321,34 @@ describe('ParentReport — khối bài thi cuối khoá', () => {
     await screen.findByText('Bé Na đã học đều đặn trong tuần này.');
 
     expect(screen.getByLabelText('Nghe: bé được 5 khiên')).toBeInTheDocument();
+  });
+
+  it('⭐ xác nhận PHẦN NÓI của bố mẹ ⇒ hiện đúng số mục đã xác nhận (kể cả "ôn thêm")', async () => {
+    getMock.mockResolvedValue(
+      report({
+        parentSpeaking: {
+          items: [
+            { id: 'p1', done: true },
+            { id: 'p2', done: false },
+            { id: 'p3', done: true },
+          ],
+          updatedAt: '2026-10-08T10:00:00.000Z',
+        },
+      }),
+    );
+    renderReport();
+
+    // 3 mục đã được bố mẹ xác nhận trên tổng 4 (done:false vẫn là một xác nhận).
+    expect(await screen.findByText('Bố mẹ đã xác nhận 3/4 mục.')).toBeInTheDocument();
+    expect(screen.getByText(/Cập nhật: \d{1,2}\/\d{1,2}\/\d{4}/)).toBeInTheDocument();
+  });
+
+  it('⭐ chưa xác nhận Nói ⇒ câu TRUNG TÍNH, KHÔNG hiện "0/4"', async () => {
+    renderReport();
+    await screen.findByText('Bé Na đã học đều đặn trong tuần này.');
+
+    expect(screen.getByText('Bố mẹ chưa xác nhận phần Nói.')).toBeInTheDocument();
+    expect(screen.queryByText(/0\/4/)).toBeNull();
   });
 });
 
