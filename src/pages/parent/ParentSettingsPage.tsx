@@ -101,8 +101,9 @@ export function ParentSettingsPage({ onGateClosed }: ParentSettingsPageProps) {
   const setReducedMotion = useSettingsStore((s) => s.setReducedMotion);
   /*
     ⚠️ "Nghe lại giọng con" là cờ CỤC BỘ, KHÔNG đồng bộ server (khác bốn cài đặt trên). Nó điều
-    khiển micro ở phần Nói, mặc định TẮT, và chỉ có hiệu lực trên chính thiết bị này — nên nó
-    nằm thẳng trong `settingsStore`, không đi qua `settingsApi`.
+    khiển micro ở phần Nói, MẶC ĐỊNH BẬT (chỉ hiện nút, không tự ghi), và chỉ có hiệu lực trên
+    chính thiết bị này — nên nó nằm thẳng trong `settingsStore`, không đi qua `settingsApi`.
+    Công tắc ở dưới là ĐƯỜNG TẮT: tắt ⇒ nút "Nghe lại giọng con" ẩn hẳn.
   */
   const voicePlaybackEnabled = useSettingsStore((s) => s.voicePlaybackEnabled);
   const setVoicePlaybackEnabled = useSettingsStore((s) => s.setVoicePlaybackEnabled);
@@ -260,9 +261,9 @@ export function ParentSettingsPage({ onGateClosed }: ParentSettingsPageProps) {
         />
 
         {/*
-          TẦNG 3 — "Nghe lại giọng con" ở phần Nói. MẶC ĐỊNH TẮT.
+          TẦNG 3 — "Nghe lại giọng con" ở phần Nói. MẶC ĐỊNH BẬT (chỉ hiện nút, KHÔNG tự ghi).
           ⚠️ Ghi thẳng vào `settingsStore` (cục bộ), KHÔNG gọi `saveSetting` — cờ này không có
-          trên server và không nên có: nó là cài đặt micro của THIẾT BỊ.
+          trên server và không nên có: nó là cài đặt micro của THIẾT BỊ. Đây là ĐƯỜNG TẮT.
         */}
         <Toggle
           label={t('parent.voicePlayback')}

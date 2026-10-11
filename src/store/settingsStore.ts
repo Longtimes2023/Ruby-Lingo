@@ -93,10 +93,13 @@ export interface SettingsState {
    * Bật tầng "Nghe lại giọng con" ở phần Nói của bài thi cuối khoá (TẦNG 3 — xem
    * `useVoicePlayback` và `docs/ke-hoach/phan-noi-bai-thi.md`).
    *
-   * ⚠️⚠️ MẶC ĐỊNH `false` — CỐ Ý, KHÔNG ĐỔI MÀ KHÔNG HỎI CHỦ DỰ ÁN.
-   *   Chủ dự án đã chốt "không ghi âm". Tầng này tồn tại như một lựa chọn có ý thức của PHỤ HUYNH:
-   *   bật thì bản ghi vẫn HOÀN TOÀN CỤC BỘ (không gửi, không lưu), nhưng nó vẫn là micro — nên
-   *   không được tự bật cho mọi người.
+   * ⚠️⚠️ MẶC ĐỊNH `true` (chủ dự án chốt 2026-10-11) — NHƯNG PHẠM VI RẤT HẸP.
+   *   "Bật mặc định" CHỈ có nghĩa là **nút "Nghe lại giọng con" hiện sẵn cho bé/phụ huynh bấm**,
+   *   KHÔNG phải tự bật micro hay tự ghi. Bản ghi chỉ có khi người dùng BẤM:
+   *     • chỉ ghi rất ngắn, phát lại NGAY trên chính máy này;
+   *     • KHÔNG lưu file, KHÔNG ghi localStorage/IndexedDB, KHÔNG gửi lên server;
+   *     • huỷ blob ngay sau khi nghe xong / rời màn.
+   *   Ai đã TẮT thì lựa chọn đã lưu được TÔN TRỌNG (đọc lại từ máy, không bị ghi đè về `true`).
    *
    * ⚠️ CỜ NÀY KHÔNG ĐỒNG BỘ SERVER: đây là sở thích của THIẾT BỊ (như `soundEnabled`), không phải
    *   dữ liệu học tập. Không nằm trong `SettingsDto`/`UpdateSettingsRequest`.
@@ -126,8 +129,8 @@ const DEFAULTS = {
   hapticsEnabled: true,
   reducedMotion: null,
   voicePreference: 'female-young',
-  /** TẮT mặc định — xem ghi chú ở `voicePlaybackEnabled`. */
-  voicePlaybackEnabled: false,
+  /** BẬT mặc định (chủ dự án chốt 2026-10-11) — chỉ hiện nút, KHÔNG tự ghi. Xem ghi chú ở trên. */
+  voicePlaybackEnabled: true,
 } as const satisfies Omit<
   SettingsState,
   | 'setSoundEnabled'

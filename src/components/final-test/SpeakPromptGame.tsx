@@ -8,8 +8,9 @@
  *     MỤC TIÊU của câu rồi báo hai trạng thái hướng trẻ ("Máy nghe thấy rồi!" / "Máy chưa nghe
  *     rõ…"). KHÔNG lưu, KHÔNG gửi, KHÔNG đụng khiên. Xem `useSpeechCheck`.
  *
- *   TẦNG 3 (tuỳ chọn, MẶC ĐỊNH TẮT): "Nghe lại giọng con" — ghi NGẮN bằng `MediaRecorder`, phát
- *     lại ngay trên máy, rồi HUỶ. Hoàn toàn cục bộ. Xem `useVoicePlayback`.
+ *   TẦNG 3 (tuỳ chọn, MẶC ĐỊNH BẬT — nhưng chỉ HIỆN NÚT BẤM): "Nghe lại giọng con" — ghi NGẮN
+ *     bằng `MediaRecorder`, phát lại ngay trên máy, rồi HUỶ. Hoàn toàn cục bộ. Không tự ghi khi mở
+ *     màn: chỉ ghi khi bé/phụ huynh BẤM. Xem `useVoicePlayback`.
  *
  *   TẦNG 4 (khu vực phụ huynh): rubric 4 phần Nói để phụ huynh TỰ XÁC NHẬN — cách ĐÁNG TIN NHẤT.
  *     Xem `ParentSpeakingChecklist`.
@@ -41,7 +42,7 @@ export function SpeakPromptGame({ item, onAnswered }: FinalTestItemProps) {
 
   const speechCheck = useSpeechCheck();
   const voicePlayback = useVoicePlayback();
-  // ⚠️ MẶC ĐỊNH TẮT: chỉ hiện tầng 3 khi phụ huynh đã chủ động bật ở khu vực phụ huynh.
+  // ⚠️ MẶC ĐỊNH BẬT nghĩa là NÚT HIỆN SẴN — KHÔNG phải tự ghi. Phụ huynh tắt cờ ⇒ nút ẩn hẳn.
   const voicePlaybackEnabled = useSettingsStore((s) => s.voicePlaybackEnabled);
 
   if (item.interaction !== 'speak_prompt') return null;
@@ -95,7 +96,7 @@ export function SpeakPromptGame({ item, onAnswered }: FinalTestItemProps) {
         </div>
       )}
 
-      {/* --- TẦNG 3: nghe lại giọng con (tuỳ chọn, mặc định TẮT) ------------ */}
+      {/* --- TẦNG 3: nghe lại giọng con (mặc định BẬT, vẫn cục bộ) ---------- */}
       {showVoicePlayback && (
         <div className="flex flex-col gap-2 rounded-kid border-2 border-line bg-surface-raised p-3">
           {voicePlayback.state === 'idle' && (

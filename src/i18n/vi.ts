@@ -593,11 +593,13 @@ export const vi = {
     /** Nói rõ đây là "máy nghe giúp vui", không phải điểm phát âm của bé. */
     speakCheckNote: 'Đây là máy nghe giúp vui, không phải điểm phát âm của bé.',
 
-    // --- Phần Nói, TẦNG 3: "Nghe lại giọng con" (tuỳ chọn, MẶC ĐỊNH TẮT) ------------------
+    // --- Phần Nói, TẦNG 3: "Nghe lại giọng con" (mặc định BẬT, vẫn CỤC BỘ) ----------------
     /**
-     * ⚠️⚠️ TẦNG NÀY MẶC ĐỊNH TẮT. Chỉ hiện khi phụ huynh chủ động bật cờ `voicePlaybackEnabled`
-     *   trong khu vực phụ huynh (`parent.voicePlayback`). Bản ghi HOÀN TOÀN CỤC BỘ: không gửi,
-     *   không lưu, bị huỷ ngay sau khi nghe. Lý do ở `docs/ke-hoach/phan-noi-bai-thi.md`.
+     * ⚠️ TẦNG NÀY MẶC ĐỊNH BẬT (chủ dự án chốt 2026-10-11): nút hiện sẵn cho bé/phụ huynh bấm.
+     *   NHƯNG phạm vi rất hẹp: CHỈ ghi khi bấm, ghi rất ngắn, phát lại NGAY trên máy này, KHÔNG
+     *   lưu file, KHÔNG ghi localStorage/IndexedDB, KHÔNG gửi lên server; huỷ blob ngay sau khi
+     *   nghe xong. Cờ vẫn TẮT ĐƯỢC trong khu vực phụ huynh (`parent.voicePlayback`), khi tắt thì
+     *   nút ẩn hẳn. Lý do đổi + cảnh báo riêng tư: `docs/ke-hoach/phan-noi-bai-thi.md`.
      */
     voicePlayback: 'Nghe lại giọng con',
     voicePlaybackLabel: 'Bắt đầu ghi giọng bé để nghe lại ngay trên máy này',
@@ -607,10 +609,11 @@ export const vi = {
     voicePlaybackPlay: 'Nghe lại giọng con',
     voicePlaybackDiscard: 'Xoá bản vừa nói',
     /**
-     * ⚠️ Nói thật về quyền riêng tư. Bản ghi nằm trong bộ nhớ tạm của tab và bị xoá khi rời câu.
+     * ⚠️ Nói thật về quyền riêng tư: CHỈ nghe lại ĐƯỢC NGAY TRÊN MÁY NÀY, không lưu lại, không
+     *   gửi đi đâu. Bản ghi nằm trong bộ nhớ tạm của tab và bị xoá khi rời câu.
      */
     voicePlaybackNote:
-      'Bản ghi chỉ nằm trong máy này và bị xoá ngay. RubyLingo không lưu và không gửi đi đâu cả.',
+      'Chỉ nghe lại được ngay trên máy này, không lưu lại và không gửi đi đâu cả.',
 
     // --- Màn hình khu vực thi (Giai đoạn 7) --------------------------------
     /** Tiêu đề thẻ cổng ở bản đồ hành trình + màn khu vực thi. */
@@ -947,13 +950,14 @@ export const vi = {
     speechRate: 'Tốc độ đọc',
     reducedMotion: 'Giảm hiệu ứng chuyển động',
     /**
-     * ⚠️ TẦNG 3 — "Nghe lại giọng con" ở phần Nói. MẶC ĐỊNH TẮT, lưu CỤC BỘ (không đồng bộ
-     *   server). Chủ dự án đã chốt "không ghi âm"; cờ này là lựa chọn có ý thức của phụ huynh,
-     *   và bản ghi chỉ nằm trong máy. Xem `docs/ke-hoach/phan-noi-bai-thi.md`.
+     * ⚠️ TẦNG 3 — "Nghe lại giọng con" ở phần Nói. **MẶC ĐỊNH BẬT** (chủ dự án chốt 2026-10-11):
+     *   nút hiện sẵn cho bé/phụ huynh bấm. Phạm vi HẸP: chỉ ghi khi bấm, cục bộ, không lưu, không
+     *   gửi. Công tắc này là ĐƯỜNG TẮT — tắt ⇒ nút ẩn hẳn. Cờ lưu CỤC BỘ (không đồng bộ server).
+     *   Xem `docs/ke-hoach/phan-noi-bai-thi.md`.
      */
     voicePlayback: 'Nghe lại giọng con (chỉ trên máy này)',
     voicePlaybackHint:
-      'Khi bật, ở phần Nói bé có thể ghi một đoạn ngắn để nghe lại ngay. Bản ghi chỉ nằm trong máy này và bị xoá ngay — RubyLingo không lưu và không gửi đi đâu cả.',
+      'Bật sẵn cho con: ở phần Nói bé có thể ghi một đoạn ngắn để nghe lại ngay trên máy này. Bản ghi không được lưu lại và không gửi đi đâu cả — chỉ nghe được ngay lúc đó thôi. Bố mẹ tắt công tắc này nếu không muốn dùng.',
 
     // --- TẦNG 4: phụ huynh xác nhận phần Nói bằng rubric (đáng tin nhất) -----------------
     openSpeaking: 'Xác nhận phần Nói của con',

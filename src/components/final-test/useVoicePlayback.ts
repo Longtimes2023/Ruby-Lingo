@@ -9,9 +9,11 @@
  *   1. **KHÔNG LƯU.** Bản ghi chỉ tồn tại như một `Blob` + URL tạm trong BỘ NHỚ. KHÔNG ghi vào
  *      `localStorage`/`IndexedDB`, KHÔNG tải file, KHÔNG gửi lên server. Đóng tab là mất.
  *   2. **KHÔNG GỬI.** Không có lời gọi mạng nào ở đây. Audio không rời khỏi thiết bị.
- *   3. **MẶC ĐỊNH TẮT.** Trước đây chủ dự án đã chốt "không ghi âm". Tầng này chỉ bật khi phụ
- *      huynh chủ động bật cờ `voicePlaybackEnabled` trong khu vực phụ huynh. Đó là quyết định
- *      CÓ Ý THỨC, không phải sơ suất — xem `docs/ke-hoach/phan-noi-bai-thi.md`.
+ *   3. **MẶC ĐỊNH BẬT — NHƯNG CHỈ LÀ HIỆN NÚT (chủ dự án chốt 2026-10-11).** "Bật mặc định"
+ *      nghĩa là nút "Nghe lại giọng con" hiện sẵn cho bé/phụ huynh bấm — KHÔNG có nghĩa là tự
+ *      bật micro hay tự ghi. Hook này KHÔNG tự làm gì khi component mount; chỉ `start()` (do người
+ *      dùng bấm) mới xin quyền micro. Phụ huynh vẫn TẮT ĐƯỢC (cờ `voicePlaybackEnabled` = false ⇒
+ *      nút ẩn hẳn). Lý do đổi: chủ dự án muốn phụ huynh nghe được giọng con mà không phải đi bật.
  *
  * ⚠️ ÂM THANH CHỈ ĐỌC TIẾNG ANH KHÔNG BỊ ẢNH HƯỞNG: đây là PHÁT LẠI bản ghi của chính bé, không
  *   đi qua `SpeechService` và không liên quan tới giọng đọc TTS.

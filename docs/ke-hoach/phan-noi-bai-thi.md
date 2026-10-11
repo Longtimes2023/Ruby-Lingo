@@ -19,7 +19,7 @@ Yêu cầu trực tiếp của chủ dự án (2026-10-10):
 |------|-----|----------|--------------------|---------|-----------------|------------------|
 | 1 | Nghe mẫu en-GB → bé tự nói → "🎤 Nói rồi!" | LUÔN có | Mọi trình duyệt | Không | Không | Không (chỉ độ tham gia) |
 | 2 | "🎧 Máy nghe thử" (Web Speech API) | Opt-in (chỉ khi bấm) | Chỉ khi `hasSpeechRecognition()` = true | Không lưu | **Có** (âm thanh gửi tới nhà cung cấp trình duyệt) | Không |
-| 3 | "Nghe lại giọng con" (MediaRecorder) | **TẮT** | Chỉ khi phụ huynh bật cờ + có `MediaRecorder` | Có, **chỉ trong máy** | Không | Không |
+| 3 | "Nghe lại giọng con" (MediaRecorder) | **BẬT** (chỉ hiện nút) | Chỉ khi cờ bật + có `MediaRecorder` | Có, **chỉ trong máy** | Không | Không |
 | 4 | Phụ huynh xác nhận bằng rubric | LUÔN có (trong khu vực phụ huynh) | Sau cổng PIN | Không | Không (lưu `localStorage`) | Không |
 
 **Hành vi mặc định:** nếu bé không đụng gì tới tầng 2/3, câu Nói vẫn kết thúc **chỉ** khi bé bấm
@@ -78,25 +78,36 @@ trong comment đầu `useSpeechCheck.ts` và trong tài liệu này.
 
 ---
 
-## 5. Tầng 3 — "Nghe lại giọng con" (tuỳ chọn, MẶC ĐỊNH TẮT)
+## 5. Tầng 3 — "Nghe lại giọng con" (MẶC ĐỊNH BẬT, vẫn CỤC BỘ)
 
 Cho phép ghi một đoạn **ngắn** bằng `MediaRecorder` ngay trong máy, **phát lại ngay** cho bé/phụ
 huynh nghe, rồi **huỷ bản ghi**.
 
-- **MẶC ĐỊNH TẮT.** Phụ huynh bật cờ `voicePlaybackEnabled` trong khu vực phụ huynh
-  (Cài đặt → "Nghe lại giọng con (chỉ trên máy này)"). Cờ lưu **cục bộ** (`settingsStore`),
-  **không đồng bộ server**.
+- **MẶC ĐỊNH BẬT (chủ dự án chốt 2026-10-11).** Nút "Nghe lại giọng con" **hiện sẵn** ở phần Nói
+  cho bé/phụ huynh bấm — không phải đi bật trước.
+- **Ý nghĩa "BẬT" RẤT HẸP: chỉ HIỆN NÚT, KHÔNG tự ghi.** Mở màn Nói KHÔNG xin quyền micro, KHÔNG
+  tạo `MediaRecorder`. Chỉ khi người dùng **BẤM** nút thì mới xin quyền và ghi.
+- **TẮT ĐƯỢC.** Phụ huynh tắt công tắc "Nghe lại giọng con (chỉ trên máy này)" trong khu vực phụ
+  huynh (Cài đặt). Khi tắt ⇒ nút **ẩn hẳn**. Cờ `voicePlaybackEnabled` lưu **cục bộ**
+  (`settingsStore`), **không đồng bộ server**; lựa chọn đã lưu (kể cả `false`) được **tôn trọng**
+  ở các lần mở sau.
 - **KHÔNG ghi ra server, KHÔNG ghi vào `localStorage`/IndexedDB, KHÔNG tải file.** Bản ghi chỉ là
   `Blob` + URL tạm trong bộ nhớ, bị thu hồi khi bấm "Xoá" hoặc rời màn hình.
 - Nếu trình duyệt không có `MediaRecorder` hoặc bé/phụ huynh từ chối quyền micro ⇒ **ẩn nhẹ nhàng**,
   không báo lỗi kỹ thuật.
+- Câu chữ cạnh nút nói thật với phụ huynh: *"Chỉ nghe lại được ngay trên máy này, không lưu lại và
+  không gửi đi đâu cả."*
 
-### ⚠️ Vì sao mặc định TẮT (quyết định có ý thức)
+### ⚠️ Vì sao ĐỔI sang mặc định BẬT (quyết định có ý thức)
 
-Trước Giai đoạn 8, chủ dự án đã chốt **"không ghi âm"**. Tầng này KHÔNG lật ngược quyết định đó —
-nó tồn tại như một lựa chọn phụ huynh **chủ động**, và bản ghi **không rời khỏi thiết bị**. Ghi lại
-đây để người sau biết: mặc định TẮT không phải sơ suất mà là quyết định có ý thức. Đổi mặc định
-thành `true` cần hỏi lại chủ dự án.
+Trước Giai đoạn 8, chủ dự án đã chốt **"không ghi âm"**, nên bản đầu để tầng này **TẮT** mặc định.
+Ngày **2026-10-11**, chủ dự án chốt lại: **mặc định BẬT** — vì muốn **phụ huynh nghe được giọng con
+ngay mà không phải đi bật** một cài đặt ẩn.
+
+Việc đảo mặc định này **KHÔNG nới bất kỳ ràng buộc an toàn nào**: vẫn chỉ ghi khi người dùng bấm,
+ghi rất ngắn, phát lại ngay, **không lưu file, không gửi lên server, không ghi localStorage/
+IndexedDB**. "BẬT mặc định" = "nút hiện sẵn", KHÔNG phải "tự động ghi âm". Cảnh báo riêng tư ở §9
+giữ nguyên.
 
 ---
 
@@ -165,7 +176,8 @@ Nguồn dò: `src/services/SpeechCapability.ts` (`hasSpeechRecognition`, `getSpe
 
 - **Tầng 1:** không micro.
 - **Tầng 2:** âm thanh tới nhà cung cấp trình duyệt (Chrome/Edge); opt-in; không lưu ở RubyLingo.
-- **Tầng 3:** bản ghi ở lại thiết bị; bị xoá khi rời; opt-in; mặc định tắt.
+- **Tầng 3:** bản ghi ở lại thiết bị; bị xoá khi rời; mặc định BẬT (chỉ hiện nút, chỉ ghi khi bấm);
+  tắt được trong khu vực phụ huynh.
 - **Tầng 4:** chỉ lưu nhãn "đã làm được / ôn thêm" trong máy; không có dữ liệu âm thanh.
 - **Không tầng nào** gửi dữ liệu tới server RubyLingo hay ảnh hưởng số khiên của bé.
 
@@ -179,6 +191,6 @@ Nguồn dò: `src/services/SpeechCapability.ts` (`hasSpeechRecognition`, `getSpe
 - `src/components/final-test/ParentSpeakingChecklist.tsx` — tầng 4 (rubric phụ huynh).
 - `src/lib/speechMatch.ts` — hàm thuần so khớp (ngưỡng dễ).
 - `src/services/SpeechCapability.ts` — dò khả năng trình duyệt.
-- `src/store/settingsStore.ts` — cờ `voicePlaybackEnabled` (mặc định TẮT).
+- `src/store/settingsStore.ts` — cờ `voicePlaybackEnabled` (MẶC ĐỊNH BẬT — chỉ hiện nút, không tự ghi).
 - Test: `tests/unit/client/speech-match.test.ts`, `final-test-speak.test.tsx`,
   `parent-speaking-checklist.test.tsx`; e2e: `tests/e2e/04-bai-thi-cuoi-khoa.spec.ts`.

@@ -191,7 +191,8 @@ export function getMediaRecorderCtor(): MediaRecorderCtor | null {
 
 /**
  * Trình duyệt có GHI ÂM cục bộ được không (có `MediaRecorder` và API micro).
- * ⚠️ "Có" KHÔNG có nghĩa là nên bật: tầng "Nghe lại giọng con" vẫn MẶC ĐỊNH TẮT.
+ * ⚠️ "Có" KHÔNG có nghĩa là nên tự ghi: tầng "Nghe lại giọng con" mặc định BẬT nhưng CHỈ HIỆN
+ *    NÚT — chỉ ghi khi người dùng bấm, và phụ huynh tắt được trong khu vực phụ huynh.
  */
 export function hasMediaRecorder(): boolean {
   if (typeof navigator === 'undefined') return false;

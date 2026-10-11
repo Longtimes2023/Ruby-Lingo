@@ -6,8 +6,10 @@
  *      `SpeechRecognition` thiếu ⇒ nút phải VẮNG HẲN, không phải hiện rồi báo lỗi khi bấm.
  *   2. **Có hỗ trợ ⇒ nút hiện, và HAI nhánh phản hồi đều dùng câu KHÔNG MẮNG** ("Máy nghe thấy
  *      rồi! 🎉" / "Máy chưa nghe rõ…"). Quét DOM để bắt cả chuỗi hardcode.
- *   3. **TẦNG 3 MẶC ĐỊNH TẮT** — dù trình duyệt có `MediaRecorder`, nút "Nghe lại giọng con" chỉ
- *      hiện khi cờ `voicePlaybackEnabled` được phụ huynh bật.
+ *   3. **TẦNG 3 MẶC ĐỊNH BẬT — NHƯNG CHỈ HIỆN NÚT, KHÔNG tự ghi.** Có `MediaRecorder` + cờ mặc
+ *      định ⇒ nút "Nghe lại giọng con" HIỆN SẴN; nhưng mở màn KHÔNG xin quyền micro — chỉ khi
+ *      BẤM mới gọi `getUserMedia`/`MediaRecorder`. Vẫn TẮT ĐƯỢC (cờ `false` ⇒ nút ẩn), và thiếu
+ *      `MediaRecorder` ⇒ nút ẩn bất kể cờ.
  *   4. **Tầng 2 KHÔNG gọi server, KHÔNG đụng khiên.** Bấm "Máy nghe thử" không gọi `fetch`, không
  *      gọi `onAnswered`. Chỉ "Nói rồi!" mới kết thúc câu — hành vi mặc định KHÔNG đổi.
  */
@@ -280,47 +282,88 @@ describe('phần Nói — TẦNG 2 "Máy nghe thử"', () => {
 });
 
 // =============================================================================
-// TẦNG 3 — "Nghe lại giọng con": MẶC ĐỊNH TẮT
+// TẦNG 3 — "Nghe lại giọng con": MẶC ĐỊNH BẬT (chỉ hiện nút, không tự ghi)
 // =============================================================================
 
+/** Lấy spy `getUserMedia` đã cài trong `installMediaRecorder()`. */
+function getUserMediaSpy(): ReturnType<typeof vi.fn> {
+  const mediaDevices = navigator.mediaDevices as unknown as { getUserMedia: ReturnType<typeof vi.fn> };
+  return mediaDevices.getUserMedia;
+}
+
 describe('phần Nói — TẦNG 3 "Nghe lại giọng con"', () => {
-  it('⚠️ có MediaRecorder nhưng cờ TẮT ⇒ nút KHÔNG hiện (mặc định là tắt)', () => {
+  it('⚠️ MẶC ĐỊNH BẬT: localStorage trống + có MediaRecorder ⇒ nút HIỆN SẴN', () => {
     installMediaRecorder();
+    render(<SpeakPromptGame item={makeSpeakItem()} onAnswered={vi.fn()} />);
+
+    expect(screen.getByText('Nghe lại giọng con')).toBeInTheDocument();
+  });
+
+  it('⚠️ KHÔNG tự ghi khi mở màn: chỉ khi BẤM mới xin quyền micro', async () => {
+    installMediaRecorder();
+    render(<SpeakPromptGame item={makeSpeakItem()} onAnswered={vi.fn()} />);
+
+    // Vừa render xong: nút đã hiện nhưng micro CHƯA được xin.
+    expect(getUserMediaSpy()).not.toHaveBeenCalled();
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Bắt đầu ghi giọng bé để nghe lại ngay trên máy này' }),
+      );
+    });
+
+    expect(getUserMediaSpy()).toHaveBeenCalledWith({ audio: true });
+  });
+
+  it('⚠️ vẫn TẮT ĐƯỢC: đặt cờ false ⇒ nút KHÔNG tồn tại', () => {
+    installMediaRecorder();
+    useSettingsStore.setState({ voicePlaybackEnabled: false });
+
     render(<SpeakPromptGame item={makeSpeakItem()} onAnswered={vi.fn()} />);
 
     expect(screen.queryByText('Nghe lại giọng con')).not.toBeInTheDocument();
   });
 
-  it('⚠️ phụ huynh bật cờ + có MediaRecorder ⇒ nút hiện, và chỉ ghi khi bé bấm', async () => {
-    installMediaRecorder();
-    useSettingsStore.setState({ voicePlaybackEnabled: true });
-
+  it('⚠️ trình duyệt KHÔNG có MediaRecorder ⇒ nút ẩn BẤT KỂ cờ (kể cả true)', () => {
+    // Không cài MediaRecorder. Cờ đang là mặc định (true).
+    expect(useSettingsStore.getState().voicePlaybackEnabled).toBe(true);
     render(<SpeakPromptGame item={makeSpeakItem()} onAnswered={vi.fn()} />);
 
-    const startButton = screen.getByRole('button', {
-      name: 'Bắt đầu ghi giọng bé để nghe lại ngay trên máy này',
-    });
-    expect(startButton).toBeInTheDocument();
-
-    // Chưa bấm ⇒ chưa xin quyền micro.
-    const getUserMedia = (navigator.mediaDevices as unknown as { getUserMedia: ReturnType<typeof vi.fn> })
-      .getUserMedia;
-    expect(getUserMedia).not.toHaveBeenCalled();
-
-    await act(async () => {
-      fireEvent.click(startButton);
-    });
-    expect(getUserMedia).toHaveBeenCalledWith({ audio: true });
+    expect(screen.queryByText('Nghe lại giọng con')).not.toBeInTheDocument();
   });
 
-  it('⚠️ cờ mặc định là false trong settingsStore', () => {
-    expect(useSettingsStore.getState().voicePlaybackEnabled).toBe(false);
+  it('⚠️ cờ mặc định là TRUE trong settingsStore', () => {
+    expect(useSettingsStore.getState().voicePlaybackEnabled).toBe(true);
   });
 
   it('cờ được LƯU vào localStorage (đọc lại vẫn đúng) — cài đặt của THIẾT BỊ', () => {
-    useSettingsStore.getState().setVoicePlaybackEnabled(true);
+    useSettingsStore.getState().setVoicePlaybackEnabled(false);
     const raw = localStorage.getItem('rubylingo.settings');
     expect(raw).not.toBeNull();
-    expect(JSON.parse(raw as string)).toMatchObject({ voicePlaybackEnabled: true });
+    expect(JSON.parse(raw as string)).toMatchObject({ voicePlaybackEnabled: false });
+  });
+
+  it('⚠️ GIỮ RÀNG BUỘC: bản ghi cục bộ được phát lại rồi xoá, không có API upload/lưu file', async () => {
+    installMediaRecorder();
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    // `localStorage` bị theo dõi để chắc KHÔNG có khoá nào của bản ghi được ghi thêm.
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+
+    render(<SpeakPromptGame item={makeSpeakItem()} onAnswered={vi.fn()} />);
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Bắt đầu ghi giọng bé để nghe lại ngay trên máy này' }),
+      );
+    });
+
+    // Ghi âm KHÔNG đụng mạng và KHÔNG ghi thêm khoá lạ nào vào localStorage.
+    expect(fetchSpy).not.toHaveBeenCalled();
+    for (const [key] of setItemSpy.mock.calls) {
+      expect(String(key).startsWith('rubylingo.parent.speaking-check.')).toBe(false);
+    }
+
+    setItemSpy.mockRestore();
+    vi.unstubAllGlobals();
   });
 });

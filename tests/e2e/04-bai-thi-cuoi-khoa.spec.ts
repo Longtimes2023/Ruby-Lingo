@@ -134,11 +134,12 @@ test.describe('Bài thi cuối khoá — cổng và luồng một phần', () =>
     await expect(page.getByText('Câu 1/11')).toBeVisible();
 
     /*
-      Giai đoạn 8 — phần Nói có ba tầng TUỲ CHỌN, nhưng LUỒNG MẶC ĐỊNH KHÔNG ĐỔI:
+      Giai đoạn 8/10 — phần Nói có các tầng TUỲ CHỌN, nhưng LUỒNG MẶC ĐỊNH KHÔNG ĐỔI:
         • "Máy nghe thử" (TẦNG 2) chỉ hiện khi trình duyệt hỗ trợ `SpeechRecognition`. Ta kiểm
           theo NĂNG LỰC THẬT của trình duyệt (không hardcode) — KHÔNG bấm, vì bấm sẽ xin quyền
           micro thật và không ảnh hưởng gì tới việc nộp bài.
-        • "Nghe lại giọng con" (TẦNG 3) MẶC ĐỊNH TẮT ⇒ KHÔNG được có.
+        • "Nghe lại giọng con" (TẦNG 3) MẶC ĐỊNH BẬT (chủ dự án chốt 2026-10-11) ⇒ hiện khi có
+          `MediaRecorder` + `navigator.mediaDevices`. Ta cũng KHÔNG bấm (bấm mới xin quyền micro).
     */
     const supportsRecognition = await page.evaluate(
       () => 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window,
@@ -146,7 +147,15 @@ test.describe('Bài thi cuối khoá — cổng và luồng một phần', () =>
     if (supportsRecognition) {
       await expect(page.getByText('Máy nghe thử')).toBeVisible();
     }
-    await expect(page.getByText('Nghe lại giọng con')).toHaveCount(0);
+
+    const supportsRecording = await page.evaluate(
+      () => 'MediaRecorder' in window && navigator.mediaDevices !== undefined,
+    );
+    if (supportsRecording) {
+      await expect(page.getByText('Nghe lại giọng con')).toBeVisible();
+    } else {
+      await expect(page.getByText('Nghe lại giọng con')).toHaveCount(0);
+    }
 
     // Chơi hết 11 câu: mỗi câu bấm "Nói rồi!" (hành vi mặc định, KHÔNG cần tầng tuỳ chọn nào).
     for (let index = 0; index < 11; index += 1) {
