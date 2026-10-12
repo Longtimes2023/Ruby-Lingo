@@ -21,6 +21,8 @@
  */
 
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -582,5 +584,117 @@ describe('PetHousePage — Momo mặc đồ bé đã mua (T065)', () => {
     renderPage();
 
     expect(screen.getByText('màn chọn bạn đồng hành')).toBeInTheDocument();
+  });
+});
+
+// =============================================================================
+// Nhóm 8 — phòng phải là MỘT CĂN PHÒNG và mọi cỡ phải theo % KHUNG (T067)
+// =============================================================================
+
+/**
+ * ⚠️ VÌ SAO NHÓM NÀY TỒN TẠI — LỖI CHỦ DỰ ÁN BÁO CÓ THẬT:
+ *   *"phòng của thú cưng không phải trong 1 khung ảnh sao, lấy bóng bay, chậu cây, tranh treo
+ *   tường thì nhỏ xíu, phòng thì không ra cái phòng, chỉ là cái phông nền"*.
+ *   Đo ra thì: khung rộng 328px ở 360×640 nhưng 848px ở 1280×800, còn mọi món trang trí thì
+ *   ĐỨNG YÊN ở 24px (`size-6`) ⇒ màn càng lớn càng nhỏ xíu (7,3% → 2,8% khung). Ba khẳng định
+ *   dưới đây khoá lại ĐÚNG ba thứ đã hỏng: (1) có tường + baseboard + sàn; (2) cỡ đo theo khung
+ *   bằng `cqw` chứ không px; (3) thú cưng cũng theo khung, không còn `clamp(…vw…)`.
+ */
+describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc viewport (T067)', () => {
+  const roomRegion = () =>
+    screen.getByRole('region', { name: 'Góc phòng của bé' });
+
+  it('⚠️ có đủ tường + baseboard + sàn: chân tường 61,8%H, baseboard 2,5%H', () => {
+    renderPage();
+
+    const wall = roomRegion().querySelector<HTMLElement>('[data-room-wall]');
+    const baseboard = roomRegion().querySelector<HTMLElement>('[data-room-baseboard]');
+    const floor = roomRegion().querySelector<HTMLElement>('[data-room-floor]');
+
+    expect(wall, 'thiếu dải tường').not.toBeNull();
+    expect(baseboard, 'thiếu baseboard — đây là chi tiết làm nên "căn phòng"').not.toBeNull();
+    expect(floor, 'thiếu dải sàn').not.toBeNull();
+
+    expect(wall!.style.height).toBe('61.8%');
+    expect(baseboard!.style.top).toBe('61.8%');
+    expect(baseboard!.style.height).toBe('2.5%');
+    // Sàn = phần còn lại dưới baseboard: 100 − (61,8 + 2,5) = 35,7%H.
+    expect(floor!.style.height).toBe('35.7%');
+  });
+
+  it('⚠️ ảnh trang trí đo theo % KHUNG (cqw) — KHÔNG còn 24px cứng', async () => {
+    seed({ inventory: [inventoryItem('dec-balloon')] });
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-balloon', x: 30, y: 40, hidden: false }]);
+    renderPage();
+
+    const button = await within(roomRegion()).findByRole('button', { name: /^Bóng bay, vị trí 30%, 40%/ });
+
+    // Ô CHẠM vẫn ≥64px cho tay trẻ con…
+    expect(button.className).toContain('size-touch');
+    // …nhưng ẢNH bên trong không còn bị ghim vào cỡ 24px (`size-6`) — đúng căn bệnh cũ.
+    expect(button.className).not.toContain('size-6');
+
+    const art = button.querySelector<HTMLElement>(':scope > span');
+    expect(art, 'ảnh phải nằm trong một khung đo theo khung phòng').not.toBeNull();
+    // 13%W của khung ⇒ 13cqw (1cqw = 1% bề rộng khung; khung có `container-type: inline-size`).
+    // ⚠️ jsdom không hiểu đơn vị `cqw` nên khai báo đi qua biến CSS — xem `roomSizeStyle`.
+    expect(art!.style.getPropertyValue('--room-w')).toBe('13cqw');
+    expect(art!.style.getPropertyValue('--room-h')).toBe('13cqw');
+    expect(art!.className).not.toContain('size-6');
+  });
+
+  it('⚠️ thú cưng trong phòng: đáy 16% / cao 46% khung — KHÔNG còn clamp(…vw…)', () => {
+    renderPage();
+
+    const petImg = roomRegion().querySelector<HTMLImageElement>(
+      'img[src^="/assets/pets/"]:not([src*="/shop/"])',
+    );
+    expect(petImg, 'phòng phải có hình thú cưng').not.toBeNull();
+
+    const holder = petImg!.parentElement as HTMLElement;
+    // Đáy ở 84%H ⇒ cách mép dưới 16%; cao 46%H; rộng suy từ cao (ảnh gốc vuông) = 34,5cqw.
+    expect(holder.style.bottom).toBe('16%');
+    expect(holder.style.height).toBe('46%');
+    expect(holder.style.getPropertyValue('--room-pet-w')).toBe('34.5cqw');
+    // `clamp(72px,24vw,144px)` là biểu thức làm con vật ĐỨNG YÊN khi khung giãn.
+    expect(roomRegion().innerHTML).not.toContain('clamp(');
+  });
+
+  it('⚠️ khung phòng dùng container query để mọi cỡ bên trong bám theo khung', () => {
+    renderPage();
+
+    const frame = roomRegion().querySelector<HTMLElement>('div.aspect-\\[4\\/3\\]');
+    expect(frame, 'không tìm thấy khung phòng 4:3').not.toBeNull();
+    expect(frame!.className).toContain('[container-type:inline-size]');
+  });
+
+  it('⚠️ ảnh nền phòng phải CÓ THẬT trên đĩa (URL 404 ⇒ bé thấy ô ảnh vỡ)', () => {
+    renderPage();
+
+    const src = '/assets/rooms/room-default.webp';
+    const background = roomRegion().querySelector(`img[src="${src}"]`);
+    expect(background, 'khung phòng phải tham chiếu ảnh nền').not.toBeNull();
+    // Ảnh là ĐƯỜNG LÙI, không phải thứ bắt buộc — nhưng nếu đã khai URL thì tệp phải tồn tại.
+    expect(existsSync(join(process.cwd(), 'public', src)), `${src} không có trên đĩa`).toBe(true);
+  });
+
+  it('món bé TỰ KÉO vẫn được tôn trọng vị trí (chỉ kẹp trong khung)', async () => {
+    seed({ inventory: [inventoryItem('dec-plant')] });
+    // Vị trí bé đã kéo: 14% / 70% — KHÁC hẳn vị trí mặc định của chậu cây (làn xa, ~58%H).
+    getRoomMock.mockResolvedValue([{ itemId: 'dec-plant', x: 14, y: 70, hidden: false }]);
+    renderPage();
+
+    const button = await within(roomRegion()).findByRole('button', { name: /^Chậu cây, vị trí 14%, 70%/ });
+    expect(button.style.left).toBe('14%');
+    expect(button.style.top).toBe('70%');
+  });
+
+  it('món CHƯA đặt không hiện trong phòng', () => {
+    seed({ inventory: [inventoryItem('dec-castle')] });
+    renderPage();
+
+    // Chưa có placement ⇒ chưa vẽ trong khung, nhưng vẫn có nút "Đặt … vào phòng".
+    expect(roomRegion().querySelector('button[aria-label^="Lâu đài nhỏ"]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Đặt Lâu đài nhỏ vào phòng' })).toBeInTheDocument();
   });
 });

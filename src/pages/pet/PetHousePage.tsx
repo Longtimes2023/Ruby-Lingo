@@ -22,6 +22,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,6 +49,20 @@ import { useShop } from '../../hooks/useShop.js';
 import { cn } from '../../lib/cn.js';
 import { ShopArtwork } from '../../lib/shopArtwork.js';
 import { petArtworkUrl } from '../../lib/petArtwork.js';
+import {
+  BASEBOARD_PCT,
+  FLOOR_HEIGHT_PCT,
+  PET_BOTTOM_PCT,
+  PET_HEIGHT_PCT,
+  WALL_LINE_PCT,
+  clampToRoom,
+  decorationRenderSize,
+  defaultDecorationBox,
+  pctHToCqw,
+  placedDecorationBox,
+  sortByBottom,
+} from '../../lib/roomLayout.js';
+import type { DecorationBox } from '../../lib/roomLayout.js';
 import { wasPetChooseSkipped } from '../../lib/petChooseSkip.js';
 import { useRewardStore } from '../../store/rewardStore.js';
 
@@ -65,6 +80,35 @@ const TAB_ICON: Record<ShopItemCategory, string> = {
   accessory: '🎀',
   decoration: '🎈',
 };
+
+/**
+ * Cỡ một vật thể trong phòng, đo theo BỀ RỘNG KHUNG (`cqw`) — xem khối chú thích ngay trên.
+ *
+ * ⚠️ VÌ SAO ĐI QUA BIẾN CSS THAY VÌ `width: '13cqw'`:
+ *   `cqw` là đơn vị ĐÚNG ở đây (1cqw = 1% bề rộng khung), nhưng jsdom — môi trường chạy unit
+ *   test — không hiểu `cqw` và XOÁ LUÔN khai báo khỏi `style`. Hệ quả: test đơn vị không thể
+ *   khẳng định "cỡ đang bám theo khung", mà đây đúng là thứ vừa hỏng và cần canh giữ. Đi qua
+ *   biến CSS thì giá trị nằm NGUYÊN trong `style` để khẳng định được, còn trình duyệt thật vẫn
+ *   nhận đúng `13cqw` như trước. Đây là tệp duy nhất trong dự án cần mẹo này.
+ */
+function roomSizeStyle(widthCqw: number, heightCqw: number): CSSProperties {
+  return {
+    width: 'var(--room-w)',
+    height: 'var(--room-h)',
+    '--room-w': `${widthCqw}cqw`,
+    '--room-h': `${heightCqw}cqw`,
+  } as CSSProperties;
+}
+
+/**
+ * Ảnh nền phòng, vẽ SAU ba dải CSS (tường / baseboard / sàn).
+ *
+ * ⭐ VÌ SAO VẪN GIỮ CẢ BA DẢI CSS DÙ ĐÃ CÓ ẢNH: ảnh là thứ có thể thiếu (404, mạng chậm, hoặc
+ *   một bản deploy chưa kịp copy `public/`). Ba dải CSS là ĐƯỜNG LÙI: thiếu ảnh thì khung phòng
+ *   vẫn đọc ra là một căn phòng có tường và sàn, chứ không sập về một mảng màu phẳng — đúng cái
+ *   trạng thái mà chủ dự án vừa phàn nàn. Ảnh hỏng thì `onError` tự ẩn nó đi.
+ */
+const ROOM_BACKGROUND_SRC = '/assets/rooms/room-default.webp';
 
 /**
  * Mảng rỗng DÙNG CHUNG cho trường hợp chưa có ảnh chụp.
@@ -295,6 +339,124 @@ export function PetHousePage() {
 
   const items = shopItemsByCategory(tab);
 
+  // ---------------------------------------------------------------------------
+  // Dựng các lớp của "Góc phòng của bé"
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Một món đã đặt trong phòng, cùng hộp đã tính sẵn (đơn vị % khung — xem `roomLayout.ts`).
+   *
+   * ⭐ `left/top` của nút LÀ TÂM món, không phải góc: đúng hệ toạ độ mà `moveDecoration` lưu, nên
+   *   kéo-thả và vẽ dùng chung một con số, không có phép đổi trục nào ở giữa.
+   */
+  const renderDecorationNode = (
+    item: ShopItem,
+    box: DecorationBox,
+    placement: RoomPlacement,
+  ): ReactNode => {
+    // Ảnh và Ô CHẠM là hai thứ khác nhau: ô chạm giữ ≥64px cho tay trẻ con, còn ảnh đo theo
+    // khung bằng `cqw`. Buộc ảnh ăn theo ô chạm là quay lại đúng lỗi "24px cố định".
+    const renderSize = decorationRenderSize(box);
+    return (
+      <button
+        key={item.id}
+        type="button"
+        aria-label={`${item.name_vi}, vị trí ${Math.round(placement.x)}%, ${Math.round(placement.y)}%. Dùng phím mũi tên để di chuyển.`}
+        className="absolute z-10 flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand"
+        style={{ left: `${box.leftPct}%`, top: `${box.topPct}%` }}
+        onPointerDown={(event) => {
+          if (!roomReady) return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          const current = roomDraftRef.current.find((entry) => entry.itemId === item.id);
+          dragStartRef.current = current ? { itemId: item.id, x: current.x, y: current.y } : null;
+          event.currentTarget.parentElement!.dataset.dragging = item.id;
+        }}
+        onKeyDown={(event) => {
+          if (!roomReady) return;
+          const step = event.shiftKey ? 10 : 2;
+          const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
+          if (!delta) return;
+          event.preventDefault();
+          const current = roomDraftRef.current.find((entry) => entry.itemId === item.id) ?? placement;
+          const point = clampToRoom(current.x + (delta[0] ?? 0), current.y + (delta[1] ?? 0));
+          moveDecoration(item.id, point.x, point.y, false);
+          saveRoomDraft();
+        }}
+      >
+        {/*
+          ⚠️ `shrink-0` LÀ BẮT BUỘC, KHÔNG PHẢI CHO ĐẸP. Ô chạm chỉ rộng 64px, còn ảnh thì rộng
+             tới ~22%W (≈190px ở khung 848px). Trong một flex container 64px, mặc định
+             `flex-shrink: 1` sẽ BÓP ảnh về đúng 64px theo trục ngang — ảnh cao 190px mà rộng
+             64px, tức là MÉO, và bề rộng thật lại rơi về tỉ lệ màn hình (đúng căn bệnh cũ).
+             `max-w-none` để preflight `img { max-width: 100% }` không bóp thêm lần nữa.
+        */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none block shrink-0"
+          style={roomSizeStyle(renderSize.widthCqw, renderSize.heightCqw)}
+        >
+          <ShopArtwork item={item} className="block h-full w-full max-w-none object-contain" />
+        </span>
+      </button>
+    );
+  };
+
+  const wallNodes: ReactNode[] = [];
+  const floorNodes: Array<{ bottomPct: number; node: ReactNode }> = [];
+
+  if (roomReady) {
+    for (const item of ownedDecorations) {
+      const placement = roomDraft.find((entry) => entry.itemId === item.id);
+      if (!placement || placement.hidden) continue;
+      // Bé đã kéo thì tôn trọng `x/y` đã lưu (chỉ kẹp biên) — xem `placedDecorationBox`.
+      const box = placedDecorationBox(item.id, placement.x, placement.y);
+      if (!box) continue;
+
+      const node = renderDecorationNode(item, box, placement);
+      if (box.band === 'wall') wallNodes.push(node);
+      else floorNodes.push({ bottomPct: box.bottomPct, node });
+    }
+  }
+
+  /*
+    Thú cưng đứng TRONG phòng, đo theo % khung: đáy (bàn chân) ở 84%H, cao 46%H ⇒ đầu ở 38%H
+    (trong dải tường) còn chân trong dải sàn — đó là thứ khiến mắt đọc ra "đang đứng trong phòng"
+    chứ không phải "dán lên phông nền". Bề rộng suy từ chiều cao (ảnh gốc vuông) nên con vật
+    KHÔNG bị méo khi khung đổi tỉ lệ theo màn hình.
+  */
+  floorNodes.push({
+    bottomPct: PET_BOTTOM_PCT,
+    node: (
+      <div
+        key="__pet__"
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+        style={
+          {
+            // Neo theo ĐÁY (%H) — bàn chân ở 84%H ⇒ cách mép dưới 16%.
+            bottom: `${100 - PET_BOTTOM_PCT}%`,
+            height: `${PET_HEIGHT_PCT}%`,
+            // Bề rộng suy từ chiều cao (ảnh gốc vuông 512×512) ⇒ 46%H = 34,5%W = 34,5cqw.
+            width: 'var(--room-pet-w)',
+            '--room-pet-w': `${pctHToCqw(PET_HEIGHT_PCT)}cqw`,
+          } as CSSProperties
+        }
+      >
+        <img
+          src={petArtworkUrl(snapshot.pet.petType, snapshot.pet.evolutionStage)}
+          alt=""
+          className="h-full w-full object-contain"
+          draggable={false}
+        />
+      </div>
+    ),
+  });
+
+  /*
+    Thứ tự vẽ (xa trước, gần sau). Đồ treo tường nằm TRÊN TƯỜNG nên luôn vẽ trước thú cưng; còn
+    đồ dưới sàn và thú cưng sắp chung theo `đáy` tăng dần — xem `sortByBottom`.
+  */
+  const sortedFloorNodes = sortByBottom(floorNodes);
+
   return (
     <div className="flex flex-col gap-5">
       <header className="flex items-center gap-3">
@@ -343,19 +505,24 @@ export function PetHousePage() {
             </span>
           )}
         </div>
+        {/*
+          ⚠️ `[container-type:inline-size]` LÀ THỨ CHỐNG LỖI "KHUNG GIÃN, NỘI DUNG KHÔNG GIÃN".
+             Khung này rộng theo màn hình (328px → 848px), nhưng mọi vật thể bên trong đo bằng
+             `cqw` = 1% bề rộng khung ⇒ tỉ lệ vật/khung GIỮ NGUYÊN ở mọi viewport. Đổi sang px
+             hay `vw` là quay lại đúng lỗi cũ (đồ trang trí nhỏ xíu trên màn lớn).
+        */}
         <div
           aria-label="Phòng của thú cưng; kéo đồ trang trí để sắp xếp"
-          className="relative aspect-[4/3] w-full overflow-hidden rounded-card border-2 border-line bg-gradient-to-b from-sky-100 via-amber-50 to-amber-100"
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-card border-2 border-line bg-amber-50 [container-type:inline-size]"
           onPointerMove={(event) => {
             const draggingId = event.currentTarget.dataset.dragging;
             if (!draggingId) return;
             const rect = event.currentTarget.getBoundingClientRect();
-            moveDecoration(
-              draggingId,
-              Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
-              Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
-              false,
+            const point = clampToRoom(
+              ((event.clientX - rect.left) / rect.width) * 100,
+              ((event.clientY - rect.top) / rect.height) * 100,
             );
+            moveDecoration(draggingId, point.x, point.y, false);
           }}
           aria-busy={!roomReady || room.isLoading}
           onPointerUp={(event) => {
@@ -371,48 +538,53 @@ export function PetHousePage() {
             dragStartRef.current = null;
           }}
         >
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-emerald-100 to-emerald-200" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-end justify-center pb-[8%]">
-            <span className="text-[clamp(72px,24vw,144px)] leading-none">
-              <img
-                src={petArtworkUrl(snapshot.pet.petType, snapshot.pet.evolutionStage)}
-                alt=""
-                className="h-[1em] w-[1em] object-contain"
-              />
-            </span>
-          </div>
-          {roomReady && ownedDecorations.map((item) => {
-            const placement = roomDraft.find((entry) => entry.itemId === item.id);
-            if (!placement || placement.hidden) return null;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                aria-label={`${item.name_vi}, vị trí ${Math.round(placement.x)}%, ${Math.round(placement.y)}%. Dùng phím mũi tên để di chuyển.`}
-                className="absolute z-10 flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid text-4xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand"
-                style={{ left: `${placement.x}%`, top: `${placement.y}%` }}
-                onPointerDown={(event) => {
-                  if (!roomReady) return;
-                  event.currentTarget.setPointerCapture(event.pointerId);
-                  const current = roomDraftRef.current.find((entry) => entry.itemId === item.id);
-                  dragStartRef.current = current ? { itemId: item.id, x: current.x, y: current.y } : null;
-                  event.currentTarget.parentElement!.dataset.dragging = item.id;
-                }}
-                onKeyDown={(event) => {
-                  if (!roomReady) return;
-                  const step = event.shiftKey ? 10 : 2;
-                  const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
-                  if (!delta) return;
-                  event.preventDefault();
-                  const current = roomDraftRef.current.find((entry) => entry.itemId === item.id) ?? placement;
-                  moveDecoration(item.id, Math.max(0, Math.min(100, current.x + (delta[0] ?? 0))), Math.max(0, Math.min(100, current.y + (delta[1] ?? 0))), false);
-                  saveRoomDraft();
-                }}
-              >
-                <ShopArtwork item={item} className="mr-1 inline-block size-6 align-middle object-contain" />
-              </button>
-            );
-          })}
+          {/*
+            NỀN PHÒNG — ba dải, vẽ TRƯỚC mọi thứ khác:
+              1. tường     [0 → 61,8%H]
+              2. baseboard [61,8% → 64,3%H]  (dải 2,5%H)
+              3. sàn       [64,3% → 100%H]
+            Baseboard là chi tiết đắt giá nhất ở đây: thiếu nó thì tường và sàn dán liền nhau
+            thành một vệt màu —— đó chính xác là "chỉ là cái phông nền" mà chủ dự án thấy.
+          */}
+          <div
+            aria-hidden="true"
+            data-room-wall=""
+            className="absolute inset-x-0 top-0 bg-gradient-to-b from-sky-100 to-amber-50"
+            style={{ height: `${WALL_LINE_PCT}%` }}
+          />
+          <div
+            aria-hidden="true"
+            data-room-baseboard=""
+            className="absolute inset-x-0 bg-amber-200 shadow-[0_1px_2px_rgba(120,72,20,0.25)]"
+            style={{ top: `${WALL_LINE_PCT}%`, height: `${BASEBOARD_PCT}%` }}
+          />
+          <div
+            aria-hidden="true"
+            data-room-floor=""
+            className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-amber-100 to-amber-300"
+            style={{ height: `${FLOOR_HEIGHT_PCT}%` }}
+          />
+
+          {/*
+            Ảnh nền phòng (nếu có) phủ LÊN ba dải CSS ở trên — ba dải kia là đường lùi khi ảnh
+            thiếu/hỏng (`onError` ẩn ảnh đi, không để lại ô ảnh vỡ trước mắt bé).
+          */}
+          <img
+            src={ROOM_BACKGROUND_SRC}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            onError={(event) => {
+              event.currentTarget.hidden = true;
+            }}
+          />
+
+          {/* Đồ TREO TƯỜNG — ở trên tường nên luôn nằm sau thú cưng. */}
+          {wallNodes}
+
+          {/* (Đồ DƯỚI SÀN + thú cưng) sắp theo đáy tăng dần — xa trước, gần sau. */}
+          {sortedFloorNodes.map((layer) => layer.node)}
         </div>
         {ownedDecorations.length > 0 && (
           <div role="group" aria-label="Đồ trang trí đang có" className="flex flex-wrap gap-2">
@@ -424,7 +596,12 @@ export function PetHousePage() {
                   type="button"
                   disabled={placed || !roomReady || room.isLoading || room.placements === null}
                   aria-label={`Đặt ${item.name_vi} vào phòng`}
-                  onClick={() => moveDecoration(item.id, 50, 65)}
+                  onClick={() => {
+                    // Đặt vào ĐÚNG CHỖ MẶC ĐỊNH của món: đồ treo tường lên tường, đồ dưới sàn
+                    // vào làn của nó — thay vì dồn hết về một điểm rồi bé phải tự kéo từng món.
+                    const box = defaultDecorationBox(item.id);
+                    moveDecoration(item.id, box?.leftPct ?? 50, box?.topPct ?? 50);
+                  }}
                   className="min-h-touch rounded-kid border-2 border-line bg-surface px-3 text-kid-sm disabled:opacity-60"
                 >
                   <ShopArtwork item={item} className="mr-1 inline-block size-6 align-middle object-contain" />{item.name_vi}
