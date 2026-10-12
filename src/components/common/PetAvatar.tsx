@@ -2,11 +2,12 @@
  * RubyLingo — `PetAvatar`: con thú cưng bé CHỌN, bộ đồ đang mặc và "sân nhà" quanh nó
  * (M6, T065–T066 · T04).
  *
- * ⭐ QUYẾT ĐỊNH C3 — "ĐEO NGƯỜI + BÀY CẢNH" (chủ dự án chốt):
- *   Phụ kiện gắn lên ĐÚNG CHỖ trên người con vật (mũ lên đầu, khăn ở cổ, giày dưới chân…), còn
- *   trang trí được bày thành hai hàng: bầu trời ở trên, mặt đất ở dưới. Vì sao không toạ độ tuyệt
- *   đối cho từng món: trên laptop sẽ đẹp hơn, nhưng trên iPhone 320px thì chồng nhau và tràn ra
- *   ngoài — mà "vỡ trên máy của bé" là hỏng thật.
+ * ⭐ QUYẾT ĐỊNH C3 — "ĐEO NGƯỜI" (chủ dự án chốt):
+ *   Phụ kiện gắn lên ĐÚNG CHỖ trên người con vật (mũ lên đầu, khăn ở cổ, giày dưới chân…).
+ *   ⚠️ T04 CHỈ CÒN VẾ "ĐEO NGƯỜI". Vế "BÀY CẢNH" (trang trí xếp hai hàng trời/đất) đã được
+ *      CHUYỂN sang khối "Góc phòng của bé" ở `PetHousePage` — nơi bé KÉO THẢ chúng thành vị trí
+ *      tự do và vị trí được lưu lên server. `PetAvatar` không còn nhận/vẽ đồ trang trí; nó chỉ
+ *      giữ HAI DẢI MÀU `bg-pet-sky`/`bg-pet-ground` làm đường chân trời cho con vật đứng.
  *
  * ⭐⭐ T04 — VÌ SAO VẼ LẠI, VÀ VÌ SAO LÀ BA DẢI (điểm #2 chủ dự án báo):
  *   *"các icon đeo vô con pet cũng khá là thô, lung tung chả đẹp tý nào."*
@@ -19,7 +20,7 @@
  *       siêu cấp 124px cũng đội chiếc mũ 34px (27%) ⇒ mũ "tụt" dần khi con lớn lên.
  *
  *   Nay: (a) hai dải `bg-pet-sky` / `bg-pet-ground` cho một đường chân trời để đọc vị trí — mũ
- *   nằm trên trời, giày nằm trên cỏ; (b) cỡ phụ kiện tính bằng **`em`**, con của ô vuông 200×200
+ *   nằm trên trời, giày nằm trên cỏ; (b) cỡ phụ kiện quy theo `em` của ô vuông 200×200
  *   (mà `font-size` của nó ĐỔI THEO BẬC), nên phụ kiện phóng to cùng con vật.
  *
  * ⚠️⚠️ NEO PHỤ KIỆN TÍNH THEO **HỘP `1em` CỦA CON VẬT**, KHÔNG theo khung 200×200 — ĐỌC KỸ.
@@ -34,16 +35,17 @@
  *        số `%` đứng yên. Mũ đúng ở bậc `baby` sẽ tụt xuống ngang mắt ở bậc `super`.
  *
  *   Nay con vật sống trong một HỘP `1em × 1em` (chính là ô chữ của nó), và MỌI phụ kiện neo theo
- *   hộp đó. Cỡ phụ kiện vốn đã tính bằng `em` (⇒ theo `font-size`), nên neo bằng `%`-của-hộp-`1em`
- *   khiến **vị trí và kích cỡ cùng lớn lên với con vật** — không cần một bảng tra nào theo bậc.
+ *   hộp đó. Neo bằng `%`-của-hộp-`1em` khiến **vị trí cùng lớn lên với con vật** — không cần một
+ *   bảng tra nào theo bậc. Còn SỐ của `%` ấy là của TỪNG ẢNH (`petAnchors.ts`), không dùng chung.
  *
  * ⚠️ Khung 200×200 vẫn CỐ ĐỊNH, và vẫn cần: nó cho con vật một khoảng thở đủ rộng và giữ cho
  *   `1em` ổn định ở mọi bề rộng màn hình.
  *
  * ⚠️ MỌI VỊ TRÍ ĐẾN TỪ DỮ LIỆU (`shop-items.json` → `slot`), KHÔNG TỪ MỘT BẢNG TRA TRONG TỆP NÀY.
- *   Tệp này chỉ trả lời "vị trí `head` nằm ở đâu trên khung vẽ" — câu hỏi THỊ GIÁC. Còn "mũ thuộc
- *   vị trí nào" là câu hỏi DỮ LIỆU, và nó nằm trong JSON, nơi `shopItemsFileSchema` từ chối một
- *   phụ kiện thiếu `slot`. Nhờ vậy thêm một chiếc mũ mới = sửa JSON, không sửa tệp này.
+ *   Còn "mũ thuộc vị trí nào" là câu hỏi DỮ LIỆU, và nó nằm trong JSON, nơi `shopItemsFileSchema`
+ *   từ chối một phụ kiện thiếu `slot`. Nhờ vậy thêm một chiếc mũ mới = sửa JSON, không sửa tệp này.
+ *   ⚠️ Ba trục vẫn nằm trong tệp này vì chúng là câu hỏi THỊ GIÁC, không phải danh mục:
+ *      `ACCESSORY_Z` (tầng chồng), thứ tự hai lượt vẽ quanh con vật, và cách canh hộp vào neo.
  *
  * ⚠️ COMPONENT "CÂM" — như `ShopItemCard`: nó không đọc store, không gọi mạng. Ba lý do:
  *     • Kiểm thử được mọi tổ hợp đồ mà không phải dựng `rewardStore` + mock mạng.
@@ -82,18 +84,20 @@ import { useTranslation } from 'react-i18next';
 
 import { stageDefinition } from '@shared/content/levels.js';
 import { petEmojiFor, petNameVi } from '@shared/content/pets.js';
-import { accessorySlotOf, decorationSlotOf } from '@shared/content/shop.js';
-import { ACCESSORY_SLOTS, DECORATION_SLOTS } from '@shared/pet-slots.js';
-import type {
-  AccessorySlot,
-  DecorationSlot,
-  EvolutionStage,
-  PetType,
-  ShopItem,
-} from '@shared/types/reward.js';
+import { accessorySlotOf } from '@shared/content/shop.js';
+import { ACCESSORY_SLOTS } from '@shared/pet-slots.js';
+import type { AccessorySlot, EvolutionStage, PetType, ShopItem } from '@shared/types/reward.js';
 
+import {
+  accessoryBox,
+  accessoryFitOf,
+  DEFAULT_ACCESSORY_INK,
+  defaultKindForSlot,
+} from '../../lib/accessoryFit.js';
 import { cn } from '../../lib/cn.js';
 import { petArtworkUrl } from '../../lib/petArtwork.js';
+import { petAnchorFor } from '../../lib/petAnchors.js';
+import type { PetAnchor } from '../../lib/petAnchors.js';
 import { ShopArtwork } from '../../lib/shopArtwork.js';
 
 /**
@@ -111,9 +115,10 @@ export const MOMO_ICON = '🐵';
 /**
  * Cỡ con vật theo bậc tiến hoá — đặt `font-size` lên chính ô vuông 200×200.
  *
- * ⭐ HAI VIỆC TRONG MỘT DÒNG: `font-size` này vừa là cỡ của emoji con vật (nó thừa hưởng), vừa là
- *   ĐƠN VỊ GỐC cho cỡ phụ kiện (`text-[0.30em]` = 30% cỡ con vật). Đó là lý do phụ kiện tự lớn
- *   theo con vật mà không cần một phép tính nào.
+ * ⭐ HAI VIỆC TRONG MỘT DÒNG: `font-size` này vừa là cỡ của ảnh con vật (nó cao `1em`), vừa là
+ *   ĐƠN VỊ GỐC cho mọi thứ quanh nó: hộp `1em × 1em` (hệ toạ độ của neo), bóng dưới chân, tia ✨
+ *   của bậc Siêu cấp. Neo trong `petAnchors.ts` là `%`-của-hộp-`1em`, nên vị trí VÀ kích cỡ phụ
+ *   kiện cùng lớn lên với con vật mà không cần một bảng tra nào theo bậc.
  */
 const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
   baby: 'text-[84px]',
@@ -122,28 +127,19 @@ const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
 };
 
 /**
- * 通用穿戴锚点按宠物 `1em × 1em` 画布定位；全身 PNG 的墨迹边界因物种与阶段而异，以下取共享视觉折中值。
- * Chromium 解码的18张图均为 1024×1024；非透明像素约宽44–73%、高95–100%。
+ * ⚠️ KHUNG `1em` LÀ HỆ TOẠ ĐỘ DUY NHẤT; CÒN "ĐẦU/CỔ/MẮT NẰM Ở ĐÂU **TRONG** KHUNG ĐÓ" LÀ DỮ LIỆU
+ *    ĐO ĐƯỢC, nằm trong `src/lib/petAnchors.ts` — KHÔNG phải một bảng hằng số trong tệp này.
  *
- * 尺寸和位置随阶段字号（84 / 104 / 124px）同步缩放。负坐标是有意的；背部槽偏左并置于宠物后，其余槽居中并置于前。
- * 各物种脸部细节不完全一致，共用锚点可能存在轻微个体偏差；同槽多件仍由一个容器稳定错位排列，不会丢失已装备物品。
+ *   Bản trước giữ ở đây hai bảng dùng chung cho CẢ 18 ảnh (`ACCESSORY_ANCHOR` +
+ *   `ACCESSORY_TEXT_SIZE`), kèm một chú thích SAI số liệu ảnh (ghi 1024×1024). Số đo thật của 18
+ *   ảnh `public/assets/pets/*.webp`: **512×512**, mực (pixel không trong suốt) rộng **43,9%–66,8%**,
+ *   cao **94,1%–98,8%** — KHÔNG đồng nhất. Cụ thể: tâm thân `cx` 0,4365–0,5566 (trên hộp 84px là
+ *   lệch ±5px mỗi bên) và đường MẮT ở 9,1%–27,0% chiều cao hộp. Một con số `top-[-45%]` cho kính
+ *   không thể đúng cho mọi con ⇒ kính nằm ngang MÁ hoặc trên TRÁN (lệch tới 44px ≈ 52% hộp) —
+ *   đúng lời chủ dự án: *"mua cái mắt kính, đeo vào là sát vào mặt"*. Nay mỗi (con × bậc) có neo
+ *   riêng, và cỡ món quy theo MỰC THẬT của chính ảnh phụ kiện (`src/lib/accessoryFit.ts`).
+ *   Tệp này chỉ còn: tầng vẽ, thứ tự chồng, và "đặt hộp vào neo".
  */
-const ACCESSORY_ANCHOR: Record<AccessorySlot, string> = {
-  back: 'left-[-15%] top-[-20%]',
-  feet: 'left-1/2 top-[23%] -translate-x-1/2',
-  head: 'left-1/2 top-[-60%] -translate-x-1/2',
-  neck: 'left-1/2 top-[-33%] -translate-x-1/2',
-  face: 'left-1/2 top-[-45%] -translate-x-1/2',
-};
-
-/** Cỡ từng lớp, theo `em` của hộp con vật (⇒ ăn theo bậc tiến hoá). Mũ to hơn kính, giày nhỏ hơn. */
-const ACCESSORY_TEXT_SIZE: Record<AccessorySlot, string> = {
-  back: 'text-[0.33em]',
-  feet: 'text-[0.25em]',
-  head: 'text-[0.30em]',
-  neck: 'text-[0.25em]',
-  face: 'text-[0.27em]',
-};
 
 /**
  * Thứ tự chồng lớp (`z-index`) — ĐÂY LÀ THỨ QUYẾT ĐỊNH "ĐEO LÊN TRÔNG CÓ THẬT KHÔNG".
@@ -227,48 +223,36 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
     return map;
   }, [items]);
 
-  const scenery = useMemo(() => {
-    const map = new Map<DecorationSlot, ShopItem[]>();
-    for (const item of items) {
-      const slot = decorationSlotOf(item);
-      if (slot === null) continue;
-      const list = map.get(slot);
-      if (list === undefined) {
-        map.set(slot, [item]);
-      } else {
-        list.push(item);
-      }
-    }
-    return map;
-  }, [items]);
-
   /**
    * Nhãn cho trình đọc màn hình.
    *
-   * ⚠️ Toàn bộ emoji bên trong đều `aria-hidden`, nên nếu không có nhãn này thì bé khiếm thị nghe
-   *    được ĐÚNG MỘT chữ cái rời rạc hoặc không gì cả — trong khi cả màn hình vừa đổi vì bé vừa
-   *    mua một món đồ mới. Sự thay đổi ấy phải nghe được.
+   * ⚠️ Toàn bộ ảnh/emoji bên trong đều `aria-hidden`, nên nếu không có nhãn này thì bé khiếm thị
+   *    nghe được ĐÚNG MỘT chữ cái rời rạc hoặc không gì cả — trong khi cả màn hình vừa đổi vì bé
+   *    vừa mua một món đồ mới. Sự thay đổi ấy phải nghe được.
    *
-   * Thứ tự đọc theo `ACCESSORY_SLOTS`/`DECORATION_SLOTS` (không theo thứ tự túi đồ) để câu văn
-   * ổn định giữa các lần mua.
+   * Thứ tự đọc theo `ACCESSORY_SLOTS` (không theo thứ tự túi đồ) để câu văn ổn định giữa các
+   * lần mua.
+   *
+   * ⚠️ ĐỒ TRANG TRÍ KHÔNG CÒN ĐƯỢC ĐỌC Ở ĐÂY — và đó là sửa một lời nói dối. Trang trí nay nằm
+   *    trong khối "Góc phòng của bé" (`PetHousePage`), nơi bé KÉO THẢ chúng; `PetAvatar` chỉ nhận
+   *    phụ kiện (người gọi lọc `decorationSlotOf(item) === null`). Bản trước vẫn có nhánh nhãn
+   *    "Quanh nhà có …" cho những món **không hề được vẽ** trong khối này — nhãn nói có mà mắt
+   *    không thấy gì. Xem `scenery` đã bị xoá ở dưới.
    */
   const wearingNames = ACCESSORY_SLOTS.flatMap((slot) =>
     (worn.get(slot) ?? []).map((item) => item.name_vi),
-  );
-  const sceneryNames = DECORATION_SLOTS.flatMap((slot) =>
-    (scenery.get(slot) ?? []).map((item) => item.name_vi),
   );
 
   const labelParts: string[] = [];
   if (wearingNames.length > 0) {
     labelParts.push(t('pet.sceneWearing', { pet: petName, items: wearingNames.join(', ') }));
   }
-  if (sceneryNames.length > 0) {
-    labelParts.push(t('pet.sceneScenery', { items: sceneryNames.join(', ') }));
-  }
   if (labelParts.length === 0) {
     labelParts.push(t('pet.sceneBare', { pet: petName }));
   }
+
+  /** Neo của ĐÚNG con × bậc đang hiện. Thiếu dữ liệu ⇒ `DEFAULT_PET_ANCHOR` (không ném lỗi). */
+  const anchor = petAnchorFor(petType, evolutionStage);
 
   const isSuper = evolutionStage === 'super';
 
@@ -291,8 +275,17 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
           isSuper && 'shadow-super',
         )}
       >
-        {/* DẢI 1 — TRỜI. Đường chân trời để mắt đọc được "mũ nằm ở trên". */}
-        <SceneryRow items={scenery.get('sky')} className="bg-pet-sky px-3 pt-2 pb-1" />
+        {/*
+          DẢI 1 — TRỜI. Đường chân trời để mắt đọc được "mũ nằm ở trên".
+
+          ⚠️ Đây chỉ còn là DẢI MÀU, không còn là hàng chứa đồ trang trí. Bản trước nó là
+             `SceneryRow` — một `<ul>` LUÔN render 0 phần tử ở production, vì `PetHousePage` lọc
+             `decorationSlotOf(item) !== null` ra khỏi `items` (trang trí nay nằm trong khối "Góc
+             phòng của bé", nơi bé kéo thả). Cơ chế đó không vẽ được gì mà vẫn giữ cửa cho một
+             đường vẽ thứ hai của cùng một dữ liệu; đã xoá hẳn. Dải màu GIỮ LẠI vì nó là đường
+             chân trời — thứ đã được chốt ở "QUYẾT ĐỊNH C3" và không liên quan tới phụ kiện.
+        */}
+        <div aria-hidden="true" className="bg-pet-sky px-3 pt-2 pb-1" />
 
         {/*
           KHUNG CỐ ĐỊNH 200×200 — khoảng thở cho con vật, và giữ `1em` ổn định ở mọi bề rộng.
@@ -316,8 +309,8 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
           {/*
             HỘP `1em × 1em` — CHÍNH LÀ Ô CHỮ CỦA CON VẬT, và là HỆ TOẠ ĐỘ DUY NHẤT của phụ kiện.
             `1em` = `font-size` của khung cha (84 / 104 / 124px theo bậc), nên hộp này lớn lên cùng
-            con vật; neo `%`-của-hộp + cỡ `em` vì thế cùng lớn lên, và MỘT bảng số dùng được cho
-            cả ba bậc — xem ghi chú ở `ACCESSORY_ANCHOR`.
+            con vật; neo `%`-của-hộp vì thế cùng lớn lên. Số neo là **của riêng từng ảnh** — xem
+            `petAnchorFor` trong `src/lib/petAnchors.ts` (KHÔNG còn bảng dùng chung ở tệp này).
 
             ⚠️ Không đặt `overflow: hidden` ở đây: mũ phải nhô lên trên đỉnh đầu và ba lô phải thò
                ra ngoài sườn (cả hai đều có toạ độ ÂM).
@@ -342,11 +335,11 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
               data-accessory-layer="behind"
               className="pointer-events-none absolute inset-0 z-[1]"
             >
-              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" />
+              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" anchor={anchor} />
             </div>
 
             {/*
-              Con vật. Cỡ = `font-size` của khung cha (84/104/124px), emoji thừa hưởng.
+              Con vật. Cỡ = `font-size` của khung cha (84/104/124px), ảnh thừa hưởng qua `1em`.
               ⚠️ `relative` cần thiết: nó giữ con vật trong ngữ cảnh xếp lớp của hộp để `z-[2]` có
                  hiệu lực (trên `back`, dưới `feet/head/neck/face`).
             */}
@@ -360,7 +353,7 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
               data-accessory-layer="front"
               className="pointer-events-none absolute inset-0 z-[3]"
             >
-              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" />
+              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" anchor={anchor} />
             </div>
 
             {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
@@ -376,8 +369,8 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
           </div>
         </div>
 
-        {/* DẢI 2 — ĐẤT / CỎ. */}
-        <SceneryRow items={scenery.get('ground')} className="bg-pet-ground px-3 pt-1 pb-2" />
+        {/* DẢI 2 — ĐẤT / CỎ. Cùng lý do như DẢI 1: chỉ còn là dải màu, không còn hàng trang trí. */}
+        <div aria-hidden="true" className="bg-pet-ground px-3 pt-1 pb-2" />
       </div>
 
       {/*
@@ -401,8 +394,20 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
  *    Một vòng lặp duy nhất sẽ phải biết "chèn con vật vào đâu", tức là logic vẽ bị trộn với logic
  *    dữ liệu. Hai lượt gọi nói thẳng ra thứ tự bằng chính cấu trúc DOM.
  *
- * ⚠️ Một `<span>` cho MỖI VỊ TRÍ (không phải mỗi món): nhiều món cùng vị trí thì `flex gap-0.5`
- *    tự xếp cạnh nhau — giữ nguyên cơ chế cũ, và KHÔNG BAO GIỜ bỏ món nào của bé.
+ * ⚠️ MỘT `<span>` CHO MỖI VỊ TRÍ (không phải mỗi món) — giữ nguyên cơ chế cũ: slot wrapper là
+ *    `absolute inset-0` phủ đúng hộp `1em`, và nó KHÔNG BAO GIỜ bỏ món nào của bé.
+ *
+ * ⚠️ NHƯNG MỖI MÓN có HỘP RIÊNG (`accessoryBox`): ba món của slot `head` (mũ / vương miện / nơ)
+ *    có cỡ mực và cao độ khác nhau, và cả 10 ảnh phụ kiện có độ "đầy" khác nhau (72%–98%). Dùng
+ *    chung một hộp `1,65em × 1,35em` như bản cũ là nguồn của "món to món nhỏ tuỳ ảnh".
+ *    Cấu trúc DOM:
+ *      slot wrapper (`absolute inset-0`, z theo slot)
+ *        └ món (`data-accessory-id`, `absolute inset-0`, lệch nhẹ ổn định khi cùng slot)
+ *            └ HỘP (`left/top/width/height` tính từ neo + tỷ lệ mực, canh tâm bằng translate)
+ *                └ `ShopArtwork`
+ *
+ * ⚠️ Thứ tự lớp trong `back` KHÔNG được đặt z-index lên slot wrapper: nó sẽ nhốt z-index của các
+ *    món con lại và phá hợp đồng "slot back nằm sau con vật". Xem `ACCESSORY_Z`.
  */
 function PetArtwork({
   petType,
@@ -437,10 +442,13 @@ function AccessoryLayers({
   slots,
   worn,
   only,
+  anchor,
 }: {
   slots: readonly AccessorySlot[];
   worn: Map<AccessorySlot, ShopItem[]>;
   only: 'behind' | 'inFront';
+  /** Neo của con × bậc đang hiện (`petAnchorFor`) — nguồn toạ độ duy nhất. */
+  anchor: PetAnchor;
 }) {
   return (
     <>
@@ -455,25 +463,50 @@ function AccessoryLayers({
           <span
             key={slot}
             aria-hidden="true"
-            className={cn(
-              'absolute flex h-[1.35em] w-[1.65em] items-center justify-center leading-none',
-              ACCESSORY_ANCHOR[slot],
-              ACCESSORY_TEXT_SIZE[slot],
-              ACCESSORY_Z[slot],
-            )}
+            data-accessory-slot={slot}
+            className={cn('absolute inset-0 leading-none', ACCESSORY_Z[slot])}
           >
             {list.map((item, index) => {
               const offset = index - (list.length - 1) / 2;
               const zIndex = list.length - index;
+              /**
+               * ⚠️ Món chưa khai tỷ lệ mực ⇒ `DEFAULT_ACCESSORY_INK` (mực đầy hộp) + kiểu đặt suy
+               *    từ `slot`. Món vẫn HIỆN, chỉ kém chuẩn — không được biến mất khỏi người bé.
+               */
+              const fit = accessoryFitOf(item.id);
+              const kind = fit?.kind ?? defaultKindForSlot(slot);
+              const box = accessoryBox(kind, anchor, fit?.ink ?? DEFAULT_ACCESSORY_INK);
               return (
                 <span
                   key={item.id}
                   aria-hidden="true"
                   data-accessory-id={item.id}
-                  className="absolute inset-0 flex items-center justify-center leading-none"
-                  style={{ transform: `translateX(${offset * 0.16}em) translateY(${Math.abs(offset) * 0.08}em)`, zIndex }}
+                  data-accessory-kind={kind}
+                  /*
+                   * ⚠️ Neo CSS đặt bằng `style` (số đo được, khác nhau từng con × bậc), nhưng
+                   *    KHÔNG được đặt `transform` ở đây: hộp con canh tâm bằng lớp
+                   *    `-translate-x-1/2 -translate-y-1/2`, và một `transform` inline sẽ ĐÈ SẠCH nó
+                   *    (đúng cái bẫy đã trả giá ở T056). Lệch nhẹ khi cùng slot nằm ở lớp NGOÀI
+                   *    CÙNG của món — nơi `transform` đứng một mình.
+                   */
+                  className="absolute inset-0 leading-none"
+                  style={{
+                    transform: `translateX(${offset * 0.16}em) translateY(${Math.abs(offset) * 0.08}em)`,
+                    zIndex,
+                  }}
                 >
-                  <ShopArtwork item={item} className="h-full w-full object-contain" />
+                  <span
+                    aria-hidden="true"
+                    className="absolute block -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      left: `${box.cx * 100}%`,
+                      top: `${box.cy * 100}%`,
+                      width: `${box.side * 100}%`,
+                      height: `${box.side * 100}%`,
+                    }}
+                  >
+                    <ShopArtwork item={item} className="h-full w-full object-contain" />
+                  </span>
                 </span>
               );
             })}
@@ -481,36 +514,5 @@ function AccessoryLayers({
         );
       })}
     </>
-  );
-}
-
-/**
- * Một hàng trang trí, nằm trong dải `sky` hoặc `ground`.
- *
- * Không có món nào thì KHÔNG vẽ gì bên trong — nhưng dải nền vẫn còn, vì dải nền là "sân nhà" của
- * con vật (đường chân trời), không phải chỗ giữ cho món đồ. Vẽ một hàng rỗng giữ chỗ thì con vật
- * luôn bị đẩy lệch khỏi giữa vì những thứ bé chưa mua.
- */
-function SceneryRow({
-  items,
-  className,
-}: {
-  items: readonly ShopItem[] | undefined;
-  className?: string;
-}) {
-  return (
-    <ul
-      aria-hidden="true"
-      className={cn('flex flex-wrap items-end justify-center gap-2', className)}
-    >
-      {(items ?? []).map((item) => (
-        <li
-          key={item.id}
-          className="flex h-9 w-10 items-center justify-center text-[28px] leading-none"
-        >
-          <ShopArtwork item={item} className="h-full w-full object-contain" />
-        </li>
-      ))}
-    </ul>
   );
 }

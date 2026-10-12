@@ -26,6 +26,12 @@ import { describe, expect, it } from 'vitest';
 import '@/i18n/index.js';
 import { PetAvatar } from '@/components/common/PetAvatar.js';
 import { petArtworkUrl } from '@/lib/petArtwork.js';
+import {
+  accessoryFitOf,
+  DEFAULT_ACCESSORY_INK,
+  HEADPIECE_DROP as HAT_DROP,
+} from '@/lib/accessoryFit.js';
+import { petAnchorFor } from '@/lib/petAnchors.js';
 import { EVOLUTION_STAGES, stageDefinition } from '@shared/content/levels.js';
 import { PET_DEFINITIONS, petEmojiFor } from '@shared/content/pets.js';
 import {
@@ -43,6 +49,36 @@ function item(id: string): ShopItem {
   const found = getShopItem(id);
   if (!found) throw new Error(`shop-items.json thiếu "${id}" — fixture của test đã lệch dữ liệu`);
   return found;
+}
+
+/**
+ * Đọc hộp MỰC NHÌN THẤY của một món từ DOM, quy về hệ 0..1 của hộp `1em` như `petAnchors.ts`.
+ *
+ * ⚠️ jsdom KHÔNG tính layout, nên không đo được `getBoundingClientRect`. Nhưng component đặt neo
+ *    bằng `style` inline (`left/top/width/height` theo `%`) — đọc lại chính các số đó rồi quy đổi
+ *    ra tâm/bề rộng MỰC cho ta bài kiểm chứng ĐÚNG THỨ cần: "kính có nằm trên đường mắt không",
+ *    độc lập với việc component tính bằng công thức nào.
+ */
+function inkBoxOf(container: HTMLElement, itemId: string) {
+  const layer = container.querySelector(`[data-accessory-id="${itemId}"]`);
+  const box = layer?.querySelector('span');
+  if (!(box instanceof HTMLElement)) throw new Error(`không thấy hộp của "${itemId}"`);
+  const pct = (value: string) => Number.parseFloat(value) / 100;
+  // ⚠️ `left`/`top` là TÂM hộp (hộp canh tâm bằng `-translate-x-1/2 -translate-y-1/2`), KHÔNG phải
+  //    mép trên-trái. Cộng thêm `side/2` ở đây là tự lừa mình.
+  const cx0 = pct(box.style.left);
+  const cy0 = pct(box.style.top);
+  const side = pct(box.style.width);
+  const ink = accessoryFitOf(itemId)?.ink ?? DEFAULT_ACCESSORY_INK;
+  const cy = cy0 + (ink.cy - 0.5) * side;
+  return {
+    side,
+    cx: cx0 + (ink.cx - 0.5) * side,
+    cy,
+    w: ink.w * side,
+    h: ink.h * side,
+    bottom: cy + (ink.h * side) / 2,
+  };
 }
 
 /**
@@ -175,7 +211,10 @@ describe('PetAvatar — vẽ', () => {
         expect(url, `${pet.id} × ${stage.stage} URL`).toBeDefined();
         expect(existsSync(join(publicDir, url!.slice(1))), url).toBe(true);
         const { container, unmount } = renderAvatar([], stage.stage, pet.id);
-        expect(container.querySelector(`img[src="${url}"]`), `${pet.id} × ${stage.stage}`).toBeInTheDocument();
+        expect(
+          container.querySelector(`img[src="${url}"]`),
+          `${pet.id} × ${stage.stage}`,
+        ).toBeInTheDocument();
         expect(container.querySelector('span[hidden]')).toBeInTheDocument();
         unmount();
       }
@@ -184,7 +223,9 @@ describe('PetAvatar — vẽ', () => {
 
   it('图片载入失败时保留表情符号回退', () => {
     const { container } = renderAvatar();
-    const image = container.querySelector<HTMLImageElement>('img[src="/assets/pets/monkey-baby.webp"]');
+    const image = container.querySelector<HTMLImageElement>(
+      'img[src="/assets/pets/monkey-baby.webp"]',
+    );
     expect(image).toBeInTheDocument();
     image!.dispatchEvent(new Event('error'));
     expect(image).toHaveProperty('hidden', true);
@@ -192,12 +233,50 @@ describe('PetAvatar — vẽ', () => {
     expect(screen.getByText(petEmojiFor('monkey', 'baby'))).toBeInTheDocument();
   });
 
-  it('mặc mũ ⇒ ảnh WebP được vẽ ở slot head, emoji chỉ làm fallback ẩn', () => {
+  it('mặc mũ ⇒ ảnh WebP được vẽ ở slot head, đáy vành chạm đúng trán', () => {
     const { container } = renderAvatar([item('acc-hat')]);
     const artwork = container.querySelector('img[src="/assets/pets/shop/acc-hat.webp"]');
     expect(artwork).toBeInTheDocument();
-    expect(artwork?.closest('.absolute')?.parentElement?.className).toContain('top-[-60%]');
     expect(container.querySelector('span[hidden]')).toBeInTheDocument();
+
+    // ⚠️ KHẲNG ĐỊNH THEO NEO, KHÔNG THEO MỘT CON SỐ CỨNG. Bản trước khoá vào `top-[-60%]` — đúng
+    //    cho MỘT bảng dùng chung, và chính con số đó là lỗi chủ dự án báo ("mũ lơ lửng"). Nay mũ
+    //    phải neo vào `head.top` của ĐÚNG con đang hiện ⇒ đỏ ngay nếu ai đó lắp lại bảng cứng.
+    const box = inkBoxOf(container, 'acc-hat');
+    const anchor = petAnchorFor('monkey', 'baby');
+    expect(Math.abs(box.bottom - (anchor.head.top + HAT_DROP))).toBeLessThanOrEqual(0.02);
+    expect(box.w).toBeGreaterThanOrEqual(1.15 * anchor.head.w);
+    expect(box.w).toBeLessThanOrEqual(1.35 * anchor.head.w);
+  });
+
+  it('⭐ kính nằm ĐÚNG ĐƯỜNG MẮT và đúng cỡ — trên 3 con lệch nhau nhất', () => {
+    // ⚠️ VÌ SAO BA CON NÀY: `monkey-baby` (cx 0,488 / mực rộng 60,7%), `cat-super` (cx 0,509),
+    //    `dragon-baby` (cx 0,496 / mực rộng 66,8%) — bộ ba lệch nhau nhiều nhất về tâm thân và bề
+    //    rộng mực. Một bảng neo DÙNG CHUNG sẽ trượt ở ít nhất một trong ba; bảng theo TỪNG ẢNH thì
+    //    cả ba đều đúng. Đây là bài kiểm chứng trực tiếp cho lời chủ dự án: "đeo vào là sát vào mặt".
+    for (const [petType, stage] of [
+      ['monkey', 'baby'],
+      ['cat', 'super'],
+      ['dragon', 'baby'],
+    ] as const) {
+      const { container, unmount } = renderAvatar([item('acc-glasses')], stage, petType);
+      const anchor = petAnchorFor(petType, stage);
+      const box = inkBoxOf(container, 'acc-glasses');
+
+      // Tâm kính trùng đường mắt / trục mắt, sai số ≤ 3% khoảng cách hai mắt.
+      expect(
+        Math.abs(box.cy - anchor.eyes.y),
+        `${petType}: tâm kính lệch đường mắt`,
+      ).toBeLessThanOrEqual(0.03 * anchor.eyes.w);
+      expect(
+        Math.abs(box.cx - anchor.eyes.cx),
+        `${petType}: tâm kính lệch trục mắt`,
+      ).toBeLessThanOrEqual(0.03 * anchor.eyes.w);
+      // Cỡ MỰC nhìn thấy nằm trong dải chủ dự án chốt (1,55–1,75 × khoảng cách hai mắt).
+      expect(box.w, `${petType}: kính quá nhỏ`).toBeGreaterThanOrEqual(1.55 * anchor.eyes.w);
+      expect(box.w, `${petType}: kính quá to`).toBeLessThanOrEqual(1.75 * anchor.eyes.w);
+      unmount();
+    }
   });
 
   it('cả 9 ảnh đều hiện và wrapper stacking giữ mọi món back sau pet, slot trước pet', () => {
@@ -215,17 +294,17 @@ describe('PetAvatar — vẽ', () => {
     for (const pet of PET_DEFINITIONS) {
       const wornItems = accessoryIds.map(item);
       for (const stage of EVOLUTION_STAGES) {
-      const { container, unmount } = renderAvatar(wornItems, stage.stage, pet.id);
-      expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(9);
-      const backWrapper = container.querySelector('[data-accessory-layer="behind"]');
-      const frontWrapper = container.querySelector('[data-accessory-layer="front"]');
-      const petLayer = container.querySelector('.z-\\[2\\]');
-      expect(backWrapper).toHaveClass('absolute', 'inset-0', 'z-[1]');
-      expect(frontWrapper).toHaveClass('absolute', 'inset-0', 'z-[3]');
-      expect(petLayer).toHaveClass('relative', 'z-[2]');
-      expect(backWrapper?.querySelector('.z-\\[1\\]')).toBeNull();
-      expect(backWrapper?.contains(petLayer)).toBe(false);
-      unmount();
+        const { container, unmount } = renderAvatar(wornItems, stage.stage, pet.id);
+        expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(9);
+        const backWrapper = container.querySelector('[data-accessory-layer="behind"]');
+        const frontWrapper = container.querySelector('[data-accessory-layer="front"]');
+        const petLayer = container.querySelector('.z-\\[2\\]');
+        expect(backWrapper).toHaveClass('absolute', 'inset-0', 'z-[1]');
+        expect(frontWrapper).toHaveClass('absolute', 'inset-0', 'z-[3]');
+        expect(petLayer).toHaveClass('relative', 'z-[2]');
+        expect(backWrapper?.querySelector('.z-\\[1\\]')).toBeNull();
+        expect(backWrapper?.contains(petLayer)).toBe(false);
+        unmount();
       }
     }
   });
@@ -240,20 +319,27 @@ describe('PetAvatar — vẽ', () => {
     for (const layer of headLayers) {
       expect(layer).toHaveClass('absolute', 'inset-0');
     }
-    expect(screen.getByRole('img')).toHaveAccessibleName(
-      'Khỉ Momo đang dùng: Nơ, Mũ, Vương miện',
-    );
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Nơ, Mũ, Vương miện');
   });
 
-  it('trang trí bầu trời và mặt đất cùng hiện', () => {
+  it('đồ trang trí truyền vào thì BỊ BỎ QUA (trang trí nay nằm trong "Góc phòng của bé")', () => {
+    // ⚠️ ĐÃ XOÁ TEST CŨ: `renderAvatar([dec-balloon, dec-plant]); getByText('🎈')`.
+    //    Nó KHÔNG chứng minh trang trí được VẼ — `ShopArtwork` luôn render một `<span hidden>` chứa
+    //    emoji làm bản dự phòng khi ảnh lỗi, và `getByText` tìm được cả chữ trong `<span hidden>`.
+    //    Nghĩa là test xanh kể cả khi hàng trang trí vẽ ra 0 phần tử — đúng trạng thái thật ở
+    //    production (`PetHousePage` lọc `decorationSlotOf(item) !== null` khỏi `items`).
+    //    Hành vi ĐÚNG nay là: PetAvatar không nhận/vẽ trang trí, và KHÔNG được nhắc tới chúng
+    //    trong nhãn đọc lên (nhãn nói có mà mắt không thấy gì là một lời nói dối).
     renderAvatar([item('dec-balloon'), item('dec-plant')]);
-    expect(screen.getByText('🎈')).toBeInTheDocument();
-    expect(screen.getByText('🪴')).toBeInTheDocument();
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang chơi trong nhà');
+    expect(screen.queryByText('🎈')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('[data-accessory-id]')).toHaveLength(0);
   });
 
   it('đồ ăn truyền vào thì BỊ BỎ QUA (Momo không đội quả chuối)', () => {
     renderAvatar([item('food-banana')]);
     expect(screen.queryByText('🍌')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('[data-accessory-id]')).toHaveLength(0);
   });
 });
 
@@ -277,16 +363,16 @@ describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Mũ, Khăn quàng');
   });
 
-  it('có trang trí ⇒ đọc tên từng món quanh nhà', () => {
+  it('⚠️ đồ trang trí KHÔNG được đọc lên (không vẽ thì không được nói là có)', () => {
+    // Trang trí nay nằm trong "Góc phòng của bé" — nhãn cũ "Quanh nhà có Bóng bay" nói về những
+    // món KHÔNG hề được vẽ trong khối này. Nhãn sai chỗ này là bịa ra một sự thật thị giác.
     renderAvatar([item('dec-balloon')]);
-    expect(screen.getByRole('img')).toHaveAccessibleName('Quanh nhà có Bóng bay');
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang chơi trong nhà');
   });
 
-  it('cả hai ⇒ đọc cả hai vế', () => {
+  it('cả phụ kiện lẫn trang trí ⇒ CHỈ đọc phần phụ kiện', () => {
     renderAvatar([item('acc-hat'), item('dec-plant')]);
-    expect(screen.getByRole('img')).toHaveAccessibleName(
-      'Khỉ Momo đang dùng: Mũ. Quanh nhà có Chậu cây',
-    );
+    expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Mũ');
   });
 
   it('thứ tự đọc theo VỊ TRÍ, không theo thứ tự túi đồ truyền vào', () => {
@@ -311,7 +397,9 @@ describe('PetAvatar — tiến hoá (T066 · T04)', () => {
     for (const pet of PET_DEFINITIONS) {
       for (const stage of EVOLUTION_STAGES) {
         const { container, unmount } = renderAvatar([], stage.stage, pet.id);
-        expect(container.querySelector('span[hidden]')).toHaveTextContent(petEmojiFor(pet.id, stage.stage));
+        expect(container.querySelector('span[hidden]')).toHaveTextContent(
+          petEmojiFor(pet.id, stage.stage),
+        );
         unmount();
       }
     }
@@ -467,7 +555,9 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
   const publicDir = join(process.cwd(), 'public');
   const abs = (url: string) => join(publicDir, url.slice(1));
   const basenamesIn = (dir: string, ext: string) =>
-    readdirSync(join(publicDir, dir)).filter((f) => f.endsWith(ext)).sort();
+    readdirSync(join(publicDir, dir))
+      .filter((f) => f.endsWith(ext))
+      .sort();
 
   function petArtworkUrls(): string[] {
     const urls: string[] = [];
@@ -482,13 +572,13 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
   }
 
   function shopArtworkUrls(): string[] {
-    return SHOP_ITEMS.filter(
-      (i) => i.category === 'accessory' || i.category === 'decoration',
-    ).map((i) => {
-      const url = shopArtworkOf(i);
-      expect(url, `${i.id} thiếu URL artwork`).toBeDefined();
-      return url!;
-    });
+    return SHOP_ITEMS.filter((i) => i.category === 'accessory' || i.category === 'decoration').map(
+      (i) => {
+        const url = shopArtworkOf(i);
+        expect(url, `${i.id} thiếu URL artwork`).toBeDefined();
+        return url!;
+      },
+    );
   }
 
   it('MỌI URL thú cưng là .webp và trỏ tới tệp CÓ THẬT', () => {
@@ -510,10 +600,14 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
   });
 
   it('⚠️ đĩa và manifest KHỚP từng tên (không thừa, không thiếu)', () => {
-    const petManifest = petArtworkUrls().map((u) => u.split('/').pop()!).sort();
+    const petManifest = petArtworkUrls()
+      .map((u) => u.split('/').pop()!)
+      .sort();
     expect(basenamesIn('assets/pets', '.webp')).toEqual(petManifest);
 
-    const shopManifest = shopArtworkUrls().map((u) => u.split('/').pop()!).sort();
+    const shopManifest = shopArtworkUrls()
+      .map((u) => u.split('/').pop()!)
+      .sort();
     expect(basenamesIn('assets/pets/shop', '.webp')).toEqual(shopManifest);
   });
 
