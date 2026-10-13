@@ -2,12 +2,13 @@
 
 Tài liệu này là **quy trình vận hành**, không phải tài liệu kiến trúc. Phần "vì sao" nằm trong
 chú thích ở `Dockerfile`, `docker-compose.yml`, `scripts/deploy.sh`, `scripts/update.sh`,
-`scripts/backup-db.sh`, `scripts/push-to-github.sh`.
+`scripts/update-keep-local.sh`, `scripts/backup-db.sh`, `scripts/push-to-github.sh`.
 Tài liệu kiến trúc đầy đủ ở `../deliverables/english-starters/ARCHITECTURE.md` (mục Nhóm 12) —
 **nằm ngoài repo**, không cần cho deploy.
 
 **Luồng chuẩn:** GitHub (repo private) → VPS `git clone` **một lần** → mỗi lần cập nhật chạy
-`./scripts/update.sh` (pull + build lại container).
+`./scripts/update.sh` (pull + build lại container). Nếu VPS có **tệp sửa tay cố ý** thì dùng
+`./scripts/update-keep-local.sh` — xem §0.4.1.
 
 ---
 
@@ -150,12 +151,44 @@ Script **dừng lại** (chứ không tự "xử lý") trong ba trường hợp,
 > ⚠️ Script **không** chép lại logic kiểm chứng của `deploy.sh` — nó `exec ./scripts/deploy.sh` ở
 > bước cuối. Hai bản sao thì bản này sẽ lệch, và lệch theo hướng tệ nhất: *"tưởng là đã kiểm"*.
 
+### 0.4.1. VPS có tệp **SỬA TAY CỐ Ý** — `./scripts/update-keep-local.sh`
+
+Có những VPS cần sửa tay vài tệp trong repo (ví dụ tham số riêng của máy chủ trong
+`docker-compose.yml`). Lúc đó bước 4 ở trên sẽ **dừng mỗi lần**, và người vận hành phải tự xử lý cây
+làm việc bằng tay — thao tác lặp lại là thứ dễ sai nhất. Một lệnh cho việc đó:
+
+```bash
+./scripts/update-keep-local.sh                 # giữ nguyên mọi tệp đang sửa tay, rồi kéo mã mới + deploy
+FORCE=1 ./scripts/update-keep-local.sh         # (tuỳ chọn) build lại dù không có commit mới
+KEEP_LOCAL_MAX=25 ./scripts/update-keep-local.sh  # (tuỳ chọn) nâng trần số tệp sửa-tay được giữ (mặc định 10)
+```
+
+Nó làm đúng bốn việc:
+
+1. **Tự dò** những tệp đang bị sửa tay (không cần gõ tên, không cần danh sách cấu hình).
+2. **DỪNG** nếu bản mới **cũng sửa đúng** một trong các tệp đó — lúc ấy giữ cả hai là **bất khả**,
+   và chọn bản nào thắng là quyết định của con người, không phải của script.
+3. **Sao lưu** bản sửa-tay ra `backups/keep-local/*.patch` (đường lui trước khi kéo).
+4. Kéo mã mới, rồi **đối chiếu vết băm sha256** để **chứng minh** các tệp sửa-tay vẫn nguyên —
+   không "tin là git đã làm đúng".
+
+> ⭐ **Vì sao không cần "xoá sửa tay → kéo → rồi dán lại"**: `git pull --ff-only` **không** đụng tới
+> tệp có sửa tay, miễn là bản mới không sửa đúng tệp đó — git tự soát và **từ chối** kéo nếu có.
+> Khi hai tập hợp *rời nhau* thì hai ý định này không giành nhau, nên **không có cửa sổ nào để mất
+> dữ liệu**. Cách "xoá rồi dán lại" thì **tạo ra** đúng cửa sổ đó — nên nó bị loại.
+>
+> ⚠️ Chế độ này **KHÔNG** đổi hành vi mặc định: `./scripts/update.sh` vẫn **dừng** như cũ khi cây
+> có tệp sửa-tay. Phải **chủ động** gọi lệnh giữ-nguyên (hoặc đặt `KEEP_LOCAL=1`).
+>
+> ⚠️ Các tệp được giữ sẽ **luôn** hiện là "thay đổi" trong `git status` trên VPS — đó là điều bình
+> thường với chế độ này, không phải lỗi. Script in lại danh sách đó ở bước 6 (kèm tệp vá sao lưu).
+
 ### 0.5. ⚠️ Những gì **KHÔNG** nằm trong repo — và vì sao `git pull` không bao giờ đụng vào
 
 | Không commit | Chứa gì | Nếu lọt lên GitHub |
 |---|---|---|
 | `data/` | DB SQLite: biệt danh, tuổi, avatar, tiến độ học của **trẻ em** | rò rỉ dữ liệu trẻ em (vi phạm COPPA/GDPR-K) |
-| `backups/` | bản sao của chính DB đó | như trên |
+| `backups/` | bản sao của chính DB đó, **và** bản vá tệp sửa-tay (`backups/keep-local/`, xem §0.4.1) | như trên |
 | `.env` | `SESSION_SECRET` | giả mạo được phiên đăng nhập |
 
 ⚠️ **Git giữ lịch sử VĨNH VIỄN**: xoá ở commit sau **không** xoá khỏi commit trước. Nếu những thứ

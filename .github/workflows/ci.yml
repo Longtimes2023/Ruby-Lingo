@@ -5,8 +5,8 @@
 # ⭐ VÌ SAO BA JOB TÁCH RỜI (không gộp làm một):
 #   • `ci`           — cổng kiểm của DỰ ÁN, y hệt `npm run ci` mà lập trình viên chạy ở máy
 #                      (typecheck + lint + validate:content + gen + test), CỘNG bốn chốt hạ tầng
-#                      (bit thực thi, tệp bắt buộc, biến bắt buộc, TỰ KIỂM `deploy.sh`) và cổng
-#                      kiểm tệp workflow.
+#                      (bit thực thi, tệp bắt buộc, biến bắt buộc, TỰ KIỂM `deploy.sh`, TỰ KIỂM
+#                      chế độ giữ-nguyên của `update.sh`) và cổng kiểm tệp workflow.
 #                      Đây là thứ chặn code sai.
 #   • `e2e`          — cổng kiểm ĐẦU-CUỐI: Chromium thật, HTTP thật, cookie thật, 3 viewport.
 #                      Đây là tầng DUY NHẤT chứng minh app chạy được, vì unit test chạy trên jsdom
@@ -181,6 +181,31 @@ jobs:
       #     ĐÃ SỬA ⇒ 14/14 xanh. Một cổng không từng đỏ là một cổng chưa được chứng minh.
       - name: Tự kiểm scripts/deploy.sh (bước 1 — chống thoát im lặng)
         run: bash scripts/tests/deploy-step1.test.sh
+
+      # ⚠️⚠️ TỰ KIỂM CHẾ ĐỘ "GIỮ NGUYÊN TỆP SỬA TAY" CỦA `scripts/update.sh` (KEEP_LOCAL=1) — cổng
+      #   duy nhất phủ được câu hỏi: "lần cập nhật này có KÉO ĐƯỢC mã mới không, và tệp sửa tay trên
+      #   VPS có CÒN NGUYÊN không?". Sai ở đây có đúng hai hậu quả, cả hai đều đắt: DỪNG OAN (mỗi lần
+      #   cập nhật lại phải xử lý tay — đúng thứ chế độ này sinh ra để bỏ) và ĐI QUA OAN (mã mới ghi
+      #   đè tệp sửa-tay, hoặc tệp sửa-tay che mất bản mới).
+      #
+      #   ⚠️ VÌ SAO PHẢI CHẠY THẬT, KHÔNG THỂ LINT: cùng lý do như bước deploy.sh ngay trên — không
+      #     cổng tĩnh nào mở tệp `.sh`. Riêng ở đây việc "cây làm việc có tệp bị sửa tay hay không" và
+      #     "hai tập hợp tệp có GIAO NHAU không" chỉ quan sát được bằng `git` THẬT. Nên test dựng một
+      #     repo TẠM + "remote" tạm (chỉ là thư mục — không cần mạng) rồi chạy `update.sh` THẬT.
+      #   ⚠️ Ca C (vùng giao KHÁC RỖNG) là ca QUAN TRỌNG NHẤT: giữ cả hai bản là bất khả, nên câu trả
+      #     lời đúng là DỪNG. Nếu ai đó "cải tiến" thành tự đặt lại bản VPS, ca đó ĐỎ.
+      #   ⚠️ Ca A canh "đổi hành vi im lặng": mặc định (không bật KEEP_LOCAL) phải giữ nguyên đúng
+      #     hành vi cũ là DỪNG — tính năng mới không được làm mặc định cũ lỏng ra.
+      #   ⚠️ Ca F canh BƯỚC 0 (script tự chạy từ bản sao tạm): commit mới GHI ĐÈ `scripts/update.sh`
+      #     trong lúc nó đang chạy. Ca G canh chính TỆP MỎNG mà người dùng gõ hằng ngày — sai một
+      #     chữ trong đó thì mọi ca khác vẫn xanh trong khi đường đi thật hỏng.
+      #   ⚠️ Đã kiểm hai chiều ở máy trước khi đưa vào: bản `update.sh` CŨ (trước khi có KEEP_LOCAL)
+      #     làm 14 khẳng định ĐỎ ở riêng ca B; bản mới ⇒ 55/55 xanh (đủ 7 ca A–G). Một cổng chưa
+      #     từng đỏ là một cổng chưa được chứng minh.
+      #   ⚠️ Trên máy dev bị GIỚI HẠN SỐ TIẾN TRÌNH, chạy đủ 7 ca một lượt có thể bị ngắt giữa chừng;
+      #     dùng `ONLY=B,C bash scripts/tests/update-keep-local.test.sh` để chạy từng nhóm.
+      - name: Tự kiểm scripts/update.sh (chế độ giữ-nguyên KEEP_LOCAL)
+        run: bash scripts/tests/update-keep-local.test.sh
 
       - name: Cài Node 20 (có cache npm)
         uses: actions/setup-node@v4

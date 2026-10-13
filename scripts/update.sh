@@ -31,6 +31,10 @@
 #   FORCE=1 ./scripts/update.sh         # build lại DÙ không có commit mới
 #   SKIP_BUILD=1 ./scripts/update.sh    # chuyển tiếp xuống deploy.sh (dùng image đang có)
 #
+#   ⭐ ./scripts/update-keep-local.sh   # TÊN NGẮN của lệnh dưới — lệnh dùng HẰNG NGÀY trên VPS
+#   KEEP_LOCAL=1 ./scripts/update.sh    # GIỮ NGUYÊN các tệp ĐANG SỬA TAY trên VPS qua lần cập nhật
+#                                       # (tự sao lưu trước, tự đặt lại sau — KHÔNG hỏi gì). Xem BƯỚC 4.
+#
 #   ⚠️ Biến môi trường (SKIP_BUILD, POLL_ATTEMPTS, POLL_INTERVAL, READY_ATTEMPTS…) KHÔNG cần
 #      script này chuyển tiếp: tiến trình con thừa hưởng nguyên môi trường của cha, nên
 #      `exec ./scripts/deploy.sh` ở BƯỚC 7 là đã "truyền tiếp" đúng nghĩa.
@@ -40,10 +44,68 @@ set -euo pipefail
 
 # Đứng ở gốc repo DÙ được gọi từ đâu — cùng cách `deploy.sh` làm, để đường dẫn tương đối (./.env,
 # ./data, ./scripts/deploy.sh) luôn trỏ đúng.
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# ⚠️ `RUBYLINGO_REPO_ROOT` do BƯỚC 0 (ngay dưới) đặt: khi chạy từ bản sao tạm thì không thể suy
+#    ra gốc repo từ đường dẫn của chính script nữa ⇒ phải nhận qua môi trường.
+REPO_ROOT="${RUBYLINGO_REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 cd "$REPO_ROOT"
 
+# =============================================================================
+# BƯỚC 0 — CHẠY TỪ BẢN SAO TẠM (chống "script tự ghi đè chính mình giữa chừng")
+# =============================================================================
+# ⚠️⚠️ VÌ SAO CẦN: BƯỚC 5 chạy `git pull`, mà commit mới RẤT THƯỜNG sửa chính `scripts/update.sh`
+#   (mỗi lần luồng deploy được cải tiến là một lần). Bash đọc tệp script theo TỪNG KHỐI, nó KHÔNG
+#   nạp cả tệp vào bộ nhớ; nhiều đường ghi của git mở tệp bằng `O_TRUNC` (CẮT NGẮN đúng cái inode
+#   đang được đọc) ⇒ phần còn lại của script có thể được đọc từ một tệp ĐÃ KHÁC: cú pháp rác, hoặc
+#   tệ hơn là chạy nhầm lệnh.
+#   ⇒ Cách chữa rẻ nhất và triệt để: tự chép ra thư mục tạm rồi chạy TIẾP TỪ BẢN SAO. Từ đó, việc
+#     git ghi đè tệp trong repo là VÔ HẠI với tiến trình đang chạy.
+#   ⚠️ Cờ `RUBYLINGO_UPDATE_SELFCOPY=1` để bản sao KHÔNG tự chép tiếp (nếu không sẽ thành vòng lặp
+#      vô hạn: mỗi bản sao lại chép ra bản sao mới).
+if [ "${RUBYLINGO_UPDATE_SELFCOPY:-0}" != "1" ]; then
+  SELF_PATH="${BASH_SOURCE[0]}"
+  SELF_DIR="$(cd "$(dirname "${SELF_PATH}")" && pwd)"
+  if ! SELF_TMP="$(mktemp 2>/dev/null)" || [ -z "${SELF_TMP}" ]; then
+    printf '\n\033[31m  ✗ BƯỚC 0 THẤT BẠI: không tạo được tệp tạm ("mktemp"). Script cần nó để chạy từ bản sao, nhờ đó việc kéo mã mới không thể làm hỏng chính script đang chạy. Kiểm xem /tmp (hoặc $TMPDIR) có ghi được không.\033[0m\n\n'
+    exit 1
+  fi
+  if ! cp "${SELF_DIR}/$(basename "${SELF_PATH}")" "${SELF_TMP}"; then
+    printf '\n\033[31m  ✗ BƯỚC 0 THẤT BẠI: không chép được bản sao script ra " %s ".\033[0m\n\n' "${SELF_TMP}"
+    exit 1
+  fi
+  # ⚠️ `-f`: trên VPS, `/tmp` có thể bị chính sách dọn dẹp hoặc `noexec`; nhưng ta chạy bằng
+  #    `bash <tệp>` chứ không exec tệp, nên `noexec` KHÔNG cản trở. Chỉ cần tệp đọc được.
+  # ⚠️ `trap` này KHÔNG dọn được ở đường thành công (BƯỚC 7 `exec ./scripts/deploy.sh` THAY THẾ
+  #    tiến trình ⇒ trap EXIT không chạy). Nó vẫn có ích: mọi đường THẤT BẠI (đều `exit`) được dọn.
+  #    ⇒ Ở đường thành công, MỘT bản sao nhỏ nằm lại trong /tmp. Đó là đánh đổi CÓ Ý: xoá tệp ngay
+  #      trước `exec` là tự tay tạo lại đúng cái nguy hiểm mà BƯỚC 0 sinh ra để chặn (bash có thể
+  #      còn đang đọc chính tệp đó). `/tmp` được hệ điều hành dọn định kỳ.
+  trap 'rm -f "${SELF_TMP}"' EXIT
+  export RUBYLINGO_UPDATE_SELFCOPY=1
+  export RUBYLINGO_REPO_ROOT="${REPO_ROOT}"
+  printf '  · chạy từ BẢN SAO TẠM (%s) — để việc kéo mã mới không thể sửa chính script đang chạy\n' "${SELF_TMP}"
+  exec bash "${SELF_TMP}" "$@"
+fi
+
 FORCE="${FORCE:-0}"
+
+# ⭐ `KEEP_LOCAL=1` — dành cho VPS có vài tệp ĐƯỢC SỬA TAY CỐ Ý (ví dụ tham số riêng của máy chủ
+#    trong `docker-compose.yml`). Bật thì BƯỚC 4 KHÔNG dừng nữa, mà sao lưu bản vá rồi ĐỐI CHIẾU
+#    để CHỨNG MINH các tệp sửa-tay vẫn nguyên qua lần kéo mã mới. Lệnh gõ hằng ngày là
+#    `./scripts/update-keep-local.sh` (tệp mỏng chỉ `exec` script này với biến này).
+#    Toàn bộ lập luận an toàn — và vì sao KHÔNG cần "reset rồi dán lại" — nằm ở BƯỚC 4.
+KEEP_LOCAL="${KEEP_LOCAL:-0}"
+
+# ⚠️ `sha256sum` là thứ CHỐT KIỂM CHỨNG của chế độ KEEP_LOCAL dựa vào (BƯỚC 4/5). Thiếu nó thì
+#    phép kiểm trở thành RỖNG mà vẫn báo xanh — đúng loại "xanh giả" tệ nhất. Bắt SỚM, rõ ràng.
+#    ⚠️ HỎI ĐÚNG LÚC: chỉ đòi khi thật sự dùng tới, để luồng thường ngày không bị chặn oan.
+#    ⚠️ VÌ SAO `sha256sum` chứ không `git hash-object`: cần băm NỘI DUNG TRÊN ĐĨA, kể cả khi tệp
+#       KHÔNG được theo dõi hoặc đang thay đổi. `sha256sum` là lệnh chuẩn (coreutils) trên mọi bản
+#       Linux — kể cả `debian:bookworm-slim` mà image runtime dùng — nên không thêm phụ thuộc mới.
+#    (⚠️ KHÔNG dùng hàm `fail` ở đây — nó được định nghĩa ngay dưới; in thẳng cho chắc.)
+if [ "${KEEP_LOCAL}" = "1" ] && ! command -v sha256sum >/dev/null 2>&1; then
+  printf '\n\033[31m  ✗ BƯỚC 1 THẤT BẠI: KEEP_LOCAL=1 cần lệnh "sha256sum" (để chứng minh bản sửa-tay còn nguyên sau khi kéo) nhưng máy này không có.\033[0m\n\n'
+  exit 1
+fi
 
 # --- Tiện ích in ấn (GIỐNG deploy.sh, để log đọc quen mắt) -------------------
 step() { printf '\n\033[1m▶ %s\033[0m\n' "$1"; }
@@ -175,24 +237,122 @@ else
 fi
 
 # =============================================================================
-# BƯỚC 4/7 — TỪ CHỐI nếu CÂY có thay đổi với tệp ĐƯỢC THEO DÕI
+# BƯỚC 4/7 — CÂY LÀM VIỆC: tệp nào bị SỬA TAY, và có AN TOÀN để kéo mã mới không?
 # =============================================================================
 # ⚠️ Thay đổi với tệp được theo dõi nghĩa là ai đó đã SỬA TAY trên VPS (hoặc một tiến trình ghi
 #    vào tệp nằm trong repo). `git pull` lúc đó sẽ XUNG ĐỘT, hoặc tệ hơn là tạo merge commit (L3).
-#    Ta DỪNG để con người xử lý có chủ đích — script không tự "giải quyết" thay họ.
+#
+# HAI CHẾ ĐỘ — mặc định KHÔNG đổi hành vi cũ:
+#   • MẶC ĐỊNH      — DỪNG lại và để con người quyết định.
+#   • KEEP_LOCAL=1  — GIỮ NGUYÊN các tệp sửa-tay qua lần cập nhật, không hỏi gì. Dùng khi VPS có
+#                     vài tệp sửa tay CỐ Ý (vd tham số riêng của máy chủ) và người vận hành không
+#                     muốn gõ lại thao tác đó mỗi lần cập nhật. Lệnh gõ hằng ngày:
+#                     `./scripts/update-keep-local.sh`
+#
+# ⭐⭐ VÌ SAO KEEP_LOCAL=1 AN TOÀN — VÀ VÌ SAO NÓ **KHÔNG** CẦN "RESET RỒI DÁN LẠI":
+#   `git pull --ff-only` KHÔNG đụng tới tệp có sửa-tay MIỄN LÀ bản mới không sửa đúng tệp đó.
+#   Chính git tự soát việc này và **TỪ CHỐI** kéo nếu có tệp vừa sửa-tay vừa bị bản mới đụng tới
+#   ("Your local changes to the following files would be overwritten by merge"). Nghĩa là: khi
+#   hai tập hợp RỜI NHAU thì "kéo mã mới" và "giữ bản sửa-tay" KHÔNG giành nhau — nên KHÔNG có
+#   cửa sổ nào để mất dữ liệu (một cách làm khác — sao chép ra rồi dán lại — lại TẠO RA đúng
+#   cửa sổ đó, nên nó bị loại).
+#   ⇒ Việc của script chỉ còn ba việc: (a) tự DÒ hai tập hợp, (b) DỪNG nếu chúng GIAO NHAU (lúc
+#     đó giữ-cả-hai là bất khả), (c) sau khi kéo thì ĐỐI CHIẾU VẾT BĂM để CHỨNG MINH bản sửa-tay
+#     vẫn nguyên — chứ không "tin là git đã làm đúng" (xem BƯỚC 5).
+#   ⚠️ KHÔNG PHẢI SUY LUẬN SUÔNG: hành vi trên đã được ĐO bằng git thật — ca B (hai tập hợp rời
+#      nhau ⇒ kéo được, tệp sửa-tay nguyên vẹn) và ca C (giao nhau ⇒ git TỪ CHỐI, không đụng gì)
+#      trong `scripts/tests/update-keep-local.test.sh`. Cổng kiểm đó chạy trên CI.
+#
 # ⚠️ Tệp KHÔNG được theo dõi (`.env`, `data/`, log…) thì KHÔNG tính: đó là dữ liệu vận hành bình
 #    thường trên VPS và không liên quan tới `git pull`. Nên phép kiểm chỉ soi tệp ĐƯỢC theo dõi.
-step "BƯỚC 4/7 — kiểm cây làm việc (chỉ tính tệp ĐƯỢC THEO DÕI)"
-DIRTY=0
-# `git diff --quiet` thoát 1 khi CÓ khác biệt. Đặt trong `if !` để `set -e` không kích hoạt nhầm.
-if ! git diff --quiet; then DIRTY=1; fi           # thay đổi chưa stage (đĩa vs index)
-if ! git diff --cached --quiet; then DIRTY=1; fi  # thay đổi đã stage  (index vs HEAD)
-if [ "${DIRTY}" -ne 0 ]; then
-  printf '\n  ── các tệp được theo dõi đang thay đổi ──\n'
-  git status --short | sed 's/^/      /'
-  fail "4" "cây có thay đổi với tệp ĐƯỢC THEO DÕI ⇒ 'git pull' có thể XUNG ĐỘT. Xem danh sách ở trên. Xử lý: 'git stash' (giữ tạm để xử lý sau), hoặc 'git checkout -- <tệp>' (BỎ thay đổi trên VPS — chỉ khi chắc chắn sửa-tay đó là sai), rồi chạy lại. Script CỐ Ý không tự trộn."
+step "BƯỚC 4/7 — cây làm việc: tệp sửa tay & vùng giao với bản mới"
+
+KEPT=()         # tệp sửa-tay sẽ được GIỮ NGUYÊN (chỉ khác rỗng khi KEEP_LOCAL=1)
+KEPT_HASHES=()  # vết băm sha256 tương ứng — để BƯỚC 5 đối chiếu
+PATCH_PATH=""   # bản vá sao lưu (đường lui nếu có gì đó hỏng)
+
+# ⚠️ `-z` (NUL) chứ không phải xuống dòng: đường dẫn có dấu cách vẫn nguyên vẹn. `mapfile -d ''`
+#    đọc đúng định dạng đó vào MẢNG.
+# ⚠️ `< <(…)` (process substitution) chứ KHÔNG dùng ống `|`: ống đẩy vòng lặp sang TIẾN TRÌNH CON
+#    ⇒ biến/mảng tạo trong đó BIẾN MẤT khi ống đóng, và mã thoát của git không còn đi tới `set -e`.
+mapfile -d '' DIRTY < <(git diff --name-only -z HEAD)
+
+if [ "${#DIRTY[@]}" -eq 0 ]; then
+  ok "cây sạch với MỌI tệp được theo dõi (tệp không theo dõi như .env/data/ không tính)"
+else
+  printf '\n  ── các tệp ĐƯỢC THEO DÕI đang thay đổi (%s tệp) ──\n' "${#DIRTY[@]}"
+  # ⚠️ `--untracked-files=no`: danh sách in ra phải KHỚP ĐÚNG tập hợp mà script đang xử lý. In cả
+  #    tệp KHÔNG theo dõi (`.env`, `data/`, …) sẽ khiến log trông như ta sắp đụng vào chúng — trong
+  #    khi chúng không hề liên quan tới `git pull` (xem chú thích cuối khối này).
+  git status --short --untracked-files=no | sed 's/^/      /'
+
+  if [ "${KEEP_LOCAL}" != "1" ]; then
+    fail "4" "cây có thay đổi với tệp ĐƯỢC THEO DÕI ⇒ 'git pull' có thể XUNG ĐỘT. Xem danh sách ở trên. Xử lý: 'git stash' (giữ tạm để xử lý sau), hoặc 'git checkout -- <tệp>' (BỎ thay đổi trên VPS — chỉ khi chắc chắn sửa-tay đó là sai), rồi chạy lại. Script CỐ Ý không tự trộn. ⇒ HOẶC, nếu những tệp sửa-tay đó là CỐ Ý và bạn muốn GIỮ NGUYÊN chúng qua lần cập nhật: chạy ./scripts/update-keep-local.sh"
+  fi
+
+  # -----------------------------------------------------------------------------------------
+  # TỪ ĐÂY LÀ NHÁNH KEEP_LOCAL=1
+  # -----------------------------------------------------------------------------------------
+
+  # (0) Trần số tệp sửa-tay. Trần tồn tại để một SỰ CỐ (vd một công cụ định dạng ghi lại cả cây)
+  #     không bị "giữ nguyên" một cách im lặng — lúc đó ta muốn DỪNG, không muốn kéo tiếp.
+  KEEP_LOCAL_MAX="${KEEP_LOCAL_MAX:-10}"
+  if [ "${#DIRTY[@]}" -gt "${KEEP_LOCAL_MAX}" ]; then
+    fail "4" "có ${#DIRTY[@]} tệp sửa-tay, VƯỢT TRẦN ${KEEP_LOCAL_MAX} của chế độ giữ-nguyên. Trần này có chủ ý: nhiều tệp bất thường thường là dấu hiệu SỰ CỐ chứ không phải sửa-tay có chủ đích. Nếu thật sự là CỐ Ý: KEEP_LOCAL_MAX=<số lớn hơn> ./scripts/update-keep-local.sh"
+  fi
+
+  # (1) VÙNG GIAO — tệp vừa sửa tay, vừa bị bản mới đụng tới ⇒ hai ý định giành nhau ⇒ DỪNG.
+  mapfile -d '' INCOMING_FILES < <(git diff --name-only -z 'HEAD..@{u}')
+  OVERLAP=()
+  # ⚠️ Kiểm rỗng TRƯỚC khi mở rộng mảng: trên bash < 4.4, `"${arr[@]}"` với mảng RỖNG + `set -u`
+  #    là lỗi "unbound variable" — tức là script chết ở đúng dòng vô hại nhất.
+  if [ "${#INCOMING_FILES[@]}" -gt 0 ]; then
+    for f in "${DIRTY[@]}"; do
+      for g in "${INCOMING_FILES[@]}"; do
+        if [ "$f" = "$g" ]; then
+          OVERLAP+=("$f")
+          break
+        fi
+      done
+    done
+  fi
+  if [ "${#OVERLAP[@]}" -gt 0 ]; then
+    printf '\n  ── VÙNG GIAO: vừa sửa tay trên VPS, vừa bị bản mới sửa (%s tệp) ──\n' "${#OVERLAP[@]}"
+    printf '      %s\n' "${OVERLAP[@]}"
+    fail "4" "bản mới CŨNG sửa đúng những tệp này ⇒ KHÔNG thể giữ cả hai bản. Đây là việc của CON NGƯỜI, script không tự chọn thay bạn. Chọn một: (1) THEO BẢN MỚI — 'git checkout -- <tệp>' rồi chạy lại; (2) GIỮ BẢN SỬA-TAY — chép nó ra ngoài, chạy lại, rồi tự dán lại sau. (Các tệp sửa-tay còn lại, KHÔNG nằm trong vùng giao, vẫn giữ nguyên được.)"
+  fi
+
+  # (2) SAO LƯU bản vá + vết băm — nguyên tắc: không bao giờ kéo mã mới mà không có đường lui.
+  PATCH_DIR="backups/keep-local"
+  mkdir -p "$PATCH_DIR"
+  PATCH_PATH="${PATCH_DIR}/keep-local-$(date -u +%Y%m%dT%H%M%SZ).patch"
+  if ! git diff --binary HEAD > "$PATCH_PATH"; then
+    fail "4" "không ghi được bản vá sao lưu vào '${PATCH_PATH}' ⇒ DỪNG, không kéo mã mới."
+  fi
+  if [ ! -s "$PATCH_PATH" ]; then
+    fail "4" "bản vá sao lưu '${PATCH_PATH}' RỖNG dù cây đang có thay đổi ⇒ có gì đó không nhất quán. DỪNG thay vì kéo mã mới trên một trạng thái ta không hiểu."
+  fi
+  ok "đã sao lưu bản sửa-tay: ${PATCH_PATH} ($(wc -c < "$PATCH_PATH" | tr -d ' ') byte)"
+
+  # (3) VẾT BĂM chụp NGAY BÂY GIỜ, để BƯỚC 5 chứng minh chúng còn nguyên SAU khi kéo.
+  #     Tệp bị XOÁ tay thì không có gì để băm ⇒ neo bằng dấu '-' và kiểm "vẫn phải KHÔNG tồn tại".
+  # ⚠️ `|| true` + kiểm rỗng ở NGAY DƯỚI là để tránh bẫy "thoát IM LẶNG": phép GÁN có lệnh thay
+  #    thế thất bại ⇒ `set -e` giết script ngay tại dòng đó mà không in gì (đã trả giá 2026-10-09).
+  for f in "${DIRTY[@]}"; do
+    KEPT+=("$f")
+    if [ ! -f "$f" ]; then
+      KEPT_HASHES+=("-")
+      continue
+    fi
+    h="$(sha256sum -- "$f" 2>/dev/null | cut -d' ' -f1 || true)"
+    if [ -z "$h" ]; then
+      fail "4" "không tính được vết băm (sha256sum) của '${f}'. Không có vết băm thì BƯỚC 5 không chứng minh được gì ⇒ DỪNG thay vì kéo mã mới với một phép kiểm rỗng. Kiểm xem tệp có đọc được không và máy có lệnh 'sha256sum' không."
+    fi
+    KEPT_HASHES+=("$h")
+  done
+
+  ok "${#KEPT[@]} tệp sửa-tay sẽ được GIỮ NGUYÊN (vùng giao RỖNG ⇒ git cho kéo mã mới mà KHÔNG đụng vào chúng)"
 fi
-ok "cây sạch với MỌI tệp được theo dõi (tệp không theo dõi như .env/data/ không tính)"
 
 # =============================================================================
 # BƯỚC 5/7 — PULL chỉ TIẾN THẲNG (`--ff-only`)
@@ -200,11 +360,45 @@ ok "cây sạch với MỌI tệp được theo dõi (tệp không theo dõi nh�
 # ⚠️⚠️ KHÔNG BAO GIỜ để server tạo merge commit. `--ff-only` bảo git: "hoặc HEAD tiến thẳng tới bản
 #    mới, hoặc DỪNG". Nếu nó thất bại thì lịch sử nhánh đã PHÂN KỲ (ai đó push lên nhánh đã rebase,
 #    hoặc VPS có commit riêng) — đó là việc của CON NGƯỜI, không phải thứ script nên tự quyết.
-step "BƯỚC 5/7 — git pull --ff-only"
+step "BƯỚC 5/7 — git pull --ff-only, rồi ĐỐI CHIẾU bản sửa-tay"
 if ! git pull --ff-only; then
+  if [ -n "${PATCH_PATH}" ]; then
+    printf '\n  \033[33m⚠ Bản sửa-tay của bạn ĐÃ sao lưu ở: %s\033[0m\n' "${PATCH_PATH}"
+    printf '    (kéo mã mới thất bại KHÔNG làm mất bản sửa-tay — chúng vẫn còn nguyên tại chỗ.)\n'
+  fi
   fail "5" "'git pull --ff-only' thất bại ⇒ lịch sử nhánh đã PHÂN KỲ (không thể tiến thẳng). Script CỐ Ý không tự merge/rebase trên server. Kiểm 'git log --oneline --graph --decorate -20' rồi xử lý TAY — ví dụ, NẾU chắc chắn không mất việc gì: 'git fetch && git reset --hard ${UPSTREAM}'."
 fi
 ok "đã kéo về an toàn, KHÔNG tạo merge commit"
+
+# ⚠️⚠️ CHỐT KIỂM CHỨNG CỦA CHẾ ĐỘ GIỮ-NGUYÊN — VÌ SAO PHẢI CÓ, DÙ LẬP LUẬN Ở BƯỚC 4 ĐÃ ĐỦ:
+#   Lập luận "git không đụng vào tệp sửa-tay khi hai tập hợp rời nhau" là lập luận về HÀNH VI CỦA
+#   GIT — một thứ có thể đổi theo phiên bản, theo cấu hình, hoặc đơn giản là ta hiểu sai. Một lời
+#   khẳng định về SỰ AN TOÀN thì phải ĐO ĐƯỢC, không được suy ra. Đây chính là phép đo đó: so vết
+#   băm TỪNG tệp sửa-tay trước/sau khi kéo. Lệch một tệp cũng đủ để DỪNG và chỉ người dùng đường lui.
+if [ "${#KEPT[@]}" -gt 0 ]; then
+  MISM=()
+  for i in "${!KEPT[@]}"; do
+    f="${KEPT[$i]}"
+    want="${KEPT_HASHES[$i]}"
+    if [ "${want}" = "-" ]; then
+      if [ -e "$f" ]; then MISM+=("$f — tệp này đang BỊ XOÁ TAY, sau khi kéo nó đã QUAY LẠI"); fi
+      continue
+    fi
+    if [ ! -f "$f" ]; then
+      MISM+=("$f — đáng lẽ còn nguyên, nay ĐÃ MẤT")
+      continue
+    fi
+    got="$(sha256sum -- "$f" 2>/dev/null | cut -d' ' -f1 || true)"
+    if [ "${got}" != "${want}" ]; then MISM+=("$f — NỘI DUNG ĐÃ ĐỔI"); fi
+  done
+
+  if [ "${#MISM[@]}" -gt 0 ]; then
+    printf '\n  ── bản sửa-tay KHÔNG còn nguyên sau khi kéo mã mới ──\n'
+    printf '      %s\n' "${MISM[@]}"
+    fail "5" "mã mới ĐÃ kéo về, nhưng bản sửa-tay trên VPS không còn nguyên. ĐƯỜNG LUI: bản vá đã sao lưu ở '${PATCH_PATH}'. Khôi phục bằng: git apply '${PATCH_PATH}'  (nếu bị từ chối, thử: git apply --3way '${PATCH_PATH}'). Đây là lỗi của SCRIPT, không phải của bạn — xin hãy báo lại kèm thông báo này."
+  fi
+  ok "${#KEPT[@]} tệp sửa-tay GIỮ NGUYÊN (đã đối chiếu vết băm sha256 trước/sau khi kéo)"
+fi
 
 # =============================================================================
 # BƯỚC 6/7 — IN BẢN SẮP ĐƯỢC BUILD (để biết mình đang build lại cái gì)
@@ -212,6 +406,14 @@ ok "đã kéo về an toàn, KHÔNG tạo merge commit"
 step "BƯỚC 6/7 — bản sẽ được build"
 git log -1 --stat --oneline | sed 's/^/  /'
 ok "HEAD hiện tại: $(git rev-parse --short HEAD)"
+
+# Nhắc lại những tệp KHÔNG được bản mới cập nhật, để log nói rõ "vì sao chúng còn khác bản mới".
+# ⚠️ Không in lại danh sách đã in ở BƯỚC 4 khi rỗng — log sạch cho luồng thường ngày.
+if [ "${#KEPT[@]}" -gt 0 ]; then
+  printf '  ℹ %s tệp vẫn giữ bản sửa-tay (KHÔNG lấy bản mới) — sẽ luôn hiện là "thay đổi" trong git status:\n' "${#KEPT[@]}"
+  printf '      %s\n' "${KEPT[@]}"
+  printf '      (bản vá sao lưu: %s)\n' "${PATCH_PATH}"
+fi
 
 # =============================================================================
 # BƯỚC 7/7 — GỌI deploy.sh (nguồn DUY NHẤT của logic kiểm chứng)
