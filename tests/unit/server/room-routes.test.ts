@@ -43,6 +43,15 @@ const DECORATION_IDS = [
   'dec-flag', 'dec-treehouse', 'dec-aquarium', 'dec-rainbow', 'dec-castle',
 ];
 
+/**
+ * ⚠️ 配件 nay CŨNG đặt được trong phòng (chủ dự án chốt: tách phụ kiện thành vật thể tự do).
+ *    Danh mục có đúng 10 món `accessory`; cộng 10 `decoration` = trần 20 của schema.
+ */
+const ACCESSORY_IDS = [
+  'acc-bow', 'acc-hat', 'acc-glasses', 'acc-scarf', 'acc-shoes',
+  'acc-backpack', 'acc-crown', 'acc-star-glasses', 'acc-cape', 'acc-wings',
+];
+
 async function ownDecoration(cookie: string, childId: string): Promise<void> {
   getDb().prepare('UPDATE wallet SET stars = 100 WHERE child_id = ?').run(childId);
   const res = await app.inject({
@@ -54,11 +63,15 @@ async function ownDecoration(cookie: string, childId: string): Promise<void> {
   expect(res.statusCode, res.body).toBe(200);
 }
 
-function ownAllDecorations(childId: string): void {
+function grantInventory(childId: string, itemIds: readonly string[]): void {
   const insert = getDb().prepare(
     'INSERT INTO inventory (child_id, item_id, quantity, equipped, acquired_at) VALUES (?, ?, 1, 0, ?)',
   );
-  for (const itemId of DECORATION_IDS) insert.run(childId, itemId, new Date().toISOString());
+  for (const itemId of itemIds) insert.run(childId, itemId, new Date().toISOString());
+}
+
+function ownAllDecorations(childId: string): void {
+  grantInventory(childId, DECORATION_IDS);
 }
 
 function save(cookie: string, childId: string, payload: object): Promise<LightMyRequestResponse> {
@@ -118,13 +131,49 @@ describe('房间装饰摆放 API', () => {
     expect(cleared.json()).toMatchObject({ data: [] });
   });
 
-  it('接受最多10项并拒绝第11项', async () => {
+  /**
+   * ⚠️⚠️ TEST NÀY KHÔNG CHỨNG MINH ĐƯỢC TRẦN 20 — ĐỌC KỸ, ĐỪNG "SỬA" NÓ THÀNH LƯỚI AN TOÀN GIẢ.
+   *
+   *   Danh mục thật chỉ có đúng 20 món KHÔNG-phải-đồ-ăn (10 `decoration` + 10 `accessory`), nên
+   *   món thứ 21 BUỘC phải là một `food-*` — và `food` đã bị `RoomService` chặn bằng một luật RIÊNG.
+   *   Nghĩa là nhánh 400 ở đây xanh KỂ CẢ khi `.max(20)` bị gỡ khỏi schema: nó đang khoá LUẬT CHẶN
+   *   FOOD, không khoá TRẦN. Trần được chứng minh ở tầng schema thuần
+   *   (`tests/unit/shared/room-schema.test.ts`, 20 `acc-*`/`dec-*` vs 21 cùng loại) — nơi có thể
+   *   dựng đầu vào mà không bị luật food xen vào.
+   *
+   *   Vẫn giữ test này vì nó khoá ĐÚNG hai thứ có thật qua HTTP: (1) 20 món không-phải-food đi
+   *   trọn qua route + service + DB; (2) một request 21 món (buộc phải kèm food) bị TỪ CHỐI — bé
+   *   không bao giờ ghi được quá nhiều món qua API công khai.
+   */
+  it('qua HTTP: 20 项 (10装饰+10配件) 被接受；21 项请求被拒绝 (món thứ 21 buộc là food)', async () => {
     const cookie = await signup('limit@example.com');
     const childId = await createChild(cookie);
     ownAllDecorations(childId);
-    const ten = DECORATION_IDS.map((itemId) => ({ itemId, x: 0, y: 100, hidden: false }));
-    expect((await save(cookie, childId, ten)).statusCode).toBe(200);
-    expect((await save(cookie, childId, [...ten, { ...ten[0]!, x: 1 }])).statusCode).toBe(400);
+    grantInventory(childId, ACCESSORY_IDS);
+
+    const twenty = [...DECORATION_IDS, ...ACCESSORY_IDS].map((itemId) => ({
+      itemId, x: 0, y: 100, hidden: false,
+    }));
+    expect((await save(cookie, childId, twenty)).statusCode, '20 món không-phải-food phải được nhận').toBe(200);
+    const extra = { itemId: 'food-banana', x: 1, y: 100, hidden: false };
+    expect((await save(cookie, childId, [...twenty, extra])).statusCode, 'request 21 món phải bị từ chối').toBe(400);
+  });
+
+  it('配件可保存，食物仍被拒绝', async () => {
+    const cookie = await signup('accessory-ok@example.com');
+    const childId = await createChild(cookie);
+    grantInventory(childId, ['acc-hat', 'food-banana']);
+
+    const saved = await save(cookie, childId, [
+      { itemId: 'acc-hat', x: 30, y: 70, hidden: false },
+    ]);
+    expect(saved.statusCode, saved.body).toBe(200);
+    expect(saved.json()).toMatchObject({ data: [{ itemId: 'acc-hat', x: 30, y: 70, hidden: false }] });
+
+    const rejected = await save(cookie, childId, [
+      { itemId: 'food-banana', x: 30, y: 70, hidden: false },
+    ]);
+    expect(rejected.statusCode, '食物不得放进房间').toBe(400);
   });
 
   it('校验期间遇到 quantity=0 时拒绝且回读时隐藏该摆放', async () => {
@@ -201,16 +250,18 @@ describe('房间装饰摆放 API', () => {
     ).toEqual(inventoryBefore);
   });
 
-  it('拒绝未拥有的物品、非装饰品和越界位置', async () => {
+  it('拒绝未拥有的物品、食物和越界位置', async () => {
     const cookie = await signup('validation@example.com');
     const childId = await createChild(cookie);
     const unowned = await save(cookie, childId, [{ itemId: 'dec-plant', x: 10, y: 10, hidden: false }]);
     expect(unowned.statusCode).toBe(404);
 
     await ownDecoration(cookie, childId);
-    const accessory = await save(cookie, childId, [{ itemId: 'acc-bow', x: 10, y: 10, hidden: false }]);
+    // 食物被拥有，但仍不得放入房间 — 见 `RoomService` 的白名单。
+    grantInventory(childId, ['food-banana']);
+    const food = await save(cookie, childId, [{ itemId: 'food-banana', x: 10, y: 10, hidden: false }]);
     const outOfBounds = await save(cookie, childId, [{ itemId: 'dec-plant', x: 100.01, y: 10, hidden: false }]);
-    expect(accessory.statusCode).toBe(400);
+    expect(food.statusCode, '食物不得放进房间').toBe(400);
     expect(outOfBounds.statusCode).toBe(400);
   });
 

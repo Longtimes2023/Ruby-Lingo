@@ -149,8 +149,25 @@ const STAGE_TEXT_SIZE: Record<EvolutionStage, string> = {
  *   `face` (món DUY NHẤT phải nằm TRƯỚC mặt) bị con vật che mất. Trên màn hình điều đó đọc ra là
  *   "bé mặc kính rồi mà không thấy kính", và không cổng nào bắt được: jsdom không tính `z-index`.
  *
- *   外层 stacking context 明确划分为：背部配饰 < 宠物 < 前景配饰；每个槽位内再由商品顺序
- *   决定遮挡关系。背部槽位本身不设 z-index，避免内层 z-index 越过背部 wrapper。
+ * ⚠️⚠️ CÓ **HAI** NƠI SẮP LỚP, VÀ CHÚNG DÙNG **HAI CƠ CHẾ KHÁC NHAU** — ĐỪNG ĐỌC NỬA VỜI
+ *    RỒI "SỬA THỨ TỰ DOM CHO ĐÚNG". Người kiểm chứng độc lập đã đo bằng `elementsFromPoint` trên
+ *    trình duyệt thật và phát hiện chú thích cũ ở đây mô tả SAI cơ chế, nên ghi lại cho đúng:
+ *
+ *    (1) TRONG `PetAvatar` này (thẻ hồ sơ, đầu trang) — **`z-index` quyết định**:
+ *        wrapper `behind` = `z-[1]` < con vật = `PET_Z` (`z-[2]`) < wrapper `front` = `z-[3]`.
+ *        Món slot `back` để `z: auto` (xem `ACCESSORY_Z.back`), nhưng nó nằm TRONG wrapper `z-[1]`
+ *        nên **luôn** ở dưới con vật — đúng như mong đợi, không cần quan tâm thứ tự chèn.
+ *
+ *    (2) TRONG "Góc phòng của bé" (`PetHousePage`) — **thứ tự chèn vào DOM + `z-index` của con vật**
+ *        quyết định, KHÔNG phải `z-index` của món phụ kiện:
+ *        `PetHousePage` đẩy món `back` vào lượt vẽ TRƯỚC con vật và món khác vào lượt SAU, qua
+ *        `bottomPct` (`sortByBottom`). Nhưng vì con vật trong phòng nằm trong một `<span>` mang
+ *        `z-[2]` (`PET_Z`), con vật **luôn thắng** `z: auto` của món `back` **bất kể thứ tự DOM**;
+ *        chỉ những món `front` có `z-10` mới nổi lên trên. ⇒ Ai "sửa lại thứ tự DOM cho đúng" ở
+ *        đó sẽ không thấy hậu quả gì, và sẽ tưởng mình làm sai. Muốn đổi thì phải đổi `z-index`.
+ *
+ *    ⇒ Nguồn sự thật của TẦNG lớp: hằng số dưới đây (thẻ hồ sơ) và `renderAccessoryNode`
+ *      (trong phòng). Cả hai đã được đo bằng hit-test thật, không phải suy luận.
  */
 const ACCESSORY_Z: Record<AccessorySlot, string> = {
   back: '',

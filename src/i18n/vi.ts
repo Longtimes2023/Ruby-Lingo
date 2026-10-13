@@ -213,6 +213,16 @@ export const vi = {
     sceneScenery: 'Quanh nhà có {{items}}',
     sceneBare: '{{pet}} đang chơi trong nhà',
 
+    /**
+     * --- KHAY ĐỒ trong "Góc phòng của bé" (chủ dự án chốt: tách phụ kiện ra khỏi "mặc lên người").
+     *
+     * Phụ kiện nằm trong một khay riêng dưới khung phòng; bé bấm một món để đặt vào phòng rồi tự
+     * kéo. Tiêu đề nói rõ đây là ĐỒ CỦA CON NÀO để bé không lẫn với khay đồ trang trí.
+     */
+    roomAccessoryTray: 'Đồ của {{pet}}',
+    /** Nhãn đọc của một nút trong khay — nói rõ HÀNH ĐỘNG (đặt vào phòng), không chỉ tên món. */
+    roomAccessoryPlace: 'Đặt {{item}} vào phòng',
+
     // --- Màn "Chọn bạn đồng hành" (T04) ----------------------------------
     /** Tiêu đề màn chọn con. Nói thẳng bé đang làm gì. */
     chooseTitle: 'Chọn bạn đồng hành',

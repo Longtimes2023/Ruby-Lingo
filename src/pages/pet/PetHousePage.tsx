@@ -1,6 +1,14 @@
 /**
  * RubyLingo — `PetHousePage`: Nhà thú cưng (M6, T064) — nơi bé cho Momo ăn, mặc phụ kiện, mua đồ.
  *
+ * ⭐ PHỤ KIỆN KHÔNG CÒN "MẶC LÊN NGƯỜI" TRONG PHÒNG (chủ dự án chốt sau nhiều vòng thử ghép lớp):
+ *   *"bạn tách các đồ vật cho thú cưng ra đi, để tự do di chuyển cho rồi."* Vì vậy TRONG PHÒNG,
+ *   phụ kiện là những VẬT THỂ TỰ DO bé kéo thả (y hệt đồ trang trí), và con vật đứng TRẦN. Phụ kiện
+ *   nằm trong một KHAY RIÊNG dưới khung phòng: bấm một món ⇒ nó rơi xuống sàn, rồi bé tự kéo.
+ *   Vị trí lưu lên server theo từng bé, dùng đúng cơ chế của đồ trang trí (`useRoomPlacements`).
+ *   ⚠️ Thẻ `PetAvatar` ở ĐẦU TRANG (ngoài khung phòng) VẪN mặc bộ `equipped` như cũ — bé cần thấy
+ *      "con vật đang mặc gì" ở thẻ hồ sơ. Chỉ TRONG PHÒNG mới tách rời.
+ *
  * ⭐ CỬA HÀNG LÀ MỘT PHẦN CỦA MÀN HÌNH NÀY, KHÔNG PHẢI MỘT MỤC RIÊNG (quyết định C2):
  *   Bé mua một chiếc nón xong phải THẤY NGAY Momo đội nón. Nếu cửa hàng là màn hình riêng, bé
  *   phải nhớ "vừa mua ở đâu", bấm về, rồi tự tìm — mất đi phản hồi liền mạch, mà đó chính là phần
@@ -26,7 +34,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { decorationSlotOf, getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
+import { accessorySlotOf, decorationSlotOf, getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
 import type { RoomPlacement } from '@shared/schemas/room.js';
 import { petNameVi } from '@shared/content/pets.js';
 import type {
@@ -119,6 +127,32 @@ const ROOM_BACKGROUND_SRC = '/assets/rooms/room-default.webp';
 const EMPTY_INVENTORY: readonly InventoryItem[] = [];
 
 /**
+ * Mảng rỗng DÙNG CHUNG cho con vật TRONG PHÒNG — bé đã tách phụ kiện ra khỏi người (xem ghi chú ở
+ * `PetAvatar` trong khung phòng). Truyền một mảng mới mỗi lượt render cũng được, nhưng một hằng ở
+ * cấp module giữ nguyên tham chiếu để các `useMemo` bên trong `PetAvatar` không dựng lại vô ích.
+ */
+const NO_ITEMS: readonly ShopItem[] = [];
+
+/** Bề rộng một phụ kiện đặt tự do trong phòng, tính bằng `cqw` (= % bề rộng khung). */
+const ROOM_ACCESSORY_WIDTH_CQW = 13;
+
+/**
+ * Vị trí NGANG MẶC ĐỊNH khi bé bấm một món trong khay — rải đều từ 25% đến 75%W.
+ *
+ * ⭐ VÌ SAO RẢI ĐỀU CHỨ KHÔNG DỒN VỀ MỘT ĐIỂM: bấm ba món liên tiếp mà món nào cũng nhảy vào đúng
+ *   một chỗ thì chúng chồng khít lên nhau và bé không thấy mình vừa đặt được gì. Nhưng vị trí phải
+ *   ỔN ĐỊNH THEO TỪNG MÓN (suy từ chỉ số trong danh sách bé sở hữu), không theo thứ tự bấm — nếu
+ *   không, đặt xong món thứ nhất thì món thứ hai nhảy vào chỗ trống vừa bị bỏ lại.
+ */
+function accessoryDropX(index: number, count: number): number {
+  if (count <= 1) return 50;
+  return 25 + (50 * index) / (count - 1);
+}
+
+/** Vị trí DỌC mặc định của một phụ kiện: trên sàn, phía sau/dưới con vật. (%H) */
+const ROOM_ACCESSORY_DROP_Y_PCT = 70;
+
+/**
  * Số dư của bé theo một loại tiền tệ.
  *
  * ⚠️ Dùng `Record<CurrencyKind, number>` chứ không `currency === 'stars' ? a : b`. Hôm nay
@@ -189,13 +223,36 @@ export function PetHousePage() {
     });
   }, [inventory]);
 
+  /**
+   * Phụ kiện bé SỞ HỮU — nguồn cho KHAY ĐỒ (chủ dự án chốt: tách phụ kiện khỏi "mặc lên người",
+   * để bé tự kéo vào phòng).
+   *
+   * ⚠️ Lọc qua `accessorySlotOf(item) !== null` (không phải `category === 'accessory'`): hàm đó
+   *    đồng thời kiểm `slot` có nằm trong danh sách vị trí hợp lệ. Một phụ kiện thiếu/sai `slot`
+   *    sẽ bị `shopItemsFileSchema` chặn từ lúc nạp module, nhưng đây là lưới an toàn thứ hai —
+   *    cùng lý do như `ownedDecorations`.
+   */
+  const ownedAccessories = useMemo(() => {
+    return inventory.flatMap((entry) => {
+      if (entry.quantity <= 0) return [];
+      const item = getShopItem(entry.itemId);
+      return item && accessorySlotOf(item) !== null ? [item] : [];
+    });
+  }, [inventory]);
+
   useEffect(() => {
     if (!roomReady || room.placements === null || queuedSavesRef.current > 0) return;
-    const allowed = new Set(ownedDecorations.map((item) => item.id));
+    /*
+      ⚠️ DANH SÁCH ĐƯỢC PHÉP phải gồm CẢ trang trí LẪN phụ kiện. Nếu chỉ lọc theo trang trí thì
+      một placement `acc-*` đọc từ server sẽ bị BỎ NGAY khỏi `roomDraft`, rồi lượt lưu kế tiếp
+      ghi đè lên server bằng danh sách đã mất món đó — phụ kiện bé vừa đặt biến mất sau khi tải
+      lại, im lặng và không có lỗi nào nổi lên.
+    */
+    const allowed = new Set([...ownedDecorations, ...ownedAccessories].map((item) => item.id));
     const next = room.placements.filter((placement) => allowed.has(placement.itemId));
     roomDraftRef.current = next;
     setRoomDraft(next);
-  }, [roomReady, room.placements, ownedDecorations, roomDraftVersion]);
+  }, [roomReady, room.placements, ownedDecorations, ownedAccessories, roomDraftVersion]);
 
   /** Tra cứu túi đồ theo `itemId` — mỗi thẻ cần biết bé đã có món đó chưa, đang mặc chưa. */
   const ownedById = useMemo(() => {
@@ -403,6 +460,112 @@ export function PetHousePage() {
   const wallNodes: ReactNode[] = [];
   const floorNodes: Array<{ bottomPct: number; node: ReactNode }> = [];
 
+  /**
+   * Phụ kiện đặt TỰ DO trong phòng — KHÔNG dùng `roomLayout.ts` (làn/band/hộp mặc định).
+   *
+   * ⭐ VÌ SAO KHÁC ĐỒ TRANG TRÍ: đồ trang trí có một BỐ CỤC MẶC ĐỊNH suy từ danh mục (treo tường
+   *   hay đứng làn nào, cỡ bao nhiêu). Phụ kiện thì không — bé bấm một món trong khay là nó rơi
+   *   xuống sàn ở một chỗ rải đều, rồi bé tự kéo. Vì vậy hộp của phụ kiện CHỈ có `x/y` thô bé kéo
+   *   (đã kẹp biên) và một cỡ cố định — không có phép tra bảng nào.
+   */
+  const renderAccessoryNode = (
+    item: ShopItem,
+    placement: RoomPlacement,
+    layer: 'back' | 'front',
+  ): ReactNode => {
+    // Ảnh phụ kiện là 512×512 vuông, và `cqw` = 1% bề rộng khung ⇒ cao = rộng (không méo).
+    const side = ROOM_ACCESSORY_WIDTH_CQW;
+    // Kẹp biên như đồ trang trí: một toạ độ hỏng (`NaN`) làm `left: NaN%` ⇒ bé mất món không báo.
+    const point = clampToRoom(placement.x, placement.y);
+    return (
+      <button
+        key={item.id}
+        type="button"
+        data-room-accessory={item.id}
+        data-room-accessory-layer={layer}
+        aria-label={`${item.name_vi}, vị trí ${Math.round(point.x)}%, ${Math.round(point.y)}%. Dùng phím mũi tên để di chuyển.`}
+        /*
+          ⚠️⚠️ HAI cơ chế cùng quyết định tầng lớp ở đây — đo bằng `elementsFromPoint` trên trình
+             duyệt thật, KHÔNG phải suy luận:
+
+             (a) THỨ TỰ CHÈN DOM — do `bottomPct` quyết (`back` = `PET_BOTTOM_PCT - 1` ⇒ vẽ trước;
+                 `front` = `PET_BOTTOM_PCT + 1` ⇒ vẽ sau), xem hai vòng lặp dựng `floorNodes`.
+             (b) `z-index` — con vật trong phòng nằm trong `<span>` mang `z-[2]` (`PET_Z` của
+                 `PetAvatar`), nên nó **LUÔN thắng** `z: auto` của món `back` **bất kể thứ tự DOM**.
+                 Chỉ món `front` có `z-10` mới thật sự nổi lên trên.
+
+             ⇒ Hệ quả thực tế: món `back` ở dưới con vật (đúng, ba lô/cánh ở sau lưng); món `front`
+               ở trên (đúng). Nhưng đừng tưởng "đổi thứ tự DOM là đổi được tầng" — muốn đổi thì
+               phải đổi `z-index`. Đặt `z-10` cho CẢ hai là bẫy: ba lô sẽ đè lên bụng con vật.
+        */
+        className={cn(
+          'absolute flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand',
+          layer === 'front' && 'z-10',
+        )}
+        style={{ left: `${point.x}%`, top: `${point.y}%` }}
+        onPointerDown={(event) => {
+          if (!roomReady) return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          const current = roomDraftRef.current.find((entry) => entry.itemId === item.id);
+          dragStartRef.current = current ? { itemId: item.id, x: current.x, y: current.y } : null;
+          event.currentTarget.parentElement!.dataset.dragging = item.id;
+        }}
+        onKeyDown={(event) => {
+          if (!roomReady) return;
+          const step = event.shiftKey ? 10 : 2;
+          const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
+          if (!delta) return;
+          event.preventDefault();
+          const current = roomDraftRef.current.find((entry) => entry.itemId === item.id) ?? placement;
+          const point = clampToRoom(current.x + (delta[0] ?? 0), current.y + (delta[1] ?? 0));
+          moveDecoration(item.id, point.x, point.y, false);
+          saveRoomDraft();
+        }}
+      >
+        {/* `shrink-0` + `max-w-none`: xem ghi chú dài trong `renderDecorationNode` — hai lớp đó
+            chống đúng cái bệnh "ảnh bị bóp méo trong ô chạm 64px". */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none block shrink-0"
+          style={roomSizeStyle(side, side)}
+        >
+          <ShopArtwork item={item} className="block h-full w-full max-w-none object-contain" />
+        </span>
+      </button>
+    );
+  };
+
+  /**
+   * Phụ kiện đã đặt trong phòng, chia THEO THỨ TỰ VẼ quanh con vật.
+   *
+   * ⭐ VÌ SAO SLOT QUYẾT ĐỊNH LƯỢT VẼ: món ở slot `back` (ba lô, áo choàng, cánh) phải nằm SAU
+   *   con vật — chúng ở sau lưng. Mọi slot khác (`head`/`face`/`neck`/`feet`) vẽ SAU con vật.
+   *   Vẽ sai lượt thì ba lô đè lên bụng con vật, đọc ra là sai ngay.
+   */
+  const roomAccessories = ownedAccessories
+    .map((item) => ({ item, placement: roomDraft.find((entry) => entry.itemId === item.id) }))
+    .filter(
+      (entry): entry is { item: ShopItem; placement: RoomPlacement } =>
+        entry.placement !== undefined && !entry.placement.hidden,
+    );
+  const backAccessoryNodes = roomAccessories
+    .filter(({ item }) => accessorySlotOf(item) === 'back')
+    .map(({ item, placement }) => renderAccessoryNode(item, placement, 'back'));
+  const frontAccessoryNodes = roomAccessories
+    .filter(({ item }) => accessorySlotOf(item) !== 'back')
+    .map(({ item, placement }) => renderAccessoryNode(item, placement, 'front'));
+
+  /**
+   * Phụ kiện CHƯA đặt trong phòng — nguồn của KHAY ĐỒ.
+   *
+   * "Chưa đặt" = KHÔNG có trong `roomDraft`, HOẶC có nhưng `hidden === true`. Nhờ vậy một món bị
+   * ẩn vẫn quay lại được khay để bé đặt lại, thay vì kẹt vĩnh viễn ở trạng thái vô hình.
+   */
+  const trayAccessories = ownedAccessories.filter((item) => {
+    const placement = roomDraft.find((entry) => entry.itemId === item.id);
+    return placement === undefined || placement.hidden;
+  });
+
   if (roomReady) {
     for (const item of ownedDecorations) {
       const placement = roomDraft.find((entry) => entry.itemId === item.id);
@@ -415,6 +578,23 @@ export function PetHousePage() {
       if (box.band === 'wall') wallNodes.push(node);
       else floorNodes.push({ bottomPct: box.bottomPct, node });
     }
+  }
+
+  /**
+   * Phụ kiện slot `back` (ba lô / áo choàng / cánh) nằm SAU lưng con vật ⇒ phải được vẽ TRƯỚC nó.
+   *
+   * ⭐ Dùng `bottomPct` nhỏ hơn đáy con vật một chút để `sortByBottom` (đáy nhỏ = xa = vẽ trước) tự
+   *   đặt chúng vào lượt trước — đây là cách giữ cho khối "Góc phòng" chỉ có MỘT cơ chế sắp thứ tự
+   *   chèn (thay vì rải `z-index` khắp nơi).
+   *
+   * ⚠️ NHƯNG thứ tự chèn KHÔNG phải là thứ duy nhất quyết định tầng lớp: con vật trong phòng nằm
+   *    trong `<span>` mang `z-[2]` (`PET_Z` của `PetAvatar`), nên nó thắng `z: auto` của món `back`
+   *    bất kể thứ tự DOM. Người kiểm chứng độc lập đã đo bằng `elementsFromPoint` và xác nhận cả
+   *    hai cơ chế cùng có tác dụng. Đọc `renderAccessoryNode` để thấy toàn cảnh — đừng sửa một
+   *    trong hai chỗ rồi tưởng chỗ kia vô dụng.
+   */
+  for (const node of backAccessoryNodes) {
+    floorNodes.push({ bottomPct: PET_BOTTOM_PCT - 1, node });
   }
 
   /*
@@ -442,25 +622,21 @@ export function PetHousePage() {
         }
       >
         {/*
-          ⚠️⚠️ CON VẬT TRONG PHÒNG PHẢI MẶC ĐÚNG BỘ PHỤ KIỆN ĐANG MẶC — dùng chính `PetAvatar`,
-             KHÔNG vẽ `<img>` trần.
+          ⚠️⚠️ CON VẬT TRONG PHÒNG KHÔNG MẶC PHỤ KIỆN — `items={NO_ITEMS}` là CHỦ Ý (chủ dự án chốt).
 
-          Bản trước vẽ một `<img src={petArtworkUrl(...)}>` ở đây. Đo trên trình duyệt thật
-          (1280×800, bé mặc đủ 5 món): `[data-accessory-id]` TRONG khung phòng = **0** — kính/mũ/
-          khăn/giày/ba lô chỉ hiện trên thẻ ở đầu trang, còn con vật trong "Nhà thú cưng" thì trần
-          truồng. Đúng lời chủ dự án: *"mua cái mắt kính, đeo vào là sát vào mặt"*.
+          Phụ kiện đã tách ra thành các VẬT THỂ TỰ DO bé kéo thả trong phòng (xem `renderAccessoryNode`
+          + khay đồ bên dưới khung). Con vật trong phòng vì thế đứng "trần" — bé tự quyết món nào
+          đặt ở đâu, thay vì bị ghép cứng lên người. Thẻ `PetAvatar` ở ĐẦU TRANG (ngoài khung phòng)
+          VẪN mặc bộ `equippedItems` như cũ: bé cần thấy "con vật đang mặc gì" ở thẻ hồ sơ; chỉ
+          TRONG PHÒNG mới tách rời.
 
-          `sizeEm` đặt hộp `1em` của con vật = `--room-pet-w` (34,5cqw) ⇒ con vật VÀ mọi phụ kiện
-          cùng phóng theo khung phòng, vì neo trong `petAnchors.ts` là `%`-của-hộp-`1em`.
-
-          `bare` là BẮT BUỘC ở đây: khối "Góc phòng của bé" đã có tường/baseboard/sàn riêng, nên
-          nếu dùng thẻ đầy đủ thì bé thấy một cái thẻ lồng trong phòng — dải trời, dải cỏ, viền bo
-          và dòng chữ "🐵 Trưởng thành" nằm chồng lên sàn gỗ.
+          Vẫn dùng chính `PetAvatar` (KHÔNG vẽ `<img>` trần) — nó là nguồn duy nhất của hình con
+          vật theo (con × bậc), và `bare` bỏ thẻ/dải trời/dải cỏ vì khung phòng đã có tường/sàn.
         */}
         <PetAvatar
           petType={snapshot.pet.petType}
           evolutionStage={snapshot.pet.evolutionStage}
-          items={equippedItems}
+          items={NO_ITEMS}
           sizeEm="var(--room-pet-w)"
           frameClassName="size-full"
           bare
@@ -468,6 +644,15 @@ export function PetHousePage() {
       </div>
     ),
   });
+
+  /**
+   * Phụ kiện slot khác `back` (mũ / kính / khăn / giày) vẽ SAU con vật ⇒ `bottomPct` lớn hơn đáy
+   * con vật. Một đơn vị là đủ để `sortByBottom` xếp chúng ra sau, mà vẫn giữ nguyên thứ tự tương
+   * đối giữa các món với nhau (ổn định theo thứ tự danh sách).
+   */
+  for (const node of frontAccessoryNodes) {
+    floorNodes.push({ bottomPct: PET_BOTTOM_PCT + 1, node });
+  }
 
   /*
     Thứ tự vẽ (xa trước, gần sau). Đồ treo tường nằm TRÊN TƯỜNG nên luôn vẽ trước thú cưng; còn
@@ -530,7 +715,7 @@ export function PetHousePage() {
              hay `vw` là quay lại đúng lỗi cũ (đồ trang trí nhỏ xíu trên màn lớn).
         */}
         <div
-          aria-label="Phòng của thú cưng; kéo đồ trang trí để sắp xếp"
+          aria-label="Phòng của thú cưng; kéo đồ trang trí và phụ kiện để sắp xếp"
           className="relative aspect-[4/3] w-full overflow-hidden rounded-card border-2 border-line bg-amber-50 [container-type:inline-size]"
           onPointerMove={(event) => {
             const draggingId = event.currentTarget.dataset.dragging;
@@ -604,6 +789,51 @@ export function PetHousePage() {
           {/* (Đồ DƯỚI SÀN + thú cưng) sắp theo đáy tăng dần — xa trước, gần sau. */}
           {sortedFloorNodes.map((layer) => layer.node)}
         </div>
+
+        {/*
+          KHAY ĐỒ — phụ kiện bé SỞ HỮU mà CHƯA đặt trong phòng (chủ dự án chốt: phụ kiện nằm trong
+          khay, bé tự kéo vào phòng). Bấm một món ⇒ nó rơi xuống sàn ở vị trí rải đều, rồi bé kéo
+          tiếp như đồ trang trí.
+
+          ⚠️ ẨN CẢ KHAY khi rỗng: một khung trống có tiêu đề mà không có món nào đọc ra là "hỏng",
+          không phải "bé đã đặt hết rồi". Bé sở hữu 0 phụ kiện cũng vào cùng nhánh này.
+        */}
+        {trayAccessories.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="text-kid-sm font-bold text-ink">{t('pet.roomAccessoryTray', { pet: petName })}</p>
+            {/*
+              ⚠️ `flex-wrap` + `overflow-x-auto`: ở 320px bề rộng, mỗi nút 64px nên ba món đã đầy
+              một hàng — không xuống dòng thì khay tràn ngang và đẩy cả trang rộng ra.
+            */}
+            <div
+              role="group"
+              aria-label={t('pet.roomAccessoryTray', { pet: petName })}
+              className="flex flex-wrap gap-2 overflow-x-auto"
+            >
+              {trayAccessories.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  disabled={!roomReady || room.isLoading || room.placements === null}
+                  aria-label={t('pet.roomAccessoryPlace', { item: item.name_vi })}
+                  onClick={() => {
+                    // Vị trí ỔN ĐỊNH theo chỉ số trong danh sách bé sở hữu — xem `accessoryDropX`.
+                    const index = ownedAccessories.findIndex((owned) => owned.id === item.id);
+                    moveDecoration(
+                      item.id,
+                      accessoryDropX(index, ownedAccessories.length),
+                      ROOM_ACCESSORY_DROP_Y_PCT,
+                    );
+                  }}
+                  className="flex size-touch shrink-0 items-center justify-center rounded-kid border-2 border-line bg-surface disabled:opacity-60"
+                >
+                  <ShopArtwork item={item} className="size-9 object-contain" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {ownedDecorations.length > 0 && (
           <div role="group" aria-label="Đồ trang trí đang có" className="flex flex-wrap gap-2">
             {ownedDecorations.map((item) => {

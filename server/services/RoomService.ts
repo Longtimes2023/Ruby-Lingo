@@ -42,9 +42,16 @@ export class RoomService {
 
     for (const placement of placements) {
       const item = getShopItem(placement.itemId);
-      if (!item || item.category !== 'decoration') {
-        throw errors.validation('Chỉ có thể sắp xếp đồ trang trí', {
-          itemId: 'Vật phẩm này không phải đồ trang trí',
+      /*
+        ⚠️ CHẤP NHẬN `decoration` **HOẶC** `accessory` — phụ kiện nay cũng là một vật thể bé KÉO THẢ
+        TỰ DO trong phòng (chủ dự án chốt: tách phụ kiện khỏi "mặc lên người"). Vẫn PHẢI chặn
+        `food`: đồ ăn bị TIÊU khi cho ăn, nên một quả chuối "nằm trong phòng" sẽ sớm là một vật thể
+        không còn tồn tại. Danh sách trắng (chứ không phải `!== 'food'`) để nhóm vật phẩm thứ tư
+        trong tương lai mặc định KHÔNG đặt được — đó là một hệ quả có ý thức, không tình cờ.
+      */
+      if (!item || (item.category !== 'decoration' && item.category !== 'accessory')) {
+        throw errors.validation('Chỉ có thể sắp xếp đồ trang trí và phụ kiện', {
+          itemId: 'Vật phẩm này không phải đồ trang trí hoặc phụ kiện',
         });
       }
     }

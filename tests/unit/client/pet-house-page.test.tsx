@@ -669,40 +669,119 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
   });
 
   /**
-   * ⚠️⚠️ ĐÂY LÀ BẢN VÁ CỦA MỘT LỖI ĐÃ ĐO ĐƯỢC TRÊN TRÌNH DUYỆT THẬT.
+   * ⚠️⚠️ ĐÂY LÀ CHỖ HÀNH VI ĐÃ ĐỔI THEO QUYẾT ĐỊNH CỦA CHỦ DỰ ÁN.
    *
-   * Bản trước vẽ con vật trong phòng bằng `<img src={petArtworkUrl(...)}>` TRẦN. Đo ở 1280×800
-   * với bé mặc đủ 5 món: `totalAccessoryNodes: 5` nhưng `accessoriesInRoom: 0` — kính/mũ/khăn/
-   * giày/ba lô CHỈ hiện trên thẻ ở đầu trang, còn con vật trong "Góc phòng của bé" thì trần
-   * truồng. Không test nào bắt được, vì mọi test cũ đều hỏi con vật ở THẺ.
+   * Bản trước: con vật TRONG PHÒNG mặc đúng bộ phụ kiện đang mặc (`equipped`). Chủ dự án kết luận
+   * cách "ghép phụ kiện lên người theo lớp" không đẹp, và chốt: TÁCH phụ kiện ra thành vật thể tự
+   * do, bé tự kéo vào phòng. Vì vậy con vật trong phòng nay ĐỨNG TRẦN — còn thẻ ở ĐẦU TRANG vẫn
+   * mặc bộ `equipped` như cũ (bé cần thấy "con vật đang mặc gì" ở thẻ hồ sơ).
    */
-  it('⚠️ con vật TRONG PHÒNG cũng mặc ĐÚNG bộ phụ kiện đang mặc', () => {
+  it('⚠️ con vật TRONG PHÒNG KHÔNG mặc phụ kiện, nhưng thẻ ĐẦU TRANG vẫn mặc', () => {
     seed({
       inventory: [
         inventoryItem('acc-hat', { equipped: true }),
         inventoryItem('acc-scarf', { equipped: true }),
         inventoryItem('acc-glasses', { equipped: true }),
-        // Món CHƯA mặc ⇒ không được lên người con vật trong phòng.
-        inventoryItem('acc-bow'),
       ],
     });
     renderPage();
 
     const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
     expect(holder, 'phòng phải có con vật').not.toBeNull();
+    // Trong phòng: KHÔNG có lớp phụ kiện nào của `PetAvatar`.
+    expect(holder!.querySelectorAll('[data-accessory-id]').length).toBe(0);
 
-    /*
-      ⚠️ Đếm DANH TÍNH (id duy nhất) — món QUẤN (`acc-scarf`) có mặt ở CẢ HAI lượt vẽ
-      (`ACCESSORY_WRAP`) nên `[data-accessory-id]` xuất hiện nhiều hơn số món. Đếm thô là khoá sai thứ.
-    */
+    // Thẻ đầu trang: vẫn mặc đúng bộ đang `equipped`.
+    const card = screen.getByRole('img', { name: 'Khỉ Momo đang dùng: Mũ, Khăn quàng, Kính' });
     const worn = [
       ...new Set(
-        [...holder!.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
+        [...card.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
           (node) => node.dataset.accessoryId,
         ),
       ),
     ];
     expect(worn.sort()).toEqual(['acc-glasses', 'acc-hat', 'acc-scarf']);
+  });
+
+  it('⚠️ phụ kiện slot `back` vẽ TRƯỚC con vật; slot khác vẽ SAU con vật', async () => {
+    seed({
+      inventory: [inventoryItem('acc-backpack'), inventoryItem('acc-hat')],
+    });
+    getRoomMock.mockResolvedValue([
+      { itemId: 'acc-backpack', x: 20, y: 70, hidden: false },
+      { itemId: 'acc-hat', x: 80, y: 70, hidden: false },
+    ]);
+    renderPage();
+
+    const room = roomRegion();
+    const back = await within(room).findByRole('button', { name: /^Ba lô, vị trí 20%, 70%/ });
+    const front = await within(room).findByRole('button', { name: /^Mũ, vị trí 80%, 70%/ });
+    const pet = room.querySelector<HTMLElement>('[data-room-pet]');
+    expect(pet, 'phòng phải có con vật').not.toBeNull();
+
+    // Ba lô (slot `back`) ở SAU lưng ⇒ xuất hiện TRƯỚC con vật trong DOM.
+    expect(back.compareDocumentPosition(pet!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Mũ (slot `head`) đeo TRƯỚC người ⇒ xuất hiện SAU con vật trong DOM.
+    expect(front.compareDocumentPosition(pet!) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+
+    /*
+      ⚠️ Khẳng định thêm trên `z-index`: jsdom KHÔNG tính `z-index`, nên thứ tự DOM ở trên vẫn
+      xanh kể cả khi món `back` bị gán `z-10` (khi đó ba lô sẽ ĐÈ LÊN con vật trong trình duyệt
+      thật). Khoá thẳng lớp là cách duy nhất bắt được lỗi đó bằng unit test.
+    */
+    expect(back.className).not.toContain('z-10');
+    expect(front.className).toContain('z-10');
+  });
+
+  it('⚠️ khay đồ: hiện món CHƯA đặt; bấm ⇒ món vào phòng và RỜI khay', async () => {
+    seed({ inventory: [inventoryItem('acc-hat')] });
+    renderPage();
+
+    const room = roomRegion();
+    const trayButton = await within(room).findByRole('button', { name: 'Đặt Mũ vào phòng' });
+    // Chưa đặt ⇒ con vật / phòng không có món này.
+    expect(room.querySelector('[data-room-accessory="acc-hat"]')).toBeNull();
+
+    // Khay chỉ sẵn sàng khi vị trí đã tải xong — chờ nút hết `disabled` rồi mới bấm.
+    await waitFor(() => expect(trayButton).toBeEnabled());
+    fireEvent.click(trayButton);
+
+    // Đã vào phòng, ở vị trí mặc định trên sàn (y = 70%).
+    expect(
+      await within(room).findByRole('button', { name: /^Mũ, vị trí \d+%, 70%/ }),
+    ).toBeInTheDocument();
+    // … và biến khỏi khay.
+    await waitFor(() =>
+      expect(within(room).queryByRole('button', { name: 'Đặt Mũ vào phòng' })).toBeNull(),
+    );
+  });
+
+  it('⚠️ khay ẩn khi bé CHƯA có phụ kiện nào', () => {
+    renderPage();
+
+    expect(screen.queryByRole('group', { name: 'Đồ của Khỉ Momo' })).not.toBeInTheDocument();
+  });
+
+  it('⚠️ khay ẩn khi mọi phụ kiện đã đặt trong phòng (không để khung trống)', async () => {
+    seed({ inventory: [inventoryItem('acc-hat')] });
+    getRoomMock.mockResolvedValue([{ itemId: 'acc-hat', x: 50, y: 70, hidden: false }]);
+    renderPage();
+
+    await within(roomRegion()).findByRole('button', { name: /^Mũ, vị trí 50%, 70%/ });
+    expect(screen.queryByRole('group', { name: 'Đồ của Khỉ Momo' })).not.toBeInTheDocument();
+  });
+
+  it('⚠️ khay không tràn ngang ở màn hẹp — dùng `flex-wrap` + `overflow-x-auto`', async () => {
+    seed({ inventory: [inventoryItem('acc-hat')] });
+    renderPage();
+
+    const tray = await screen.findByRole('group', { name: 'Đồ của Khỉ Momo' });
+    expect(tray.className).toContain('flex-wrap');
+    expect(tray.className).toContain('overflow-x-auto');
+    // Mỗi món là nút chạm ≥64px (`size-touch`).
+    expect(within(tray).getByRole('button', { name: 'Đặt Mũ vào phòng' }).className).toContain(
+      'size-touch',
+    );
   });
 
   it('⚠️ con vật trong phòng là bối cảnh TRẦN — không thẻ lồng trong phòng', () => {
