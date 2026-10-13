@@ -25,6 +25,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ACCESSORY_FIT,
   ACCESSORY_SCALE,
+  ACCESSORY_SQUASH,
+  SCARF_LIFT,
   accessoryBox,
   accessoryFitOf,
   DEFAULT_ACCESSORY_INK,
@@ -50,12 +52,23 @@ function anchorKeysOnDisk(): string[] {
 const KINDS: readonly AccessoryFitKind[] = ['face', 'hat', 'crown', 'bow', 'neck', 'feet', 'back'];
 
 /** Tâm/bề rộng MỰC của một hộp phụ kiện (0..1 của hộp `1em`). */
-function inkOf(box: { cx: number; cy: number; side: number }, ink: typeof DEFAULT_ACCESSORY_INK) {
+/**
+ * Hộp MỰC NHÌN THẤY suy từ hộp ảnh — dùng CHÍNH công thức mà component dùng.
+ *
+ * ⚠️ `squashY` phải có mặt: hộp không còn luôn vuông (khăn quàng bị ép dẹt dọc). Bỏ qua nó là
+ *    test xanh trong khi mắt bé vẫn thấy cục len phủ kín ngực — đúng loại "test nói dối".
+ */
+function inkOf(
+  box: { cx: number; cy: number; side: number; squashY?: number },
+  ink: typeof DEFAULT_ACCESSORY_INK,
+) {
+  const sy = box.squashY ?? 1;
+  const h = box.side * sy;
   return {
     cx: box.cx + (ink.cx - 0.5) * box.side,
-    cy: box.cy + (ink.cy - 0.5) * box.side,
+    cy: box.cy + (ink.cy - 0.5) * h,
     w: ink.w * box.side,
-    h: ink.h * box.side,
+    h: ink.h * h,
   };
 }
 
@@ -240,5 +253,61 @@ describe('accessoryFit — fitSize và accessoryBox', () => {
     // Hộp của một món lạ vẫn tính được bằng mực mặc định.
     const box = accessoryBox('hat', DEFAULT_PET_ANCHOR, DEFAULT_ACCESSORY_INK);
     expect(Number.isFinite(box.side)).toBe(true);
+  });
+});
+
+// =============================================================================
+// 4. Bản vá "khăn quàng + giày mặc vào trông tệ" (chủ dự án báo)
+// =============================================================================
+
+/**
+ * ⚠️⚠️ HAI TEST DƯỚI ĐÂY KHOÁ LẠI HAI LỖI ĐÃ NHÌN THẤY TRÊN ẢNH THẬT, và cả hai đều thuộc loại
+ *   "không có lỗi biên dịch, không có cảnh báo lint, ảnh nhỏ thì trông tạm được":
+ *
+ *   1. GIÀY — `acc-shoes.webp` là ảnh của **CẢ ĐÔI** giày, nhưng `ACCESSORY_SCALE.feet` là 0,675,
+ *      tức cỡ của **MỘT CHIẾC** ⇒ cả đôi giày chỉ rộng 67,5% khoảng cách hai bàn chân, dồn vào
+ *      giữa, mỗi chiếc nhỏ hơn bàn chân.
+ *   2. KHĂN — ảnh là góc 3/4 TỪ TRÊN XUỐNG nên ta nhìn vào MẶT TRONG của vòng khăn; dán nguyên
+ *      lên ngực (khăn cao bằng 1,03 lần chiều cao thân con vật) thì mắt đọc ra "cục len", không ra
+ *      "khăn quàng".
+ */
+describe('accessoryFit — bản vá khăn quàng + giày', () => {
+  it('⚠️ GIÀY: mực cả đôi phải TRÙM ĐƯỢC cả hai bàn chân (không dồn vào giữa)', () => {
+    // Biên dưới 0,9 là CỐ Ý: dưới mức đó là mỗi chiếc giày nhỏ hơn bàn chân, thấy ngay bằng mắt.
+    expect(ACCESSORY_SCALE.feet).toBeGreaterThanOrEqual(0.9);
+    // Không được phình quá tay — đôi giày to hơn cả bàn chân hai lần là lố.
+    expect(ACCESSORY_SCALE.feet).toBeLessThanOrEqual(1.1);
+
+    for (const [key, anchor] of Object.entries(PET_ANCHORS) as [string, PetAnchor][]) {
+      const fit = ACCESSORY_FIT['acc-shoes']!;
+      const ink = inkOf(accessoryBox('feet', anchor, fit.ink), fit.ink);
+      // Mực giày / bề rộng CẢ HAI bàn chân — phải quanh 1,0 (trùm vừa, hơi thừa ra ngoài).
+      expect(ink.w / anchor.feet.w, `${key} giày/cả-hai-bàn-chân`).toBeGreaterThan(0.85);
+      expect(ink.w / anchor.feet.w, `${key} giày/cả-hai-bàn-chân`).toBeLessThan(1.15);
+    }
+  });
+
+  it('⚠️ KHĂN: bị ÉP DẸT theo chiều dọc, và MÉP TRÊN nằm đúng cao độ cổ', () => {
+    expect(ACCESSORY_SQUASH.neck).toBeLessThan(0.85);
+    expect(ACCESSORY_SQUASH.neck).toBeGreaterThan(0.5);
+    // Mọi kiểu đặt khác KHÔNG được ép — nếu ai đó vô tình đặt số ở đây, mũ/kính sẽ méo.
+    for (const kind of KINDS) {
+      if (kind === 'neck') continue;
+      expect(ACCESSORY_SQUASH[kind], kind).toBe(1);
+    }
+
+    for (const [key, anchor] of Object.entries(PET_ANCHORS) as [string, PetAnchor][]) {
+      const fit = ACCESSORY_FIT['acc-scarf']!;
+      const ink = inkOf(accessoryBox('neck', anchor, fit.ink), fit.ink);
+      // Mép TRÊN mực = `neck.y − SCARF_LIFT` ⇒ vòng khăn quàng đúng cổ, không trùm lên mặt.
+      expect(ink.cy - ink.h / 2, `${key} mép trên khăn`).toBeCloseTo(anchor.neck.y - SCARF_LIFT, 6);
+      /*
+        ⚠️ VÀ ĐÂY LÀ ĐIỀU QUAN TRỌNG NHẤT: chiều cao mực khăn phải NHỎ HƠN CHIỀU CAO THÂN con vật.
+        Trước bản vá, khăn cao 0,437 hộp còn thân khỉ baby cao 0,424 hộp ⇒ khăn phủ kín ngực.
+        Đây chính là "mặc vào trông tệ" mà mắt đọc ra được.
+      */
+      const torsoH = anchor.torso.bottom - anchor.torso.top;
+      expect(ink.h, `${key} cao khăn < cao thân`).toBeLessThan(torsoH);
+    }
   });
 });

@@ -27,6 +27,7 @@ import '@/i18n/index.js';
 import { PetAvatar } from '@/components/common/PetAvatar.js';
 import { petArtworkUrl } from '@/lib/petArtwork.js';
 import {
+  ACCESSORY_SQUASH,
   accessoryFitOf,
   DEFAULT_ACCESSORY_INK,
   HEADPIECE_DROP as HAT_DROP,
@@ -69,15 +70,26 @@ function inkBoxOf(container: HTMLElement, itemId: string) {
   const cx0 = pct(box.style.left);
   const cy0 = pct(box.style.top);
   const side = pct(box.style.width);
+  /*
+    ⚠️⚠️ `height` KHÔNG còn bằng `width`. Khăn quàng bị ép dẹt theo chiều dọc
+    (`ACCESSORY_SQUASH.neck = 0,7`) nên hộp là hình chữ nhật. Đọc `height` từ chính DOM —
+    suy nó ra từ `width` là bỏ qua đúng thứ vừa được sửa, và test sẽ xanh trong khi mắt bé
+    vẫn thấy cục len phủ kín ngực.
+  */
+  const height = pct(box.style.height);
+  const squashY = side > 0 ? height / side : 1;
   const ink = accessoryFitOf(itemId)?.ink ?? DEFAULT_ACCESSORY_INK;
-  const cy = cy0 + (ink.cy - 0.5) * side;
+  const cy = cy0 + (ink.cy - 0.5) * height;
   return {
     side,
+    height,
+    squashY,
     cx: cx0 + (ink.cx - 0.5) * side,
     cy,
     w: ink.w * side,
-    h: ink.h * side,
-    bottom: cy + (ink.h * side) / 2,
+    h: ink.h * height,
+    top: cy - (ink.h * height) / 2,
+    bottom: cy + (ink.h * height) / 2,
   };
 }
 
@@ -614,5 +626,40 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
   it('⚠️ KHÔNG còn tệp .png sót lại trong thư mục pets (đã chuyển hẳn sang WebP)', () => {
     expect(basenamesIn('assets/pets', '.png')).toEqual([]);
     expect(basenamesIn('assets/pets/shop', '.png')).toEqual([]);
+  });
+});
+
+// =============================================================================
+// 7. Khăn quàng bị ÉP DẸT — hộp không còn luôn vuông
+// =============================================================================
+
+/**
+ * ⚠️⚠️ TEST NÀY KHOÁ MỘT CHI TIẾT DỄ BỊ "SỬA LẠI CHO GỌN".
+ *
+ * `accessoryBox('neck', …)` trả `squashY` (0,7 cho khăn). Component PHẢI dùng nó cho chiều cao hộp.
+ * Ai đó "dọn dẹp" đổi `height: side * squashY` về `height: side` (cho khớp `width`) thì:
+ *   • test này ĐỎ ngay, thay vì
+ *   • mắt bé thấy cục len phủ kín ngực như trước bản vá, và CI vẫn xanh.
+ *
+ * Đọc `height` THẲNG TỪ DOM (không suy từ `width`) — vì đúng cái cần kiểm là hai số đó KHÁC nhau.
+ */
+describe('PetAvatar — khăn quàng bị ép dẹt theo chiều dọc', () => {
+  it('⚠️ hộp khăn có `height` = `width × squashY` (không phải hộp vuông)', () => {
+    const { container } = renderAvatar([item('acc-scarf')]);
+    const box = inkBoxOf(container, 'acc-scarf');
+
+    expect(box.squashY).toBeCloseTo(ACCESSORY_SQUASH.neck, 6);
+    expect(box.height).toBeLessThan(box.side);
+  });
+
+  it('mọi kiểu đặt KHÁC vẫn giữ hộp VUÔNG (không méo mũ, kính, giày, ba lô)', () => {
+    const square = ['acc-hat', 'acc-glasses', 'acc-shoes', 'acc-backpack', 'acc-crown', 'acc-bow'];
+    const { container } = renderAvatar(square.map(item));
+
+    for (const id of square) {
+      const box = inkBoxOf(container, id);
+      expect(box.squashY, `${id} phải vuông`).toBeCloseTo(1, 6);
+      expect(box.height, `${id} cao = rộng`).toBeCloseTo(box.side, 6);
+    }
   });
 });

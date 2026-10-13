@@ -571,7 +571,16 @@ function AccessoryLayers({
                       left: `${box.cx * 100}%`,
                       top: `${box.cy * 100}%`,
                       width: `${box.side * 100}%`,
-                      height: `${box.side * 100}%`,
+                      /*
+                        ⚠️⚠️ CHIỀU CAO = `side × squashY`, KHÔNG phải `side`. Hộp không còn luôn
+                        vuông: khăn quàng bị ÉP DẸT theo chiều dọc (`ACCESSORY_SQUASH.neck`) để vòng
+                        khăn thành dải ôm cổ thay vì một cục len phủ kín ngực — xem ghi chú dài ở
+                        `accessoryFit.ts`. `ShopArtwork` vẽ `h-full w-full object-contain` nên ảnh
+                        vuông sẽ tự bị ép theo hộp, không cần `transform` nào ở đây (và KHÔNG được
+                        thêm `transform`: lớp `-translate-x-1/2 -translate-y-1/2` phía trên đang
+                        dùng chính thuộc tính đó để canh tâm).
+                      */
+                      height: `${box.side * box.squashY * 100}%`,
                     }}
                   >
                     <ShopArtwork item={item} className="h-full w-full object-contain" />
