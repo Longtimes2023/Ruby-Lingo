@@ -24,19 +24,30 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ACCESSORY_FIT,
+  ACCESSORY_MIRRORED,
   ACCESSORY_SCALE,
   ACCESSORY_SQUASH,
-  SCARF_LIFT,
+  CROWN_DROP,
+  HEADPIECE_DROP,
+  SCARF_TOP_DROP,
   accessoryBox,
+  accessoryBoxes,
   accessoryFitOf,
   DEFAULT_ACCESSORY_INK,
   defaultKindForSlot,
   fitSize,
   type AccessoryFitKind,
 } from '@/lib/accessoryFit.js';
-import { DEFAULT_PET_ANCHOR, PET_ANCHORS, petAnchorFor, type PetAnchor } from '@/lib/petAnchors.js';
+import {
+  DEFAULT_PET_ANCHOR,
+  PET_ANCHORS,
+  feetSplitFor,
+  petAnchorFor,
+  type PetAnchor,
+} from '@/lib/petAnchors.js';
 import { EVOLUTION_STAGES } from '@shared/content/levels.js';
 import { PET_DEFINITIONS } from '@shared/content/pets.js';
+import type { EvolutionStage, PetType } from '@shared/types/reward.js';
 
 const PUBLIC_DIR = join(process.cwd(), 'public');
 const PETS_DIR = join(PUBLIC_DIR, 'assets', 'pets');
@@ -214,15 +225,30 @@ describe('accessoryFit — fitSize và accessoryBox', () => {
     }
   });
 
-  it('⭐ MŨ/VƯƠNG MIỆN: đáy vành nằm dưới `head.top` đúng một hằng số, tâm x = `head.cx`', () => {
+  it('⭐ MŨ/VƯƠNG MIỆN: đáy vành theo TỈ LỆ chiều cao đầu, và LUÔN còn trên đường mắt', () => {
+    /*
+      ⚠️⚠️ HAI KHẲNG ĐỊNH, VÌ MỘT MÌNH KHẲNG ĐỊNH "theo tỉ lệ" LÀ KHÔNG ĐỦ:
+      chiều cao đầu của 18 con chênh nhau **1,8 lần** (0,225 ở tiger/rồng adult → 0,400 ở khỉ
+      baby). Một số TUYỆT ĐỐI không thể đúng cho cả hai đầu mút — đã thử cả hai và cả hai đều sai:
+        • 0,06 (số cho ảnh sản phẩm) ⇒ mũ BAY LƠ LỬNG ở con đầu to;
+        • 0,10 (số cho ảnh chính diện) ⇒ vành mũ TRÙM XUỐNG DƯỚI MẮT ở `tiger:adult`.
+      Nên: đo bằng TỈ LỆ, và KHOÁ thêm điều kiện "vành còn trên mắt" để không tái diễn vế thứ hai.
+    */
     for (const id of ['acc-hat', 'acc-crown']) {
       const fit = accessoryFitOf(id)!;
+      const ratio = fit.kind === 'hat' ? HEADPIECE_DROP : CROWN_DROP;
       for (const [key, anchor] of Object.entries(PET_ANCHORS) as [string, PetAnchor][]) {
         const box = accessoryBox(fit.kind, anchor, fit.ink);
         const ink = inkOf(box, fit.ink);
         expect(ink.cx, `${id} trên ${key}`).toBeCloseTo(anchor.head.cx, 10);
-        expect(ink.cy + ink.h / 2, `${id} trên ${key}`).toBeGreaterThan(anchor.head.top);
-        expect(ink.cy + ink.h / 2, `${id} trên ${key}`).toBeLessThan(anchor.eyes.y);
+        // Đáy vành = head.top + tỉ lệ × chiều cao đầu.
+        const headH = anchor.head.bottom - anchor.head.top;
+        expect(ink.cy + ink.h / 2, `${id} trên ${key}`).toBeCloseTo(
+          anchor.head.top + ratio * headH,
+          6,
+        );
+        // ⚠️ VÀ: vành phải CÒN TRÊN ĐƯỜNG MẮT — nếu không là mũ che mắt bé.
+        expect(ink.cy + ink.h / 2, `${id} trên ${key} che mắt?`).toBeLessThan(anchor.eyes.y);
       }
     }
   });
@@ -257,57 +283,129 @@ describe('accessoryFit — fitSize và accessoryBox', () => {
 });
 
 // =============================================================================
-// 4. Bản vá "khăn quàng + giày mặc vào trông tệ" (chủ dự án báo)
+// 4. Mặc phụ kiện lên con vật — hai lỗi chủ dự án báo, và cách sửa ĐÚNG
 // =============================================================================
 
 /**
- * ⚠️⚠️ HAI TEST DƯỚI ĐÂY KHOÁ LẠI HAI LỖI ĐÃ NHÌN THẤY TRÊN ẢNH THẬT, và cả hai đều thuộc loại
- *   "không có lỗi biên dịch, không có cảnh báo lint, ảnh nhỏ thì trông tạm được":
+ * ⚠️⚠️ NHÓM NÀY KHOÁ LẠI HAI LỖI ĐÃ NHÌN THẤY TRÊN ẢNH THẬT. Cả hai đều thuộc loại "không có lỗi
+ *   biên dịch, không có cảnh báo lint, ảnh nhỏ thì trông tạm được".
  *
- *   1. GIÀY — `acc-shoes.webp` là ảnh của **CẢ ĐÔI** giày, nhưng `ACCESSORY_SCALE.feet` là 0,675,
- *      tức cỡ của **MỘT CHIẾC** ⇒ cả đôi giày chỉ rộng 67,5% khoảng cách hai bàn chân, dồn vào
- *      giữa, mỗi chiếc nhỏ hơn bàn chân.
- *   2. KHĂN — ảnh là góc 3/4 TỪ TRÊN XUỐNG nên ta nhìn vào MẶT TRONG của vòng khăn; dán nguyên
- *      lên ngực (khăn cao bằng 1,03 lần chiều cao thân con vật) thì mắt đọc ra "cục len", không ra
- *      "khăn quàng".
+ *   Lịch sử sửa (ghi lại vì đã đi qua 2 vòng, đừng lặp lại vòng 1):
+ *
+ *   VÒNG 1 — vá CÔNG THỨC (vẫn giữ art cũ, ảnh CHỤP SẢN PHẨM góc 3/4 từ trên xuống):
+ *     • giày: `ACCESSORY_SCALE.feet` 0,675 → 0,95 (đôi giày kéo giãn cho trùm hai bàn chân)
+ *     • khăn: `ACCESSORY_SQUASH.neck = 0,70` (ép dẹt vòng khăn thành dải ôm cổ)
+ *     Vá này CHẠY ĐƯỢC, nhưng chỉ là chữa triệu chứng: giày vẫn là "một khối dồn vào giữa", khăn
+ *     vẫn là một tấm vải dẹt chứ không phải khăn quàng.
+ *
+ *   VÒNG 2 — VẼ LẠI ART (chủ dự án gửi ảnh mẫu và duyệt 5 ảnh): 5 ảnh được vẽ ở góc "ĐANG MẶC".
+ *     • `acc-shoes` nay là **MỘT CHIẾC** ⇒ vẽ hai lần, lật gương (`ACCESSORY_MIRRORED`)
+ *     • `acc-scarf` nay là dây len quấn quanh cổ ⇒ bỏ ép dẹt (`ACCESSORY_SQUASH.neck` về 1)
+ *     • `acc-hat` chính diện, `acc-backpack` có quai, `acc-wings` chính diện
  */
-describe('accessoryFit — bản vá khăn quàng + giày', () => {
-  it('⚠️ GIÀY: mực cả đôi phải TRÙM ĐƯỢC cả hai bàn chân (không dồn vào giữa)', () => {
-    // Biên dưới 0,9 là CỐ Ý: dưới mức đó là mỗi chiếc giày nhỏ hơn bàn chân, thấy ngay bằng mắt.
-    expect(ACCESSORY_SCALE.feet).toBeGreaterThanOrEqual(0.9);
-    // Không được phình quá tay — đôi giày to hơn cả bàn chân hai lần là lố.
-    expect(ACCESSORY_SCALE.feet).toBeLessThanOrEqual(1.1);
+describe('accessoryFit — mặc phụ kiện lên con vật', () => {
+  it('⚠️ GIÀY: vẽ HAI LẦN, mỗi bàn chân một chiếc, lần thứ hai LẬT GƯƠNG', () => {
+    // Giày phải nằm trong danh sách "vẽ hai lần" — thiếu dòng này thì bé chỉ có giày ở chân trái.
+    expect(ACCESSORY_MIRRORED['acc-shoes']).toBe(true);
 
     for (const [key, anchor] of Object.entries(PET_ANCHORS) as [string, PetAnchor][]) {
       const fit = ACCESSORY_FIT['acc-shoes']!;
-      const ink = inkOf(accessoryBox('feet', anchor, fit.ink), fit.ink);
-      // Mực giày / bề rộng CẢ HAI bàn chân — phải quanh 1,0 (trùm vừa, hơi thừa ra ngoài).
-      expect(ink.w / anchor.feet.w, `${key} giày/cả-hai-bàn-chân`).toBeGreaterThan(0.85);
-      expect(ink.w / anchor.feet.w, `${key} giày/cả-hai-bàn-chân`).toBeLessThan(1.15);
+      const split = feetSplitFor(...(key.split(':') as [PetType, EvolutionStage]));
+      const placements = accessoryBoxes('acc-shoes', 'feet', anchor, fit.ink, split);
+
+      // Đúng HAI chiếc, một chiếc lật gương.
+      expect(placements.length, key).toBe(2);
+      expect(placements[0]!.mirror, key).toBe(false);
+      expect(placements[1]!.mirror, key).toBe(true);
+
+      const [l, r] = placements;
+      const li = inkOf(l!.box, fit.ink);
+      const ri = inkOf(r!.box, fit.ink);
+
+      // ⭐ MỖI CHIẾC nằm trên ĐÚNG bàn chân của nó — không phải cả hai dồn vào giữa.
+      expect(li.cx, `${key} giày trái`).toBeCloseTo(split.left.cx, 6);
+      expect(ri.cx, `${key} giày phải`).toBeCloseTo(split.right.cx, 6);
+      // Chiếc trái phải nằm BÊN TRÁI chiếc phải (nếu không, ảnh đã bị lật nhầm).
+      expect(li.cx, `${key} thứ tự trái–phải`).toBeLessThan(ri.cx);
+
+      /*
+        ⚠️ HAI CHIẾC ĐƯỢC PHÉP CHỒNG NHAU MỘT CHÚT — đó là cách bàn chân thật trông ở góc chính
+        diện, và cũng đúng như ảnh mẫu của chủ dự án. Thứ KHÔNG được phép là "cả hai dồn vào giữa"
+        (lỗi cũ): khi đó hai chiếc trùng khít nhau. Khoá bằng TỈ LỆ chồng lấn.
+      */
+      const overlap = li.cx + li.w / 2 - (ri.cx - ri.w / 2);
+      expect(overlap, `${key} chồng lấn`).toBeLessThan(0.4 * li.w);
+      // Và hai chiếc phải CÁCH NHAU thật sự, không nằm đè lên nhau.
+      expect(ri.cx - li.cx, `${key} khoảng cách hai giày`).toBeGreaterThan(0.4 * li.w);
+
+      /*
+        ⭐ CỠ: mỗi chiếc giày rộng 1,9 × bàn chân (giày phủ qua mắt cá, thừa ra hai bên như giày
+        thật). Biên dưới 1,3 là CỐ Ý — dưới mức đó giày nhỏ hơn bàn chân, thấy ngay bằng mắt.
+      */
+      expect(li.w / split.left.w, `${key} cỡ giày`).toBeCloseTo(ACCESSORY_SCALE.feet, 6);
+      expect(li.w / split.left.w, `${key} cỡ giày`).toBeGreaterThan(1.3);
+      // Đáy giày phải nằm quanh bàn chân, không lơ lửng trên hay tụt xuống dưới hộp.
+      expect(li.cy + li.h / 2, `${key} đáy giày`).toBeGreaterThan(anchor.feet.y - 0.05);
+      expect(li.cy + li.h / 2, `${key} đáy giày`).toBeLessThan(anchor.feet.y + 0.15);
     }
   });
 
-  it('⚠️ KHĂN: bị ÉP DẸT theo chiều dọc, và MÉP TRÊN nằm đúng cao độ cổ', () => {
-    expect(ACCESSORY_SQUASH.neck).toBeLessThan(0.85);
-    expect(ACCESSORY_SQUASH.neck).toBeGreaterThan(0.5);
-    // Mọi kiểu đặt khác KHÔNG được ép — nếu ai đó vô tình đặt số ở đây, mũ/kính sẽ méo.
+  it('⚠️ KHĂN: MÉP TRÊN nằm ngay dưới cao độ cổ, và KHÔNG ép dẹt nữa (art đã đúng góc)', () => {
+    // Art mới vẽ ở góc đang mặc ⇒ ép dẹt là BÓP MÉO một ảnh vốn đã đúng.
     for (const kind of KINDS) {
-      if (kind === 'neck') continue;
       expect(ACCESSORY_SQUASH[kind], kind).toBe(1);
     }
 
     for (const [key, anchor] of Object.entries(PET_ANCHORS) as [string, PetAnchor][]) {
       const fit = ACCESSORY_FIT['acc-scarf']!;
       const ink = inkOf(accessoryBox('neck', anchor, fit.ink), fit.ink);
-      // Mép TRÊN mực = `neck.y − SCARF_LIFT` ⇒ vòng khăn quàng đúng cổ, không trùm lên mặt.
-      expect(ink.cy - ink.h / 2, `${key} mép trên khăn`).toBeCloseTo(anchor.neck.y - SCARF_LIFT, 6);
-      /*
-        ⚠️ VÀ ĐÂY LÀ ĐIỀU QUAN TRỌNG NHẤT: chiều cao mực khăn phải NHỎ HƠN CHIỀU CAO THÂN con vật.
-        Trước bản vá, khăn cao 0,437 hộp còn thân khỉ baby cao 0,424 hộp ⇒ khăn phủ kín ngực.
-        Đây chính là "mặc vào trông tệ" mà mắt đọc ra được.
-      */
-      const torsoH = anchor.torso.bottom - anchor.torso.top;
-      expect(ink.h, `${key} cao khăn < cao thân`).toBeLessThan(torsoH);
+      // Mép TRÊN mực = `neck.y + SCARF_TOP_DROP` ⇒ vòng khăn quàng đúng cổ, không trùm lên mặt.
+      expect(ink.cy - ink.h / 2, `${key} mép trên khăn`).toBeCloseTo(anchor.neck.y + SCARF_TOP_DROP, 6);
+      // Mép trên phải THẤP HƠN đường mắt ⇒ khăn không bao giờ che mặt.
+      expect(ink.cy - ink.h / 2, `${key} khăn che mặt?`).toBeGreaterThan(anchor.eyes.y);
     }
+  });
+
+  it('món KHÔNG khai "vẽ hai lần" ⇒ vẫn đúng MỘT hộp (không nhân đôi mũ, kính, ba lô)', () => {
+    for (const [id, fit] of Object.entries(ACCESSORY_FIT)) {
+      if (ACCESSORY_MIRRORED[id] === true) continue;
+      const placements = accessoryBoxes(id, fit.kind, DEFAULT_PET_ANCHOR, fit.ink, {
+        left: { cx: 0.4, w: 0.1 },
+        right: { cx: 0.6, w: 0.1 },
+      });
+      expect(placements.length, id).toBe(1);
+      expect(placements[0]!.mirror, id).toBe(false);
+    }
+  });
+
+  it('⚠️ thiếu dữ liệu chân ⇒ giày VẪN HIỆN (lùi về tỉ lệ trung bình, không ném lỗi)', () => {
+    // `feet` bỏ trống = đường lùi của người gọi. Món phải vẫn vẽ, chỉ kém chính xác.
+    const placements = accessoryBoxes(
+      'acc-shoes',
+      'feet',
+      DEFAULT_PET_ANCHOR,
+      ACCESSORY_FIT['acc-shoes']!.ink,
+      undefined,
+    );
+    expect(placements.length).toBe(1);
+    for (const p of placements) {
+      expect(Number.isFinite(p.box.cx)).toBe(true);
+      expect(Number.isFinite(p.box.cy)).toBe(true);
+      expect(p.box.side).toBeGreaterThan(0.05);
+    }
+  });
+
+  it('⚠️ `feetSplitFor` phủ ĐỦ 18 con và tự lùi khi thiếu (không con nào mất giày)', () => {
+    for (const key of Object.keys(PET_ANCHORS)) {
+      const [petType, stage] = key.split(':') as [PetType, EvolutionStage];
+      const split = feetSplitFor(petType, stage);
+      expect(split.left.cx, `${key} chân trái`).toBeGreaterThan(0.2);
+      expect(split.right.cx, `${key} chân phải`).toBeLessThan(0.8);
+      expect(split.left.cx, `${key} trái < phải`).toBeLessThan(split.right.cx);
+    }
+    // Con không có trong bảng ⇒ suy từ `feet` (KHÔNG ném lỗi).
+    const fallback = feetSplitFor('unicorn' as PetType, 'baby');
+    expect(Number.isFinite(fallback.left.cx)).toBe(true);
+    expect(Number.isFinite(fallback.right.cx)).toBe(true);
   });
 });

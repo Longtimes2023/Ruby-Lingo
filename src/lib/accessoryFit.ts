@@ -40,7 +40,7 @@
 
 import type { AccessorySlot } from '@shared/types/reward.js';
 
-import type { PetAnchor } from './petAnchors.js';
+import type { PetAnchor, PetFeetAnchor } from './petAnchors.js';
 
 /** Tỷ lệ mực (pixel không trong suốt) của ảnh phụ kiện, 0..1, theo hộp ảnh vuông. */
 export interface AccessoryInk {
@@ -71,18 +71,22 @@ export interface AccessoryFit {
 
 /** 10 phụ kiện (mã `acc-*` = khoá trong `shopArtworkManifest.ts`). */
 export const ACCESSORY_FIT: Readonly<Record<string, AccessoryFit>> = {
-  // Ảnh đầy gần kín hộp (93–98%W): kính, kính sao, mũ, cánh, áo choàng.
-  'acc-hat': { ink: { w: 0.9414, h: 0.5469, cx: 0.5, cy: 0.4883 }, kind: 'hat' },
+  /*
+    ⚠️⚠️ 5 DÒNG DƯỚI ĐÂY ĐÃ ĐO LẠI — vì 5 ẢNH đã được VẼ LẠI ở góc "đang mặc" (xem ghi chú
+    `ACCESSORY_SCALE`). Số cũ không còn dùng được: mỗi ảnh mới có độ "đầy" khác, và `acc-shoes`
+    nay là MỘT CHIẾC (không phải cả đôi) nên cũng đổi luôn cách đặt.
+    Nguồn: `_verify/ref/new-ink.json` (đo trên chính tệp đã ghi vào `public/assets/pets/shop/`).
+  */
+  'acc-hat': { ink: { w: 1, h: 0.6133, cx: 0.5, cy: 0.5 }, kind: 'hat' },
   'acc-crown': { ink: { w: 0.7246, h: 0.5039, cx: 0.499, cy: 0.4922 }, kind: 'crown' },
   'acc-bow': { ink: { w: 0.9199, h: 0.5684, cx: 0.501, cy: 0.5049 }, kind: 'bow' },
   'acc-glasses': { ink: { w: 0.9336, h: 0.3691, cx: 0.5, cy: 0.4971 }, kind: 'face' },
   'acc-star-glasses': { ink: { w: 0.9766, h: 0.4004, cx: 0.5, cy: 0.4971 }, kind: 'face' },
-  // Khăn và ba lô "đầy" vừa (71–78%) — không chuẩn hoá thì trông nhỏ hơn kính 1,3 lần.
-  'acc-scarf': { ink: { w: 0.709, h: 0.6953, cx: 0.5068, cy: 0.5078 }, kind: 'neck' },
-  'acc-shoes': { ink: { w: 0.8809, h: 0.5879, cx: 0.5088, cy: 0.5068 }, kind: 'feet' },
-  'acc-backpack': { ink: { w: 0.7793, h: 0.8008, cx: 0.501, cy: 0.4941 }, kind: 'back' },
+  'acc-scarf': { ink: { w: 0.916, h: 1, cx: 0.499, cy: 0.5 }, kind: 'neck' },
+  'acc-shoes': { ink: { w: 1, h: 0.5898, cx: 0.5, cy: 0.5 }, kind: 'feet' },
+  'acc-backpack': { ink: { w: 1, h: 0.9492, cx: 0.5, cy: 0.5 }, kind: 'back' },
   'acc-cape': { ink: { w: 0.9277, h: 0.5488, cx: 0.501, cy: 0.4912 }, kind: 'back' },
-  'acc-wings': { ink: { w: 0.9453, h: 0.5566, cx: 0.5, cy: 0.4854 }, kind: 'back' },
+  'acc-wings': { ink: { w: 1, h: 0.7617, cx: 0.5, cy: 0.5 }, kind: 'back' },
 };
 
 /** Mực coi như lấp đầy hộp — dùng cho món chưa khai tỷ lệ. */
@@ -91,56 +95,67 @@ export const DEFAULT_ACCESSORY_INK: AccessoryInk = { w: 1, h: 1, cx: 0.5, cy: 0.
 /**
  * ⭐ HỆ SỐ "CỠ MỰC NHÌN THẤY" so với neo, theo từng kiểu đặt. Xem bảng ở ghi chú đầu tệp.
  *
- * ⚠️⚠️ `feet` ĐÃ ĐỔI 0,675 → 0,95 — ĐÂY LÀ BẢN VÁ CỦA MỘT LỖI ĐÃ NHÌN THẤY TRÊN ẢNH THẬT
- *    (chủ dự án: *"đôi giày mặc vào con khỉ hơi bị tệ"*).
+ * ⚠️⚠️ HAI DÒNG ĐÃ ĐỔI VÌ **5 ẢNH ĐÃ ĐƯỢC VẼ LẠI** Ở GÓC "ĐANG MẶC" (đúng như ảnh mẫu chủ dự án
+ *    gửi), thay cho ảnh CHỤP SẢN PHẨM cũ. Lịch sử, để không ai "sửa lại cho gọn":
  *
- *    Bảng neo ghi rõ: `feet.w` = **bề rộng mực của CẢ HAI bàn chân** (đo lại 18/18 ảnh: khoảng
- *    cách hai mép ngoài bàn chân / `feet.w` = 0,958–1,000 — xem
- *    `_verify/pet-probe/probe_feet.py` + `out/split-feasibility.json`). Nhưng `acc-shoes.webp`
- *    là ảnh của **CẢ ĐÔI giày**, không phải một chiếc. Hệ số 0,675 vì thế vẽ cả đôi giày chỉ rộng
- *    bằng 67,5% khoảng cách hai bàn chân ⇒ mỗi chiếc nhỏ hơn bàn chân và cả đôi dồn vào giữa.
- *    0,95 = đôi giày trùm vừa hai bàn chân, chừa 5% để thấy được mép đế.
+ *    • `neck` 0,90 → **0,95**: ảnh khăn mới là dây len quấn quanh cổ (mực 91,6%W × 100%H), không
+ *      còn là vòng khăn nhìn từ trên xuống (70,9% × 69,5%). Nhờ vậy `ACCESSORY_SQUASH.neck` về 1.
  *
- *    ⚠️ Nếu sau này ảnh `acc-shoes` được vẽ lại thành MỘT CHIẾC (để vẽ hai lần, lật gương cho chân
- *       kia — cách các game dress-up lớn làm), thì hệ số này phải quay về ~0,5 và cần thêm một
- *       trường "vẽ hai lần" trong `AccessoryFit`.
+ *    • `feet` 0,675 → 0,95 → **1,9**: bản 0,675 coi ảnh là MỘT CHIẾC trong khi ảnh cũ là CẢ ĐÔI
+ *      (mỗi chiếc nhỏ hơn bàn chân, dồn vào giữa). Bản 0,95 kéo giãn cả đôi cho trùm hai bàn chân
+ *      — đúng hơn nhưng vẫn là "một khối". Nay ảnh là **MỘT CHIẾC** và được VẼ HAI LẦN
+ *      (`ACCESSORY_MIRRORED`), nên hệ số phải tính cho **MỘT bàn chân**: bề rộng mực một chiếc
+ *      giày = 1,9 × bề rộng một bàn chân (giày phủ qua mắt cá, thừa ra hai bên như giày thật).
  */
 export const ACCESSORY_SCALE: Readonly<Record<AccessoryFitKind, number>> = {
   face: 1.65,
-  hat: 1.25,
+  hat: 1.05,
   crown: 1.15,
   bow: 0.65,
-  neck: 0.9,
-  feet: 0.95,
+  neck: 1.05,
+  feet: 1.55,
   back: 1.425,
+};
+
+/**
+ * MÓN NÀY VẼ **HAI LẦN** — một cho mỗi bàn chân (lần thứ hai lật gương).
+ *
+ * ⭐ VÌ SAO: ảnh `acc-shoes.webp` cũ là **một đôi giày trong một ảnh**, không thể đặt lên hai bàn
+ *   chân ở hai vị trí khác nhau — cách duy nhất là kéo giãn cả đôi cho trùm hai chân, và kết quả
+ *   luôn trông như "một khối dồn vào giữa" (đúng lời chủ dự án: *"đôi giày mặc vào con khỉ hơi bị
+ *   tệ"*). Cách các game dress-up lớn làm: vẽ **MỘT chiếc**, rồi vẽ hai lần, lật gương cho bàn
+ *   chân kia. Ảnh `acc-shoes.webp` nay đã được vẽ lại theo cách đó.
+ *
+ * ⚠️ Mọi món KHÁC vẽ một lần. Nếu sau này có món nào cần hai lần (găng tay, dép), thêm id vào đây
+ *    — không cần sửa `PetAvatar`.
+ */
+export const ACCESSORY_MIRRORED: Readonly<Record<string, boolean>> = {
+  'acc-shoes': true,
 };
 
 /**
  * ⭐ ÉP DẸT THEO CHIỀU DỌC (1 = không ép), theo từng kiểu đặt.
  *
- * ⚠️⚠️ VÌ SAO CẦN — VÀ VÌ SAO NÓ KHÔNG PHẢI "CHỮA TRIỆU CHỨNG":
- *    Cả 10 ảnh phụ kiện đều là ảnh CHỤP SẢN PHẨM (product shot), thường ở góc **3/4 TỪ TRÊN
- *    XUỐNG**, trong khi 18 ảnh thú cưng vẽ **CHÍNH DIỆN**. Với mũ/kính/ba lô/vương miện/nơ thì
- *    lệch góc này không sao (chúng vốn là vật thể đặt lên đầu/mặt/lưng). Nhưng với KHĂN QUÀNG thì
- *    ảnh 3/4 từ trên xuống cho ta **nhìn vào MẶT TRONG của vòng khăn** — dán lên ngực con vật,
- *    mắt đọc ra "một cục len dẹt" chứ không ra "chiếc khăn quàng quanh cổ". Đo được: mực khăn
- *    rộng 70,9%W × 69,5%H (gần VUÔNG) mà công thức lại canh cỡ theo BỀ RỘNG ⇒ khăn cao bằng 1,03
- *    lần chiều cao thân con vật (khỉ baby: thân cao 0,424 hộp, khăn cao 0,437 hộp) — phủ kín ngực.
+ * ⚠️⚠️ ĐÂY LÀ **DI SẢN CỦA MỘT BẢN VÁ ĐÃ QUA** — giữ lại cơ chế, nhưng nay MỌI KIỂU ĐỀU = 1.
  *
- *    Ép dẹt 0,70 làm vòng khăn trở thành một DẢI NGANG ôm cổ — đúng hình dạng mà mắt mong đợi ở
- *    một chiếc khăn quàng, và giữ nguyên MÉP TRÊN của khăn (nên vòng khăn vẫn nằm đúng cổ).
- *    Chọn 0,70 bằng cách dựng thử composite và nhìn: `_verify/pet-probe/sweep_scarf.py`.
+ *    Chuyện đã xảy ra: 10 ảnh phụ kiện cũ đều là ảnh CHỤP SẢN PHẨM ở góc **3/4 TỪ TRÊN XUỐNG**,
+ *    còn 18 ảnh thú cưng vẽ **CHÍNH DIỆN**. Riêng khăn quàng thì sai hẳn: ảnh cho ta **nhìn vào
+ *    MẶT TRONG của vòng khăn**, dán lên ngực con vật đọc ra "cục len dẹt" (mực 70,9%W × 69,5%H,
+ *    gần VUÔNG, mà công thức canh cỡ theo BỀ RỘNG ⇒ khăn cao bằng 1,03 lần chiều cao thân).
+ *    Bản vá rẻ nhất khi đó là `neck: 0,70` — ép dẹt vòng khăn thành dải ngang ôm cổ.
  *
- * ⚠️ ĐÂY LÀ CÁCH SỬA RẺ NHẤT (0 credit). Cách sửa ĐÚNG VỀ BẢN CHẤT là vẽ lại ảnh khăn ở góc
- *    CHÍNH DIỆN — nhưng đó là việc của bên tạo ảnh, không phải của công thức đặt. Khi ảnh mới về
- *    thì đặt `neck: 1` ở đây là xong, không phải sửa gì khác.
+ *    ⚠️ **NAY ẢNH KHĂN ĐÃ ĐƯỢC VẼ LẠI** ở góc đang mặc (chủ dự án gửi ảnh mẫu và duyệt) ⇒ ép dẹt
+ *    không còn cần nữa, và GIỮ 0,7 LẠI SẼ LÀ SAI: nó bóp méo một ảnh vốn đã đúng.
+ *
+ *    ⇒ Giữ cơ chế để lần sau gặp lại tình huống "ảnh sai góc" thì chỉ cần điền một số, KHÔNG phải
+ *      sửa `PetAvatar`. Nhưng ĐỪNG điền số nào khi art đã đúng góc.
  */
 export const ACCESSORY_SQUASH: Readonly<Record<AccessoryFitKind, number>> = {
   face: 1,
   hat: 1,
   crown: 1,
   bow: 1,
-  neck: 0.7,
+  neck: 1,
   feet: 1,
   back: 1,
 };
@@ -220,17 +235,59 @@ function boxAt(
   };
 }
 
-/** Đáy vành mũ/vương miện nằm dưới đỉnh đầu bao nhiêu (phần hộp `1em`). Xem ghi chú đầu tệp. */
-export const HEADPIECE_DROP = 0.06;
+/**
+ * Đáy vành mũ nằm dưới đỉnh đầu bao nhiêu — **TỈ LỆ CỦA CHIỀU CAO ĐẦU** (không phải số tuyệt đối).
+ *
+ * ⚠️⚠️ VÌ SAO PHẢI LÀ TỈ LỆ: 18 con có chiều cao đầu chênh nhau **1,8 lần** (`head.bottom −
+ *   head.top` từ 0,225 ở rồng/tiger adult tới 0,400 ở khỉ/pig baby). Một số tuyệt đối không thể
+ *   đúng cho cả hai đầu mút:
+ *     • 0,06 (số cũ, cho ảnh sản phẩm) ⇒ mũ BAY LƠ LỬNG trên đầu con đầu to (khỉ baby hở 16,7%).
+ *     • 0,10 (số vừa thử cho ảnh chính diện) ⇒ với `tiger:adult` (đầu cao 0,225, mắt ở 0,097)
+ *       vành mũ **trùm xuống DƯỚI đường mắt** — che mắt bé.
+ *   Tỉ lệ 0,25 cho khỉ baby đúng 0,10 (khớp ảnh mẫu), và với `tiger:adult` chỉ còn 0,056 — LUÔN
+ *   nằm trên đường mắt (kiểm 18/18: tỉ lệ "vành còn trên mắt" nhỏ nhất là 0,336 > 0,25).
+ *
+ * ⚠️ HẰNG SỐ NÀY CHỈ ĐÚNG CHO ẢNH CHÍNH DIỆN. Quay lại ảnh sản phẩm thì phải hạ về 0,15.
+ */
+export const HEADPIECE_DROP = 0.25;
 
 /**
- * Vòng khăn nằm trên cao độ cổ bao nhiêu (dương = cao hơn). Xem ghi chú đầu tệp.
+ * Như `HEADPIECE_DROP` nhưng cho VƯƠNG MIỆN — và số này **VẪN LÀ TỈ LỆ CỦA BẢN CŨ (0,15)**.
+ *
+ * ⚠️ VÌ SAO TÁCH RA: `acc-crown.webp` **chưa** được vẽ lại, vẫn là ảnh chụp sản phẩm nhìn từ trên
+ *    xuống (mực 72,5%W × 50,4%H). Dùng chung tỉ lệ 0,25 thì vương miện bị ấn sâu xuống đầu và
+ *    biến mất sau trán — đúng loại lỗi mà việc tách hằng số này ngăn được.
+ *    Khi nào vương miện được vẽ lại ở góc chính diện thì gộp hai hằng số làm một.
+ */
+export const CROWN_DROP = 0.15;
+
+/**
+ * Mép trên mực khăn quàng nằm **DƯỚI** cao độ cổ bao nhiêu (phần hộp `1em`).
+ *
+ * ⚠️⚠️ ĐÃ ĐỔI DẤU Ý NGHĨA: bản cũ là `SCARF_LIFT = 0,04` (mép trên mực NẰM TRÊN cổ 0,04) — đúng
+ *    cho ảnh khăn cũ, vì ảnh đó nhìn từ trên xuống nên vòng khăn phải "nâng" lên mới trông như
+ *    đang quàng. Ảnh khăn MỚI vẽ ở góc đang mặc, mép trên của mực CHÍNH LÀ mép trên của vòng khăn
+ *    đang ôm cổ ⇒ đặt ngay dưới cao độ cổ một chút mới đúng.
  *
  * ⚠️ Export để TEST khoá được "mép trên khăn nằm đúng cổ" — xem `pet-anchors.test.ts`. Một hằng
  *    số thị giác quyết định khăn quàng hay trùm lên mặt mà không test nào chạm tới thì lần sau ai
- *    đó sửa nó thành `-0,04` là mắt bé bị che, còn CI vẫn xanh.
+ *    đó sửa dấu là mắt bé bị che, còn CI vẫn xanh.
  */
-export const SCARF_LIFT = 0.04;
+export const SCARF_TOP_DROP = 0.02;
+
+/** Đáy mực giày nằm dưới `feet.y` bao nhiêu (phần hộp `1em`) — giày ôm bàn chân, thấp hơn một chút. */
+export const SHOE_BOTTOM_DROP = 0.02;
+
+/**
+ * Đáy vành mũ/vương miện nằm dưới đỉnh đầu bao nhiêu, tính bằng phần HỘP `1em`.
+ *
+ * ⚠️ Là `tỉ lệ × chiều cao đầu` của ĐÚNG con đang hiện — không phải số tuyệt đối. Xem ghi chú ở
+ *    `HEADPIECE_DROP`: chiều cao đầu của 18 con chênh nhau 1,8 lần, nên một số tuyệt đối hoặc làm
+ *    mũ bay lơ lửng ở con đầu to, hoặc trùm xuống dưới đường mắt ở con đầu nhỏ.
+ */
+export function headpieceDrop(anchor: PetAnchor, ratio: number): number {
+  return ratio * (anchor.head.bottom - anchor.head.top);
+}
 
 /** Nơ: cách mép trái đầu bao nhiêu phần `head.w`, và cách đỉnh đầu bao nhiêu phần chiều cao đầu. */
 const BOW_INSET = 0.225;
@@ -259,7 +316,7 @@ export function accessoryBox(
       const side = fitSize(scale * anchor.head.w, ink.w);
       return boxAt(
         anchor.head.cx,
-        anchor.head.top + HEADPIECE_DROP - (ink.h * side * squashY) / 2,
+        anchor.head.top + headpieceDrop(anchor, HEADPIECE_DROP) - (ink.h * side * squashY) / 2,
         side,
         ink,
         squashY,
@@ -269,7 +326,7 @@ export function accessoryBox(
       const side = fitSize(scale * anchor.head.w, ink.w);
       return boxAt(
         anchor.head.cx,
-        anchor.head.top + HEADPIECE_DROP - (ink.h * side * squashY) / 2,
+        anchor.head.top + headpieceDrop(anchor, CROWN_DROP) - (ink.h * side * squashY) / 2,
         side,
         ink,
         squashY,
@@ -283,24 +340,36 @@ export function accessoryBox(
     }
     case 'neck': {
       /*
-        ⚠️⚠️ KHĂN QUÀNG — NEO THEO **MÉP TRÊN MỰC**, VÀ MÉP TRÊN ẤY LÀ BẤT ĐỘNG KHI ÉP DẸT.
-        Đây là cả hai nửa của bản vá "khăn quàng mặc vào trông tệ":
+        ⚠️⚠️ KHĂN QUÀNG — HAI ĐIỀU CHỈNH SO VỚI CÁC KIỂU KHÁC:
 
-          (a) Mép trên mực = `neck.y − SCARF_LIFT` (không phải tâm mực). Ghi chú đầu tệp đã giải
-              thích: canh TÂM mực vào cổ thì vòng khăn trùm lên MẶT. Canh mép trên thì vòng khăn
-              quàng đúng cổ, đuôi rủ xuống ngực.
-          (b) Ép dẹt `squashY` phải giữ mép trên ấy CỐ ĐỊNH (giống `transform-origin: top`) — nếu
-              ép quanh TÂM thì vòng khăn tụt lên, hở cổ. Vì vậy `cy` tính bằng chiều cao ĐÃ ÉP,
-              `ink.h * side * squashY`.
+        (1) NEO VÀO **`neck.w`**, KHÔNG phải `head.w`.
+            Lấy `head.w` làm chuẩn thì con ĐẦU TO có khăn to gấp rưỡi con đầu nhỏ: khỉ baby
+            `head.w = 0,543` còn mèo baby `head.w = 0,379` — trong khi CỔ hai con gần như bằng nhau
+            (`neck.w` 0,236 và 0,242). Khăn quàng QUẤN QUANH CỔ, nên cổ mới quyết định cỡ khăn.
+            Đo trên ảnh mẫu chủ dự án gửi: khăn rộng **0,26 hộp**, `neck.w` mèo = 0,242
+            ⇒ hệ số **≈ 1,05 × `neck.w`** (`_verify/ref/measure_ref_ratios.py`).
+
+        (2) MÉP TRÊN MỰC = `neck.y + SCARF_TOP_DROP` (KHÔNG phải tâm mực vào cổ).
+            Canh TÂM mực vào cổ thì vòng khăn trùm lên MẶT. Canh mép trên thì vòng khăn quàng đúng
+            cổ, đuôi rủ xuống ngực.
+
+        ⚠️ `squashY` (nếu có) phải giữ mép trên ấy CỐ ĐỊNH (giống `transform-origin: top`) — nếu
+           ép quanh TÂM thì vòng khăn tụt lên, hở cổ. Vì vậy `cy` tính bằng chiều cao ĐÃ ÉP.
       */
-      const side = fitSize(scale * anchor.head.w, ink.w);
-      const inkTop = anchor.neck.y - SCARF_LIFT;
+      const side = fitSize(scale * anchor.neck.w, ink.w);
+      const inkTop = anchor.neck.y + SCARF_TOP_DROP;
       const cy = inkTop + (ink.h * side * squashY) / 2;
       return boxAt(anchor.neck.cx, cy, side, ink, squashY);
     }
     case 'feet': {
-      const side = fitSize(scale * anchor.feet.w, ink.w);
-      return boxAt(anchor.feet.cx, anchor.feet.y, side, ink, squashY);
+      /*
+        ⚠️ MỘT CHIẾC GIÀY ⇒ phải có `feetSplit` mới đặt đúng hai bàn chân (xem `accessoryBoxes`).
+        Nhánh này chỉ là ĐƯỜNG LÙI khi không có dữ liệu chân: đặt một chiếc vào giữa hai bàn chân,
+        cỡ bằng nửa khoảng cách hai bàn chân — trông không đẹp, nhưng món KHÔNG BIẾN MẤT.
+      */
+      const side = fitSize(scale * (anchor.feet.w / 2), ink.w);
+      return boxAt(anchor.feet.cx, anchor.feet.y + SHOE_BOTTOM_DROP - (ink.h * side * squashY) / 2,
+        side, ink, squashY);
     }
     case 'back': {
       const side = fitSize(scale * anchor.torso.w, ink.w);
@@ -308,4 +377,50 @@ export function accessoryBox(
       return boxAt(anchor.torso.cx, cy, side, ink, squashY);
     }
   }
+}
+
+/**
+ * ⭐⭐ ĐẶT **MỘT MÓN** LÊN CON VẬT — trả về MỘT HAY NHIỀU HỘP.
+ *
+ * ⚠️⚠️ VÌ SAO CẦN HÀM NÀY, CHỨ KHÔNG DÙNG `accessoryBox` TRỰC TIẾP:
+ *   Món giày phải vẽ **HAI LẦN**, mỗi bàn chân một lần (lật gương cho chân phải). `accessoryBox`
+ *   trả về MỘT hộp vì nó chỉ biết `anchor` — mà `anchor.feet` là neo của **cả hai bàn chân gộp**.
+ *   Nhồi luật "hai hộp" vào `accessoryBox` sẽ làm hàm đó không còn là "một món ⇒ một hộp", và mọi
+ *   test hiện có (kiểm `ink.cx` khớp neo) đều phải viết lại.
+ *
+ * ⇒ `accessoryBox` giữ nguyên nghĩa "hộp CHÍNH". `accessoryBoxes` là lớp mỏng biết món nào cần
+ *   vẽ thêm bản thứ hai, và trả kèm cờ `mirror` để người vẽ lật ảnh.
+ */
+export interface AccessoryPlacement {
+  /** Hộp ảnh — như cũ. */
+  box: AccessoryBox;
+  /** `true` ⇒ lật ngang ảnh khi vẽ (`scaleX(-1)`). */
+  mirror: boolean;
+}
+
+export function accessoryBoxes(
+  itemId: string,
+  kind: AccessoryFitKind,
+  anchor: PetAnchor,
+  ink: AccessoryInk,
+  feet?: PetFeetAnchor,
+): AccessoryPlacement[] {
+  if (ACCESSORY_MIRRORED[itemId] === true && feet !== undefined) {
+    const scale = ACCESSORY_SCALE[kind];
+    const squashY = ACCESSORY_SQUASH[kind];
+    const boxes: AccessoryPlacement[] = [];
+    for (const [side, mirror] of [['left', false], ['right', true]] as const) {
+      const foot = feet[side];
+      // Ảnh giày vẽ ở TƯ THẾ NGHIÊNG, đáy mực là ĐẾ GIÀY ⇒ neo theo ĐÁY, không theo tâm.
+      const sideLen = fitSize(scale * foot.w, ink.w);
+      const cy =
+        anchor.feet.y + SHOE_BOTTOM_DROP - (ink.h * sideLen * squashY) / 2;
+      boxes.push({
+        box: boxAt(foot.cx, cy, sideLen, ink, squashY),
+        mirror,
+      });
+    }
+    return boxes;
+  }
+  return [{ box: accessoryBox(kind, anchor, ink), mirror: false }];
 }

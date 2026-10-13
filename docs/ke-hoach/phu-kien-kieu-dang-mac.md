@@ -107,3 +107,59 @@ phải **sinh lại sạch** bằng ImageGen.
 2. **Duyệt ngân sách**: ~15–50 credit cho 3–5 ảnh.
 3. (Tuỳ chọn) có muốn sinh **1 ảnh mẫu trước** (khăn — món tệ nhất, ~5–10 credit) để duyệt style
    rồi mới làm phần còn lại hay không.
+
+---
+
+## 7. ĐÃ LÀM — 5 ảnh đã sinh và nối vào game (2026-10-13)
+
+### Ảnh đã sinh (ImageGen, image-to-image với ảnh mẫu của chủ dự án, `input_fidelity: high`)
+
+| Tệp | Nội dung | Ghi chú |
+|---|---|---|
+| `acc-hat.webp` | Mũ vàng **chính diện**: thấy mặt trước chỏm + vành cong hai bên | thay ảnh nhìn từ trên xuống |
+| `acc-scarf.webp` | Khăn len **đang quấn**: vòng ôm cổ + hai đuôi rủ trước ngực, thấy mặt NGOÀI của len | thay ảnh nhìn vào mặt trong vòng |
+| `acc-shoes.webp` | **MỘT CHIẾC** giày, nhìn ngang, mũi hướng trái | thay ảnh cả đôi |
+| `acc-backpack.webp` | Ba lô **có hai quai** vắt qua vai | thay ảnh chỉ có thân túi |
+| `acc-wings.webp` | Cánh bướm **chính diện**, đối xứng | thay ảnh nghiêng |
+
+Ảnh cũ được sao lưu ở `_verify/ref/old-art/` (không mất).
+
+### Mã phải sửa — đúng như dự kiến, cộng thêm 2 chỗ phát sinh khi đo
+
+| Tệp | Thay đổi |
+|---|---|
+| `src/lib/accessoryFit.ts` | `ACCESSORY_SCALE`: `hat` 1,25→1,05; `neck` 0,95→1,05; `feet` 0,95→1,55 (tính cho MỘT chân) |
+| | `ACCESSORY_SQUASH.neck` 0,70 → **1** (art đã đúng góc, ép dẹt là bóp méo) |
+| | MỚI `ACCESSORY_MIRRORED` — món vẽ HAI LẦN (giày) |
+| | MỚI `headpieceDrop(anchor, ratio)` — mũ/vương miện neo theo **TỈ LỆ chiều cao đầu**, không phải số tuyệt đối |
+| | MỚI `SCARF_TOP_DROP` (thay `SCARF_LIFT`), `SHOE_BOTTOM_DROP`, `CROWN_DROP` |
+| | MỚI `accessoryBoxes()` — trả 1 HAY 2 hộp (giày trái/phải, kèm cờ `mirror`) |
+| `src/lib/petAnchors.ts` | MỚI `PET_FEET` (18 cặp) + `feetSplitFor()` — tâm & bề rộng TỪNG bàn chân |
+| `src/components/common/PetAvatar.tsx` | Dùng `accessoryBoxes`; mỗi hộp vẽ một `<span>`, phép lật gương ở **LỚP CON RIÊNG** |
+
+### Hai lỗi phát sinh khi đo — đã sửa, và bài học
+
+1. **Mũ bay lơ lửng / trùm xuống dưới mắt.** `HEADPIECE_DROP` cũ là **số tuyệt đối** (0,06). Nhưng
+   chiều cao đầu của 18 con chênh nhau **1,8 lần** (0,225 ở tiger/rồng adult → 0,400 ở khỉ baby):
+   0,06 làm mũ hở ở con đầu to, 0,10 làm vành trùm xuống dưới đường mắt ở `tiger:adult`.
+   ⇒ Đổi thành **tỉ lệ 0,25 × chiều cao đầu** (khỉ baby ra đúng 0,10 — khớp ảnh mẫu; tiger adult
+   chỉ 0,056 — luôn trên mắt). Kiểm 18/18: tỉ lệ "vành còn trên mắt" nhỏ nhất là 0,336 > 0,25.
+2. **Chiếc giày PHẢI lệch xuống 14,7% hộp và sang phải 37% hộp.** Nguyên nhân: đặt
+   `transform: scaleX(-1)` **cùng lớp** với `-translate-x-1/2 -translate-y-1/2` ⇒ `transform` inline
+   ĐÈ SẠCH phép canh tâm. Đây là **bẫy đã trả giá lần thứ hai** trong cùng một dòng code — ghi chú
+   cảnh báo đã có sẵn ở lớp trên, nhưng lớp mới lại vướng lại. Cách sửa bền: phép lật nằm ở
+   **`<span>` con riêng**, nơi `transform` đứng một mình — không phụ thuộc thứ tự `translate`/`scale`.
+
+### Đo trên trình duyệt thật (Playwright), 9 ca (6 con × bậc)
+
+* Mỗi bàn chân có **đúng một chiếc giày**, chiếc phải **lật gương** — 9/9 ca khớp tâm và đáy
+  (lệch đáy ≤ 0,4% hộp; lệch cỡ hai chiếc ≤ 13%).
+* Khăn: cao 20,6–33,4% hộp (trước khi vẽ lại: 26–73%), mép trên luôn dưới đường mắt.
+* Mũ: 30,1–57,0% hộp; kính/ba lô **không đổi** so với trước (đúng — chỉ 5 món được vẽ lại).
+
+### Còn gì để đẹp hơn (không bắt buộc)
+
+* **Vương miện, nơ, kính, kính sao, áo choàng** vẫn là ảnh chụp sản phẩm — chúng vốn là vật thể
+  đặt lên đầu/mặt/lưng nên **không lỗi**, nhưng nếu muốn đồng nhất phong cách thì vẽ lại 5 ảnh nữa.
+* **Quai ba lô nằm SAU con vật** (ba lô là món `back`). Trong ảnh mẫu quai vắt QUA VAI ở phía trước.
+  Muốn đúng như ảnh mẫu thì tách ba lô thành 2 lớp: thân túi (sau) + quai (trước).

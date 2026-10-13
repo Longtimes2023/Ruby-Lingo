@@ -213,6 +213,66 @@ export const DEFAULT_PET_ANCHOR: PetAnchor = {
   feet: { cx: 0.5207, y: 0.9192, w: 0.3904 },
 };
 
+/** Bàn chân TRÁI và PHẢI của một con × bậc (`cx` + `w` riêng từng bàn chân). */
+export interface PetFeetAnchor {
+  left: { cx: number; w: number };
+  right: { cx: number; w: number };
+}
+
+/**
+ * TÂM VÀ BỀ RỘNG TỪNG BÀN CHÂN — 18 cặp (con × bậc), khoá `"<petType>:<evolutionStage>"`.
+ *
+ * ⭐ VÌ SAO CẦN, DÙ ĐÃ CÓ `feet.w`:
+ *   `feet.w` là bề rộng của **CẢ HAI** bàn chân gộp lại — đúng cho một món "một khối" (đôi giày
+ *   trong cùng một ảnh). Nhưng khi ảnh giày là **MỘT CHIẾC** (để vẽ hai lần, lật gương cho chân
+ *   kia — cách các game dress-up lớn làm), thì phải biết **từng bàn chân nằm ở đâu**.
+ *
+ * ⚠️ ĐO THẾ NÀO (`_verify/pet-probe/probe_feet.py` → `out/split-feasibility.json`):
+ *   trong vùng chân (12% dưới cùng của mực), tìm hàng NGANG có **hai blob tách rời** rộng nhất;
+ *   `cx`/`w` là tâm và bề rộng từng blob chia cho bề rộng ảnh. Cả **18/18 con** đều tách được
+ *   (17–21 hàng có hai blob), nên bảng này KHÔNG có lỗ hổng.
+ *
+ * ⚠️ LÙI AN TOÀN: thiếu dữ liệu ⇒ `feetSplitFor` suy từ `feet` (hai bàn chân cách nhau ±22% `feet.w`,
+ *   mỗi bàn rộng 28% `feet.w`) — giày vẫn HIỆN, chỉ kém chính xác. KHÔNG được ném lỗi.
+ */
+export const PET_FEET: Readonly<Record<string, PetFeetAnchor>> = {
+  'cat:baby': { left: { cx: 0.3994, w: 0.1094 }, right: { cx: 0.6299, w: 0.1133 } },
+  'cat:adult': { left: { cx: 0.374, w: 0.1094 }, right: { cx: 0.624, w: 0.1133 } },
+  'cat:super': { left: { cx: 0.3799, w: 0.1094 }, right: { cx: 0.6484, w: 0.1152 } },
+  'dog:baby': { left: { cx: 0.3877, w: 0.1328 }, right: { cx: 0.6377, w: 0.1289 } },
+  'dog:adult': { left: { cx: 0.4209, w: 0.1016 }, right: { cx: 0.6377, w: 0.1016 } },
+  'dog:super': { left: { cx: 0.3916, w: 0.1094 }, right: { cx: 0.6455, w: 0.1094 } },
+  'pig:baby': { left: { cx: 0.4121, w: 0.0996 }, right: { cx: 0.6572, w: 0.1016 } },
+  'pig:adult': { left: { cx: 0.3594, w: 0.1074 }, right: { cx: 0.6396, w: 0.1094 } },
+  'pig:super': { left: { cx: 0.3779, w: 0.0977 }, right: { cx: 0.6445, w: 0.1035 } },
+  'tiger:baby': { left: { cx: 0.3877, w: 0.1523 }, right: { cx: 0.6475, w: 0.1523 } },
+  'tiger:adult': { left: { cx: 0.3867, w: 0.1348 }, right: { cx: 0.6504, w: 0.1387 } },
+  'tiger:super': { left: { cx: 0.3877, w: 0.1328 }, right: { cx: 0.6387, w: 0.1426 } },
+  'dragon:baby': { left: { cx: 0.3701, w: 0.1562 }, right: { cx: 0.6484, w: 0.1543 } },
+  'dragon:adult': { left: { cx: 0.4297, w: 0.1348 }, right: { cx: 0.7031, w: 0.166 } },
+  'dragon:super': { left: { cx: 0.4287, w: 0.1562 }, right: { cx: 0.6914, w: 0.166 } },
+  'monkey:baby': { left: { cx: 0.377, w: 0.1543 }, right: { cx: 0.6113, w: 0.1543 } },
+  'monkey:adult': { left: { cx: 0.3779, w: 0.1445 }, right: { cx: 0.6357, w: 0.1406 } },
+  'monkey:super': { left: { cx: 0.3867, w: 0.127 }, right: { cx: 0.6514, w: 0.1719 } },
+};
+
+/**
+ * Hai bàn chân của một cặp (con × bậc). Thiếu dữ liệu ⇒ suy từ `feet` (KHÔNG ném lỗi).
+ *
+ * ⚠️ Tỉ lệ lùi (0,22 / 0,28) lấy từ TRUNG BÌNH 18 neo đã đo: hai tâm cách nhau ≈ 0,44 `feet.w`,
+ *    mỗi bàn rộng ≈ 0,28 `feet.w` ⇒ nửa khoảng cách 0,22. Nhờ vậy món giày một-chiếc vẫn nằm
+ *    đúng chỗ ngay cả khi bảng trên thiếu một khoá.
+ */
+export function feetSplitFor(petType: PetType, evolutionStage: EvolutionStage): PetFeetAnchor {
+  const found = PET_FEET[`${petType}:${evolutionStage}`];
+  if (found !== undefined) return found;
+  const { w } = petAnchorFor(petType, evolutionStage).feet;
+  return {
+    left: { cx: 0.5 - 0.22 * w, w: 0.28 * w },
+    right: { cx: 0.5 + 0.22 * w, w: 0.28 * w },
+  };
+}
+
 /**
  * Neo của một cặp (con × bậc). Thiếu dữ liệu ⇒ `DEFAULT_PET_ANCHOR` (KHÔNG ném lỗi).
  *

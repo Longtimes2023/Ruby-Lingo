@@ -89,15 +89,15 @@ import { ACCESSORY_SLOTS } from '@shared/pet-slots.js';
 import type { AccessorySlot, EvolutionStage, PetType, ShopItem } from '@shared/types/reward.js';
 
 import {
-  accessoryBox,
+  accessoryBoxes,
   accessoryFitOf,
   DEFAULT_ACCESSORY_INK,
   defaultKindForSlot,
 } from '../../lib/accessoryFit.js';
 import { cn } from '../../lib/cn.js';
 import { petArtworkUrl } from '../../lib/petArtwork.js';
-import { petAnchorFor } from '../../lib/petAnchors.js';
-import type { PetAnchor } from '../../lib/petAnchors.js';
+import { feetSplitFor, petAnchorFor } from '../../lib/petAnchors.js';
+import type { PetAnchor, PetFeetAnchor } from '../../lib/petAnchors.js';
 import { ShopArtwork } from '../../lib/shopArtwork.js';
 
 /**
@@ -296,6 +296,15 @@ export function PetAvatar({
   /** Neo của ĐÚNG con × bậc đang hiện. Thiếu dữ liệu ⇒ `DEFAULT_PET_ANCHOR` (không ném lỗi). */
   const anchor = petAnchorFor(petType, evolutionStage);
 
+  /**
+   * Hai bàn chân RIÊNG của đúng con × bậc đang hiện — cần cho món phải vẽ hai lần (giày).
+   *
+   * ⚠️ `anchor.feet` là neo của **cả hai bàn chân gộp**, không dùng được để đặt hai chiếc giày ở
+   *    hai chỗ. `feetSplitFor` trả tâm + bề rộng TỪNG bàn chân (đo cho 18/18 con), và tự lùi về
+   *    tỉ lệ trung bình khi thiếu dữ liệu — không bao giờ ném lỗi.
+   */
+  const feet = feetSplitFor(petType, evolutionStage);
+
   const isSuper = evolutionStage === 'super';
 
   /*
@@ -332,7 +341,13 @@ export function PetAvatar({
         data-accessory-layer="behind"
         className="pointer-events-none absolute inset-0 z-[1]"
       >
-        <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" anchor={anchor} />
+        <AccessoryLayers
+              slots={ACCESSORY_SLOTS}
+              worn={worn}
+              only="behind"
+              anchor={anchor}
+              feet={feet}
+            />
       </div>
 
       {/*
@@ -350,7 +365,13 @@ export function PetAvatar({
         data-accessory-layer="front"
         className="pointer-events-none absolute inset-0 z-[3]"
       >
-        <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" anchor={anchor} />
+        <AccessoryLayers
+              slots={ACCESSORY_SLOTS}
+              worn={worn}
+              only="inFront"
+              anchor={anchor}
+              feet={feet}
+            />
       </div>
 
       {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
@@ -512,12 +533,15 @@ function AccessoryLayers({
   worn,
   only,
   anchor,
+  feet,
 }: {
   slots: readonly AccessorySlot[];
   worn: Map<AccessorySlot, ShopItem[]>;
   only: 'behind' | 'inFront';
   /** Neo của con × bậc đang hiện (`petAnchorFor`) — nguồn toạ độ duy nhất. */
   anchor: PetAnchor;
+  /** Tâm + bề rộng TỪNG bàn chân (`feetSplitFor`) — cần cho món vẽ hai lần (giày). */
+  feet: PetFeetAnchor;
 }) {
   return (
     <>
@@ -544,7 +568,19 @@ function AccessoryLayers({
                */
               const fit = accessoryFitOf(item.id);
               const kind = fit?.kind ?? defaultKindForSlot(slot);
-              const box = accessoryBox(kind, anchor, fit?.ink ?? DEFAULT_ACCESSORY_INK);
+              /*
+                ⚠️⚠️ `accessoryBoxes` (số nhiều), KHÔNG phải `accessoryBox`. Món như GIÀY phải vẽ
+                   HAI LẦN — mỗi bàn chân một chiếc, lần thứ hai lật gương — vì ảnh giày nay là
+                   MỘT CHIẾC (xem `ACCESSORY_MIRRORED`). Nhồi luật đó vào `accessoryBox` sẽ làm
+                   "một món ⇒ một hộp" không còn đúng, và mọi test neo phải viết lại.
+              */
+              const placements = accessoryBoxes(
+                item.id,
+                kind,
+                anchor,
+                fit?.ink ?? DEFAULT_ACCESSORY_INK,
+                feet,
+              );
               return (
                 <span
                   key={item.id}
@@ -564,27 +600,50 @@ function AccessoryLayers({
                     zIndex,
                   }}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute block -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      left: `${box.cx * 100}%`,
-                      top: `${box.cy * 100}%`,
-                      width: `${box.side * 100}%`,
-                      /*
-                        ⚠️⚠️ CHIỀU CAO = `side × squashY`, KHÔNG phải `side`. Hộp không còn luôn
-                        vuông: khăn quàng bị ÉP DẸT theo chiều dọc (`ACCESSORY_SQUASH.neck`) để vòng
-                        khăn thành dải ôm cổ thay vì một cục len phủ kín ngực — xem ghi chú dài ở
-                        `accessoryFit.ts`. `ShopArtwork` vẽ `h-full w-full object-contain` nên ảnh
-                        vuông sẽ tự bị ép theo hộp, không cần `transform` nào ở đây (và KHÔNG được
-                        thêm `transform`: lớp `-translate-x-1/2 -translate-y-1/2` phía trên đang
-                        dùng chính thuộc tính đó để canh tâm).
-                      */
-                      height: `${box.side * box.squashY * 100}%`,
-                    }}
-                  >
-                    <ShopArtwork item={item} className="h-full w-full object-contain" />
-                  </span>
+                  {placements.map((placement, partIndex) => (
+                    <span
+                      // Thứ tự là DANH TÍNH DUY NHẤT của các bản vẽ (món đã có `key` ở lớp trên).
+                      key={partIndex}
+                      aria-hidden="true"
+                      className="absolute block -translate-x-1/2 -translate-y-1/2"
+                      style={{
+                        left: `${placement.box.cx * 100}%`,
+                        top: `${placement.box.cy * 100}%`,
+                        width: `${placement.box.side * 100}%`,
+                        /*
+                          ⚠️⚠️ CHIỀU CAO = `side × squashY`, KHÔNG phải `side`. Hộp không còn luôn
+                          vuông khi một kiểu đặt cần ÉP DẸT theo chiều dọc (`ACCESSORY_SQUASH`;
+                          hiện mọi kiểu = 1 vì art đã đúng góc, nhưng cơ chế được giữ để lần sau
+                          gặp ảnh sai góc thì chỉ cần điền một số). `ShopArtwork` vẽ
+                          `h-full w-full object-contain` nên ảnh vuông tự bị ép theo hộp.
+                        */
+                        height: `${placement.box.side * placement.box.squashY * 100}%`,
+                        /*
+                          ⚠️⚠️ KHÔNG ĐƯỢC đặt `transform` Ở LỚP NÀY. Lớp này canh tâm bằng
+                          `-translate-x-1/2 -translate-y-1/2`, và một `transform` inline sẽ ĐÈ SẠCH
+                          phép canh tâm đó (Tailwind biên dịch lớp kia thành chính thuộc tính
+                          `transform`). Đây là bẫy đã trả giá HAI LẦN — lần thứ hai ngay trong bản
+                          vá giày: viết `transform: 'scaleX(-1)'` ở đây làm chiếc giày PHẢI mất canh
+                          tâm, lệch xuống 14,7% hộp và lệch sang phải 37% hộp so với chiếc trái.
+                          Phép lật nằm ở LỚP CON bên dưới — xem ghi chú ở đó.
+                        */
+                      }}
+                    >
+                      {/*
+                        ⚠️ LỚP LẬT GƯƠNG — một `<span>` riêng, `transform` đứng MỘT MÌNH (không
+                        lớp nào khác trên nó dùng `transform`). Nhờ vậy thứ tự `translate`/`scaleX`
+                        không còn là câu hỏi, và canh tâm ở lớp cha vẫn nguyên vẹn.
+                        `inline-block` để phần tử nhận đúng kích thước của lớp cha (`h-full w-full`).
+                      */}
+                      <span
+                        aria-hidden="true"
+                        className="block h-full w-full"
+                        style={placement.mirror ? { transform: 'scaleX(-1)' } : undefined}
+                      >
+                        <ShopArtwork item={item} className="h-full w-full object-contain" />
+                      </span>
+                    </span>
+                  ))}
                 </span>
               );
             })}

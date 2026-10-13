@@ -17,20 +17,19 @@
  * emoji đã `aria-hidden`, nên nếu nhãn sai thì bé khiếm thị không nghe được gì khi bé vừa mua cho
  * Momo một món đồ mới.
  */
-
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-
 import '@/i18n/index.js';
 import { PetAvatar } from '@/components/common/PetAvatar.js';
 import { petArtworkUrl } from '@/lib/petArtwork.js';
 import {
-  ACCESSORY_SQUASH,
+  ACCESSORY_SCALE,
   accessoryFitOf,
   DEFAULT_ACCESSORY_INK,
   HEADPIECE_DROP as HAT_DROP,
+  headpieceDrop,
 } from '@/lib/accessoryFit.js';
 import { petAnchorFor } from '@/lib/petAnchors.js';
 import { EVOLUTION_STAGES, stageDefinition } from '@shared/content/levels.js';
@@ -44,14 +43,12 @@ import {
 import { shopItemsFileSchema } from '@shared/schemas/content.js';
 import type { EvolutionStage, ShopItem } from '@shared/types/reward.js';
 import { shopArtworkOf } from '@/lib/shopArtworkManifest.js';
-
 /** Vật phẩm THẬT đọc từ danh mục — cùng lý do như `shop-item-card.test.tsx`. */
 function item(id: string): ShopItem {
   const found = getShopItem(id);
   if (!found) throw new Error(`shop-items.json thiếu "${id}" — fixture của test đã lệch dữ liệu`);
   return found;
 }
-
 /**
  * Đọc hộp MỰC NHÌN THẤY của một món từ DOM, quy về hệ 0..1 của hộp `1em` như `petAnchors.ts`.
  *
@@ -92,7 +89,6 @@ function inkBoxOf(container: HTMLElement, itemId: string) {
     bottom: cy + (ink.h * height) / 2,
   };
 }
-
 /**
  * ⚠️ Mặc định `'monkey'` × `'baby'` (🐵) là CỐ Ý: các khẳng định cũ trong tệp này nói về "Momo"
  *    nói chung, và chúng phải tiếp tục kiểm đúng điều chúng định kiểm. `petEmojiFor('monkey',
@@ -110,11 +106,9 @@ function renderAvatar(
 ) {
   return render(<PetAvatar petType={petType} evolutionStage={stage} items={items} />);
 }
-
 // =============================================================================
 // 1. Canh giữ DỮ LIỆU — không món nào được "biến mất" khỏi Momo
 // =============================================================================
-
 describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
   it('MỌI phụ kiện trong danh mục đều có một vị trí trên người Momo', () => {
     const accessories = SHOP_ITEMS.filter((i) => i.category === 'accessory');
@@ -123,14 +117,12 @@ describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
     // Thiếu `slot` ⇒ món này KHÔNG BAO GIỜ hiện trên Momo. Không có lỗi nào khác báo điều đó.
     expect(missing).toEqual([]);
   });
-
   it('MỌI món trang trí đều có một vị trí trong cảnh', () => {
     const decorations = SHOP_ITEMS.filter((i) => i.category === 'decoration');
     expect(decorations.length).toBeGreaterThan(0);
     const missing = decorations.filter((i) => decorationSlotOf(i) === null).map((i) => i.id);
     expect(missing).toEqual([]);
   });
-
   it('KHÔNG món đồ ăn nào có vị trí (đồ ăn bị tiêu khi cho ăn, không phải để mặc)', () => {
     const food = SHOP_ITEMS.filter((i) => i.category === 'food');
     expect(food.length).toBeGreaterThan(0);
@@ -139,7 +131,6 @@ describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
       .map((i) => i.id);
     expect(wrong).toEqual([]);
   });
-
   it('vị trí đã gán đúng như thiết kế (đọc thẳng từ dữ liệu)', () => {
     expect(accessorySlotOf(item('acc-hat'))).toBe('head');
     expect(accessorySlotOf(item('acc-bow'))).toBe('head');
@@ -152,7 +143,6 @@ describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
     expect(accessorySlotOf(item('acc-cape'))).toBe('back');
     expect(accessorySlotOf(item('acc-wings'))).toBe('back');
   });
-
   it('trang trí: đồ trên cao vào hàng "sky", đồ dưới đất vào hàng "ground"', () => {
     expect(decorationSlotOf(item('dec-balloon'))).toBe('sky');
     expect(decorationSlotOf(item('dec-rainbow'))).toBe('sky');
@@ -161,37 +151,31 @@ describe('PetAvatar — canh giữ dữ liệu danh mục', () => {
     expect(decorationSlotOf(item('dec-aquarium'))).toBe('ground');
     expect(decorationSlotOf(item('dec-castle'))).toBe('ground');
   });
-
   it('một món KHÔNG BAO GIỜ vừa là phụ kiện vừa là trang trí', () => {
     const both = SHOP_ITEMS.filter(
       (i) => accessorySlotOf(i) !== null && decorationSlotOf(i) !== null,
     ).map((i) => i.id);
     expect(both).toEqual([]);
   });
-
   it('món không thuộc nhóm ⇒ luôn trả `null`', () => {
     expect(accessorySlotOf(item('food-banana'))).toBeNull();
     expect(accessorySlotOf(item('dec-balloon'))).toBeNull();
     expect(decorationSlotOf(item('food-banana'))).toBeNull();
     expect(decorationSlotOf(item('acc-hat'))).toBeNull();
   });
-
   it('⚠️ vị trí SAI NHÓM ⇒ trả `null`, không được trả một vị trí dùng được', () => {
     // Kiểu dữ liệu này đã bị schema chặn, nhưng hàm tra cứu chạy TRONG lúc render — ném lỗi ở đó
     // là trắng cả màn hình của bé, nên nó phải tự vệ. Nếu phép kiểm `Set` biến mất, một cái lâu
     // đài bị dán nhãn sai sẽ được vẽ LÊN ĐẦU Momo.
     const wrongForAccessory: ShopItem = { ...item('acc-hat'), slot: 'sky' };
     expect(accessorySlotOf(wrongForAccessory)).toBeNull();
-
     const wrongForDecoration: ShopItem = { ...item('dec-balloon'), slot: 'head' };
     expect(decorationSlotOf(wrongForDecoration)).toBeNull();
   });
 });
-
 // =============================================================================
 // 2. Vẽ
 // =============================================================================
-
 describe('PetAvatar — vẽ', () => {
   it('ánh xạ đủ mọi phụ kiện và đồ trang trí sang WebP; đồ ăn tiếp tục dùng emoji', () => {
     const artItems = SHOP_ITEMS.filter(
@@ -214,7 +198,6 @@ describe('PetAvatar — vẽ', () => {
       expect(accessorySlotOf(shopItem)).not.toBe('back');
     }
   });
-
   it('đủ ảnh đứng cho mọi pet × stage và component dùng đúng từng URL', () => {
     const publicDir = join(process.cwd(), 'public');
     for (const pet of PET_DEFINITIONS) {
@@ -232,7 +215,6 @@ describe('PetAvatar — vẽ', () => {
       }
     }
   });
-
   it('图片载入失败时保留表情符号回退', () => {
     const { container } = renderAvatar();
     const image = container.querySelector<HTMLImageElement>(
@@ -244,23 +226,27 @@ describe('PetAvatar — vẽ', () => {
     expect(container.querySelector('span[hidden]')).not.toBeInTheDocument();
     expect(screen.getByText(petEmojiFor('monkey', 'baby'))).toBeInTheDocument();
   });
-
   it('mặc mũ ⇒ ảnh WebP được vẽ ở slot head, đáy vành chạm đúng trán', () => {
     const { container } = renderAvatar([item('acc-hat')]);
     const artwork = container.querySelector('img[src="/assets/pets/shop/acc-hat.webp"]');
     expect(artwork).toBeInTheDocument();
     expect(container.querySelector('span[hidden]')).toBeInTheDocument();
-
     // ⚠️ KHẲNG ĐỊNH THEO NEO, KHÔNG THEO MỘT CON SỐ CỨNG. Bản trước khoá vào `top-[-60%]` — đúng
     //    cho MỘT bảng dùng chung, và chính con số đó là lỗi chủ dự án báo ("mũ lơ lửng"). Nay mũ
     //    phải neo vào `head.top` của ĐÚNG con đang hiện ⇒ đỏ ngay nếu ai đó lắp lại bảng cứng.
     const box = inkBoxOf(container, 'acc-hat');
     const anchor = petAnchorFor('monkey', 'baby');
-    expect(Math.abs(box.bottom - (anchor.head.top + HAT_DROP))).toBeLessThanOrEqual(0.02);
-    expect(box.w).toBeGreaterThanOrEqual(1.15 * anchor.head.w);
-    expect(box.w).toBeLessThanOrEqual(1.35 * anchor.head.w);
+    /*
+      ⚠️⚠️ ĐÁY VÀNH TÍNH BẰNG **TỈ LỆ CHIỀU CAO ĐẦU**, không phải một số tuyệt đối.
+      Chiều cao đầu của 18 con chênh nhau 1,8 lần, nên số tuyệt đối không thể đúng cho cả hai đầu
+      mút: 0,06 làm mũ bay lơ lửng ở con đầu to, 0,10 làm vành trùm xuống dưới mắt ở con đầu nhỏ.
+      Nên phép kiểm phải đi qua `headpieceDrop(anchor, HAT_DROP)` — dùng đúng công thức production.
+    */
+    expect(Math.abs(box.bottom - (anchor.head.top + headpieceDrop(anchor, HAT_DROP)))).toBeLessThanOrEqual(0.02);
+    // Cỡ mực mũ quanh 1,05 × `head.w` (đo lại theo ảnh mẫu chủ dự án — xem `ACCESSORY_SCALE`).
+    expect(box.w).toBeGreaterThanOrEqual(ACCESSORY_SCALE.hat * anchor.head.w - 0.02);
+    expect(box.w).toBeLessThanOrEqual(ACCESSORY_SCALE.hat * anchor.head.w + 0.02);
   });
-
   it('⭐ kính nằm ĐÚNG ĐƯỜNG MẮT và đúng cỡ — trên 3 con lệch nhau nhất', () => {
     // ⚠️ VÌ SAO BA CON NÀY: `monkey-baby` (cx 0,488 / mực rộng 60,7%), `cat-super` (cx 0,509),
     //    `dragon-baby` (cx 0,496 / mực rộng 66,8%) — bộ ba lệch nhau nhiều nhất về tâm thân và bề
@@ -274,7 +260,6 @@ describe('PetAvatar — vẽ', () => {
       const { container, unmount } = renderAvatar([item('acc-glasses')], stage, petType);
       const anchor = petAnchorFor(petType, stage);
       const box = inkBoxOf(container, 'acc-glasses');
-
       // Tâm kính trùng đường mắt / trục mắt, sai số ≤ 3% khoảng cách hai mắt.
       expect(
         Math.abs(box.cy - anchor.eyes.y),
@@ -290,8 +275,7 @@ describe('PetAvatar — vẽ', () => {
       unmount();
     }
   });
-
-  it('cả 9 ảnh đều hiện và wrapper stacking giữ mọi món back sau pet, slot trước pet', () => {
+  it('cả 10 ảnh đều hiện (giày vẽ HAI LẦN) và wrapper stacking giữ mọi món back sau pet', () => {
     const accessoryIds = [
       'acc-bow',
       'acc-hat',
@@ -303,11 +287,16 @@ describe('PetAvatar — vẽ', () => {
       'acc-cape',
       'acc-wings',
     ];
+    /*
+      ⚠️ 9 MÓN nhưng **10 ảnh**: `acc-shoes` nay là MỘT CHIẾC giày và được vẽ HAI LẦN — mỗi bàn
+      chân một chiếc, lần thứ hai lật gương (xem `ACCESSORY_MIRRORED`). Bản cũ là một đôi trong một
+      ảnh, nên chỉ có 9 `<img>`. Đây KHÔNG phải đếm nhầm — số này là hệ quả của bản vá.
+    */
     for (const pet of PET_DEFINITIONS) {
       const wornItems = accessoryIds.map(item);
       for (const stage of EVOLUTION_STAGES) {
         const { container, unmount } = renderAvatar(wornItems, stage.stage, pet.id);
-        expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(9);
+        expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(10);
         const backWrapper = container.querySelector('[data-accessory-layer="behind"]');
         const frontWrapper = container.querySelector('[data-accessory-layer="front"]');
         const petLayer = container.querySelector('.z-\\[2\\]');
@@ -320,7 +309,6 @@ describe('PetAvatar — vẽ', () => {
       }
     }
   });
-
   it('nhiều món CÙNG một vị trí thì chồng lệch có giới hạn và giữ đủ nội dung', () => {
     renderAvatar([item('acc-bow'), item('acc-hat'), item('acc-crown')]);
     const headLayers = document.querySelectorAll('[data-accessory-id^="acc-"]');
@@ -333,7 +321,6 @@ describe('PetAvatar — vẽ', () => {
     }
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Nơ, Mũ, Vương miện');
   });
-
   it('đồ trang trí truyền vào thì BỊ BỎ QUA (trang trí nay nằm trong "Góc phòng của bé")', () => {
     // ⚠️ ĐÃ XOÁ TEST CŨ: `renderAvatar([dec-balloon, dec-plant]); getByText('🎈')`.
     //    Nó KHÔNG chứng minh trang trí được VẼ — `ShopArtwork` luôn render một `<span hidden>` chứa
@@ -347,63 +334,52 @@ describe('PetAvatar — vẽ', () => {
     expect(screen.queryByText('🎈')).not.toBeInTheDocument();
     expect(document.querySelectorAll('[data-accessory-id]')).toHaveLength(0);
   });
-
   it('đồ ăn truyền vào thì BỊ BỎ QUA (Momo không đội quả chuối)', () => {
     renderAvatar([item('food-banana')]);
     expect(screen.queryByText('🍌')).not.toBeInTheDocument();
     expect(document.querySelectorAll('[data-accessory-id]')).toHaveLength(0);
   });
 });
-
 // =============================================================================
 // 3. Nhãn đọc lên
 // =============================================================================
-
 describe('PetAvatar — nhãn cho trình đọc màn hình', () => {
   it('luôn là một ảnh có tên đọc được (role="img")', () => {
     renderAvatar();
     expect(screen.getByRole('img')).toBeInTheDocument();
   });
-
   it('chưa có gì ⇒ nói Momo đang chơi trong nhà', () => {
     renderAvatar();
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang chơi trong nhà');
   });
-
   it('có mặc ⇒ đọc tên từng món đang dùng', () => {
     renderAvatar([item('acc-hat'), item('acc-scarf')]);
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Mũ, Khăn quàng');
   });
-
   it('⚠️ đồ trang trí KHÔNG được đọc lên (không vẽ thì không được nói là có)', () => {
     // Trang trí nay nằm trong "Góc phòng của bé" — nhãn cũ "Quanh nhà có Bóng bay" nói về những
     // món KHÔNG hề được vẽ trong khối này. Nhãn sai chỗ này là bịa ra một sự thật thị giác.
     renderAvatar([item('dec-balloon')]);
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang chơi trong nhà');
   });
-
   it('cả phụ kiện lẫn trang trí ⇒ CHỈ đọc phần phụ kiện', () => {
     renderAvatar([item('acc-hat'), item('dec-plant')]);
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Mũ');
   });
-
   it('thứ tự đọc theo VỊ TRÍ, không theo thứ tự túi đồ truyền vào', () => {
     // Truyền mũ trước giày, nhưng `ACCESSORY_SLOTS` xếp "feet" trước "head".
     // Câu văn phải ổn định giữa các lần mua — cùng bộ đồ thì luôn cùng một câu.
     renderAvatar([item('acc-hat'), item('acc-shoes')]);
     expect(screen.getByRole('img')).toHaveAccessibleName('Khỉ Momo đang dùng: Giày, Mũ');
   });
-
   it('mọi emoji bên trong đều aria-hidden (không bị đọc lặp)', () => {
     const { container } = renderAvatar([item('acc-hat'), item('dec-balloon')]);
     expect(container.querySelectorAll('[aria-hidden="true"]').length).toBeGreaterThan(0);
   });
 });
-
 // =============================================================================
 // 4. Tiến hoá (T066)
 // =============================================================================
-
 describe('PetAvatar — tiến hoá (T066 · T04)', () => {
   it('⭐ 每个pet × stage仍保留正确的表情回退', () => {
     for (const pet of PET_DEFINITIONS) {
@@ -416,19 +392,16 @@ describe('PetAvatar — tiến hoá (T066 · T04)', () => {
       }
     }
   });
-
   it('bậc "super" có ✨ — dấu hiệu thị giác cho đỉnh tiến hoá', () => {
     // ✨ là phần TRANG TRÍ do `PetAvatar` thêm, KHÔNG nằm trong `pets.json`. Nó phải hiện ở MỌI
     // con khi đạt bậc cuối — kể cả con có `iconSuper` trùng `iconAdult` (Khỉ, Mèo, Cún…).
     renderAvatar([], 'super');
     expect(screen.getByText('✨')).toBeInTheDocument();
   });
-
   it('hiện TÊN giai đoạn bằng chữ thật (bé và phụ huynh đều đọc được)', () => {
     renderAvatar([], 'baby');
     expect(screen.getByText('Nhóc con')).toBeInTheDocument();
   });
-
   it('⭐ canh giữ DỮ LIỆU: MỌI giai đoạn trong `xp-levels.json` đều tra được', () => {
     // BA bậc (baby/adult/super) — `'egg'` đã bị bỏ ở T04 (xem `shared/types/reward.ts`). Nếu ai
     // đó thêm giai đoạn thứ tư vào JSON mà quên luồng tra cứu, `stageDefinition` sẽ ném ngay ở đây.
@@ -437,7 +410,6 @@ describe('PetAvatar — tiến hoá (T066 · T04)', () => {
       expect(stageDefinition(definition.stage).name_vi).toBe(definition.name_vi);
     }
   });
-
   it('tên giai đoạn đến từ JSON, KHÔNG từ i18n (một nguồn sự thật duy nhất)', () => {
     // Khẳng định thẳng vào giá trị của giai đoạn cuối: nếu ai đó "tiện tay" khai lại tên giai đoạn
     // trong `vi.ts` rồi hiển thị bản i18n, chữ hiện ra sẽ lệch khi JSON đổi — test này bắt được.
@@ -445,7 +417,6 @@ describe('PetAvatar — tiến hoá (T066 · T04)', () => {
     renderAvatar([], last!.stage);
     expect(screen.getByText(last!.name_vi)).toBeInTheDocument();
   });
-
   it('⚠️ chú thích nằm NGOÀI khối `role="img"` (con của nó bị coi là trang trí)', () => {
     renderAvatar([], 'adult');
     const scene = screen.getByRole('img');
@@ -455,11 +426,9 @@ describe('PetAvatar — tiến hoá (T066 · T04)', () => {
     expect(screen.getByText('Trưởng thành')).toBeInTheDocument();
   });
 });
-
 // =============================================================================
 // 5. Cổng DỮ LIỆU — danh mục SAI phải bị TỪ CHỐI, không phải bị bỏ qua
 // =============================================================================
-
 /**
  * ⚠️ VÌ SAO PHẢI KIỂM CẢ SCHEMA, KHÔNG CHỈ KIỂM DANH MỤC ĐANG CÓ:
  *   Nhóm 1 chứng minh dữ liệu HIỆN TẠI đúng. Nó KHÔNG chứng minh được rằng một món SAI sẽ bị
@@ -472,7 +441,6 @@ describe('PetAvatar — cổng dữ liệu: shopItemsFileSchema từ chối danh
     stars: { name_vi: 'Sao', icon: '⭐' },
     acorns: { name_vi: 'Hạt dẻ', icon: '🌰' },
   };
-
   /** Một danh mục tối thiểu, chỉ khác nhau ở `itemPatch` — để mỗi test chỉ nói MỘT điều. */
   function fileWith(itemPatch: Record<string, unknown>) {
     return {
@@ -492,17 +460,14 @@ describe('PetAvatar — cổng dữ liệu: shopItemsFileSchema từ chối danh
       ],
     };
   }
-
   it('phụ kiện CÓ vị trí hợp lệ ⇒ qua', () => {
     expect(shopItemsFileSchema.safeParse(fileWith({ slot: 'head' })).success).toBe(true);
   });
-
   it('trang trí CÓ vị trí hợp lệ ⇒ qua', () => {
     expect(
       shopItemsFileSchema.safeParse(fileWith({ category: 'decoration', slot: 'sky' })).success,
     ).toBe(true);
   });
-
   it('⚠️ phụ kiện THIẾU vị trí ⇒ TỪ CHỐI, và lỗi phải nói ĐÚNG là THIẾU', () => {
     const result = shopItemsFileSchema.safeParse(fileWith({}));
     expect(result.success).toBe(false);
@@ -510,7 +475,6 @@ describe('PetAvatar — cổng dữ liệu: shopItemsFileSchema từ chối danh
       const issue = result.error.issues.find((i) => i.path.join('.') === 'items.0.slot');
       // Trỏ đúng chỗ là điều kiện để thông báo lỗi còn dùng được khi danh mục có 500 món.
       expect(issue).toBeDefined();
-
       /**
        * ⚠️ PHẢI KHẲNG ĐỊNH CẢ CÂU CHỮ, KHÔNG CHỈ "bị từ chối".
        *
@@ -525,36 +489,29 @@ describe('PetAvatar — cổng dữ liệu: shopItemsFileSchema từ chối danh
       expect(issue?.message).toContain('phải có "slot"');
     }
   });
-
   it('⚠️ trang trí THIẾU vị trí ⇒ TỪ CHỐI', () => {
     expect(shopItemsFileSchema.safeParse(fileWith({ category: 'decoration' })).success).toBe(false);
   });
-
   it('⚠️ phụ kiện gắn vị trí của TRANG TRÍ ⇒ TỪ CHỐI', () => {
     expect(shopItemsFileSchema.safeParse(fileWith({ slot: 'sky' })).success).toBe(false);
   });
-
   it('⚠️ trang trí gắn vị trí của PHỤ KIỆN ⇒ TỪ CHỐI', () => {
     expect(
       shopItemsFileSchema.safeParse(fileWith({ category: 'decoration', slot: 'head' })).success,
     ).toBe(false);
   });
-
   it('⚠️ đồ ăn có vị trí ⇒ TỪ CHỐI (quả chuối không đội lên đầu ai)', () => {
     expect(
       shopItemsFileSchema.safeParse(fileWith({ category: 'food', slot: 'head' })).success,
     ).toBe(false);
   });
-
   it('đồ ăn KHÔNG có vị trí ⇒ qua (đó mới là trạng thái đúng)', () => {
     expect(shopItemsFileSchema.safeParse(fileWith({ category: 'food' })).success).toBe(true);
   });
 });
-
 // =============================================================================
 // 6. Canh giữ TỆP ẢNH — manifest và đĩa phải khớp NHAU theo CẢ HAI CHIỀU
 // =============================================================================
-
 /**
  * ⚠️ VÌ SAO KHÔNG CHỈ "existsSync trên manifest là đủ":
  *   `existsSync` bắt được "manifest trỏ tới tệp không tồn tại", nhưng KHÔNG bắt được chiều ngược
@@ -570,7 +527,6 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
     readdirSync(join(publicDir, dir))
       .filter((f) => f.endsWith(ext))
       .sort();
-
   function petArtworkUrls(): string[] {
     const urls: string[] = [];
     for (const pet of PET_DEFINITIONS) {
@@ -582,7 +538,6 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
     }
     return urls;
   }
-
   function shopArtworkUrls(): string[] {
     return SHOP_ITEMS.filter((i) => i.category === 'accessory' || i.category === 'decoration').map(
       (i) => {
@@ -592,7 +547,6 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
       },
     );
   }
-
   it('MỌI URL thú cưng là .webp và trỏ tới tệp CÓ THẬT', () => {
     const urls = petArtworkUrls();
     expect(urls.length).toBeGreaterThan(0);
@@ -601,7 +555,6 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
       expect(existsSync(abs(url)), `${url} KHÔNG tồn tại trên đĩa`).toBe(true);
     }
   });
-
   it('MỌI URL cửa hàng là .webp và trỏ tới tệp CÓ THẬT', () => {
     const urls = shopArtworkUrls();
     expect(urls.length).toBeGreaterThan(0);
@@ -610,53 +563,58 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
       expect(existsSync(abs(url)), `${url} KHÔNG tồn tại trên đĩa`).toBe(true);
     }
   });
-
   it('⚠️ đĩa và manifest KHỚP từng tên (không thừa, không thiếu)', () => {
     const petManifest = petArtworkUrls()
       .map((u) => u.split('/').pop()!)
       .sort();
     expect(basenamesIn('assets/pets', '.webp')).toEqual(petManifest);
-
     const shopManifest = shopArtworkUrls()
       .map((u) => u.split('/').pop()!)
       .sort();
     expect(basenamesIn('assets/pets/shop', '.webp')).toEqual(shopManifest);
   });
-
   it('⚠️ KHÔNG còn tệp .png sót lại trong thư mục pets (đã chuyển hẳn sang WebP)', () => {
     expect(basenamesIn('assets/pets', '.png')).toEqual([]);
     expect(basenamesIn('assets/pets/shop', '.png')).toEqual([]);
   });
 });
-
 // =============================================================================
-// 7. Khăn quàng bị ÉP DẸT — hộp không còn luôn vuông
+// 7. Hộp phụ kiện — kích thước, ép dẹt, và giày vẽ HAI LẦN
 // =============================================================================
-
 /**
- * ⚠️⚠️ TEST NÀY KHOÁ MỘT CHI TIẾT DỄ BỊ "SỬA LẠI CHO GỌN".
+ * ⚠️⚠️ NHÓM NÀY KHOÁ NHỮNG CHI TIẾT DỄ BỊ "SỬA LẠI CHO GỌN" TRONG `PetAvatar`.
  *
- * `accessoryBox('neck', …)` trả `squashY` (0,7 cho khăn). Component PHẢI dùng nó cho chiều cao hộp.
- * Ai đó "dọn dẹp" đổi `height: side * squashY` về `height: side` (cho khớp `width`) thì:
- *   • test này ĐỎ ngay, thay vì
- *   • mắt bé thấy cục len phủ kín ngực như trước bản vá, và CI vẫn xanh.
+ * `accessoryBoxes` trả `squashY` và cờ `mirror` — component PHẢI dùng CẢ HAI:
+ *   • bỏ `squashY`  ⇒ món bị bóp méo (khi có kiểu đặt cần ép dẹt)
+ *   • bỏ `mirror`   ⇒ bé chỉ có giày ở MỘT chân, chân kia trần
+ * Cả hai đều là lỗi KHÔNG có lỗi biên dịch và KHÔNG có cảnh báo lint — test này là cổng duy nhất.
  *
- * Đọc `height` THẲNG TỪ DOM (không suy từ `width`) — vì đúng cái cần kiểm là hai số đó KHÁC nhau.
+ * Đọc `height` THẲNG TỪ DOM (không suy từ `width`), và ĐẾM `<img>` (không suy từ số món).
  */
-describe('PetAvatar — khăn quàng bị ép dẹt theo chiều dọc', () => {
-  it('⚠️ hộp khăn có `height` = `width × squashY` (không phải hộp vuông)', () => {
-    const { container } = renderAvatar([item('acc-scarf')]);
-    const box = inkBoxOf(container, 'acc-scarf');
-
-    expect(box.squashY).toBeCloseTo(ACCESSORY_SQUASH.neck, 6);
-    expect(box.height).toBeLessThan(box.side);
+describe('PetAvatar — hộp phụ kiện: ép dẹt và vẽ hai lần', () => {
+  it('⚠️ GIÀY: có ĐÚNG HAI `<img>` — một cho mỗi bàn chân', () => {
+    const { container } = renderAvatar([item('acc-shoes')]);
+    const shoes = container.querySelectorAll('img[src*="acc-shoes"]');
+    expect(shoes.length).toBe(2);
+    // Một chiếc phải bị LẬT GƯƠNG — nếu cả hai cùng chiều thì bé đi hai chiếc giày cùng bên.
+    const mirrored = [...shoes].filter((img) => {
+      const wrapper = img.closest('span') as HTMLElement | null;
+      return wrapper?.style.transform === 'scaleX(-1)';
+    });
+    expect(mirrored.length).toBe(1);
   });
-
-  it('mọi kiểu đặt KHÁC vẫn giữ hộp VUÔNG (không méo mũ, kính, giày, ba lô)', () => {
-    const square = ['acc-hat', 'acc-glasses', 'acc-shoes', 'acc-backpack', 'acc-crown', 'acc-bow'];
-    const { container } = renderAvatar(square.map(item));
-
-    for (const id of square) {
+  it('⚠️ mọi món KHÁC chỉ vẽ MỘT lần (không nhân đôi mũ, kính, ba lô)', () => {
+    const single = ['acc-hat', 'acc-glasses', 'acc-scarf', 'acc-backpack', 'acc-crown', 'acc-bow'];
+    const { container } = renderAvatar(single.map(item));
+    for (const id of single) {
+      expect(container.querySelectorAll(`img[src*="${id}"]`).length, id).toBe(1);
+    }
+  });
+  it('mọi kiểu đặt giữ hộp VUÔNG khi `ACCESSORY_SQUASH` = 1 (art đã đúng góc)', () => {
+    const ids = ['acc-hat', 'acc-glasses', 'acc-shoes', 'acc-backpack', 'acc-crown', 'acc-bow', 'acc-scarf'];
+    const { container } = renderAvatar(ids.map(item));
+    for (const id of ids) {
+      // `inkBoxOf` lấy hộp ĐẦU TIÊN của món (với giày là chiếc trái) — đủ để kiểm tỉ lệ.
       const box = inkBoxOf(container, id);
       expect(box.squashY, `${id} phải vuông`).toBeCloseTo(1, 6);
       expect(box.height, `${id} cao = rộng`).toBeCloseTo(box.side, 6);
