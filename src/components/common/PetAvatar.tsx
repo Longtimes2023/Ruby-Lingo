@@ -546,9 +546,16 @@ function AccessoryLayers({
   return (
     <>
       {slots.map((slot) => {
-        const isBehind = slot === 'back';
-        if (only === 'behind' ? !isBehind : isBehind) return null;
+        /*
+          ⚠️⚠️ `slot === 'back'` vẫn quyết định món nằm SAU lưng (ba lô, áo choàng, cánh) — nhưng
+          đó KHÔNG còn là toàn bộ câu chuyện. Món ĐANG MẶC mà QUẤN quanh cơ thể (khăn quàng, giày)
+          phải được vẽ HAI LẦN ở HAI LƯỢT: phần trên ở lượt SAU, phần dưới ở lượt TRƯỚC — nhờ vậy
+          cơ thể mới CHE được một phần món đồ, và mắt mới đọc ra "đang mặc" thay vì "để gần".
+          Xem `ACCESSORY_WRAP` trong `accessoryFit.ts`.
 
+          Vì vậy KHÔNG được `return null` sớm theo `slot`: một món thuộc slot `neck` vẫn phải xuất
+          hiện ở LƯỢT SAU (nửa trên). Điều kiện bỏ qua phải dựa trên TỪNG BẢN VẼ, ở dưới.
+        */
         const list = worn.get(slot);
         if (list === undefined || list.length === 0) return null;
 
@@ -581,6 +588,22 @@ function AccessoryLayers({
                 fit?.ink ?? DEFAULT_ACCESSORY_INK,
                 feet,
               );
+              /*
+                ⚠️⚠️ TÍNH BẢN VẼ CỦA LƯỢT NÀY TRƯỚC KHI RENDER — và bỏ qua CẢ KHỐI nếu lượt này không
+                có gì để vẽ. Nếu để khối ngoài (`data-accessory-id`) luôn hiện ở cả hai lượt thì:
+                  • DOM có HAI phần tử cùng `data-accessory-id` cho một món ⇒ mọi truy vấn kiểu
+                    `querySelector('[data-accessory-id]')` chỉ thấy phần tử RỖNG ở lượt sau;
+                  • test đếm số món và các công cụ đo đều đọc sai.
+              */
+              const layerParts = placements
+                .map((placement, partIndex) => ({ placement, partIndex }))
+                .filter(({ placement }) =>
+                  only === 'behind'
+                    ? slot === 'back' || placement.wrapCutPct !== null
+                    : slot !== 'back' || placement.wrapCutPct !== null,
+                );
+              if (layerParts.length === 0) return null;
+
               return (
                 <span
                   key={item.id}
@@ -600,16 +623,33 @@ function AccessoryLayers({
                     zIndex,
                   }}
                 >
-                  {placements.map((placement, partIndex) => (
+                  {layerParts.map(({ placement, partIndex }) => {
+                    /*
+                      ⚠️⚠️ BẢN VẼ CỦA LƯỢT NÀY — XEM `ACCESSORY_WRAP` trong `accessoryFit.ts`.
+                      `wrapCutPct` khác `null` = món QUẤN quanh cơ thể, phải cắt làm hai:
+                        • LƯỢT SAU (`only='behind'`) → nửa TRÊN (`inset(0 0 (100−cut)% 0)`)
+                        • LƯỢT TRƯỚC (`only='inFront'`) → nửa DƯỚI (`inset(cut% 0 0 0)`)
+                      Món không quấn ⇒ vẽ nguyên ở đúng lượt theo `slot` như cũ.
+                    */
+                    const wrap = placement.wrapCutPct;
+                    const wrapped = wrap !== null;
+                    const clipPath = wrapped
+                      ? only === 'behind'
+                        ? `inset(0 0 ${100 - wrap}% 0)`
+                        : `inset(${wrap}% 0 0 0)`
+                      : undefined;
+                    return (
                     <span
-                      // Thứ tự là DANH TÍNH DUY NHẤT của các bản vẽ (món đã có `key` ở lớp trên).
-                      key={partIndex}
+                      // Thứ tự + lượt vẽ là DANH TÍNH DUY NHẤT của các bản vẽ.
+                      key={`${partIndex}-${only}`}
                       aria-hidden="true"
+                      data-accessory-part={wrapped ? (only === 'behind' ? 'upper' : 'lower') : 'whole'}
                       className="absolute block -translate-x-1/2 -translate-y-1/2"
                       style={{
                         left: `${placement.box.cx * 100}%`,
                         top: `${placement.box.cy * 100}%`,
                         width: `${placement.box.side * 100}%`,
+                        clipPath,
                         /*
                           ⚠️⚠️ CHIỀU CAO = `side × squashY`, KHÔNG phải `side`. Hộp không còn luôn
                           vuông khi một kiểu đặt cần ÉP DẸT theo chiều dọc (`ACCESSORY_SQUASH`;
@@ -643,7 +683,8 @@ function AccessoryLayers({
                         <ShopArtwork item={item} className="h-full w-full object-contain" />
                       </span>
                     </span>
-                  ))}
+                    );
+                  })}
                 </span>
               );
             })}

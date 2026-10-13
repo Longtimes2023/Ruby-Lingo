@@ -134,6 +134,35 @@ export const ACCESSORY_MIRRORED: Readonly<Record<string, boolean>> = {
 };
 
 /**
+ * ⭐⭐ TỈ LỆ CHIỀU CAO MỰC (tính từ ĐỈNH) được vẽ ở **LỚP SAU** con vật.
+ *
+ * ⚠️⚠️ ĐÂY LÀ THỨ TẠO RA "CẢM GIÁC PET MẶC ĐỒ" — CHỦ DỰ ÁN ĐÃ NÊU ĐÚNG HAI LẦN.
+ *    Lần 1: *"hình cái khăn choàng, đôi giày mặc vào con khỉ hơi bị tệ"*.
+ *    Lần 2: *"mình cần là cái CẢM GIÁC PET MẶC ĐỒ, không phải TREO ĐỒ LƠ LỬNG, hay để gần"*.
+ *
+ *    VÌ SAO CẦN: bản cũ vẽ mỗi món thành MỘT LỚP duy nhất — hoặc TRƯỚC con vật, hoặc SAU con
+ *    vật. Nhưng một món ĐANG MẶC thì **luôn bị CƠ THỂ CHE MỘT PHẦN**, và chính phần bị che đó là
+ *    thứ mắt dùng để phân biệt "đồ mặc trên người" với "đồ đặt trước người":
+ *      • KHĂN QUẤN CỔ: vòng khăn đi RA SAU GÁY rồi mới quàng ra trước ⇒ phần trên của vòng bị
+ *        cằm/cổ che. Vẽ cả vòng ở lớp trước thì nó thành "cái phao dán trước ngực".
+ *      • GIÀY: miệng giày ở MẮT CÁ ⇒ ống chân chui VÀO giày, phần trên miệng giày bị chân che.
+ *        Vẽ cả chiếc giày ở lớp trước thì nó thành "đôi giày đặt cạnh chân".
+ *      • MŨ: không cần cắt lớp, nhưng phải LÚN xuống (`HEADPIECE_DROP`) để vành chạm trán và
+ *        đỉnh đầu bị mũ che — xem ghi chú ở hằng số đó.
+ *
+ *    CÁCH VẼ (hai lượt, con vật ở GIỮA):
+ *      [ phần TRÊN của món, z=1 ]  →  [ CON VẬT, z=2 ]  →  [ phần DƯỚI của món, z=3 ]
+ *
+ *    ⚠️ Số ở đây là **tỉ lệ CHIỀU CAO MỰC** (không phải chiều cao hộp, không phải % ảnh) — nên
+ *    đổi ảnh phụ kiện (mực dày/thưa) không làm đường cắt lệch. 0 = tắt cắt lớp (vẽ một lượt).
+ *    Dựng thử và chọn số bằng mắt: `_verify/ref/sweep_wrap.py` + `sweep_wear.py`.
+ */
+export const ACCESSORY_WRAP: Readonly<Record<string, number>> = {
+  'acc-scarf': 0.4,
+  'acc-shoes': 0.22,
+};
+
+/**
  * ⭐ ÉP DẸT THEO CHIỀU DỌC (1 = không ép), theo từng kiểu đặt.
  *
  * ⚠️⚠️ ĐÂY LÀ **DI SẢN CỦA MỘT BẢN VÁ ĐÃ QUA** — giữ lại cơ chế, nhưng nay MỌI KIỂU ĐỀU = 1.
@@ -249,7 +278,7 @@ function boxAt(
  *
  * ⚠️ HẰNG SỐ NÀY CHỈ ĐÚNG CHO ẢNH CHÍNH DIỆN. Quay lại ảnh sản phẩm thì phải hạ về 0,15.
  */
-export const HEADPIECE_DROP = 0.25;
+export const HEADPIECE_DROP = 0.32;
 
 /**
  * Như `HEADPIECE_DROP` nhưng cho VƯƠNG MIỆN — và số này **VẪN LÀ TỈ LỆ CỦA BẢN CŨ (0,15)**.
@@ -273,7 +302,7 @@ export const CROWN_DROP = 0.15;
  *    số thị giác quyết định khăn quàng hay trùm lên mặt mà không test nào chạm tới thì lần sau ai
  *    đó sửa dấu là mắt bé bị che, còn CI vẫn xanh.
  */
-export const SCARF_TOP_DROP = 0.02;
+export const SCARF_TOP_DROP = -0.05;
 
 /** Đáy mực giày nằm dưới `feet.y` bao nhiêu (phần hộp `1em`) — giày ôm bàn chân, thấp hơn một chút. */
 export const SHOE_BOTTOM_DROP = 0.02;
@@ -396,6 +425,20 @@ export interface AccessoryPlacement {
   box: AccessoryBox;
   /** `true` ⇒ lật ngang ảnh khi vẽ (`scaleX(-1)`). */
   mirror: boolean;
+  /**
+   * ĐƯỜNG CẮT LỚP, tính bằng **% CHIỀU CAO HỘP** từ mép trên hộp. `null` = vẽ một lượt.
+   *
+   * ⚠️⚠️ Có trường này để món ĐANG MẶC bị CƠ THỂ CHE MỘT PHẦN — xem ghi chú dài ở `ACCESSORY_WRAP`.
+   *    Người vẽ PHẢI cắt ảnh tại đúng đường này bằng `clip-path`:
+   *      • phần TRÊN (`inset(0 0 (100−cut)% 0)`) → vẽ ở LỚP SAU con vật;
+   *      • phần DƯỚI (`inset(cut% 0 0 0)`)      → vẽ ở LỚP TRƯỚC con vật.
+   *    Bỏ qua nó (vẽ cả món ở một lớp) là quay lại đúng lỗi chủ dự án đã báo hai lần:
+   *    *"treo đồ lơ lửng, hay để gần"* thay vì *"cảm giác PET mặc đồ"*.
+   *
+   * ⚠️ Đơn vị là % CHIỀU CAO HỘP (không phải % chiều cao mực) vì `clip-path` cắt theo hộp. Đã quy
+   *    đổi sẵn ở đây — người vẽ KHÔNG phải biết `ink.cy`/`ink.h`/`squashY`.
+   */
+  wrapCutPct: number | null;
 }
 
 export function accessoryBoxes(
@@ -405,6 +448,19 @@ export function accessoryBoxes(
   ink: AccessoryInk,
   feet?: PetFeetAnchor,
 ): AccessoryPlacement[] {
+  const wrap = ACCESSORY_WRAP[itemId] ?? 0;
+  /**
+   * Quy đổi "tỉ lệ chiều cao MỰC" → "% chiều cao HỘP" cho `clip-path`.
+   *
+   * Mực bắt đầu ở `ink.cy − ink.h/2` (đơn vị: cạnh hộp ngang) và cao `ink.h`. Đường cắt nằm ở
+   * `ink.cy − ink.h/2 + ink.h × wrap`. Chia cho `squashY` vì hộp có thể bị ép dẹt theo chiều dọc.
+   */
+  const cutPct = (box: AccessoryBox): number | null => {
+    if (!(wrap > 0)) return null;
+    const fromTop = (ink.cy - ink.h / 2 + ink.h * wrap) / box.squashY;
+    return Math.max(0, Math.min(1, fromTop)) * 100;
+  };
+
   if (ACCESSORY_MIRRORED[itemId] === true && feet !== undefined) {
     const scale = ACCESSORY_SCALE[kind];
     const squashY = ACCESSORY_SQUASH[kind];
@@ -415,12 +471,11 @@ export function accessoryBoxes(
       const sideLen = fitSize(scale * foot.w, ink.w);
       const cy =
         anchor.feet.y + SHOE_BOTTOM_DROP - (ink.h * sideLen * squashY) / 2;
-      boxes.push({
-        box: boxAt(foot.cx, cy, sideLen, ink, squashY),
-        mirror,
-      });
+      const box = boxAt(foot.cx, cy, sideLen, ink, squashY);
+      boxes.push({ box, mirror, wrapCutPct: cutPct(box) });
     }
     return boxes;
   }
-  return [{ box: accessoryBox(kind, anchor, ink), mirror: false }];
+  const box = accessoryBox(kind, anchor, ink);
+  return [{ box, mirror: false, wrapCutPct: cutPct(box) }];
 }

@@ -524,7 +524,12 @@ describe('PetHousePage — Momo mặc đồ bé đã mua (T065)', () => {
     renderPage();
 
     const momo = screen.getByRole('img', { name: 'Khỉ Momo đang dùng: Khăn quàng' });
-    expect(within(momo).getByText('🧣')).toBeInTheDocument();
+    /*
+      ⚠️ `getAllByText` chứ `getByText`: khăn quàng là món QUẤN quanh cổ nên được vẽ HAI LƯỢT
+      (`ACCESSORY_WRAP` — nửa trên ở lớp sau, nửa dưới ở lớp trước), và đường lùi emoji của
+      `ShopArtwork` nằm trong cả hai lượt ⇒ hai phần tử cùng chữ. Điều cần khẳng định là MÓN CÓ MẶT.
+    */
+    expect(within(momo).getAllByText('🧣').length).toBe(2);
     const room = screen.getByRole('region', { name: 'Góc phòng của bé' });
     expect(await within(room).findByRole('button', { name: /Chậu cây, vị trí 50%, 65%/ })).toBeInTheDocument();
   });
@@ -686,9 +691,17 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
     const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
     expect(holder, 'phòng phải có con vật').not.toBeNull();
 
-    const worn = [...holder!.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
-      (node) => node.dataset.accessoryId,
-    );
+    /*
+      ⚠️ Đếm DANH TÍNH (id duy nhất) — món QUẤN (`acc-scarf`) có mặt ở CẢ HAI lượt vẽ
+      (`ACCESSORY_WRAP`) nên `[data-accessory-id]` xuất hiện nhiều hơn số món. Đếm thô là khoá sai thứ.
+    */
+    const worn = [
+      ...new Set(
+        [...holder!.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
+          (node) => node.dataset.accessoryId,
+        ),
+      ),
+    ];
     expect(worn.sort()).toEqual(['acc-glasses', 'acc-hat', 'acc-scarf']);
   });
 

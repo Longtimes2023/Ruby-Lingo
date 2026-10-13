@@ -288,15 +288,29 @@ describe('PetAvatar — vẽ', () => {
       'acc-wings',
     ];
     /*
-      ⚠️ 9 MÓN nhưng **10 ảnh**: `acc-shoes` nay là MỘT CHIẾC giày và được vẽ HAI LẦN — mỗi bàn
-      chân một chiếc, lần thứ hai lật gương (xem `ACCESSORY_MIRRORED`). Bản cũ là một đôi trong một
-      ảnh, nên chỉ có 9 `<img>`. Đây KHÔNG phải đếm nhầm — số này là hệ quả của bản vá.
+      ⚠️⚠️ 9 MÓN nhưng **13 `<img>`** — KHÔNG phải đếm nhầm, đây là hệ quả của hai cơ chế:
+        • MÓN QUẤN quanh cơ thể (`ACCESSORY_WRAP`) vẽ HAI LẦN ở hai lượt:
+            khăn: 2 (nửa trên ở lượt SAU + nửa dưới ở lượt TRƯỚC)
+            giày: 2 chiếc × 2 lượt = 4
+        • 7 món còn lại: 1 ảnh mỗi món = 7
+        ⇒ 7 + 2 + 4 = 13.
+      Số này KHOÁ cả hai cơ chế: quên `clip-path` (vẽ một lượt) ⇒ còn 10; quên lật gương ⇒ còn 12.
     */
     for (const pet of PET_DEFINITIONS) {
       const wornItems = accessoryIds.map(item);
       for (const stage of EVOLUTION_STAGES) {
         const { container, unmount } = renderAvatar(wornItems, stage.stage, pet.id);
-        expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(10);
+        expect(container.querySelectorAll('img[src^="/assets/pets/shop/acc-"]').length).toBe(13);
+        /*
+          ⚠️ Đếm DANH TÍNH (id duy nhất), KHÔNG đếm số phần tử: món QUẤN có mặt ở CẢ HAI lượt vẽ
+          nên `[data-accessory-id]` xuất hiện 11 lần cho 9 món. Đếm thô là khoá sai thứ.
+        */
+        const ids = new Set(
+          [...container.querySelectorAll('[data-accessory-id]')].map((el) =>
+            el.getAttribute('data-accessory-id'),
+          ),
+        );
+        expect(ids.size).toBe(9);
         const backWrapper = container.querySelector('[data-accessory-layer="behind"]');
         const frontWrapper = container.querySelector('[data-accessory-layer="front"]');
         const petLayer = container.querySelector('.z-\\[2\\]');
@@ -592,23 +606,36 @@ describe('PetAvatar — canh giữ tệp ảnh trên đĩa (WebP 512px)', () => 
  * Đọc `height` THẲNG TỪ DOM (không suy từ `width`), và ĐẾM `<img>` (không suy từ số món).
  */
 describe('PetAvatar — hộp phụ kiện: ép dẹt và vẽ hai lần', () => {
-  it('⚠️ GIÀY: có ĐÚNG HAI `<img>` — một cho mỗi bàn chân', () => {
+  it('⚠️ GIÀY: HAI bàn chân × HAI lượt cắt lớp, chiếc phải LẬT GƯƠNG', () => {
     const { container } = renderAvatar([item('acc-shoes')]);
     const shoes = container.querySelectorAll('img[src*="acc-shoes"]');
-    expect(shoes.length).toBe(2);
-    // Một chiếc phải bị LẬT GƯƠNG — nếu cả hai cùng chiều thì bé đi hai chiếc giày cùng bên.
+    // 2 chiếc × 2 lượt (nửa trên ở lớp sau + nửa dưới ở lớp trước) = 4.
+    expect(shoes.length).toBe(4);
+    // Mỗi chiếc đều có ĐỦ hai nửa — thiếu một nửa là giày bị cụt.
+    const parts = [...container.querySelectorAll('[data-accessory-part]')].map((el) =>
+      el.getAttribute('data-accessory-part'),
+    );
+    expect(parts.filter((p) => p === 'upper').length).toBe(2);
+    expect(parts.filter((p) => p === 'lower').length).toBe(2);
+    // Chiếc PHẢI phải bị LẬT GƯƠNG (cả 2 lượt của nó) — nếu không, bé đi hai chiếc cùng bên.
     const mirrored = [...shoes].filter((img) => {
       const wrapper = img.closest('span') as HTMLElement | null;
       return wrapper?.style.transform === 'scaleX(-1)';
     });
-    expect(mirrored.length).toBe(1);
+    expect(mirrored.length).toBe(2);
   });
-  it('⚠️ mọi món KHÁC chỉ vẽ MỘT lần (không nhân đôi mũ, kính, ba lô)', () => {
-    const single = ['acc-hat', 'acc-glasses', 'acc-scarf', 'acc-backpack', 'acc-crown', 'acc-bow'];
-    const { container } = renderAvatar(single.map(item));
+  it('⚠️ món không QUẤN vẽ MỘT lần; món QUẤN vẽ đúng HAI lượt (khăn)', () => {
+    const single = ['acc-hat', 'acc-glasses', 'acc-backpack', 'acc-crown', 'acc-bow'];
+    const { container } = renderAvatar([...single, 'acc-scarf'].map(item));
     for (const id of single) {
       expect(container.querySelectorAll(`img[src*="${id}"]`).length, id).toBe(1);
     }
+    expect(container.querySelectorAll('img[src*="acc-scarf"]').length).toBe(2);
+    // Khoanh vùng ĐÚNG món khăn — `[data-accessory-part]` cũng có trên các món không quấn ('whole').
+    const parts = [
+      ...container.querySelectorAll('[data-accessory-id="acc-scarf"] [data-accessory-part]'),
+    ].map((el) => el.getAttribute('data-accessory-part'));
+    expect(parts.sort()).toEqual(['lower', 'upper']);
   });
   it('mọi kiểu đặt giữ hộp VUÔNG khi `ACCESSORY_SQUASH` = 1 (art đã đúng góc)', () => {
     const ids = ['acc-hat', 'acc-glasses', 'acc-shoes', 'acc-backpack', 'acc-crown', 'acc-bow', 'acc-scarf'];
