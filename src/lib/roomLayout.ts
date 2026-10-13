@@ -123,11 +123,37 @@ export const LANE_SCALE: Readonly<Record<FloorLane, number>> = {
 /** Lề tối thiểu từ mép khung cho đồ TREO TƯỜNG. (%W) */
 export const WALL_MARGIN_PCT = 6;
 
-/** Khoảng hở tối thiểu giữa hai món treo tường cạnh nhau. (%W) */
-export const WALL_GAP_PCT = 4;
+/**
+ * Khoảng hở tối thiểu giữa hai món treo tường nằm CÙNG HÀNG. (%W)
+ *
+ * ⚠️ Hạ từ 4 xuống 1 khi bố cục tường đổi từ MỘT hàng sang HAI hàng (xem `WALL_SLOTS`): hai bên
+ *   vùng giữa mỗi bên chỉ còn 26%W, mà hai món nhỏ nhất đã chiếm 13 + 12 = 25%W. 4%W không còn
+ *   chỗ để tồn tại. 1%W là mức tối thiểu để mắt còn tách được hai vật rời nhau — và quan trọng
+ *   hơn: hai vật KHÔNG chồng lên nhau, thứ mà test khoá lại.
+ */
+export const WALL_GAP_PCT = 1;
 
 /** Bề rộng cho phép của đồ treo tường. (%W) */
 export const WALL_WIDTH_RANGE: readonly [number, number] = [12, 18];
+
+/**
+ * VÙNG GIỮA CỦA BỨC TƯỜNG, CHỪA RIÊNG CHO THÚ CƯNG (VÀ MŨ CỦA NÓ). (%W)
+ *
+ * ⭐ VÌ SAO PHẢI CHỪA: đây là một lỗi đã ĐO ĐƯỢC trên trình duyệt thật, không phải phòng xa.
+ *   Bản trước rải 5 món treo tường thành MỘT HÀNG NGANG từ lề trái (lề 6, hở 4), nên món thứ ba
+ *   — cầu vồng — rơi đúng **47%W**, tức là ngay sau gáy thú cưng (thú cưng ở 32,75–67,25%W).
+ *   Lúc thú cưng còn "trần truồng" trong phòng thì chỉ bị che một mẩu nhỏ ở đỉnh đầu; nhưng từ khi
+ *   bản vá cho con vật TRONG PHÒNG mặc đủ phụ kiện, chiếc mũ nhô lên tới ~15%H và **che kín cả cầu
+ *   vồng** — mắt đọc ra "cái mũ có hình cầu vồng".
+ *
+ * ⭐ SUY TỪ HÌNH HỌC THÚ CƯNG, KHÔNG PHẢI SỐ ƯA MẮT: hộp thú cưng rộng `pctHToCqw(PET_HEIGHT_PCT)`
+ *   = 34,5%W, canh giữa ở 50%W ⇒ 32,75–67,25%W; `floor`/`ceil` để nới ra ngoài (an toàn hơn).
+ *   Đổi `PET_HEIGHT_PCT` là vùng này tự đổi theo — không có hai nguồn sự thật.
+ */
+export const WALL_RESERVED_X_PCT: readonly [number, number] = [
+  Math.floor(50 - pctHToCqw(PET_HEIGHT_PCT) / 2),
+  Math.ceil(50 + pctHToCqw(PET_HEIGHT_PCT) / 2),
+];
 
 /** Bề rộng cho phép của đồ dưới sàn, theo làn. (%W) */
 export const LANE_WIDTH_RANGE: Readonly<Record<FloorLane, readonly [number, number]>> = {
@@ -177,7 +203,7 @@ export const DECORATION_LAYOUT: Readonly<Record<string, DecorationLayoutSpec>> =
 };
 
 /**
- * Thứ tự bày mặc định của đồ treo tường, TRÁI → PHẢI.
+ * Thứ tự bày mặc định của đồ treo tường — món thứ N nhận ô thứ N trong `WALL_SLOTS`.
  *
  * ⭐ VÌ SAO CỐ ĐỊNH THỨ TỰ NÀY, KHÔNG SẮP THEO id HAY THEO TÚI ĐỒ:
  *   Vị trí mặc định phải ỔN ĐỊNH giữa các lần tải. Nếu sắp theo thứ tự túi đồ (thứ tự bé mua),
@@ -192,14 +218,31 @@ const WALL_ORDER: readonly string[] = [
   'dec-lantern',
 ];
 
-/** Tâm y mặc định của từng món treo tường (%H) — giữ trong dải 22–32%H. */
-const WALL_CENTER_Y_PCT: Readonly<Record<string, number>> = {
-  'dec-picture': 26,
-  'dec-flag': 24,
-  'dec-rainbow': 31,
-  'dec-balloon': 25,
-  'dec-lantern': 27,
-};
+/**
+ * Ô treo tường mặc định — TÂM của từng món, theo đúng thứ tự `WALL_ORDER`. (%W, %H)
+ *
+ * ⭐ VÌ SAO VIẾT TAY TỪNG Ô, KHÔNG CÒN "CHẠY CURSOR TỪ LỀ TRÁI":
+ *   Thuật toán cursor cũ chỉ có MỘT hàng, nên không thể né vùng giữa — mà vùng giữa thì BẮT BUỘC
+ *   phải né (xem `WALL_RESERVED_X_PCT`). Nhét thêm luật "nhảy qua vùng cấm" vào cursor thì kết quả
+ *   lại là 3 hàng, mà 3 hàng thì hàng cuối rơi xuống dưới đường chân tường. Viết tay 5 ô là cách
+ *   duy nhất vừa né được vùng giữa, vừa giữ mọi đáy trên chân tường, vừa ĐỌC ĐƯỢC ngay trên giấy.
+ *
+ * ⭐ HAI HÀNG, KHÔNG PHẢI MỘT: 5 món rộng 12–16%W cần 82%W cho một hàng, mà hai bên vùng giữa chỉ
+ *   còn 6–32 và 68–94 (26%W mỗi bên). Chia hai hàng thì mỗi bên chứa được 2 món nhỏ (13 + 1 + 12).
+ *
+ * ⭐ BỐ CỤC: hàng trên = tranh + cờ (trái) và cầu vồng (phải); hàng dưới = bóng bay (trái) và
+ *   đèn lồng (phải). Cân đối hai bên, và không món nào lấn vào cột của thú cưng.
+ *
+ * ⚠️ MỌI CON SỐ Ở ĐÂY CÓ TEST CANH (`room-layout.test.ts`): lề ≥6%W, không chồng nhau, không lấn
+ *   vùng giữa, đáy < đường chân tường. Sửa số mà quên chạy test là đỏ ngay.
+ */
+const WALL_SLOTS: readonly RoomPoint[] = [
+  { x: 12.5, y: 22 }, // tranh — trái, hàng trên (6–19%W, 13,35–30,65%H)
+  { x: 26, y: 22 }, // cờ — trái, hàng trên (20–32%W, 14–30%H)
+  { x: 76, y: 20 }, // cầu vồng — phải, hàng trên (68–84%W, 9,35–30,65%H)
+  { x: 12.5, y: 42 }, // bóng bay — trái, hàng dưới (6–19%W, 33,35–50,65%H)
+  { x: 76, y: 42 }, // đèn lồng — phải, hàng dưới (70–82%W, 34–50%H)
+];
 
 /**
  * Tâm x mặc định của từng món dưới sàn (%W).
@@ -288,23 +331,6 @@ export function decorationSpec(itemId: string): DecorationLayoutSpec | undefined
 }
 
 /**
- * Xếp đồ treo tường trái → phải theo `WALL_ORDER`, giữ lề và khoảng hở.
- *
- * Tính MỘT LẦN ở cấp module: bảng là hằng số, nên vị trí là hằng số.
- */
-const WALL_CENTER_X_PCT: ReadonlyMap<string, number> = (() => {
-  const centers = new Map<string, number>();
-  let cursor = WALL_MARGIN_PCT;
-  for (const itemId of WALL_ORDER) {
-    const spec = DECORATION_LAYOUT[itemId];
-    if (spec === undefined) continue;
-    centers.set(itemId, round1(cursor + spec.widthPct / 2));
-    cursor = cursor + spec.widthPct + WALL_GAP_PCT;
-  }
-  return centers;
-})();
-
-/**
  * Hộp MẶC ĐỊNH của một món khi bé chưa tự kéo nó.
  *
  * ⚠️ Trả `undefined` (không ném) khi id không có trong bảng: hàm này chạy trong lúc render, và
@@ -315,10 +341,9 @@ export function defaultDecorationBox(itemId: string): DecorationBox | undefined 
   if (spec === undefined) return undefined;
 
   if (spec.band === 'wall') {
-    const leftPct = WALL_CENTER_X_PCT.get(itemId);
-    const topPct = WALL_CENTER_Y_PCT[itemId];
-    if (leftPct === undefined || topPct === undefined) return undefined;
-    return makeBox(itemId, spec, leftPct, topPct);
+    const slot = WALL_SLOTS[WALL_ORDER.indexOf(itemId)];
+    if (slot === undefined) return undefined;
+    return makeBox(itemId, spec, slot.x, slot.y);
   }
 
   const lane = spec.lane ?? 'near';

@@ -574,7 +574,13 @@ describe('PetHousePage — Momo mặc đồ bé đã mua (T065)', () => {
     seed({ pet: pet({ evolutionStage: 'baby' }) });
     renderPage();
 
-    expect(screen.getByText('🐵')).toBeInTheDocument();
+    /*
+      ⚠️ `getAllByText` chứ không `getByText`: emoji là ĐƯỜNG LÙI của `PetArtwork` (`<span hidden>`),
+         và từ khi con vật trong "Góc phòng của bé" cũng vẽ bằng `PetAvatar`, cùng một emoji có mặt
+         ở HAI chỗ (thẻ đầu trang + trong phòng). Khẳng định "có ít nhất một chỗ" là điều test này
+         muốn nói; số lần xuất hiện là chuyện của bố cục, không phải của giai đoạn tiến hoá.
+    */
+    expect(screen.getAllByText('🐵').length).toBeGreaterThan(0);
     expect(screen.getByText('Nhóc con')).toBeInTheDocument();
   });
 
@@ -646,18 +652,61 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
   it('⚠️ thú cưng trong phòng: đáy 16% / cao 46% khung — KHÔNG còn clamp(…vw…)', () => {
     renderPage();
 
-    const petImg = roomRegion().querySelector<HTMLImageElement>(
-      'img[src^="/assets/pets/"]:not([src*="/shop/"])',
-    );
-    expect(petImg, 'phòng phải có hình thú cưng').not.toBeNull();
+    const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
+    expect(holder, 'phòng phải có con vật').not.toBeNull();
 
-    const holder = petImg!.parentElement as HTMLElement;
     // Đáy ở 84%H ⇒ cách mép dưới 16%; cao 46%H; rộng suy từ cao (ảnh gốc vuông) = 34,5cqw.
-    expect(holder.style.bottom).toBe('16%');
-    expect(holder.style.height).toBe('46%');
-    expect(holder.style.getPropertyValue('--room-pet-w')).toBe('34.5cqw');
+    expect(holder!.style.bottom).toBe('16%');
+    expect(holder!.style.height).toBe('46%');
+    expect(holder!.style.getPropertyValue('--room-pet-w')).toBe('34.5cqw');
     // `clamp(72px,24vw,144px)` là biểu thức làm con vật ĐỨNG YÊN khi khung giãn.
     expect(roomRegion().innerHTML).not.toContain('clamp(');
+  });
+
+  /**
+   * ⚠️⚠️ ĐÂY LÀ BẢN VÁ CỦA MỘT LỖI ĐÃ ĐO ĐƯỢC TRÊN TRÌNH DUYỆT THẬT.
+   *
+   * Bản trước vẽ con vật trong phòng bằng `<img src={petArtworkUrl(...)}>` TRẦN. Đo ở 1280×800
+   * với bé mặc đủ 5 món: `totalAccessoryNodes: 5` nhưng `accessoriesInRoom: 0` — kính/mũ/khăn/
+   * giày/ba lô CHỈ hiện trên thẻ ở đầu trang, còn con vật trong "Góc phòng của bé" thì trần
+   * truồng. Không test nào bắt được, vì mọi test cũ đều hỏi con vật ở THẺ.
+   */
+  it('⚠️ con vật TRONG PHÒNG cũng mặc ĐÚNG bộ phụ kiện đang mặc', () => {
+    seed({
+      inventory: [
+        inventoryItem('acc-hat', { equipped: true }),
+        inventoryItem('acc-scarf', { equipped: true }),
+        inventoryItem('acc-glasses', { equipped: true }),
+        // Món CHƯA mặc ⇒ không được lên người con vật trong phòng.
+        inventoryItem('acc-bow'),
+      ],
+    });
+    renderPage();
+
+    const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
+    expect(holder, 'phòng phải có con vật').not.toBeNull();
+
+    const worn = [...holder!.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
+      (node) => node.dataset.accessoryId,
+    );
+    expect(worn.sort()).toEqual(['acc-glasses', 'acc-hat', 'acc-scarf']);
+  });
+
+  it('⚠️ con vật trong phòng là bối cảnh TRẦN — không thẻ lồng trong phòng', () => {
+    renderPage();
+
+    const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
+    expect(holder).not.toBeNull();
+
+    // Có HÌNH thật của con vật…
+    expect(holder!.querySelector('img[src^="/assets/pets/"]')).not.toBeNull();
+    // …nhưng KHÔNG kèm dải trời/dải cỏ của thẻ (phòng đã có tường/baseboard/sàn riêng)…
+    expect(holder!.querySelector('.bg-pet-sky')).toBeNull();
+    expect(holder!.querySelector('.bg-pet-ground')).toBeNull();
+    // …và KHÔNG kèm chú thích giai đoạn của thẻ.
+    expect(within(holder!).queryByText('Nhóc con')).toBeNull();
+    // Nhãn đọc lên đã có ở thẻ đầu trang ⇒ con vật trong phòng là TRANG TRÍ, không đọc lặp.
+    expect(holder!.querySelector('[role="img"]')).toBeNull();
   });
 
   it('⚠️ khung phòng dùng container query để mọi cỡ bên trong bám theo khung', () => {

@@ -29,6 +29,7 @@ import {
   WALL_GAP_PCT,
   WALL_LINE_PCT,
   WALL_MARGIN_PCT,
+  WALL_RESERVED_X_PCT,
   WALL_WIDTH_RANGE,
   clampToRoom,
   decorationRenderSize,
@@ -96,16 +97,47 @@ describe('roomLayout — đồ treo tường', () => {
     );
   });
 
-  it('⚠️ tâm y nằm TRONG dải tường (22–32%H) và KHÔNG chạm đường chân tường', () => {
+  it('⚠️ tâm y nằm TRONG dải tường (20–45%H) và KHÔNG chạm đường chân tường', () => {
     for (const id of wallIds) {
       const box = defaultDecorationBox(id);
       expect(box, id).toBeDefined();
       if (!box) continue;
-      expect(box.topPct, `${id} tâm y`).toBeGreaterThanOrEqual(22 - EPS);
-      expect(box.topPct, `${id} tâm y`).toBeLessThanOrEqual(32 + EPS);
+      expect(box.topPct, `${id} tâm y`).toBeGreaterThanOrEqual(20 - EPS);
+      expect(box.topPct, `${id} tâm y`).toBeLessThanOrEqual(45 + EPS);
       // Đáy món phải còn nằm trên đường chân tường, nếu không nó "xuyên" xuống sàn.
       expect(box.bottomPct, `${id} đáy`).toBeLessThan(WALL_LINE_PCT);
     }
+  });
+
+  it('⚠️ KHÔNG món treo tường nào lấn vào cột của thú cưng (vùng giữa bức tường)', () => {
+    /*
+      ⚠️⚠️ ĐÂY LÀ BẢN VÁ CỦA MỘT LỖI ĐÃ NHÌN THẤY TRÊN ẢNH CHỤP THẬT.
+      Bản cũ rải 5 món thành MỘT hàng từ lề trái ⇒ cầu vồng rơi đúng 47%W, tức là sau gáy thú cưng.
+      Khi con vật trong phòng bắt đầu mặc mũ (bản vá "phụ kiện trong phòng"), chiếc mũ nhô lên
+      ~15%H và che kín cầu vồng — mắt đọc ra "cái mũ có hình cầu vồng". Test này khoá lại: bất kỳ
+      món treo tường nào chồng lên hộp thú cưng là ĐỎ.
+    */
+    const [reservedLeft, reservedRight] = WALL_RESERVED_X_PCT;
+
+    for (const id of wallIds) {
+      const box = defaultDecorationBox(id);
+      if (!box) continue;
+      const left = box.leftPct - box.widthPct / 2;
+      const right = box.leftPct + box.widthPct / 2;
+      const overlapsReserved = right > reservedLeft + EPS && left < reservedRight - EPS;
+      expect(overlapsReserved, `${id} lấn vào cột thú cưng (${left}–${right}%W)`).toBe(false);
+    }
+  });
+
+  it('⚠️ vùng giữa chừa cho thú cưng ĐÚNG BẰNG hộp thú cưng (không phải số ưa mắt)', () => {
+    // Vùng chừa phải SUY từ hình học thú cưng: rộng `pctHToCqw(PET_HEIGHT_PCT)` và canh giữa 50%W.
+    const petWidthPct = pctHToCqw(PET_HEIGHT_PCT);
+    const [reservedLeft, reservedRight] = WALL_RESERVED_X_PCT;
+
+    expect(reservedLeft).toBeLessThanOrEqual(50 - petWidthPct / 2 + EPS);
+    expect(reservedRight).toBeGreaterThanOrEqual(50 + petWidthPct / 2 - EPS);
+    // Và không được rộng đến mức nuốt luôn hai bên tường (còn phải treo được đồ).
+    expect(reservedRight - reservedLeft).toBeLessThanOrEqual(petWidthPct + 2);
   });
 
   it('⚠️ bề rộng trong khoảng 12–18%W', () => {
@@ -129,17 +161,45 @@ describe('roomLayout — đồ treo tường', () => {
     }
   });
 
-  it('⚠️ khoảng hở giữa hai món cạnh nhau ≥4%W (không chồng lên nhau)', () => {
+  it('⚠️ hai món CÙNG HÀNG không chồng nhau, và hai món BẤT KỲ không chồng nhau', () => {
     const boxes = wallIds
       .map((id) => defaultDecorationBox(id))
-      .filter((box): box is NonNullable<typeof box> => box !== undefined)
-      .sort((a, b) => a.leftPct - b.leftPct);
+      .filter((box): box is NonNullable<typeof box> => box !== undefined);
 
-    for (let i = 1; i < boxes.length; i += 1) {
-      const prev = boxes[i - 1]!;
-      const next = boxes[i]!;
-      const gap = next.leftPct - next.widthPct / 2 - (prev.leftPct + prev.widthPct / 2);
-      expect(gap, `${prev.itemId} → ${next.itemId}`).toBeGreaterThanOrEqual(WALL_GAP_PCT - EPS);
+    /** Hộp theo 2 chiều, để so chồng lấn thật (không chỉ theo trục x như bản một-hàng cũ). */
+    const extent = (box: NonNullable<(typeof boxes)[number]>) => ({
+      left: box.leftPct - box.widthPct / 2,
+      right: box.leftPct + box.widthPct / 2,
+      top: box.topPct - box.heightPct / 2,
+      bottom: box.topPct + box.heightPct / 2,
+    });
+
+    // (a) Không hai món nào chồng lên nhau — xét CẢ hai chiều.
+    for (let i = 0; i < boxes.length; i += 1) {
+      for (let j = i + 1; j < boxes.length; j += 1) {
+        const a = extent(boxes[i]!);
+        const b = extent(boxes[j]!);
+        const overlaps =
+          a.right > b.left + EPS && a.left < b.right - EPS && a.bottom > b.top + EPS && a.top < b.bottom - EPS;
+        expect(overlaps, `${boxes[i]!.itemId} chồng ${boxes[j]!.itemId}`).toBe(false);
+      }
+    }
+
+    // (b) Trong cùng một hàng, hai món cạnh nhau phải còn khoảng hở.
+    const rows = new Map<number, typeof boxes>();
+    for (const box of boxes) {
+      const key = box.topPct;
+      rows.set(key, [...(rows.get(key) ?? []), box]);
+    }
+    for (const [, rowBoxes] of rows) {
+      const sorted = [...rowBoxes].sort((a, b) => a.leftPct - b.leftPct);
+      for (let i = 1; i < sorted.length; i += 1) {
+        const prev = extent(sorted[i - 1]!);
+        const next = extent(sorted[i]!);
+        expect(next.left - prev.right, `${sorted[i - 1]!.itemId} → ${sorted[i]!.itemId}`).toBeGreaterThanOrEqual(
+          WALL_GAP_PCT - EPS,
+        );
+      }
     }
   });
 });

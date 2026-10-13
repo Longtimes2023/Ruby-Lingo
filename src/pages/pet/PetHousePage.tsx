@@ -48,7 +48,6 @@ import { useRoomPlacements } from '../../hooks/useRoomPlacements.js';
 import { useShop } from '../../hooks/useShop.js';
 import { cn } from '../../lib/cn.js';
 import { ShopArtwork } from '../../lib/shopArtwork.js';
-import { petArtworkUrl } from '../../lib/petArtwork.js';
 import {
   BASEBOARD_PCT,
   FLOOR_HEIGHT_PCT,
@@ -429,6 +428,7 @@ export function PetHousePage() {
     node: (
       <div
         key="__pet__"
+        data-room-pet=""
         className="pointer-events-none absolute left-1/2 -translate-x-1/2"
         style={
           {
@@ -441,11 +441,29 @@ export function PetHousePage() {
           } as CSSProperties
         }
       >
-        <img
-          src={petArtworkUrl(snapshot.pet.petType, snapshot.pet.evolutionStage)}
-          alt=""
-          className="h-full w-full object-contain"
-          draggable={false}
+        {/*
+          ⚠️⚠️ CON VẬT TRONG PHÒNG PHẢI MẶC ĐÚNG BỘ PHỤ KIỆN ĐANG MẶC — dùng chính `PetAvatar`,
+             KHÔNG vẽ `<img>` trần.
+
+          Bản trước vẽ một `<img src={petArtworkUrl(...)}>` ở đây. Đo trên trình duyệt thật
+          (1280×800, bé mặc đủ 5 món): `[data-accessory-id]` TRONG khung phòng = **0** — kính/mũ/
+          khăn/giày/ba lô chỉ hiện trên thẻ ở đầu trang, còn con vật trong "Nhà thú cưng" thì trần
+          truồng. Đúng lời chủ dự án: *"mua cái mắt kính, đeo vào là sát vào mặt"*.
+
+          `sizeEm` đặt hộp `1em` của con vật = `--room-pet-w` (34,5cqw) ⇒ con vật VÀ mọi phụ kiện
+          cùng phóng theo khung phòng, vì neo trong `petAnchors.ts` là `%`-của-hộp-`1em`.
+
+          `bare` là BẮT BUỘC ở đây: khối "Góc phòng của bé" đã có tường/baseboard/sàn riêng, nên
+          nếu dùng thẻ đầy đủ thì bé thấy một cái thẻ lồng trong phòng — dải trời, dải cỏ, viền bo
+          và dòng chữ "🐵 Trưởng thành" nằm chồng lên sàn gỗ.
+        */}
+        <PetAvatar
+          petType={snapshot.pet.petType}
+          evolutionStage={snapshot.pet.evolutionStage}
+          items={equippedItems}
+          sizeEm="var(--room-pet-w)"
+          frameClassName="size-full"
+          bare
         />
       </div>
     ),

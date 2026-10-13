@@ -189,9 +189,51 @@ export interface PetAvatarProps {
    */
   items: readonly ShopItem[];
   className?: string;
+  /**
+   * Cỡ hộp `1em` của con vật, dạng độ dài CSS (ví dụ `'var(--room-pet-w)'`).
+   *
+   * ⭐ VÌ SAO CẦN: màn "Nhà thú cưng" vẽ con vật **TRONG PHÒNG**, và ở đó con vật phải lớn lên
+   *   theo khung phòng (`34.5cqw`), không phải theo bậc tiến hoá (84/104/124px cố định của thẻ).
+   *   Mọi neo phụ kiện (`petAnchors.ts`) là `%`-của-hộp-`1em`, nên chỉ cần đặt `font-size` là
+   *   **con vật VÀ toàn bộ phụ kiện cùng phóng** — không cần bảng tra nào theo bối cảnh.
+   *
+   * Bỏ trống ⇒ giữ nguyên hành vi cũ (cỡ theo bậc, khung 200×200) — thẻ ở đầu trang không đổi.
+   */
+  sizeEm?: string;
+  /**
+   * Ghi đè lớp của KHUNG NGOÀI. Mặc định `size-[200px]` (khung thẻ).
+   *
+   * ⚠️ Khi truyền `sizeEm`, hãy truyền luôn khung theo bối cảnh (ví dụ `'h-full w-full'`), nếu
+   *   không khung 200px cố định sẽ cắt/đè lên con vật đã phóng to.
+   */
+  frameClassName?: string;
+  /**
+   * Bối cảnh TRẦN: chỉ **con vật + phụ kiện**, không thẻ.
+   *
+   * ⭐ VÌ SAO CẦN: màn "Nhà thú cưng" đã có phòng riêng (tường/baseboard/sàn + khung 4:3), nên nếu
+   *   nhét nguyên cái THẺ vào trong phòng thì bé thấy **một cái thẻ lồng trong một cái phòng**:
+   *   dải trời + dải cỏ + viền bo + dòng chữ "🐵 Trưởng thành" nằm chồng lên sàn gỗ. Đó không phải
+   *   "con vật đang chơi trong nhà" — đó là hai bối cảnh chồng lên nhau.
+   *
+   * `bare` bỏ: dải trời, dải cỏ, viền/bo/nền, chú thích giai đoạn, và `role="img"` + nhãn.
+   *
+   * ⚠️ VÌ SAO BỎ CẢ NHÃN ĐỌC LÊN: cùng một con vật đã được đọc ở thẻ đầu trang bằng ĐÚNG nhãn đó
+   *    (`pet.sceneWearing` / `pet.sceneBare`). Để nguyên thì trình đọc màn hình đọc hai lần cùng
+   *    một thông tin — và trong phòng, con vật chỉ là hình ảnh trang trí, bé không bấm vào được.
+   *    Bỏ nhãn ở đây KHÔNG mất thông tin: thông tin vẫn còn nguyên ở thẻ đầu trang.
+   */
+  bare?: boolean;
 }
 
-export function PetAvatar({ petType, evolutionStage, items, className }: PetAvatarProps) {
+export function PetAvatar({
+  petType,
+  evolutionStage,
+  items,
+  className,
+  sizeEm,
+  frameClassName,
+  bare = false,
+}: PetAvatarProps) {
   const { t } = useTranslation();
 
   /** Tên con vật — tra từ DỮ LIỆU, không nhận qua prop (xem ghi chú đầu tệp). */
@@ -256,6 +298,113 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
 
   const isSuper = evolutionStage === 'super';
 
+  /*
+    HỘP `1em × 1em` — CHÍNH LÀ Ô CHỮ CỦA CON VẬT, và là HỆ TOẠ ĐỘ DUY NHẤT của phụ kiện.
+    `1em` = `font-size` của khung cha (84 / 104 / 124px theo bậc, hoặc `--room-pet-w` khi ở trong
+    phòng), nên hộp này lớn lên cùng con vật; neo `%`-của-hộp vì thế cùng lớn lên. Số neo là
+    **của riêng từng ảnh** — xem `petAnchorFor` trong `src/lib/petAnchors.ts`.
+
+    ⚠️ TÁCH RA BIẾN DÙNG CHUNG CHO CẢ HAI BỐI CẢNH (`bare` và thẻ): đây là phần *duy nhất* quyết
+       định con vật trông ra sao. Chép lại nó cho bối cảnh thứ hai là mở đường cho hai bản vẽ
+       lệch nhau — đúng loại lỗi đã xảy ra với bảng neo dùng chung trước đây.
+
+    ⚠️ Không đặt `overflow: hidden` ở đây: mũ phải nhô lên trên đỉnh đầu và ba lô phải thò
+       ra ngoài sườn (cả hai đều có toạ độ ÂM).
+  */
+  const petBox = (
+    <div className="relative flex size-[1em] items-center justify-center">
+      {/*
+        Bóng ellipse dưới chân — NEO thị giác, cho con vật một mặt đất để đứng lên.
+        Cỡ tính bằng `em` (không phải px) để bóng lớn lên cùng con vật: một cái bóng 90px cố
+        định dưới một con `super` 124px trông như một vết bẩn rời rạc.
+      */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-[0%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
+      />
+
+      {/*
+        Wrapper duy nhất tạo stacking context cho phụ kiện sau lưng. Slot `back` bên trong
+        không có z-index riêng, để z-index từng món chỉ quyết định thứ tự trong cùng slot.
+      */}
+      <div
+        aria-hidden="true"
+        data-accessory-layer="behind"
+        className="pointer-events-none absolute inset-0 z-[1]"
+      >
+        <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" anchor={anchor} />
+      </div>
+
+      {/*
+        Con vật. Cỡ = `font-size` của khung cha, ảnh thừa hưởng qua `1em`.
+        ⚠️ `relative` cần thiết: nó giữ con vật trong ngữ cảnh xếp lớp của hộp để `z-[2]` có
+           hiệu lực (trên `back`, dưới `feet/head/neck/face`).
+      */}
+      <span aria-hidden="true" className={cn('relative leading-none', PET_Z)}>
+        <PetArtwork petType={petType} evolutionStage={evolutionStage} fallback={petIcon} />
+      </span>
+
+      {/* Phụ kiện ĐEO TRƯỚC NGƯỜI (giày, mũ, khăn, kính). */}
+      <div
+        aria-hidden="true"
+        data-accessory-layer="front"
+        className="pointer-events-none absolute inset-0 z-[3]"
+      >
+        <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" anchor={anchor} />
+      </div>
+
+      {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
+          `animate-pulse` đã bị tắt sẵn dưới `prefers-reduced-motion` (xem `tokens.css`). */}
+      {isSuper && (
+        <span
+          aria-hidden="true"
+          className="absolute right-[2%] top-[-4%] animate-pulse text-[0.34em] leading-none"
+        >
+          ✨
+        </span>
+      )}
+    </div>
+  );
+
+  /*
+    KHUNG chứa hộp con vật. Cỡ do NGƯỜI GỌI quyết (`sizeEm` + `frameClassName`), mặc định là khung
+    thẻ 200×200 với cỡ chữ theo bậc tiến hoá.
+
+    ⚠️⚠️ `flex items-center justify-center` LÀ BẮT BUỘC — KHÔNG ĐƯỢC GỠ.
+      Con vật là một `<span>` INLINE. Trong một `<div>` thường nó trôi về GÓC TRÊN-TRÁI —
+      đo trên trình duyệt thật (Playwright/Chromium): tâm con vật ở **28,8% / 31,3%** thay vì
+      50% / 50%. Hệ quả đo được: mũ lơ lửng cạnh tai, kính nằm ngang MÁ chứ không trên mắt,
+      khăn rơi dưới cằm, giày cách xa chân — đúng lời chủ dự án: *"các icon đeo vô con pet
+      cũng khá là thô, lung tung"*. Tiêm `display:flex; align-items:center; justify-content:
+      center` vào ô (chỉ sửa DOM sống) đưa tâm con vật về **50% / 50%** và mọi món rơi đúng
+      người ngay lập tức.
+  */
+  const petFrame = (
+    <div
+      className={cn(
+        'relative mx-auto flex shrink-0 items-center justify-center',
+        frameClassName ?? 'size-[200px]',
+        // ⚠️ Khi người gọi tự đặt cỡ (`sizeEm`) thì KHÔNG áp cỡ theo bậc nữa — hai nguồn
+        //    `font-size` cùng lúc là hai nguồn sự thật, và cái sau sẽ thắng một cách mơ hồ.
+        sizeEm === undefined && STAGE_TEXT_SIZE[evolutionStage],
+      )}
+      style={sizeEm === undefined ? undefined : { fontSize: sizeEm }}
+    >
+      {petBox}
+    </div>
+  );
+
+  /*
+    BỐI CẢNH TRẦN — xem ghi chú `bare` ở `PetAvatarProps`. Chỉ con vật + phụ kiện.
+  */
+  if (bare) {
+    return (
+      <div className={cn('flex flex-col', className)} aria-hidden="true">
+        {petFrame}
+      </div>
+    );
+  }
+
   return (
     <div className={cn('flex flex-col gap-1', className)}>
       {/*
@@ -287,87 +436,7 @@ export function PetAvatar({ petType, evolutionStage, items, className }: PetAvat
         */}
         <div aria-hidden="true" className="bg-pet-sky px-3 pt-2 pb-1" />
 
-        {/*
-          KHUNG CỐ ĐỊNH 200×200 — khoảng thở cho con vật, và giữ `1em` ổn định ở mọi bề rộng.
-          Bên trong nó là HỘP `1em × 1em` của con vật, và đó mới là hệ toạ độ của phụ kiện.
-
-          ⚠️⚠️ `flex items-center justify-center` LÀ BẮT BUỘC — KHÔNG ĐƯỢC GỠ.
-            Con vật là một `<span>` INLINE. Trong một `<div>` thường nó trôi về GÓC TRÊN-TRÁI —
-            đo trên trình duyệt thật (Playwright/Chromium): tâm con vật ở **28,8% / 31,3%** thay vì
-            50% / 50%. Hệ quả đo được: mũ lơ lửng cạnh tai, kính nằm ngang MÁ chứ không trên mắt,
-            khăn rơi dưới cằm, giày cách xa chân — đúng lời chủ dự án: *"các icon đeo vô con pet
-            cũng khá là thô, lung tung"*. Tiêm `display:flex; align-items:center; justify-content:
-            center` vào ô (chỉ sửa DOM sống) đưa tâm con vật về **50% / 50%** và mọi món rơi đúng
-            người ngay lập tức.
-        */}
-        <div
-          className={cn(
-            'relative mx-auto flex size-[200px] shrink-0 items-center justify-center',
-            STAGE_TEXT_SIZE[evolutionStage],
-          )}
-        >
-          {/*
-            HỘP `1em × 1em` — CHÍNH LÀ Ô CHỮ CỦA CON VẬT, và là HỆ TOẠ ĐỘ DUY NHẤT của phụ kiện.
-            `1em` = `font-size` của khung cha (84 / 104 / 124px theo bậc), nên hộp này lớn lên cùng
-            con vật; neo `%`-của-hộp vì thế cùng lớn lên. Số neo là **của riêng từng ảnh** — xem
-            `petAnchorFor` trong `src/lib/petAnchors.ts` (KHÔNG còn bảng dùng chung ở tệp này).
-
-            ⚠️ Không đặt `overflow: hidden` ở đây: mũ phải nhô lên trên đỉnh đầu và ba lô phải thò
-               ra ngoài sườn (cả hai đều có toạ độ ÂM).
-          */}
-          <div className="relative flex size-[1em] items-center justify-center">
-            {/*
-              Bóng ellipse dưới chân — NEO thị giác, cho con vật một mặt đất để đứng lên.
-              Cỡ tính bằng `em` (không phải px) để bóng lớn lên cùng con vật: một cái bóng 90px cố
-              định dưới một con `super` 124px trông như một vết bẩn rời rạc.
-            */}
-            <span
-              aria-hidden="true"
-              className="absolute bottom-[0%] left-1/2 z-0 h-[0.10em] w-[1.05em] -translate-x-1/2 rounded-pill bg-pet-shadow"
-            />
-
-            {/*
-              Wrapper duy nhất tạo stacking context cho phụ kiện sau lưng. Slot `back` bên trong
-              không có z-index riêng, để z-index từng món chỉ quyết định thứ tự trong cùng slot.
-            */}
-            <div
-              aria-hidden="true"
-              data-accessory-layer="behind"
-              className="pointer-events-none absolute inset-0 z-[1]"
-            >
-              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="behind" anchor={anchor} />
-            </div>
-
-            {/*
-              Con vật. Cỡ = `font-size` của khung cha (84/104/124px), ảnh thừa hưởng qua `1em`.
-              ⚠️ `relative` cần thiết: nó giữ con vật trong ngữ cảnh xếp lớp của hộp để `z-[2]` có
-                 hiệu lực (trên `back`, dưới `feet/head/neck/face`).
-            */}
-            <span aria-hidden="true" className={cn('relative leading-none', PET_Z)}>
-              <PetArtwork petType={petType} evolutionStage={evolutionStage} fallback={petIcon} />
-            </span>
-
-            {/* Phụ kiện ĐEO TRƯỚC NGƯỜI (giày, mũ, khăn, kính). */}
-            <div
-              aria-hidden="true"
-              data-accessory-layer="front"
-              className="pointer-events-none absolute inset-0 z-[3]"
-            >
-              <AccessoryLayers slots={ACCESSORY_SLOTS} worn={worn} only="inFront" anchor={anchor} />
-            </div>
-
-            {/* Dấu "Siêu cấp": tia sáng ở góc trên phải. Cỡ bằng `em` để lớn lên cùng con vật.
-                `animate-pulse` đã bị tắt sẵn dưới `prefers-reduced-motion` (xem `tokens.css`). */}
-            {isSuper && (
-              <span
-                aria-hidden="true"
-                className="absolute right-[2%] top-[-4%] animate-pulse text-[0.34em] leading-none"
-              >
-                ✨
-              </span>
-            )}
-          </div>
-        </div>
+        {petFrame}
 
         {/* DẢI 2 — ĐẤT / CỎ. Cùng lý do như DẢI 1: chỉ còn là dải màu, không còn hàng trang trí. */}
         <div aria-hidden="true" className="bg-pet-ground px-3 pt-1 pb-2" />
