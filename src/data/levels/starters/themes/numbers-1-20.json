@@ -6,7 +6,7 @@
     "name_vi": "Số 1-20",
     "icon": "🔢",
     "sceneImage": "",
-    "sceneAlt": "Chủ đề số đếm từ 1 đến 20. Mỗi thẻ hiển thị biểu tượng số (1️⃣ đến 🔟, và các số 11 đến 20 dùng hai ô số ghép như 1️⃣1️⃣ cho số 11).",
+    "sceneAlt": "Chủ đề số đếm từ 1 đến 20. Mỗi thẻ hiển thị CHỮ SỐ thật của từ đó (1, 2, … 20) — không có tranh minh hoạ, vì chính mặt số mới là bài học.",
     "unlockCondition": {
       "type": "coming_soon"
     },
