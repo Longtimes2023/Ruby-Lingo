@@ -316,8 +316,14 @@ describe('MemoryMatchGame — chơi thật', () => {
 
     fireEvent.click(cards[i1]!);
 
-    // ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
-    await waitFor(() => expect(roundNumber()).toBe('2'));
+    /**
+     * ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
+     *   `timeout` nêu TƯỜNG MINH (mặc định của `waitFor` là 1000 ms): đường đi nay gồm
+     *   `await waitForSpeech()` (microtask) + `setTimeout(250)` + React vẽ lại. Trên runner
+     *   CI đang tải, 1000 ms là biên quá mỏng cho một test KHÔNG kiểm hiệu năng — và một
+     *   test đỏ ngẫu nhiên còn tệ hơn một test chậm.
+     */
+    await waitFor(() => expect(roundNumber()).toBe('2'), { timeout: 5000 });
     expect(advancedFrom(start)).toBe(true);
     expect(screen.getByText('1/6 cặp')).toBeInTheDocument();
     // Trò này KHÔNG có mạng: lật thẻ không bao giờ "sai".
@@ -379,8 +385,14 @@ describe('WordPictureGame — chơi thật', () => {
     fireEvent.click(screen.getByRole('button', { name: `Hình của từ ${target.en}` }));
     fireEvent.click(screen.getByRole('button', { name: `Từ ${target.en}` }));
 
-    // ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
-    await waitFor(() => expect(roundNumber()).toBe('2'));
+    /**
+     * ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
+     *   `timeout` nêu TƯỜNG MINH (mặc định của `waitFor` là 1000 ms): đường đi nay gồm
+     *   `await waitForSpeech()` (microtask) + `setTimeout(250)` + React vẽ lại. Trên runner
+     *   CI đang tải, 1000 ms là biên quá mỏng cho một test KHÔNG kiểm hiệu năng — và một
+     *   test đỏ ngẫu nhiên còn tệ hơn một test chậm.
+     */
+    await waitFor(() => expect(roundNumber()).toBe('2'), { timeout: 5000 });
     expect(advancedFrom(start)).toBe(true);
     expect(screen.getByText('1/6 cặp')).toBeInTheDocument();
   });
