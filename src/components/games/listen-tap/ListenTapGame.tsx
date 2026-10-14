@@ -34,11 +34,12 @@ import { cn } from '../../../lib/cn.js';
 import { shuffleSeeded } from '../../../lib/random.js';
 import { BigButton } from '../../common/BigButton.js';
 import { WordIcon } from '../../common/WordIcon.js';
+import { afterSpeechThen } from '../shared/afterSpeech.js';
 import type { GameComponentProps } from '../shared/types.js';
 
 export function ListenTapGame({ exercise, words, engine }: GameComponentProps) {
   const { t } = useTranslation();
-  const { speak } = useSpeech({ stopOnUnmount: true });
+  const { speak, waitForSpeech } = useSpeech({ stopOnUnmount: true });
   const { play } = useSfx();
 
   const config = exercise.config as ListenTapConfig;
@@ -126,17 +127,24 @@ export function ListenTapGame({ exercise, words, engine }: GameComponentProps) {
       attempt(true);
 
       /**
-       * ⚠️ CHỜ MỘT NHỊP TRƯỚC KHI SANG CÂU — KHÔNG gọi `completeRound()` ngay.
-       *   Bé cần thấy ô mình chọn sáng xanh lên để biết "mình đúng rồi". Chuyển câu tức thì
-       *   làm bé không kịp nhận ra điều gì vừa xảy ra, và câu mới hiện ra như thể màn hình
-       *   tự nhảy. 650ms là đủ để thấy mà chưa đủ để sốt ruột.
+       * ⚠️⚠️ CHỜ TIẾNG ĐỌC XONG RỒI MỚI SANG CÂU — KHÔNG dùng hằng số thời gian cứng.
+       *
+       *   Bản cũ: `window.setTimeout(() => completeRound(target.id), 650)`.
+       *   650 ms là một con số KHÔNG LIÊN QUAN gì tới độ dài từ đang đọc. Bé chạm đáp án khi
+       *   tiếng đọc chưa xong (bé nhanh, hoặc đã thuộc từ) ⇒ 650 ms sau, câu bị chuyển và
+       *   `speak()` của câu mới CẮT NGANG tiếng cũ. Ở CÂU CUỐI thì `completeRound` làm game
+       *   kết thúc ⇒ game bị gỡ khỏi DOM ⇒ `stopOnUnmount` cắt tiếng giữa câu — đúng triệu
+       *   chứng "mất một khúc" / "im re" chủ dự án báo (mục 6).
+       *
+       *   Nay: chờ tiếng đang đọc kết thúc, RỒI giữ 650 ms cho bé thấy ô mình chọn sáng xanh.
+       *   Xem `afterSpeech.ts` để biết toàn bộ lập luận.
        */
-      window.setTimeout(() => {
+      afterSpeechThen(waitForSpeech, 650, () => {
         // Truyền TỪ của câu này: engine ghi vào nhật ký để T049 gửi lên server.
         completeRound(target.id);
-      }, 650);
+      });
     },
-    [target, revealedId, play, attempt, completeRound],
+    [target, revealedId, play, attempt, completeRound, waitForSpeech],
   );
 
   if (!target) {

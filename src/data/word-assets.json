@@ -1,9 +1,8 @@
 {
   "_comment": "SINH TỰ ĐỘNG bởi asset-src/words/convert_words.py — ĐỪNG sửa tay. Danh sách id từ vựng ĐÃ CÓ ảnh; WordIcon chỉ vẽ <img> khi id nằm trong đây.",
-  "count": 201,
+  "count": 200,
   "ids": [
     "starters.alien",
-    "starters.angry",
     "starters.apartment",
     "starters.apple",
     "starters.arm",

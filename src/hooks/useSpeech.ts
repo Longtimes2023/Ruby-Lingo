@@ -36,6 +36,15 @@ export interface UseSpeechOptions {
 export interface UseSpeechResult {
   /** Đọc một chuỗi TIẾNG ANH. Trả `false` nếu bị bỏ qua (tắt tiếng, sai ngôn ngữ...). */
   speak: (text: string, options?: SpeakOptions) => Promise<boolean>;
+  /**
+   * Đọc một chuỗi và CHỜ TỚI KHI ĐỌC XONG — khác `speak()` (hoàn tất ngay khi bắt đầu đọc).
+   *
+   * ⭐ DÙNG NGAY TRƯỚC KHI ĐỔI CÂU HOẶC RỜI MÀN HÌNH. Xem `SpeechService.speakAndWait` để biết
+   *   đầy đủ: rời sớm ⇒ `stopOnUnmount` cắt tiếng giữa câu (mục 6 và 7 chủ dự án báo).
+   */
+  speakAndWait: (text: string, options?: SpeakOptions) => Promise<boolean>;
+  /** Chờ tiếng ĐANG ĐỌC kết thúc, không bắt đầu tiếng mới. */
+  waitForSpeech: () => Promise<void>;
   /** Đọc lần lượt nhiều chuỗi tiếng Anh. */
   speakSequence: (texts: readonly string[]) => Promise<void>;
   stop: () => void;
@@ -99,6 +108,15 @@ export function useSpeech(options: UseSpeechOptions = {}): UseSpeechResult {
     [],
   );
 
+  // Hai hàm dưới đây bọc `useCallback` cùng lý do như `speak`: tham chiếu ổn định thì
+  // `useEffect([...])` ở component con không chạy lại mỗi lần render.
+  const speakAndWait = useCallback(
+    (text: string, speakOptions?: SpeakOptions) => speechService.speakAndWait(text, speakOptions),
+    [],
+  );
+
+  const waitForSpeech = useCallback(() => speechService.waitForSpeech(), []);
+
   const speakSequence = useCallback(
     (texts: readonly string[]) => speechService.speakSequence(texts),
     [],
@@ -108,5 +126,13 @@ export function useSpeech(options: UseSpeechOptions = {}): UseSpeechResult {
 
   const isSupported = useMemo(() => speechService.isSupported(), []);
 
-  return { speak, speakSequence, stop, isSupported, voicesReady };
+  return {
+    speak,
+    speakAndWait,
+    waitForSpeech,
+    speakSequence,
+    stop,
+    isSupported,
+    voicesReady,
+  };
 }

@@ -42,7 +42,28 @@ export function WordIcon({ wordId, fallback, className }: WordIconProps) {
 
   // Chưa sinh ảnh cho từ này ⇒ trả về đúng emoji cũ. Trong lúc 201 ảnh còn đang được
   // sinh dần theo chủ đề, app vẫn phải chạy bình thường chứ không được hiện ô vỡ.
-  if (src === null) return <>{fallback}</>;
+  if (src === null) {
+    /**
+     * ⚠️⚠️ SỐ CÓ HAI CHỮ SỐ PHẢI NHỎ HƠN — nếu không, CHỮ SỐ CUỐI BỊ CẮT MẤT.
+     *
+     *   Chủ dự án báo (2026-10-14, mục 24): *"số 2 chữ số bị lệch (tỷ lệ không đúng) nên mất số
+     *   ngoài sau"*. Nguyên nhân cũ là emoji keycap ghép đôi (`1️⃣1️⃣`) — đã bỏ ở tầng dữ liệu
+     *   (`numbers-1-20.json` nay để `icon` là chữ số thật "11"…"20").
+     *
+     *   Nhưng bỏ keycap KHÔNG đủ: `.wi-fill` đặt cỡ chữ = 88% BỀ RỘNG KHUNG (đúng cho MỘT ký
+     *   tự), nên chuỗi hai chữ số rộng ~2 lần khung và bị `overflow-x: clip` cắt mất chữ thứ
+     *   hai — y hệt triệu chứng cũ, chỉ khác nguyên nhân. Hạ cỡ cho riêng nhánh này thì hai
+     *   chữ số nằm gọn (đo: 0,68 × 88cqw ≈ 60cqw cỡ chữ ⇒ hai chữ số ≈ 66% bề rộng khung).
+     *
+     *   ⚠️ Chỉ áp cho CHUỖI TOÀN CHỮ SỐ, không áp cho emoji: emoji hai ký tự ("🚪🧭" của
+     *     `hall`, "🟢🟢" của `peas`) cũng tràn khung, nhưng đó là vấn đề NỘI DUNG (từ đó phải
+     *     có ảnh thật) — hạ cỡ ở đây sẽ che mất dấu hiệu cần sửa.
+     */
+    if (/^\d{2,}$/.test(fallback)) {
+      return <span className="wi-text-narrow">{fallback}</span>;
+    }
+    return <>{fallback}</>;
+  }
 
   return (
     <img

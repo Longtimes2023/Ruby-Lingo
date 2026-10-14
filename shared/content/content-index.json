@@ -17,16 +17,16 @@
         "numbers-1-20"
       ],
       "requiredExerciseIds": [
+        "alphabet/a1/listen-tap",
         "alphabet/a1/memory-match",
         "alphabet/a1/memory-match-2",
-        "alphabet/a1/missing-letter",
+        "alphabet/a2/listen-tap",
         "alphabet/a2/memory-match",
         "alphabet/a2/memory-match-2",
-        "alphabet/a2/missing-letter",
+        "alphabet/a3/listen-tap",
         "alphabet/a3/memory-match",
-        "alphabet/a3/missing-letter",
+        "alphabet/a4/listen-tap",
         "alphabet/a4/memory-match",
-        "alphabet/a4/missing-letter",
         "at-home/h1/listen-tap",
         "at-home/h1/memory-match",
         "at-home/h1/memory-match-2",
@@ -286,7 +286,7 @@
         "at-the-clothes-shop/l4",
         "at-the-clothes-shop/l5"
       ],
-      "wordCount": 27,
+      "wordCount": 26,
       "hasGames": true,
       "unlock": {
         "type": "coming_soon"
@@ -442,11 +442,6 @@
       "id": "starters.alphabet",
       "en": "alphabet",
       "vi": "bảng chữ cái"
-    },
-    {
-      "id": "starters.angry",
-      "en": "angry",
-      "vi": "tức giận"
     },
     {
       "id": "starters.animal",
@@ -1370,8 +1365,8 @@
     },
     {
       "id": "starters.part",
-      "en": "part",
-      "vi": "phần"
+      "en": "a part of",
+      "vi": "một phần của"
     },
     {
       "id": "starters.pear",

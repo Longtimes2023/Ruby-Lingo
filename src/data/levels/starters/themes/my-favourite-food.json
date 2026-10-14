@@ -23,6 +23,7 @@
     {
       "id": "my-favourite-food/l1",
       "themeId": "my-favourite-food",
+      "name_en": "Tasty fruit",
       "name_vi": "Trái cây ngon",
       "wordIds": [
         "starters.apple",
@@ -43,6 +44,7 @@
     {
       "id": "my-favourite-food/l2",
       "themeId": "my-favourite-food",
+      "name_en": "Tropical fruit",
       "name_vi": "Trái cây nhiệt đới",
       "wordIds": [
         "starters.lime",
@@ -63,6 +65,7 @@
     {
       "id": "my-favourite-food/l3",
       "themeId": "my-favourite-food",
+      "name_en": "Fresh vegetables",
       "name_vi": "Rau củ tươi",
       "wordIds": [
         "starters.tomato",
@@ -70,8 +73,7 @@
         "starters.potato",
         "starters.carrot",
         "starters.peas",
-        "starters.beans",
-        "starters.rice"
+        "starters.beans"
       ],
       "exerciseIds": [
         "my-favourite-food/l3/memory-match",
@@ -85,6 +87,7 @@
     {
       "id": "my-favourite-food/l4",
       "themeId": "my-favourite-food",
+      "name_en": "Meals of the day",
       "name_vi": "Bữa ăn trong ngày",
       "wordIds": [
         "starters.breakfast",
@@ -93,7 +96,8 @@
         "starters.bread",
         "starters.egg",
         "starters.milk",
-        "starters.water"
+        "starters.water",
+        "starters.rice"
       ],
       "exerciseIds": [
         "my-favourite-food/l4/memory-match",
@@ -107,6 +111,7 @@
     {
       "id": "my-favourite-food/l5",
       "themeId": "my-favourite-food",
+      "name_en": "Tasty food",
       "name_vi": "Đồ ăn ngon",
       "wordIds": [
         "starters.fish",
@@ -129,6 +134,7 @@
     {
       "id": "my-favourite-food/l6",
       "themeId": "my-favourite-food",
+      "name_en": "Sweets and drinks",
       "name_vi": "Đồ ngọt và đồ uống",
       "wordIds": [
         "starters.candy",
@@ -251,7 +257,7 @@
       "id": "starters.rice",
       "levelId": "starters",
       "primaryThemeId": "my-favourite-food",
-      "primaryLessonId": "my-favourite-food/l3",
+      "primaryLessonId": "my-favourite-food/l4",
       "en": "rice",
       "vi": "cơm",
       "type": "n",
@@ -600,7 +606,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 6
       }
     },
@@ -636,7 +642,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -670,7 +676,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -689,7 +695,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 6
       }
     },
@@ -698,14 +704,14 @@
       "lessonId": "my-favourite-food/l3",
       "gameType": "memory_match",
       "wordIds": [
+        "starters.carrot",
         "starters.peas",
-        "starters.beans",
-        "starters.rice"
+        "starters.beans"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },
@@ -716,13 +722,14 @@
       "wordIds": [
         "starters.egg",
         "starters.milk",
-        "starters.water"
+        "starters.water",
+        "starters.rice"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 3
+        "pairs": 4
       }
     },
     {
@@ -737,7 +744,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },
@@ -793,8 +800,7 @@
         "starters.potato",
         "starters.carrot",
         "starters.peas",
-        "starters.beans",
-        "starters.rice"
+        "starters.beans"
       ],
       "difficulty": 1,
       "config": {
@@ -816,7 +822,8 @@
         "starters.bread",
         "starters.egg",
         "starters.milk",
-        "starters.water"
+        "starters.water",
+        "starters.rice"
       ],
       "difficulty": 1,
       "config": {
@@ -939,8 +946,7 @@
         "starters.potato",
         "starters.carrot",
         "starters.peas",
-        "starters.beans",
-        "starters.rice"
+        "starters.beans"
       ],
       "difficulty": 1,
       "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
@@ -971,7 +977,8 @@
         "starters.bread",
         "starters.egg",
         "starters.milk",
-        "starters.water"
+        "starters.water",
+        "starters.rice"
       ],
       "difficulty": 1,
       "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }

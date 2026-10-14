@@ -22,6 +22,7 @@
     {
       "id": "at-home/h1",
       "themeId": "at-home",
+      "name_en": "Rooms in the house",
       "name_vi": "Các phòng trong nhà",
       "wordIds": [
         "starters.bedroom",
@@ -43,6 +44,7 @@
     {
       "id": "at-home/h2",
       "themeId": "at-home",
+      "name_en": "Furniture at home",
       "name_vi": "Đồ đạc trong nhà",
       "wordIds": [
         "starters.chair",
@@ -65,6 +67,7 @@
     {
       "id": "at-home/h3",
       "themeId": "at-home",
+      "name_en": "Things around me",
       "name_vi": "Đồ đạc quanh bé",
       "wordIds": [
         "starters.bookcase",
@@ -87,6 +90,7 @@
     {
       "id": "at-home/h4",
       "themeId": "at-home",
+      "name_en": "Decorations at home",
       "name_vi": "Trang trí trong nhà",
       "wordIds": [
         "starters.door",
@@ -109,6 +113,7 @@
     {
       "id": "at-home/h5",
       "themeId": "at-home",
+      "name_en": "The house and the garden",
       "name_vi": "Ngôi nhà và khu vườn",
       "wordIds": [
         "starters.house",
@@ -577,7 +582,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -594,7 +599,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -630,7 +635,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 6
       }
     },
@@ -662,7 +667,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },
@@ -678,7 +683,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },

@@ -295,10 +295,23 @@ export function PetHousePage() {
     return list;
   }, [inventory]);
 
+  /**
+   * Ghi bản nháp phòng và cho React vẽ lại.
+   *
+   * ⚠️⚠️ KHÔNG bump `roomDraftVersion` Ở ĐÂY — ĐÓ LÀ MỘT NỬA CỦA LỖI "KÉO THẢ RẤT LAG" (mục 26).
+   *
+   *   `roomDraftVersion` là KHOÁ để hiệu ứng ĐỒNG BỘ LẠI `roomDraft` từ `room.placements` (dữ
+   *   liệu server) chạy lại — xem `useEffect` phía trên. Trong lúc bé ĐANG KÉO, `moveDecoration`
+   *   được gọi với `persist = false` nên KHÔNG có lượt lưu nào xếp hàng, và hiệu ứng đó CHẠY ĐƯỢC
+   *   ⇒ nó ghi đè vị trí bé vừa kéo bằng vị trí CŨ trên server ⇒ món đồ giật về chỗ cũ rồi lại
+   *   nhảy tới con trỏ — mỗi sự kiện con trỏ một lần.
+   *
+   *   ⭐ `setRoomDraft(next)` MỘT MÌNH đã đủ để React vẽ lại. Chỉ `enqueueRoomSave().finally()`
+   *     mới cần bump, vì đó là lúc dữ liệu server THẬT SỰ đã đổi và ta muốn đồng bộ lại.
+   */
   const updateRoomDraft = (next: RoomPlacement[]) => {
     roomDraftRef.current = next;
     setRoomDraft(next);
-    setRoomDraftVersion((version) => version + 1);
   };
 
   const enqueueRoomSave = () => {
@@ -331,6 +344,47 @@ export function PetHousePage() {
     updateRoomDraft(next);
     if (persist && roomReady) enqueueRoomSave();
   };
+
+  /**
+   * ⭐ GỘP CẬP NHẬT KÉO-THẢ THEO KHUNG HÌNH — mục 26 (*"Thao tác kéo thả các item rất lag, không
+   *    mượt mà gì cả"*).
+   *
+   * ⚠️ VÌ SAO CẦN: `pointermove` bắn nhanh hơn tốc độ vẽ của màn hình (chuột 125–1000 Hz, ngón
+   *   tay ~120 Hz, màn hình 60–120 Hz). Bản cũ gọi `moveDecoration` cho MỖI sự kiện, và mỗi lượt
+   *   là một `setState` ⇒ React hoà giải lại cả trang (khung phòng + mọi món đồ + cả khay đồ)
+   *   hàng trăm lần mỗi giây. Phần lớn số lần đó bị trình duyệt vứt đi vì chưa tới khung hình kế.
+   *
+   *   Nay: chỉ GHI LẠI toạ độ mới nhất vào ref (rẻ), và hẹn ĐÚNG MỘT khung hình
+   *   (`requestAnimationFrame`). Tới khung hình đó mới `setState` một lần ⇒ số lần React vẽ bằng
+   *   số khung hình thật, không phụ thuộc tần số thiết bị.
+   *
+   * ⚠️ Toạ độ mới nhất LUÔN thắng (không hàng đợi): điều bé thấy phải là vị trí ngón tay HIỆN
+   *   TẠI. Xếp hàng các điểm trung gian sẽ làm món đồ "đuổi theo" ngón tay chậm hơn nữa.
+   */
+  const dragPointRef = useRef<{ itemId: string; x: number; y: number } | null>(null);
+  const dragFrameRef = useRef<number | null>(null);
+
+  const scheduleDragMove = (itemId: string, x: number, y: number) => {
+    dragPointRef.current = { itemId, x, y };
+    if (dragFrameRef.current !== null) return;
+    dragFrameRef.current = window.requestAnimationFrame(() => {
+      dragFrameRef.current = null;
+      const point = dragPointRef.current;
+      if (!point) return;
+      moveDecoration(point.itemId, point.x, point.y, false);
+    });
+  };
+
+  /** Huỷ khung hình đang hẹn — gọi khi kết thúc kéo hoặc khi rời màn hình. */
+  const cancelScheduledDragMove = () => {
+    if (dragFrameRef.current !== null) {
+      window.cancelAnimationFrame(dragFrameRef.current);
+      dragFrameRef.current = null;
+    }
+    dragPointRef.current = null;
+  };
+
+  useEffect(() => cancelScheduledDragMove, []);
 
   // --- Chưa nạp xong ---------------------------------------------------------
   //
@@ -725,18 +779,22 @@ export function PetHousePage() {
               ((event.clientX - rect.left) / rect.width) * 100,
               ((event.clientY - rect.top) / rect.height) * 100,
             );
-            moveDecoration(draggingId, point.x, point.y, false);
+            // ⚠️ `scheduleDragMove` (gộp theo khung hình) chứ KHÔNG `moveDecoration` trực tiếp —
+            //    xem ghi chú "GỘP CẬP NHẬT KÉO-THẢ THEO KHUNG HÌNH" ở `scheduleDragMove`.
+            scheduleDragMove(draggingId, point.x, point.y);
           }}
           aria-busy={!roomReady || room.isLoading}
           onPointerUp={(event) => {
             if (!event.currentTarget.dataset.dragging) return;
             delete event.currentTarget.dataset.dragging;
             dragStartRef.current = null;
+            cancelScheduledDragMove();
             saveRoomDraft();
           }}
           onPointerCancel={(event) => {
             delete event.currentTarget.dataset.dragging;
             const start = dragStartRef.current;
+            cancelScheduledDragMove();
             if (start) moveDecoration(start.itemId, start.x, start.y, false);
             dragStartRef.current = null;
           }}

@@ -6,7 +6,7 @@
  * mà app báo SAI — bé mất niềm tin vào app và không chơi nữa. Đó là lỗi thật đã xảy ra
  * khi soạn nội dung (5 cặp trùng emoji trong cùng một chủ đề).
  *
- * Vì vậy test dưới đây KHÔNG kiểm vài ví dụ mẫu. Nó QUÉT TOÀN BỘ 275 từ × 4 chế độ
+ * Vì vậy test dưới đây KHÔNG kiểm vài ví dụ mẫu. Nó QUÉT TOÀN BỘ 274 từ × 4 chế độ
  * (1100 lượt) và khẳng định các bất biến đúng cho MỌI lượt. Một ví dụ mẫu có thể may mắn
  * rơi vào từ "sạch"; quét toàn bộ thì không.
  */
@@ -174,7 +174,7 @@ describe('tranh cảnh toàn cục', () => {
   });
 });
 
-describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 4 chế độ', () => {
+describe('pickDistractors — bất biến quét TOÀN BỘ 274 từ × 4 chế độ', () => {
   const bundle = contentRepository.loadLevel('starters');
 
   it('quét toàn bộ: không lượt nào vi phạm điều kiện (1)/(2)/(3)', () => {
@@ -200,9 +200,19 @@ describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 4 chế 
             violations.push(`${label}: nhiễu "${d.id}" trùng emoji ${d.icon} với nhiễu khác`);
           }
           icons.add(d.icon);
-          // (3) phải có hình để chạm
-          if (!d.picturable) {
-            violations.push(`${label}: nhiễu "${d.id}" KHÔNG picturable`);
+          /**
+           * (3) Ô nhiễu phải CÓ GÌ ĐỂ NHÌN.
+           *
+           * ⚠️ Luật này KHỚP `isShowableOption()` trong `ContentRepository.ts` — đọc ghi chú ở
+           *   đó trước khi sửa. Tóm tắt: mặc định phải `picturable` (có tranh). RIÊNG chế độ
+           *   `same_lesson` chấp nhận thêm từ mà `icon` là KÝ TỰ chữ/số — đó là chủ đề
+           *   `alphabet` (chữ cái) và `numbers-1-20` (chữ số), nơi mặt chữ CHÍNH LÀ bài học.
+           *   Không có luật này thì "nghe và chạm chữ cái" không thể tồn tại: bàn phím sẽ rỗng.
+           */
+          const glyph = /^[A-Za-z0-9]{1,3}$/.test(d.icon);
+          const showable = d.picturable === true || (mode === 'same_lesson' && glyph);
+          if (!showable) {
+            violations.push(`${label}: nhiễu "${d.id}" KHÔNG có gì để nhìn`);
           }
           // cùng chữ nhưng khác nghĩa ⇒ hai ô giống hệt nhau về chữ
           if (d.en.toLowerCase() === target.en.toLowerCase()) {
@@ -216,8 +226,19 @@ describe('pickDistractors — bất biến quét TOÀN BỘ 275 từ × 4 chế 
     expect(violations).toEqual([]);
     // Chốt số lượt quét để test không bị "rỗng ruột" nếu nội dung biến mất.
     expect(calls).toBe(bundle.words.length * ALL_MODES.length);
-    // 275 từ × 4 chế độ = 1100 (≥ 1100 vì nội dung chỉ được THÊM, không bớt).
-    expect(calls).toBeGreaterThanOrEqual(1100);
+    /**
+     * ⚠️⚠️ SÀN SỐ LƯỢT QUÉT ĐÃ **GIẢM** MỘT LẦN — 1100 → 1096. ĐỌC TRƯỚC KHI "SỬA LẠI CHO ĐÚNG":
+     *   Sàn cũ (1100 = 275 từ × 4 chế độ) dựa trên giả định "nội dung chỉ được THÊM". Giả định
+     *   đó vẫn đúng cho mọi lần bổ sung, nhưng KHÔNG đúng khi một từ bị **GỠ CÓ CHỦ ĐÍCH**:
+     *   ngày 2026-10-14, `starters.angry` bị bỏ khỏi chủ đề `at-the-clothes-shop` (bài "Đồ dùng")
+     *   theo yêu cầu chủ dự án — `angry` là tính từ chỉ CẢM XÚC, không phải đồ dùng, và PDF
+     *   Cambridge dùng CỤM `angry man` chứ không dùng từ đơn.
+     *   ⇒ 274 từ × 4 chế độ = 1096. Con số này KHÔNG phải "nới lỏng cổng": phép khẳng định thật
+     *     nằm ở dòng ngay trên (`calls === bundle.words.length * ALL_MODES.length`), tức MỌI từ
+     *     hiện có đều được quét ở MỌI chế độ. Sàn ở đây chỉ để bắt trường hợp nội dung biến mất
+     *     hàng loạt mà không ai nhận ra.
+     */
+    expect(calls).toBeGreaterThanOrEqual(1096);
   });
 
   it('same_theme: mọi nhiễu đều nằm trong chủ đề gốc của từ đích', () => {

@@ -20,6 +20,7 @@
     {
       "id": "my-street/m1",
       "themeId": "my-street",
+      "name_en": "Getting around",
       "name_vi": "Phương tiện đi lại",
       "wordIds": [
         "starters.train",
@@ -40,6 +41,7 @@
     {
       "id": "my-street/m2",
       "themeId": "my-street",
+      "name_en": "Moving and doing",
       "name_vi": "Đi lại và vận động",
       "wordIds": [
         "starters.ride",
@@ -59,6 +61,7 @@
     {
       "id": "my-street/m3",
       "themeId": "my-street",
+      "name_en": "Around my street",
       "name_vi": "Quanh khu phố",
       "wordIds": [
         "starters.tree",
@@ -343,7 +346,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 6
       }
     },

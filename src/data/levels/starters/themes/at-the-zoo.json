@@ -14,6 +14,7 @@
     {
       "id": "at-the-zoo/z1",
       "themeId": "at-the-zoo",
+      "name_en": "Big wild animals",
       "name_vi": "Động vật hoang dã to lớn",
       "wordIds": [
         "starters.elephant",
@@ -35,6 +36,7 @@
     {
       "id": "at-the-zoo/z2",
       "themeId": "at-the-zoo",
+      "name_en": "Farm animals and pets",
       "name_vi": "Vật nuôi & bạn nhỏ",
       "wordIds": [
         "starters.dog",
@@ -56,6 +58,7 @@
     {
       "id": "at-the-zoo/z3",
       "themeId": "at-the-zoo",
+      "name_en": "Reptiles, insects and more",
       "name_vi": "Bò sát, côn trùng & từ chung",
       "wordIds": [
         "starters.frog",

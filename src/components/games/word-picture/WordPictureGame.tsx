@@ -27,6 +27,7 @@ import { useSpeech } from '../../../hooks/useSpeech.js';
 import { cn } from '../../../lib/cn.js';
 import { WordIcon } from '../../common/WordIcon.js';
 import { pickEncourage } from '../../../i18n/index.js';
+import { afterSpeechThen } from '../shared/afterSpeech.js';
 import type { GameComponentProps } from '../shared/types.js';
 import { buildColumns } from './logic.js';
 
@@ -46,7 +47,7 @@ function connectorPath(line: Connector): string {
 
 export function WordPictureGame({ exercise, words, engine }: GameComponentProps) {
   const { t } = useTranslation();
-  const { speak } = useSpeech({ stopOnUnmount: true });
+  const { speak, waitForSpeech } = useSpeech({ stopOnUnmount: true });
   const { play } = useSfx();
 
   const config = exercise.config as WordPictureConfig;
@@ -173,9 +174,11 @@ export function WordPictureGame({ exercise, words, engine }: GameComponentProps)
       // CHỈ TIẾNG ANH.
       void speak(word.en, { rate: 0.8 });
       attempt(true);
-      completeRound(word.id);
+      // ⚠️ Bản cũ gọi `completeRound` NGAY ⇒ tiếng đọc vừa phát bị cắt lập tức (và ở cặp CUỐI
+      //    thì game bị gỡ khỏi DOM ⇒ `stopOnUnmount` cắt hẳn). Xem đầu `afterSpeech.ts`.
+      afterSpeechThen(waitForSpeech, 250, () => completeRound(word.id));
     },
-    [matchedSet, selected, play, speak, config.rightColumn, attempt, completeRound],
+    [matchedSet, selected, play, speak, waitForSpeech, config.rightColumn, attempt, completeRound],
   );
 
   if (columns.left.length === 0) {

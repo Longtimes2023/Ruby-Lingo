@@ -306,6 +306,13 @@ function LessonRow({
 
         <div className="min-w-0 flex-1">
           <h3 className="text-kid-md leading-tight text-ink">{lesson.name_vi}</h3>
+          {/*
+            ⭐ TÊN TIẾNG ANH NGAY DƯỚI TÊN TIẾNG VIỆT (yêu cầu chủ dự án 2026-10-14:
+            *"Các tiêu đề nên để kèm tiếng anh. Ví dụ, rau củ tươi / xxx"*).
+            Dùng dấu `·` chứ không dấu `/`: tên bài tiếng Anh có thể chứa dấu `/` và
+            `&` ("Trousers, shoes and hats"), nên `/` làm câu đọc ra hai lần ngắt.
+          */}
+          <p className="text-kid-xs leading-tight text-ink-faint">{lesson.name_en}</p>
           <p className="mt-0.5 text-kid-xs text-ink-soft">
             {t('lesson.wordsInLesson', { count: total })}
             {' · '}

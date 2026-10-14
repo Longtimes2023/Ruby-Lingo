@@ -24,6 +24,7 @@ import { useSpeech } from '../../../hooks/useSpeech.js';
 import { cn } from '../../../lib/cn.js';
 import { pickEncourage } from '../../../i18n/index.js';
 import { BigButton } from '../../common/BigButton.js';
+import { afterSpeechThen } from '../shared/afterSpeech.js';
 import type { GameComponentProps } from '../shared/types.js';
 import { sceneLayout, splitSentence, subjectIcon, type SceneLayout } from './logic.js';
 
@@ -88,7 +89,7 @@ function Scene({ layout, petIcon }: { layout: SceneLayout; petIcon: string }) {
 
 export function PrepositionsGame({ exercise, words, engine }: GameComponentProps) {
   const { t } = useTranslation();
-  const { speak, isSupported: speechSupported } = useSpeech({ stopOnUnmount: true });
+  const { speak, waitForSpeech, isSupported: speechSupported } = useSpeech({ stopOnUnmount: true });
   const { play } = useSfx();
 
   const config = exercise.config as PrepositionsConfig;
@@ -152,12 +153,19 @@ export function PrepositionsGame({ exercise, words, engine }: GameComponentProps
       // Đọc lại cả câu SAU khi bé đúng — lúc này bé đã nghe câu một lần, nghe lại lần hai gắn
       // âm thanh với cấu trúc câu vừa hiện ra trên màn hình.
       hear();
-      // `null`: câu này dạy GIỚI TỪ, không dạy từ vựng — `PrepositionSlot` không có `wordId`.
-      // Vẫn tính đủ điểm/sao/số câu; chỉ không ghi gì vào tiến độ TỪNG TỪ.
-      // Xem `GameAnswerRecord.wordId` ở `shared/types/progress.ts`.
-      window.setTimeout(() => completeRound(null), 900);
+      // ⚠️⚠️ CHỜ CÂU ĐỌC XONG MỚI SANG CÂU MỚI — mục 7 chủ dự án báo:
+      //   *"đoạn văn được đọc lại chưa xong đã nhảy qua câu khác, câu không hoàn chỉnh"*.
+      //   Bản cũ: `setTimeout(completeRound, 900)`. Câu thật trong dữ liệu dài hơn thế nhiều
+      //   ("The bookcase is in the box." ở `rate 0.8` cần > 2 giây) ⇒ sang câu mới ở mốc 900 ms
+      //   ⇒ `speak()` của câu mới CẮT NGANG câu đang đọc. Xem đầu `afterSpeech.ts`.
+      afterSpeechThen(waitForSpeech, 400, () => {
+        // `null`: câu này dạy GIỚI TỪ, không dạy từ vựng — `PrepositionSlot` không có `wordId`.
+        // Vẫn tính đủ điểm/sao/số câu; chỉ không ghi gì vào tiến độ TỪNG TỪ.
+        // Xem `GameAnswerRecord.wordId` ở `shared/types/progress.ts`.
+        completeRound(null);
+      });
     },
-    [slot, solved, play, attempt, hear, completeRound],
+    [slot, solved, play, attempt, hear, waitForSpeech, completeRound],
   );
 
   // `rounds` khai trong config có thể lệch với số `slots` thật — chặn ở đây thay vì render rỗng.

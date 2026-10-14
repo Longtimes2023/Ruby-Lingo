@@ -21,6 +21,7 @@
     {
       "id": "my-friends-birthday/l1",
       "themeId": "my-friends-birthday",
+      "name_en": "My family",
       "name_vi": "Gia đình của bé",
       "wordIds": [
         "starters.dad",
@@ -43,6 +44,7 @@
     {
       "id": "my-friends-birthday/l2",
       "themeId": "my-friends-birthday",
+      "name_en": "People around me",
       "name_vi": "Mọi người quanh bé",
       "wordIds": [
         "starters.person",
@@ -62,6 +64,7 @@
     {
       "id": "my-friends-birthday/l3",
       "themeId": "my-friends-birthday",
+      "name_en": "Friends and teachers",
       "name_vi": "Bạn bè và thầy cô",
       "wordIds": [
         "starters.boy",
@@ -79,6 +82,7 @@
     {
       "id": "my-friends-birthday/l4",
       "themeId": "my-friends-birthday",
+      "name_en": "Toys and party guests",
       "name_vi": "Đồ chơi và khách mời",
       "wordIds": [
         "starters.robot",
@@ -378,7 +382,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -396,7 +400,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 5
       }
     },
@@ -448,7 +452,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },

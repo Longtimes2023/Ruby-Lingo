@@ -21,6 +21,7 @@
     {
       "id": "at-school/s1",
       "themeId": "at-school",
+      "name_en": "School things",
       "name_vi": "Đồ dùng học tập",
       "wordIds": [
         "starters.pencil",
@@ -43,6 +44,7 @@
     {
       "id": "at-school/s2",
       "themeId": "at-school",
+      "name_en": "Subjects and sports",
       "name_vi": "Môn học và thể thao",
       "wordIds": [
         "starters.football",
@@ -65,6 +67,7 @@
     {
       "id": "at-school/s3",
       "themeId": "at-school",
+      "name_en": "In the classroom",
       "name_vi": "Trong lớp học",
       "wordIds": [
         "starters.teacher",
@@ -86,6 +89,7 @@
     {
       "id": "at-school/s4",
       "themeId": "at-school",
+      "name_en": "Learning and playing",
       "name_vi": "Học và chơi",
       "wordIds": [
         "starters.close",
@@ -455,12 +459,12 @@
       "levelId": "starters",
       "primaryThemeId": "at-school",
       "primaryLessonId": "at-school/s4",
-      "en": "part",
-      "vi": "phần",
+      "en": "a part of",
+      "vi": "một phần của",
       "type": "n",
-      "icon": "🧩",
+      "icon": "◔",
       "picturable": false,
-      "phonetic": "/pɑːt/"
+      "phonetic": "/ə pɑːt əv/"
     }
   ],
   "exercises": [
@@ -477,7 +481,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -544,7 +548,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },

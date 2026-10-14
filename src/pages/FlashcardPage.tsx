@@ -6,23 +6,25 @@
  *   đúng phát âm, và hiểu nghĩa. Nó cũng là hoạt động duy nhất chạy được ở CẢ 11 chủ đề, vì 10
  *   chủ đề kia chưa có bài tập game nào.
  *
- * ⭐ THẺ HIỆN CẢ TIẾNG ANH LẪN TIẾNG VIỆT CÙNG LÚC — KHÔNG LẬT MẶT.
- *   Bản thiết kế ban đầu ghi "lật thẻ" (mặt trước tiếng Anh, mặt sau nghĩa). Đổi thành hiện cả
- *   hai vì ba lý do cụ thể, không phải vì cho nhanh:
+ * ⭐ THẺ CHỈ HIỆN TIẾNG ANH + HÌNH — NGHĨA TIẾNG VIỆT ĐÃ BỎ (2026-10-14).
  *
- *     1. **Không lồng được nút.** Thẻ vừa phải bấm-để-nghe, vừa phải vuốt-để-đổi-thẻ. Một nút
- *        lật nằm BÊN TRONG vùng vuốt sẽ bị `setPointerCapture` của vùng vuốt nuốt mất cú `click`
- *        trên thiết bị cảm ứng (sự kiện chuột đi theo sự kiện con trỏ). Tách nút ra ngoài thẻ
- *        thì mất chính cái hay của lật thẻ.
- *     2. **`<button>` lồng trong `<button>` là HTML không hợp lệ** và làm trình đọc màn hình đọc
- *        hai lần. Không có cách nào vừa lật vừa có nút loa riêng trên cùng một tấm thẻ.
- *     3. **Với bé 7 tuổi đang học từ MỚI, giấu nghĩa không giúp gì.** Lật thẻ là để KIỂM TRA
- *        trí nhớ — việc đó thuộc về các game (Nhóm 5), nơi có chấm điểm và có phần thưởng. Còn
- *        thẻ từ là chỗ để HỌC: bé cần thấy nghĩa ngay.
+ *   Yêu cầu chủ dự án: *"Phần lật thẻ sao lại là thẻ tiếng anh và thẻ tiếng việt nhỉ? Nhớ trước
+ *   đó là thẻ tiếng anh và ảnh tương ứng mà."* — và khi được hỏi, chủ dự án chọn **"bỏ hẳn tiếng
+ *   Việt"**.
+ *
+ *   ⚠️ BẢN CŨ ĐÃ CỐ Ý HIỆN CẢ HAI và biện luận rằng "bé 7 tuổi học từ MỚI thì cần thấy nghĩa
+ *     ngay". Lập luận đó không sai về mặt sư phạm, nhưng nó BỎ QUA một điều: cặp `từ tiếng Anh +
+ *     nghĩa tiếng Việt` đã bị bỏ khỏi TRÒ LẬT THẺ vì đúng lý do này (xem `pairMode` trong
+ *     `memory-match/logic.ts`), và để màn HỌC cũng hiện tiếng Việt nghĩa là bé đi qua cả chủ đề
+ *     mà không bao giờ buộc phải nối ÂM với HÌNH. Ảnh minh hoạ mới là thứ làm việc đó.
+ *
+ *   ⇒ Thẻ nay gồm: HÌNH + từ tiếng Anh + phiên âm. Nghĩa tiếng Việt KHÔNG hiện ở đây.
+ *     (Nghĩa tiếng Việt vẫn còn nguyên trong dữ liệu — nó dùng cho danh sách từ ở khu vực phụ
+ *      huynh và cho `aria-label`; chỉ KHÔNG hiện trên mặt thẻ.)
  *
  * ⭐ ÂM THANH CHỈ ĐỌC TIẾNG ANH — ràng buộc cứng, xem đầu `SpeechService.ts`.
- *   Nghĩa tiếng Việt hiện trên màn hình nhưng KHÔNG bao giờ được đọc lên. `speak()` tự chặn
- *   (và `warnIfNotEnglish` báo ra console) nếu ai đó lỡ truyền tiếng Việt vào.
+ *   `speak()` tự chặn (và `warnIfNotEnglish` báo ra console) nếu ai đó lỡ truyền tiếng Việt vào.
+ *   Nay mặt thẻ cũng không còn tiếng Việt, nên không còn chỗ nào để lỡ.
  *
  * ⚠️ KHÔNG TỰ PHÁT ÂM KHI VÀO MÀN HÌNH (bẫy 4 ở `SpeechService.ts`).
  *   iOS/Safari chỉ cho phát âm sau một thao tác thật của người dùng; tự đọc lúc tải trang sẽ bị
@@ -282,6 +284,8 @@ export function FlashcardPage() {
         </Link>
 
         <h1 className="text-kid-lg leading-tight text-ink">{lesson.name_vi}</h1>
+        {/* Tên bài tiếng Anh — cùng lý do đã ghi ở `ThemePage` (yêu cầu chủ dự án 2026-10-14). */}
+        <p className="text-kid-xs text-ink-faint">{lesson.name_en}</p>
       </header>
 
       <ProgressDots
@@ -345,8 +349,6 @@ export function FlashcardPage() {
         <p className="text-kid-3xl font-bold leading-tight text-ink">{word.en}</p>
 
         {word.phonetic && <p className="text-kid-sm text-ink-faint">{word.phonetic}</p>}
-
-        <p className="text-kid-lg text-ink-soft">{word.vi}</p>
       </div>
 
       <p className="text-center text-kid-xs text-ink-faint">{t('flashcard.hint')}</p>

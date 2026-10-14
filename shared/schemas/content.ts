@@ -82,6 +82,16 @@ export const lessonSchema = z
   .object({
     id: idString,
     themeId: idString,
+    /**
+     * Tên bài bằng TIẾNG ANH — hiện cạnh tên tiếng Việt trên tiêu đề (yêu cầu chủ dự án,
+     * 2026-10-14: *"Các tiêu đề nên để kèm tiếng anh. Ví dụ, rau củ tươi / xxx"*).
+     *
+     * ⭐ VÌ SAO ĐƯA VÀO SCHEMA CHỨ KHÔNG DỊCH Ở UI: bản dịch máy cho tên bài ("Rau củ tươi" →
+     *   "Fresh vegetables") là nội dung SƯ PHẠM, cần người đọc lại — không phải chuỗi giao diện.
+     *   Để trong dữ liệu thì `validate:content` và test nội dung soi được, và người soạn nội dung
+     *   sửa được mà không phải mở mã React.
+     */
+    name_en: z.string().min(1),
     name_vi: z.string().min(1),
     // KHÔNG có trường `order`. Thứ tự bài do THỨ TỰ phần tử trong `theme.lessonIds`
     // quyết định. Trước đây có `order` và nó đã lệch với `lessonIds` — hai nguồn chân

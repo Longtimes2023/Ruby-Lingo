@@ -30,6 +30,26 @@
   container-type: inline-size;
 }
 
+/**
+ * Nhánh chữ/số DÀI HƠN MỘT KÝ TỰ (hiện chỉ dùng cho chủ đề `numbers-1-20`: "11"…"20").
+ *
+ * ⚠️ VÌ SAO CẦN: `.wi-fill` đặt `font-size` bằng 88% BỀ RỘNG KHUNG — con số đúng cho MỘT ký tự
+ *   (một chữ cái, một chữ số, một emoji). Một chuỗi hai chữ số ở cỡ đó rộng gấp đôi khung và bị
+ *   `overflow-x: clip` của `.wi-fill` CẮT MẤT chữ số thứ hai. Chủ dự án đã báo đúng triệu chứng
+ *   này (mục 24: *"số 2 chữ số bị lệch … mất số ngoài sau"*) — nguyên nhân khi đó là emoji keycap
+ *   ghép đôi, nay là cỡ chữ. Hai nguyên nhân khác nhau, cùng một hậu quả.
+ *
+ * ⭐ `em` (không phải `cqw`): `.wi-fill` ĐÃ tính cỡ theo bề rộng khung, kể cả nhánh dự phòng
+ *   `3.5rem` cho trình duyệt không hiểu container query. Nhân theo `em` nghĩa là nhánh này tự
+ *   đúng ở CẢ HAI trường hợp, không phải lặp lại con số 88cqw ở đây (hai nơi khai cùng một con số
+ *   thì sớm muộn cũng lệch).
+ *
+ * Đo: 0,68 × 88cqw ≈ 60cqw cỡ chữ ⇒ hai chữ số ≈ 66% bề rộng khung, còn lề rộng rãi.
+ */
+.wi-text-narrow {
+  font-size: 0.68em;
+}
+
 .wi-fill {
   display: flex;
   align-items: center;

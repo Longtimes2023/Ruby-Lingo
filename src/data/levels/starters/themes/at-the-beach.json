@@ -14,6 +14,7 @@
     {
       "id": "at-the-beach/b1",
       "themeId": "at-the-beach",
+      "name_en": "Moving at the beach",
       "name_vi": "Vận động ở biển",
       "wordIds": [
         "starters.swim",
@@ -28,6 +29,7 @@
     {
       "id": "at-the-beach/b2",
       "themeId": "at-the-beach",
+      "name_en": "Playing sports",
       "name_vi": "Chơi thể thao",
       "wordIds": [
         "starters.kick",
@@ -42,6 +44,7 @@
     {
       "id": "at-the-beach/b3",
       "themeId": "at-the-beach",
+      "name_en": "Music and making things",
       "name_vi": "Âm nhạc và sáng tạo",
       "wordIds": [
         "starters.sing",
@@ -56,6 +59,7 @@
     {
       "id": "at-the-beach/b4",
       "themeId": "at-the-beach",
+      "name_en": "At the seaside",
       "name_vi": "Cảnh bãi biển",
       "wordIds": [
         "starters.sand",
@@ -113,7 +117,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 6
             }
         },
@@ -151,7 +155,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 6
             }
         },
@@ -170,7 +174,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 6
             }
         },

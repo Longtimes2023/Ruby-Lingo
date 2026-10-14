@@ -21,6 +21,7 @@
     {
       "id": "alphabet/a1",
       "themeId": "alphabet",
+      "name_en": "Letters A to G",
       "name_vi": "Chữ A đến chữ G",
       "wordIds": [
         "starters.a",
@@ -34,12 +35,13 @@
       "exerciseIds": [
         "alphabet/a1/memory-match",
         "alphabet/a1/memory-match-2",
-        "alphabet/a1/missing-letter"
+        "alphabet/a1/listen-tap"
       ]
     },
     {
       "id": "alphabet/a2",
       "themeId": "alphabet",
+      "name_en": "Letters H to N",
       "name_vi": "Chữ H đến chữ N",
       "wordIds": [
         "starters.h",
@@ -53,12 +55,13 @@
       "exerciseIds": [
         "alphabet/a2/memory-match",
         "alphabet/a2/memory-match-2",
-        "alphabet/a2/missing-letter"
+        "alphabet/a2/listen-tap"
       ]
     },
     {
       "id": "alphabet/a3",
       "themeId": "alphabet",
+      "name_en": "Letters O to T",
       "name_vi": "Chữ O đến chữ T",
       "wordIds": [
         "starters.o",
@@ -70,12 +73,13 @@
       ],
       "exerciseIds": [
         "alphabet/a3/memory-match",
-        "alphabet/a3/missing-letter"
+        "alphabet/a3/listen-tap"
       ]
     },
     {
       "id": "alphabet/a4",
       "themeId": "alphabet",
+      "name_en": "Letters U to Z",
       "name_vi": "Chữ U đến chữ Z",
       "wordIds": [
         "starters.u",
@@ -87,7 +91,7 @@
       ],
       "exerciseIds": [
         "alphabet/a4/memory-match",
-        "alphabet/a4/missing-letter"
+        "alphabet/a4/listen-tap"
       ]
     }
   ],
@@ -485,9 +489,9 @@
       }
     },
     {
-      "id": "alphabet/a1/missing-letter",
+      "id": "alphabet/a1/listen-tap",
       "lessonId": "alphabet/a1",
-      "gameType": "missing_letter",
+      "gameType": "listen_tap",
       "wordIds": [
         "starters.a",
         "starters.b",
@@ -498,18 +502,12 @@
         "starters.g"
       ],
       "difficulty": 1,
-      "config": {
-        "kind": "missing_letter",
-        "rounds": 6,
-        "hideCount": 1,
-        "hidePosition": "any",
-        "showImageHint": true
-      }
+      "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
-      "id": "alphabet/a2/missing-letter",
+      "id": "alphabet/a2/listen-tap",
       "lessonId": "alphabet/a2",
-      "gameType": "missing_letter",
+      "gameType": "listen_tap",
       "wordIds": [
         "starters.h",
         "starters.i",
@@ -520,18 +518,12 @@
         "starters.n"
       ],
       "difficulty": 1,
-      "config": {
-        "kind": "missing_letter",
-        "rounds": 6,
-        "hideCount": 1,
-        "hidePosition": "any",
-        "showImageHint": true
-      }
+      "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
-      "id": "alphabet/a3/missing-letter",
+      "id": "alphabet/a3/listen-tap",
       "lessonId": "alphabet/a3",
-      "gameType": "missing_letter",
+      "gameType": "listen_tap",
       "wordIds": [
         "starters.o",
         "starters.p",
@@ -541,18 +533,12 @@
         "starters.t"
       ],
       "difficulty": 1,
-      "config": {
-        "kind": "missing_letter",
-        "rounds": 6,
-        "hideCount": 1,
-        "hidePosition": "any",
-        "showImageHint": true
-      }
+      "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     },
     {
-      "id": "alphabet/a4/missing-letter",
+      "id": "alphabet/a4/listen-tap",
       "lessonId": "alphabet/a4",
-      "gameType": "missing_letter",
+      "gameType": "listen_tap",
       "wordIds": [
         "starters.u",
         "starters.v",
@@ -562,13 +548,7 @@
         "starters.z"
       ],
       "difficulty": 1,
-      "config": {
-        "kind": "missing_letter",
-        "rounds": 6,
-        "hideCount": 1,
-        "hidePosition": "any",
-        "showImageHint": true
-      }
+      "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
     }
   ]
 }

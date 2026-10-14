@@ -12,7 +12,7 @@
  *   V4  trùng `word.id` toàn cấp        ⇒ tiến độ 2 nghĩa khác nhau bị gộp ⇒ báo cáo sai
  *   V7  bài ngoài 4–8 từ                ⇒ lưới từ tràn màn hình điện thoại
  *   V10 chủ đề đầu để `previous_theme`  ⇒ BẢN ĐỒ HÀNH TRÌNH CHẾT, không mở được gì
- *   V11 game dạng hình < 4 từ picturable⇒ bé không có đủ hình để chọn
+ *   V11 game dạng hình < 4 từ CÓ GÌ ĐỂ NHÌN ⇒ bé không có đủ hình để chọn
  *   V15 trùng icon tiền tệ ↔ vật phẩm   ⇒ bé tưởng vật phẩm là tiền
  *   V17 trùng `key` ở global-scenes.json⇒ một màn hình lấy nhầm tranh của màn khác
  *   V18 trùng `id`/`icon` avatar         ⇒ hai avatar nhìn GIỐNG HỆT nhau, bé chọn mà không
@@ -49,6 +49,21 @@ const CONTENT_DIR = join(ROOT, 'shared', 'content');
 // `public/` ở gốc `/`, và bản build copy sang `dist/assets/scenes/`). Trước đây trỏ nhầm
 // `assets/scenes` (không tồn tại) nên MỌI tranh đều bị báo thiếu file ⇒ cảnh báo sai (V12/V17).
 const SCENES_DIR = join(ROOT, 'public', 'assets', 'scenes');
+
+/**
+ * Tập id từ vựng ĐÃ CÓ ẢNH THẬT (`src/data/word-assets.json` — sinh từ đĩa bởi
+ * `asset-src/words/convert_words.py`).
+ *
+ * Dùng cho V11: `picturable: false` KHÔNG luôn có nghĩa "không có gì để nhìn" — `my-body` khai
+ * `picturable: false` cho `hair`/`body`/`head` nhưng ba từ đó VẪN có ảnh. Xem ghi chú ở V11.
+ */
+const wordAssetIds = new Set<string>(
+  (
+    JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'word-assets.json'), 'utf8')) as {
+      ids: string[];
+    }
+  ).ids,
+);
 
 type Severity = 'error' | 'warning';
 interface Issue {
@@ -308,17 +323,75 @@ function validateLevels() {
         }
       }
 
-      // --- V11: game dạng hình cần >= 4 từ picturable -------------------
+      // --- V11: game dạng hình cần >= 4 từ CÓ GÌ ĐỂ NHÌN -----------------
+      /**
+       * ⚠️⚠️ LUẬT ĐÃ ĐƯỢC NỚI ĐÚNG MỘT CHỖ, CÓ LÝ DO — 2026-10-14. ĐỌC TRƯỚC KHI "SIẾT LẠI".
+       *
+       *   Luật cũ: đếm `word.picturable === true`. Điều kiện đó đúng với hầu hết nội dung, nhưng
+       *   SAI ở hai nhóm từ mà `picturable: false` KHÔNG có nghĩa là "không có gì để nhìn":
+       *
+       *     1. `my-body` — `hair` / `body` / `head` khai `picturable: false` (không vẽ được thành
+       *        một "đồ vật") NHƯNG vẫn CÓ ẢNH thật trong `public/assets/words/`. Thẻ hình vẫn
+       *        hiện đúng hình ⇒ bé có hình để chạm.
+       *     2. `alphabet` / `numbers-1-20` — `icon` CHÍNH LÀ mặt chữ/số ("A", "12"). Không có
+       *        ảnh, và đó là điều đúng: vẽ con vật cho chữ "B" là làm hỏng bài. Mặt chữ mới là
+       *        nội dung bài học, và nó VẪN chạm được.
+       *
+       *   ⭐ VÌ SAO PHẢI SỬA LUẬT (chứ không phải hạ nội dung cho vừa luật):
+       *     Chủ dự án yêu cầu trò lật thẻ ghép **từ ↔ HÌNH** thay vì từ ↔ tiếng Việt (mục 4),
+       *     và yêu cầu chủ đề chữ cái dùng **"nghe và chạm"** (mục 8). Cả hai việc đều bị luật
+       *     cũ chặn oan: `my-body/l1` có 3/4 từ `picturable: false` dù CẢ BỐN đều có ảnh.
+       *
+       *   ⚠️⚠️ NHƯNG ĐÂY KHÔNG PHẢI "NỚI CHO XONG": điều kiện mới vẫn là một ĐẲNG THỨC CHẶT —
+       *     một từ được tính khi và chỉ khi nó THẬT SỰ hiện ra được thứ gì đó:
+       *       • `picturable === true`                       → có tranh theo thiết kế, HOẶC
+       *       • có tệp ảnh trong `src/data/word-assets.json` → tranh đã sinh thật, HOẶC
+       *       • `icon` là KÝ TỰ chữ/số VÀ game lấy ô nhiễu bằng `pickDistractors` với chế độ
+       *         `same_lesson` (tức `listen_tap`).
+       *     Nhánh ký tự CỐ Ý KHÔNG áp cho `memory_match`: ở đó hai thẻ phải KHÁC nội dung, mà
+       *     thẻ "A" ghép với thẻ "A" là hai thẻ GIỐNG HỆT nhau — trò chơi mất hết ý nghĩa.
+       *     (Đó cũng đúng là lý do `alphabet`/`numbers` giữ `pairMode: 'en_vi'`.)
+       *     Điều kiện này KHỚP `isShowableOption()` trong `src/services/ContentRepository.ts` —
+       *     hai nơi phải nói cùng một điều, nếu lệch thì luật ở đây thành vô nghĩa.
+       */
       const wordById = new Map(b.words.map((w) => [w.id, w]));
       for (const e of b.exercises) {
         const usesVietnameseText =
           e.gameType === 'memory_match' && e.config.kind === 'memory_match' && e.config.pairMode === 'en_vi';
         if (PICTURE_GAME_TYPES.includes(e.gameType) && !usesVietnameseText) {
-          const picturable = e.wordIds.filter((id) => wordById.get(id)?.picturable === true);
-          if (picturable.length < 4) {
+          const glyphAllowed =
+            e.gameType === 'listen_tap' &&
+            e.config.kind === 'listen_tap' &&
+            e.config.distractorMode === 'same_lesson';
+          const showable = e.wordIds.filter((id) => {
+            const word = wordById.get(id);
+            if (!word) return false;
+            if (word.picturable === true) return true;
+            if (wordAssetIds.has(word.id)) return true;
+            return glyphAllowed && /^[A-Za-z0-9]{1,3}$/.test(word.icon);
+          });
+          /**
+           * ⚠️ NGƯỠNG KHÔNG PHẢI LÚC NÀO CŨNG 4 — và đây là lý do:
+           *
+           *   • `memory_match` KHÔNG bày "ô để chọn"; nó LẬT TỪNG CẶP. Ngưỡng đúng là đủ hình cho
+           *     SỐ CẶP đã khai (`pairs`), và schema đã buộc `pairs >= 3`. Trước 2026-10-14, các
+           *     exercise `memory-match-2` (3 cặp) không bị luật này chạm tới chỉ vì chúng mang
+           *     `pairMode: 'en_vi'` và được miễn — chứ không phải vì 3 cặp là sai. Khi chủ dự án
+           *     yêu cầu lật thẻ ghép từ ↔ HÌNH (mục 4), chúng chuyển sang `en_icon` và lộ ra:
+           *     luật "≥ 4" vốn được viết cho trò BÀY Ô, không dành cho trò LẬT CẶP.
+           *   • `listen_tap` bày `optionCount` ô ⇒ cần đúng chừng ấy thứ để nhìn.
+           *   • Các trò dạng hình còn lại (`word_picture`) giữ ngưỡng 4.
+           */
+          const minNeeded =
+            e.config.kind === 'memory_match'
+              ? e.config.pairs
+              : e.config.kind === 'listen_tap'
+                ? e.config.optionCount
+                : 4;
+          if (showable.length < minNeeded) {
             err(
               'V11',
-              `themes/${file}: exercise "${e.id}" (${e.gameType}) chỉ có ${picturable.length} từ picturable (cần >= 4). ` +
+              `themes/${file}: exercise "${e.id}" (${e.gameType}) chỉ có ${showable.length} từ CÓ GÌ ĐỂ NHÌN (cần >= ${minNeeded}). ` +
                 'Từ trừu tượng không có hình để bé chạm.',
             );
           }

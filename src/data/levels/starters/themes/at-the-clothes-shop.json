@@ -20,6 +20,7 @@
     {
       "id": "at-the-clothes-shop/l1",
       "themeId": "at-the-clothes-shop",
+      "name_en": "Colours 1",
       "name_vi": "Màu sắc 1",
       "wordIds": [
         "starters.purple", "starters.brown", "starters.black",
@@ -30,6 +31,7 @@
     {
       "id": "at-the-clothes-shop/l2",
       "themeId": "at-the-clothes-shop",
+      "name_en": "Colours 2",
       "name_vi": "Màu sắc 2",
       "wordIds": [
         "starters.grey", "starters.yellow", "starters.orange-adj",
@@ -40,6 +42,7 @@
     {
       "id": "at-the-clothes-shop/l3",
       "themeId": "at-the-clothes-shop",
+      "name_en": "My clothes",
       "name_vi": "Áo quần của bé",
       "wordIds": [
         "starters.clothes", "starters.jacket", "starters.skirt",
@@ -50,6 +53,7 @@
     {
       "id": "at-the-clothes-shop/l4",
       "themeId": "at-the-clothes-shop",
+      "name_en": "Trousers, shoes and hats",
       "name_vi": "Quần, giày và mũ",
       "wordIds": [
         "starters.trousers", "starters.jeans", "starters.shoe",
@@ -60,10 +64,11 @@
     {
       "id": "at-the-clothes-shop/l5",
       "themeId": "at-the-clothes-shop",
+      "name_en": "Things I wear",
       "name_vi": "Đồ dùng",
       "wordIds": [
         "starters.glasses", "starters.bag", "starters.handbag",
-        "starters.watch", "starters.angry"
+        "starters.watch"
       ],
       "exerciseIds": ["at-the-clothes-shop/l5/memory-match", "at-the-clothes-shop/l5/missing-letter", "at-the-clothes-shop/l5/listen-tap", "at-the-clothes-shop/l5/word-picture", "at-the-clothes-shop/l5/prepositions"]
     }
@@ -94,8 +99,7 @@
     { "id": "starters.glasses",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "glasses",  "vi": "kính",            "type": "n",   "icon": "👓", "picturable": true },
     { "id": "starters.bag",        "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "bag",      "vi": "cái túi",         "type": "n",   "icon": "🛍️", "picturable": true },
     { "id": "starters.handbag",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "handbag",  "vi": "túi xách",        "type": "n",   "icon": "👜", "picturable": true },
-    { "id": "starters.watch",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "watch",    "vi": "đồng hồ đeo tay", "type": "n",   "icon": "⌚", "picturable": true },
-    { "id": "starters.angry",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "angry",    "vi": "tức giận",        "type": "adj", "icon": "😠", "picturable": true }
+    { "id": "starters.watch",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "watch",    "vi": "đồng hồ đeo tay", "type": "n",   "icon": "⌚", "picturable": true }
   ],
   "exercises":     [
         {
@@ -113,7 +117,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 6
             }
         },
@@ -131,7 +135,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 5
             }
         },
@@ -168,7 +172,7 @@
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
+                "pairMode": "en_icon",
                 "pairs": 5
             }
         },
@@ -180,21 +184,20 @@
                 "starters.glasses",
                 "starters.bag",
                 "starters.handbag",
-                "starters.watch",
-                "starters.angry"
+                "starters.watch"
             ],
             "difficulty": 1,
             "config": {
                 "kind": "memory_match",
-                "pairMode": "en_vi",
-                "pairs": 5
+                "pairMode": "en_icon",
+                "pairs": 4
             }
         },
       { "id": "at-the-clothes-shop/l1/missing-letter", "lessonId": "at-the-clothes-shop/l1", "gameType": "missing_letter", "wordIds": ["starters.purple", "starters.brown", "starters.black", "starters.blue", "starters.white", "starters.pink"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
       { "id": "at-the-clothes-shop/l2/missing-letter", "lessonId": "at-the-clothes-shop/l2", "gameType": "missing_letter", "wordIds": ["starters.grey", "starters.yellow", "starters.orange-adj", "starters.red", "starters.green"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
       { "id": "at-the-clothes-shop/l3/missing-letter", "lessonId": "at-the-clothes-shop/l3", "gameType": "missing_letter", "wordIds": ["starters.clothes", "starters.jacket", "starters.skirt", "starters.shirt", "starters.dress", "starters.t-shirt"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
       { "id": "at-the-clothes-shop/l4/missing-letter", "lessonId": "at-the-clothes-shop/l4", "gameType": "missing_letter", "wordIds": ["starters.trousers", "starters.jeans", "starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
-      { "id": "at-the-clothes-shop/l5/missing-letter", "lessonId": "at-the-clothes-shop/l5", "gameType": "missing_letter", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-clothes-shop/l5/missing-letter", "lessonId": "at-the-clothes-shop/l5", "gameType": "missing_letter", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
       { "id": "at-the-clothes-shop/l1/listen-tap", "lessonId": "at-the-clothes-shop/l1", "gameType": "listen_tap", "wordIds": ["starters.purple", "starters.brown", "starters.black", "starters.blue", "starters.white", "starters.pink"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
       { "id": "at-the-clothes-shop/l1/word-picture", "lessonId": "at-the-clothes-shop/l1", "gameType": "word_picture", "wordIds": ["starters.purple", "starters.brown", "starters.black", "starters.blue", "starters.white", "starters.pink"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
       { "id": "at-the-clothes-shop/l2/listen-tap", "lessonId": "at-the-clothes-shop/l2", "gameType": "listen_tap", "wordIds": ["starters.grey", "starters.yellow", "starters.orange-adj", "starters.red", "starters.green"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
@@ -203,8 +206,8 @@
       { "id": "at-the-clothes-shop/l3/word-picture", "lessonId": "at-the-clothes-shop/l3", "gameType": "word_picture", "wordIds": ["starters.jacket", "starters.skirt", "starters.shirt", "starters.dress", "starters.t-shirt"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
       { "id": "at-the-clothes-shop/l4/listen-tap", "lessonId": "at-the-clothes-shop/l4", "gameType": "listen_tap", "wordIds": ["starters.trousers", "starters.jeans", "starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
       { "id": "at-the-clothes-shop/l4/word-picture", "lessonId": "at-the-clothes-shop/l4", "gameType": "word_picture", "wordIds": ["starters.trousers", "starters.jeans", "starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
-      { "id": "at-the-clothes-shop/l5/listen-tap", "lessonId": "at-the-clothes-shop/l5", "gameType": "listen_tap", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
-      { "id": "at-the-clothes-shop/l5/word-picture", "lessonId": "at-the-clothes-shop/l5", "gameType": "word_picture", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch", "starters.angry"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } },
+      { "id": "at-the-clothes-shop/l5/listen-tap", "lessonId": "at-the-clothes-shop/l5", "gameType": "listen_tap", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-clothes-shop/l5/word-picture", "lessonId": "at-the-clothes-shop/l5", "gameType": "word_picture", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" } },
       { "id": "at-the-clothes-shop/l3/prepositions", "lessonId": "at-the-clothes-shop/l3", "gameType": "prepositions", "wordIds": ["starters.jacket", "starters.skirt", "starters.shirt", "starters.t-shirt"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 4, "slots": [{ "sentenceEn": "The jacket is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The skirt is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The shirt is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The T-shirt is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }] } },
       { "id": "at-the-clothes-shop/l4/prepositions", "lessonId": "at-the-clothes-shop/l4", "gameType": "prepositions", "wordIds": ["starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The shoe is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The sock is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The hat is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
       { "id": "at-the-clothes-shop/l5/prepositions", "lessonId": "at-the-clothes-shop/l5", "gameType": "prepositions", "wordIds": ["starters.bag", "starters.handbag"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The bag is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The handbag is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The bag is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } }

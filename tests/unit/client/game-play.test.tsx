@@ -24,7 +24,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -180,9 +180,14 @@ describe('MissingLetterGame — chơi thật', () => {
 
     fireEvent.click(screen.getByRole('button', { name: `chữ ${answer}` }));
 
-    // `completeRound` nằm sau một nhịp 800ms để bé kịp thấy từ hoàn chỉnh.
+    /**
+     * ⚠️ `completeRound` nay nằm SAU khi tiếng đọc kết thúc, rồi mới tới nhịp phản hồi (mục 6).
+     *   Hệ quả với test: có thêm MỘT chặng microtask (`await waitForSpeech()`) TRƯỚC khi hẹn giờ.
+     *   `vi.advanceTimersByTime` thuần sẽ chạy trước khi chặng đó hoàn tất ⇒ không có hẹn giờ nào
+     *   để chạy ⇒ đỏ oan. `advanceTimersByTimeAsync` xả microtask giữa các mốc, đúng thứ cần.
+     */
     await act(async () => {
-      vi.advanceTimersByTime(1000);
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     expect(advancedFrom(start)).toBe(true);
@@ -283,7 +288,7 @@ describe('PrepositionsGame — chơi thật', () => {
 describe('MemoryMatchGame — chơi thật', () => {
   const EXERCISE_ID = 'at-the-zoo/z1/memory-match';
 
-  it('mở đúng hai thẻ của một cặp ⇒ cặp được tính, và KHÔNG mất mạng (game không có mạng)', () => {
+  it('mở đúng hai thẻ của một cặp ⇒ cặp được tính, và KHÔNG mất mạng (game không có mạng)', async () => {
     // Ghim `Math.random` để bộ bài tất định ⇒ tính lại được bộ bài trong test.
     vi.spyOn(Math, 'random').mockReturnValue(0.42);
     renderGame(EXERCISE_ID);
@@ -311,8 +316,9 @@ describe('MemoryMatchGame — chơi thật', () => {
 
     fireEvent.click(cards[i1]!);
 
+    // ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
+    await waitFor(() => expect(roundNumber()).toBe('2'));
     expect(advancedFrom(start)).toBe(true);
-    expect(roundNumber()).toBe('2');
     expect(screen.getByText('1/6 cặp')).toBeInTheDocument();
     // Trò này KHÔNG có mạng: lật thẻ không bao giờ "sai".
     expect(screen.getByTestId('hearts').textContent).toBe('0');
@@ -359,7 +365,7 @@ describe('MemoryMatchGame — chơi thật', () => {
 describe('WordPictureGame — chơi thật', () => {
   const EXERCISE_ID = 'at-the-zoo/z1/word-picture';
 
-  it('chọn hình rồi chọn từ đúng ⇒ cặp được nối và sang câu', () => {
+  it('chọn hình rồi chọn từ đúng ⇒ cặp được nối và sang câu', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.42);
     renderGame(EXERCISE_ID);
 
@@ -373,8 +379,9 @@ describe('WordPictureGame — chơi thật', () => {
     fireEvent.click(screen.getByRole('button', { name: `Hình của từ ${target.en}` }));
     fireEvent.click(screen.getByRole('button', { name: `Từ ${target.en}` }));
 
+    // ⚠️ Mục 6: câu được tính xong SAU khi tiếng đọc kết thúc, không còn đồng bộ sau cú chạm.
+    await waitFor(() => expect(roundNumber()).toBe('2'));
     expect(advancedFrom(start)).toBe(true);
-    expect(roundNumber()).toBe('2');
     expect(screen.getByText('1/6 cặp')).toBeInTheDocument();
   });
 

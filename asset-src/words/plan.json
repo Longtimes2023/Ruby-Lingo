@@ -1000,16 +1000,6 @@
     "prompt_sha": "db159e8e4dcd"
   },
   {
-    "key": "angry",
-    "id": "starters.angry",
-    "en": "angry",
-    "vi": "tức giận",
-    "theme": "at-the-clothes-shop",
-    "subject": "a cute cartoon character's head and shoulders showing an angry expression: furrowed eyebrows, puffed cheeks, flushed red-orange face and two small steam puffs beside the head. Expressive and funny, absolutely NOT frightening or mean",
-    "prompt": "angry: a cute cartoon character's head and shoulders showing an angry expression: furrowed eyebrows, puffed cheeks, flushed red-orange face and two small steam puffs beside the head. Expressive and funny, absolutely NOT frightening or mean. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "1af97e417a80"
-  },
-  {
     "key": "elephant",
     "id": "starters.elephant",
     "en": "elephant",

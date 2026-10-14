@@ -340,8 +340,19 @@ describe('final-test — hình của từ (Giai đoạn 10)', () => {
     );
 
     expect(imgSrcs(container)).toHaveLength(0);
-    // Emoji của từ vẫn hiện (đường lùi cho ảnh chưa sinh).
-    expect(screen.getByText('2️⃣')).toBeInTheDocument();
+    /**
+     * Emoji/ký tự của từ vẫn hiện (đường lùi cho ảnh chưa sinh).
+     *
+     * ⚠️ KHÔNG ghim ký tự cụ thể ở đây. Bản cũ ghim `'2️⃣'` (emoji keycap), và nó ĐỎ khi chủ dự
+     *   án yêu cầu bỏ keycap cho chủ đề số (mục 24: *"các con số đâu cần thiết phải bọc trong
+     *   khối xám"*) — `starters.two` nay có `icon` là chữ số thật `"2"`.
+     *   Ký tự đường lùi là NỘI DUNG, không phải hành vi của component; ghim nó ở đây khiến mỗi
+     *   lần sửa nội dung là một lần test đỏ oan. Điều cần khẳng định là: KHÔNG có `<img>`, và
+     *   ký tự của từ CÓ mặt.
+     */
+    const fallback = WORDS_BY_EN.get('two')?.icon;
+    expect(fallback, 'dữ liệu phải có từ "two"').toBeTruthy();
+    expect(screen.getByText(fallback as string)).toBeInTheDocument();
   });
 
   it('choose_picture: lựa chọn vẫn bấm được và trả về ĐÚNG chuỗi của đề', () => {

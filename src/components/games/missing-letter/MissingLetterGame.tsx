@@ -30,12 +30,13 @@ import { cn } from '../../../lib/cn.js';
 import { shuffleSeeded } from '../../../lib/random.js';
 import { BigButton } from '../../common/BigButton.js';
 import { WordIcon } from '../../common/WordIcon.js';
+import { afterSpeechThen } from '../shared/afterSpeech.js';
 import type { GameComponentProps } from '../shared/types.js';
 import { correctLetters, hiddenIndices, letterOptions } from './logic.js';
 
 export function MissingLetterGame({ exercise, words, engine }: GameComponentProps) {
   const { t } = useTranslation();
-  const { speak } = useSpeech({ stopOnUnmount: true });
+  const { speak, waitForSpeech } = useSpeech({ stopOnUnmount: true });
   const { play } = useSfx();
 
   const config = exercise.config as MissingLetterConfig;
@@ -129,15 +130,29 @@ export function MissingLetterGame({ exercise, words, engine }: GameComponentProp
       const done = { ...filled, [nextIndex]: letter.toLowerCase() };
       setFilled(done);
 
-      // Điền hết các ô trống ⇒ xong câu. Đọc cả từ, rồi chờ một nhịp cho bé thấy từ hoàn chỉnh.
+      // Điền hết các ô trống ⇒ xong câu. Đọc cả từ, rồi CHỜ ĐỌC XONG mới sang câu.
       if (Object.keys(done).length >= hidden.length) {
         setSolved(true);
         attempt(true);
         void speak(target.en, { rate: 0.8 });
-        window.setTimeout(() => completeRound(target.id), 800);
+        // ⚠️ Trước đây là `setTimeout(completeRound, 800)` — hằng số cứng, không liên quan độ
+        //    dài từ. Xem đầu `afterSpeech.ts` (mục 6 chủ dự án báo: "mất một khúc" / "im re").
+        afterSpeechThen(waitForSpeech, 400, () => completeRound(target.id));
       }
     },
-    [target, solved, nextIndex, nextLetter, play, attempt, filled, hidden.length, speak, completeRound],
+    [
+      target,
+      solved,
+      nextIndex,
+      nextLetter,
+      play,
+      attempt,
+      filled,
+      hidden.length,
+      speak,
+      waitForSpeech,
+      completeRound,
+    ],
   );
 
   if (!target) {

@@ -28,6 +28,7 @@ import { useSfx } from '../../../hooks/useSfx.js';
 import { useSpeech } from '../../../hooks/useSpeech.js';
 import { cn } from '../../../lib/cn.js';
 import { WordIcon } from '../../common/WordIcon.js';
+import { afterSpeechThen } from '../shared/afterSpeech.js';
 import type { GameComponentProps } from '../shared/types.js';
 import { buildDeck, isPair, type MemoryCard } from './logic.js';
 
@@ -36,7 +37,7 @@ const MISMATCH_HOLD_MS = 950;
 
 export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps) {
   const { t } = useTranslation();
-  const { speak, stop } = useSpeech({ stopOnUnmount: true });
+  const { speak, stop, waitForSpeech } = useSpeech({ stopOnUnmount: true });
   const { play } = useSfx();
 
   const config = exercise.config as MemoryMatchConfig;
@@ -91,7 +92,9 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
         // Đọc từ tiếng Anh — CHỈ tiếng Anh. Thẻ tiếng Việt (`en_vi`) cũng đọc từ tiếng Anh.
         void speak(card.spokenEn, { rate: 0.8 });
         attempt(true);
-        completeRound(card.wordId);
+        // ⚠️ Bản cũ gọi `completeRound` NGAY ⇒ cắt tiếng đọc vừa phát; ở cặp CUỐI thì game bị gỡ
+        //    khỏi DOM và `stopOnUnmount` cắt hẳn. Xem đầu `afterSpeech.ts` (mục 6).
+        afterSpeechThen(waitForSpeech, 250, () => completeRound(card.wordId));
         return;
       }
 
@@ -104,7 +107,7 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
         setLocked(false);
       }, MISMATCH_HOLD_MS);
     },
-    [locked, matched, open, byId, play, speak, attempt, completeRound],
+    [locked, matched, open, byId, play, speak, waitForSpeech, attempt, completeRound],
   );
 
   if (deck.length === 0) {

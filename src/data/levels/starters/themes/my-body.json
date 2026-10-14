@@ -19,6 +19,7 @@
     {
       "id": "my-body/l1",
       "themeId": "my-body",
+      "name_en": "Parts of the body",
       "name_vi": "Các bộ phận cơ thể",
       "wordIds": [
         "starters.leg",
@@ -40,6 +41,7 @@
     {
       "id": "my-body/l2",
       "themeId": "my-body",
+      "name_en": "Face, hands and feet",
       "name_vi": "Mặt mũi và tay chân",
       "wordIds": [
         "starters.nose",
@@ -219,7 +221,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 4
       }
     },
@@ -238,7 +240,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 6
       }
     },
@@ -254,7 +256,7 @@
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
-        "pairMode": "en_vi",
+        "pairMode": "en_icon",
         "pairs": 3
       }
     },

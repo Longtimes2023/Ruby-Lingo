@@ -230,7 +230,7 @@ export class ContentRepository {
     const themeWordIds = new Set(bundle.wordIdsByTheme.get(target.primaryThemeId) ?? []);
 
     const pool = bundle.words.filter((w) => {
-      if (!w.picturable) return false; // (3)
+      if (!isShowableOption(w, mode)) return false; // (3)
       if (w.id === target.id) return false;
       // Cùng chữ nhưng khác nghĩa (orange quả cam / orange màu cam) sẽ hiện hai ô
       // giống hệt nhau về chữ ⇒ cũng là nhiễu hỏng.
@@ -282,6 +282,38 @@ export class ContentRepository {
     return null;
   }
 }
+
+/**
+ * Một từ có dùng được làm Ô CHẠM trong game dạng hình hay không (điều kiện (3)).
+ *
+ * ⭐ ĐIỀU KIỆN THẬT LÀ "Ô ĐÓ CÓ GÌ ĐỂ NHÌN", KHÔNG PHẢI "TỪ ĐÓ VẼ ĐƯỢC THÀNH TRANH".
+ *   Trước đây hàm này chỉ hỏi `word.picturable` — đúng cho mọi danh từ, nhưng SAI cho hai chủ
+ *   đề mà CHÍNH MẶT CHỮ là nội dung bài học:
+ *     • `alphabet` — mỗi "từ" là một CHỮ CÁI; `icon` chính là ký tự sẽ hiện ra ("A", "B"…).
+ *     • `numbers-1-20` — mỗi "từ" là một SỐ; `icon` là chữ số ("1"…"20").
+ *   Hai chủ đề này khai `picturable: false` một cách CÓ LÝ (không có tranh nào để vẽ cho một chữ
+ *   cái — và `lesson-game-coverage.test.ts` khoá đúng sự thật đó), nhưng `WordIcon` VẪN hiện
+ *   được chúng: không có tệp ảnh thì nó rơi về `icon`, và ở đây `icon` là chữ/số thật.
+ *   ⇒ Vì vậy "nhìn thấy được" = có tranh, HOẶC `icon` là ký tự chữ/số.
+ *
+ * ⚠️⚠️ CHỈ MỞ CHO `same_lesson` — CỐ Ý, KHÔNG PHẢI CHO GỌN.
+ *   `same_lesson` lấy nhiễu TRONG CHÍNH BÀI HỌC. Với chủ đề chữ cái/số, "trong bài" nghĩa là
+ *   các chữ cái/số khác của cùng bài — đúng thứ bé cần phân biệt khi nghe ("nghe và chạm chữ
+ *   cái"). Còn `cross_theme` / `same_theme` lấy nhiễu từ các chủ đề KHÁC: mở cho chúng nghĩa là
+ *   một chữ cái "A" có thể xuất hiện làm ô nhiễu cho từ "apple" — hai ô lệch hẳn loại nội dung,
+ *   và bé học sai. Đo trên dữ liệu: cả 35 exercise `listen_tap` đều dùng `same_lesson`, nên việc
+ *   mở đúng một chế độ này KHÔNG đổi hành vi của bất kỳ exercise nào đang có.
+ */
+function isShowableOption(word: Word, mode: DistractorMode): boolean {
+  if (word.picturable) return true;
+  return mode === 'same_lesson' && GLYPH_ICON.test(word.icon);
+}
+
+/**
+ * `icon` là KÝ TỰ chữ/số (nội dung thật), không phải emoji.
+ * Đo trên toàn bộ dữ liệu Starters: đúng 46 từ khớp — 26 chữ cái + 20 số, không từ nào khác.
+ */
+const GLYPH_ICON = /^[A-Za-z0-9]{1,3}$/;
 
 function matchesMode(
   word: Word,

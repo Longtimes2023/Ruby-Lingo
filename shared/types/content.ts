@@ -168,6 +168,11 @@ export interface Lesson {
   /** "{themeId}/{code}" */
   id: string;
   themeId: string;
+  /**
+   * Tên bài bằng TIẾNG ANH — hiện cạnh `name_vi` trên tiêu đề (yêu cầu chủ dự án 2026-10-14).
+   * Xem vì sao nằm ở DỮ LIỆU chứ không dịch ở UI: `shared/schemas/content.ts` → `lessonSchema`.
+   */
+  name_en: string;
   name_vi: string;
   /**
    * 4–8 từ (1 bài = 1 phiên chơi; lưới từ được thiết kế cho <= 8).

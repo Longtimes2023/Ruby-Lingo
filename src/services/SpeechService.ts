@@ -315,6 +315,16 @@ export class SpeechService {
   private queue: Array<{ text: string; options: SpeakOptions }> = [];
   private draining = false;
 
+  /**
+   * Lời hứa của tiếng ĐANG ĐỌC (hoàn tất khi đọc xong hoặc lỗi). `null` khi không đọc gì.
+   *
+   * ⭐ VÌ SAO CẦN: `speak()` cố ý hoàn tất ngay khi utterance được GIAO cho synthesizer, không
+   *   chờ đọc xong (xem ghi chú ở `speak()`). Nhưng có một ca cần biết lúc ĐỌC XONG: trước khi
+   *   rời màn hình game. Rời sớm ⇒ `stopOnUnmount` gọi `stop()` ⇒ tiếng bị CẮT GIỮA CÂU.
+   *   Chủ dự án đã báo đúng triệu chứng này (mục 6 và 7).
+   */
+  private inFlight: Promise<void> | null = null;
+
   constructor(
     private readonly synth: SynthLike | null = getSynth(),
     private readonly createUtterance: (text: string) => UtteranceLike = defaultCreateUtterance,
@@ -443,6 +453,48 @@ export class SpeechService {
     this.synth?.cancel();
   }
 
+  /**
+   * Đọc một chuỗi và CHỜ TỚI KHI ĐỌC XONG — khác `speak()` (hoàn tất ngay khi bắt đầu đọc).
+   *
+   * ⭐ DÙNG KHI NÀO: chỉ khi thứ chạy ngay sau đó sẽ CẮT tiếng đọc — tức là khi sắp ĐỔI CÂU hoặc
+   *   sắp RỜI MÀN HÌNH (unmount ⇒ `useSpeech({ stopOnUnmount: true })` ⇒ `stop()`).
+   *
+   * ⚠️⚠️ VÌ SAO PHẢI CÓ TRẦN THỜI GIAN (`withCap`): `onend` KHÔNG được bảo đảm trên mọi trình
+   *   duyệt — đã gặp Chrome không bắn `onend` khi tab bị ẩn. Không có trần thì một tiếng đọc treo
+   *   sẽ làm bài học ĐỨNG VĨNH VIỄN ở câu đó: bé bấm đúng mà app không đi tiếp. Cắt sớm một tiếng
+   *   đọc là lỗi nhỏ; kẹt cứng màn hình là lỗi lớn. Trần ở đây rộng rãi (≈200 ms/ký tự + 2,5 s)
+   *   nên trong điều kiện bình thường nó KHÔNG bao giờ chạy.
+   *
+   * Trả `true` nếu đã đưa vào hàng đợi phát, `false` nếu bỏ qua (không hỗ trợ / tắt tiếng /
+   * không phải tiếng Anh) — cùng quy ước với `speak()`.
+   */
+  async speakAndWait(text: string, options: SpeakOptions = {}): Promise<boolean> {
+    if (!this.synth) return false;
+    if (!this.settings.enabled) return false;
+    if (!warnIfNotEnglish(text, 'SpeechService.speakAndWait')) return false;
+
+    this.queue = [];
+    await withCap(this.flushAndSpeak(text, options, true), speechCapMs(text));
+    return true;
+  }
+
+  /**
+   * Chờ tiếng ĐANG ĐỌC kết thúc, KHÔNG bắt đầu tiếng mới.
+   *
+   * ⭐ DÙNG Ở ĐÂU: trước khi chuyển câu trong game. Bé có thể chạm đáp án TRƯỚC khi câu/từ đang
+   *   đọc xong (bé nhanh, hoặc đã thuộc); nếu ta chuyển ngay thì tiếng đó bị cắt — đúng triệu
+   *   chứng "mất một khúc" chủ dự án báo (mục 6).
+   *
+   * ⚠️ Vòng lặp (chứ không `await` một lần): đang đọc xong câu này thì `drain()` có thể bắt đầu
+   *   câu kế trong hàng đợi, và ta muốn chờ tới khi IM HẲN. Hàng đợi luôn cạn dần nên vòng lặp
+   *   kết thúc; mỗi lượt còn có trần thời gian riêng nên không thể treo.
+   */
+  async waitForSpeech(): Promise<void> {
+    while (this.inFlight) {
+      await withCap(this.inFlight, SPEECH_WAIT_CAP_MS);
+    }
+  }
+
   /** Có đang đọc (hoặc còn hàng đợi) không — dùng để đổi biểu tượng nút loa. */
   isSpeaking(): boolean {
     if (!this.synth) return false;
@@ -490,7 +542,7 @@ export class SpeechService {
     const needFlush = synth.speaking || synth.pending;
     if (needFlush) synth.cancel();
 
-    return new Promise<void>((resolve) => {
+    const done = new Promise<void>((resolve) => {
       const start = () => {
         if (!this.synth) {
           resolve();
@@ -535,6 +587,13 @@ export class SpeechService {
         start();
       }
     });
+
+    // Ghi lại "tiếng đang đọc" để `waitForSpeech()` biết mà chờ; tự xoá khi xong.
+    this.inFlight = done;
+    void done.then(() => {
+      if (this.inFlight === done) this.inFlight = null;
+    });
+    return done;
   }
 }
 
@@ -546,6 +605,39 @@ export class SpeechService {
 export function clampRate(rate: number): number {
   if (!Number.isFinite(rate)) return SPEECH_RATE_DEFAULT;
   return Math.min(SPEECH_RATE_MAX, Math.max(SPEECH_RATE_MIN, rate));
+}
+
+/**
+ * Trần thời gian chờ một tiếng đọc, tính theo ĐỘ DÀI chuỗi.
+ *
+ * ⚠️ Đây là LƯỚI AN TOÀN, không phải thời lượng dự kiến. Xem `speakAndWait()` để biết vì sao
+ *   không thể chờ vô hạn: `onend` không được bảo đảm trên mọi trình duyệt, và một tiếng đọc treo
+ *   sẽ làm BÀI HỌC ĐỨNG ở câu đó. Ước lượng 200 ms/ký tự ở `rate 0.8` là rộng rãi (đo giọng
+ *   `en-GB` thực tế ~140–190 ms/ký tự), cộng 2,5 s cho độ trễ khởi động — nên bình thường KHÔNG
+ *   bao giờ chạm trần.
+ */
+function speechCapMs(text: string): number {
+  return 2_500 + text.length * 200;
+}
+
+/** Trần dùng cho `waitForSpeech()` — không biết trước chuỗi nên lấy một con số rộng rãi. */
+const SPEECH_WAIT_CAP_MS = 20_000;
+
+/** Chờ `promise` nhưng KHÔNG BAO GIỜ lâu hơn `capMs` — xem `speechCapMs`. */
+function withCap(promise: Promise<void>, capMs: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    const timer = setTimeout(finish, capMs);
+    void promise.then(() => {
+      clearTimeout(timer);
+      finish();
+    });
+  });
 }
 
 /** Lấy `speechSynthesis` từ window, an toàn cả khi chạy trên Node (test). */

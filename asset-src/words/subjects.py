@@ -196,6 +196,16 @@ SUBJECTS = {
     "cross": "a single big chunky rounded red X symbol standing alone, glossy and friendly",
     "keyboard": "a single cute pastel computer keyboard seen at a slight angle, keys completely blank",
     "mouse-computer": "a single cute pastel computer mouse with a scroll wheel and a short curly cable",
+    # ⚠️ `part` — CÂU TẢ ĐÃ VIẾT SẴN, CHƯA DÙNG (2026-10-14).
+    #    `en` của từ này đã đổi thành CỤM "a part of" (nghĩa "một phần của"), KHÔNG còn là
+    #    "miếng ghép" (icon cũ 🧩 khiến bé 7 tuổi đọc sai nghĩa). Từ hiện khai
+    #    `picturable: false` nên KHÔNG nằm trong `plan.json` — câu tả dưới đây để dành cho
+    #    lần sinh ảnh tới: chỉ cần đổi `picturable` sang `true` trong
+    #    `src/data/levels/starters/themes/at-school.json` rồi chạy lại `plan.py`.
+    #    (Để nguyên trong `SUBJECTS` sẽ khiến `plan.py` in cảnh báo "câu tả không dùng tới".)
+    #    "part": "a single round pie chart shape divided into four equal wedge slices, one wedge "
+    #            "lifted slightly out of the circle and coloured bright cheerful red while the other "
+    #            "three wedges are soft pale grey, flat clean friendly illustration",
 
     # ===== at-the-beach (23) ================================================
     # Động từ: PHẢI thấy hành động, không phải đứa trẻ đứng yên.
@@ -266,11 +276,6 @@ SUBJECTS = {
     "bag": "a single cute rounded kids' backpack with two shoulder straps and a front pocket",
     "handbag": "a single cute small woman's handbag with one handle and a shiny clasp",
     "watch": "a single cute wristwatch with a round face and a colourful strap, with two short pointers showing",
-
-    # Tính từ
-    "angry": "a cute cartoon character's head and shoulders showing an angry expression: furrowed eyebrows, "
-             "puffed cheeks, flushed red-orange face and two small steam puffs beside the head. "
-             "Expressive and funny, absolutely NOT frightening or mean",
 
     # ===== at-the-zoo (19) ==================================================
     # Toàn thân, hướng về phía bé. Cá sấu / rắn / nhện phải DỄ THƯƠNG, không đáng sợ.
@@ -546,7 +551,6 @@ NOT_SOLO = {
     "draw", "teacher",
     "swim", "jump", "walk", "throw", "catch", "hit", "kick", "sing", "paint", "take",
     "fishing",
-    "angry",
     "robot", "monster", "person", "man", "woman", "child", "baby", "boy", "girl",
     "alien", "family", "dad", "mum", "grandfather", "grandmother", "sister", "brother",
     "cousin",

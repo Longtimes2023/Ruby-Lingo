@@ -25,6 +25,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { readLevelBundle } from '@/data/index.js';
+import { contentRepository } from '@/services/ContentRepository.js';
 import {
   correctLetters,
   hiddenIndices,
@@ -228,8 +229,26 @@ describe('Phủ game theo bài (G3)', () => {
 describe('missing_letter — chơi được với MỌI từ của mọi bài', () => {
   const missingLetterExercises = bundle.exercises.filter((e) => e.gameType === 'missing_letter');
 
-  it('có đúng một exercise missing_letter cho mỗi bài (43 bài)', () => {
-    expect(missingLetterExercises.length).toBe(bundle.lessons.length);
+  /**
+   * ⚠️⚠️ CHỦ ĐỀ `alphabet` ĐÃ RỜI KHỎI TRÒ NÀY — 2026-10-14, yêu cầu chủ dự án (mục 8):
+   *
+   *   *"Phần trò chơi của chủ đề chữ cái, nên là trò chơi nghe và chạm chứ (tức nghe và chọn
+   *   chữ cái chính xác), chứ điền chữ cái còn thiếu thấy không hợp lý gì cả."*
+   *
+   *   ⇒ 4 bài của `alphabet` nay dùng `listen-tap` ("nghe và chạm chữ cái") — xem khối
+   *     `describe('listen_tap — nghe và chạm chữ cái ở chủ đề alphabet')` ngay dưới.
+   *   ⇒ Số bài còn lại của trò này = tổng số bài TRỪ số bài của chủ đề `alphabet`.
+   *
+   *   ⚠️ Con số này KHÔNG phải "nới ngưỡng cho dễ": phép khẳng định ở đây vẫn là ĐẲNG THỨC
+   *     (`===`), chỉ đổi vế phải từ "mọi bài" thành "mọi bài trừ chủ đề đã rời trò". Nếu một
+   *     bài KHÁC lỡ mất `missing_letter`, test vẫn đỏ đúng như trước.
+   */
+  const ALPHABET_LESSON_COUNT =
+    bundle.themes.find((t) => t.id === 'alphabet')?.lessonIds.length ?? 0;
+
+  it('mỗi bài (trừ 4 bài của chủ đề alphabet) có đúng một exercise missing_letter', () => {
+    expect(ALPHABET_LESSON_COUNT).toBe(4);
+    expect(missingLetterExercises.length).toBe(bundle.lessons.length - ALPHABET_LESSON_COUNT);
   });
 
   it('mỗi exercise: mọi từ đều có ô trống và chữ đúng luôn nằm trong bàn phím ảo', () => {
@@ -270,42 +289,67 @@ describe('missing_letter — chơi được với MỌI từ của mọi bài', 
 
     expect(problems, problems.join('\n')).toEqual([]);
   });
+});
 
-  it('từ MỘT chữ cái (chủ đề alphabet) vẫn có bàn phím nhiều lựa chọn và có chữ đúng', () => {
-    const letters = bundle.words.filter((w) => w.primaryThemeId === 'alphabet');
-    expect(letters.length).toBe(26);
+/**
+ * ⭐ TRÒ MỚI CỦA CHỦ ĐỀ CHỮ CÁI (mục 8, 2026-10-14): NGHE RỒI CHẠM ĐÚNG CHỮ CÁI.
+ *
+ * ⚠️ VÌ SAO PHẢI CÓ TEST NÀY, KHÔNG CHỈ "ĐÃ THÊM EXERCISE VÀO JSON":
+ *   `alphabet` là chủ đề mà `icon` CHÍNH LÀ mặt chữ ("A", "B"…) và khai `picturable: false`.
+ *   `ContentRepository.pickDistractors()` trước đây đòi `picturable === true` cho MỌI ô nhiễu
+ *   ⇒ với chủ đề này nó trả về **0 ô nhiễu** ⇒ bàn chơi chỉ còn ĐÚNG MỘT ô là đáp án ⇒ bé chạm
+ *   ô duy nhất và luôn "đúng". Trò chơi chạy, không lỗi nào được ném, và KHÔNG dạy gì cả —
+ *   đúng loại hỏng im lặng mà test này sinh ra để chặn.
+ *   Nay `isShowableOption()` mở đúng chế độ `same_lesson` cho từ có `icon` là ký tự chữ/số.
+ *   Test dưới đây gọi THẲNG hàm thật, nên nếu ai đó đóng cửa đó lại, nó đỏ ngay.
+ */
+describe('listen_tap — "nghe và chạm chữ cái" ở chủ đề alphabet', () => {
+  const alphabetLessonIds = new Set(
+    bundle.themes.find((t) => t.id === 'alphabet')?.lessonIds ?? [],
+  );
+  const alphabetListenTap = bundle.exercises.filter(
+    (e) => e.gameType === 'listen_tap' && alphabetLessonIds.has(e.lessonId),
+  );
 
-    const alphabetLessons = new Set(
-      bundle.themes.find((t) => t.id === 'alphabet')?.lessonIds ?? [],
+  it('mỗi bài của chủ đề chữ cái có đúng một exercise listen_tap', () => {
+    expect(alphabetListenTap.map((e) => e.lessonId).sort()).toEqual(
+      [...alphabetLessonIds].sort(),
     );
-    const alphabetExercises = missingLetterExercises.filter((e) =>
-      alphabetLessons.has(e.lessonId),
-    );
-    expect(alphabetExercises.length).toBe(alphabetLessons.size);
+  });
 
-    for (const exercise of alphabetExercises) {
-      // ⭐ `siblings` PHẢI đúng như component truyền: các từ KHÁC trong chính bài tập đó
-      //    (`MissingLetterGame.tsx`: `words.filter(w => w.id !== target.id).map(w => w.en)`).
-      //    Dùng cả 26 chữ cái làm nhiễu là SAI — khi đó mọi chữ đều bị chặn và bàn phím teo còn
-      //    1 ô, test sẽ báo lỗi giả.
-      const pairs = exercise.wordIds
-        .map((id) => bundle.wordById.get(id))
-        .filter((w): w is NonNullable<typeof w> => w !== undefined);
+  it('MỌI chữ cái có ĐỦ ô để chạm — bàn phím rỗng là trò chơi vô nghĩa', () => {
+    const problems: string[] = [];
 
-      for (const word of pairs) {
-        const siblings = pairs.filter((w) => w.id !== word.id).map((w) => w.en);
-        const hidden = hiddenIndices(word.en, 1, 'any', `${exercise.id}:${word.id}`);
+    for (const exercise of alphabetListenTap) {
+      if (exercise.config.kind !== 'listen_tap') continue;
+      const needed = exercise.config.optionCount - 1;
 
-        // Từ 1 chữ cái: buộc phải ẩn chính chữ đó — đây là "nghe và chạm chữ cái", vẫn chơi được.
-        expect(hidden.length, `${word.en} không có ô trống`).toBe(1);
-
-        const options = letterOptions(word.en, hidden, siblings, `${exercise.id}:${word.id}`);
-        expect(options, `${word.en}: bàn phím thiếu chữ đúng`).toContain(word.en.toLowerCase());
-        expect(
-          options.length,
-          `${word.en} (${exercise.id}): bàn phím chỉ có ${options.length} lựa chọn ⇒ game vô nghĩa`,
-        ).toBeGreaterThan(1);
+      for (const wordId of exercise.wordIds) {
+        const picked = contentRepository.pickDistractors(
+          wordId,
+          needed,
+          exercise.config.distractorMode,
+          `${exercise.id}:${wordId}`,
+        );
+        if (picked.length < needed) {
+          problems.push(
+            `${exercise.id} / "${wordId}": chỉ có ${picked.length}/${needed} ô nhiễu ⇒ bàn chơi thiếu ô`,
+          );
+        }
+        const target = bundle.wordById.get(wordId);
+        for (const d of picked) {
+          if (d.icon === target?.icon) {
+            problems.push(`${exercise.id} / "${wordId}": ô nhiễu "${d.id}" TRÙNG mặt chữ`);
+          }
+          if (d.primaryLessonId !== exercise.lessonId) {
+            problems.push(
+              `${exercise.id} / "${wordId}": ô nhiễu "${d.id}" KHÔNG cùng bài ⇒ bé chưa học chữ đó`,
+            );
+          }
+        }
       }
     }
+
+    expect(problems, problems.join('\n')).toEqual([]);
   });
 });
