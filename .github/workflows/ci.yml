@@ -218,8 +218,41 @@ jobs:
       - name: Cài phụ thuộc
         run: npm ci
 
+      # ⚠️⚠️ `tee` ĐỂ LẠI VẾT LOG, VÀ VÌ SAO ĐIỀU ĐÓ LÀ CẦN THIẾT (2026-10-14):
+      #   Repo là PUBLIC nên đọc được `actions/runs`, NHƯNG API tải log của job vẫn trả **403**
+      #   ("Must have admin rights") với tài khoản không phải admin. Nghĩa là khi job này đỏ,
+      #   người sửa KHÔNG đọc được output của `npm run ci` — chỉ thấy "exit code 1".
+      #   => Chép output ra tệp, rồi ở bước dưới biến phần đáng đọc thành ANNOTATION. Annotation
+      #      ĐỌC ĐƯỢC qua `GET /check-runs/<id>/annotations` mà không cần quyền admin.
+      #   ⚠️ `set -o pipefail` BẮT BUỘC: thiếu nó thì mã thoát của cả pipeline là mã thoát của
+      #      `tee` (luôn 0) và bước này XANH dù `npm run ci` đỏ — một cổng tự vô hiệu.
       - name: Chạy cổng kiểm của dự án
-        run: npm run ci
+        run: |
+          set -o pipefail
+          npm run ci 2>&1 | tee /tmp/ci.log
+
+      # ⚠️ VÌ SAO CÓ BƯỚC NÀY: xem ghi chú ngay trên. Không cần quyền admin để đọc annotation.
+      #   Chỉ chạy khi bước trên đỏ (`if: failure()`), và LUÔN thoát 0 — nó là kênh báo cáo,
+      #   không phải một cổng kiểm nữa; làm nó đỏ chỉ che mất lỗi thật.
+      - name: Tóm tắt lỗi cổng kiểm (đọc được không cần quyền admin)
+        if: failure()
+        run: |
+          if [ ! -s /tmp/ci.log ]; then
+            echo "::error title=Cổng kiểm đỏ::Không có /tmp/ci.log — bước cổng kiểm không chạy tới nơi."
+            exit 0
+          fi
+          # ⚠️ Gộp thành MỘT annotation: mỗi bước chỉ hiện được ~10 annotation, mà thông tin cần
+          #    đọc lại nằm rải rác. `%25` hoá `%` rước, rồi nối dòng bằng `%0A` — GitHub giải mã
+          #    hai chuỗi này thành `%` và xuống dòng. KHÔNG được để xuống dòng THẬT trong thông
+          #    báo: nó sẽ bị hiểu là dòng lệnh workflow mới.
+          {
+            printf '=== CÓ "%s" trong /tmp/ci.log ===\n' 'Failed Tests'
+            grep -nE 'FAIL |✕|AssertionError|Failed Tests|❌|error TS|Expected:|Received:|CÓ FILE TEST|Không tìm thấy' /tmp/ci.log | tail -30
+            echo '=== 40 dòng cuối ==='
+            tail -40 /tmp/ci.log
+          } | tr -d '\r' | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > /tmp/ann.txt
+          echo "::error title=Cổng kiểm đỏ — trích /tmp/ci.log::$(cat /tmp/ann.txt)"
+          exit 0
 
       # ⚠️ CANH LỆCH TỆP SINH TỰ ĐỘNG — và vì sao bước này KHÔNG đỏ giả:
       #   `npm run ci` chạy `gen:content-index` và `gen:theme-colors`. Hai script đó là NGUỒN của
