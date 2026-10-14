@@ -34,6 +34,18 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().min(1).default(10),
   AUTH_RATE_LIMIT_WINDOW: z.string().default('1 minute'),
 
+  // ⚠️⚠️ HẠN MỨC TOÀN CỤC — CHỈ áp cho `/api/**` (xem `allowList` ở `plugins/security.ts`).
+  //   Vì sao tách riêng khỏi `AUTH_RATE_LIMIT_MAX`: đây là hai câu hỏi KHÁC NHAU. Ngưỡng auth
+  //   trả lời "một người được thử mật khẩu mấy lần"; ngưỡng này trả lời "một IP được gọi API
+  //   mấy lần". Gộp chúng làm một con số khiến việc nới cái này vô tình nới luôn cái kia (và
+  //   ngược lại) — mà chúng có lý do đúng hoàn toàn khác nhau.
+  //
+  //   ⚠️ VÌ SAO CẦN ĐƯA RA CONFIG, KHÔNG GHIM HẰNG SỐ TRONG PLUGIN: test phải hạ được ngưỡng
+  //     xuống nhỏ (vài đơn vị) để TÁI HIỆN được cảnh vượt hạn mức trong vài request, thay vì
+  //     gửi 300 request mỗi lượt chạy. Một hằng số không đổi được là một hành vi không kiểm được.
+  RATE_LIMIT_MAX: z.coerce.number().int().min(1).default(300),
+  RATE_LIMIT_WINDOW: z.string().default('1 minute'),
+
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().optional(),
   SMTP_USER: z.string().optional(),

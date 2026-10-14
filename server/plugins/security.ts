@@ -75,11 +75,48 @@ export const securityPlugin = fp(
     });
 
     // --- Rate limit toàn cục (nới) + siết riêng ở route auth --------------
+    //
+    // ⚠️⚠️⚠️ CHỈ ÁP CHO `/api/**` — KHÔNG BAO GIỜ CHO TÀI NGUYÊN TĨNH.
+    //   Đọc khối này trước khi sửa `allowList`; lỗi ở đây đã làm CI ĐỎ 11 LẦN LIÊN TIẾP.
+    //
+    //   `global: true` của `@fastify/rate-limit` gắn hook `onRequest` vào MỌI route đăng ký
+    //   SAU nó — kể cả route do `@fastify/static` sinh ra (`/assets/**`, `/`). Nghĩa là mỗi
+    //   lần trình duyệt nạp MỘT trang, ~6 tệp bundle + CSS đều bị tính vào CÙNG một bộ đếm
+    //   với các lời gọi API. `keyGenerator` dùng `req.ip`, mà cả bộ e2e chạy từ `127.0.0.1`
+    //   ⇒ toàn bộ lượt chạy dùng CHUNG một bộ đếm 300/phút.
+    //
+    //   Hậu quả thật (đo được trong `trace.zip` của artifact CI): trình duyệt nhận
+    //       `429 GET /assets/vendor-motion-*.js`
+    //   ⇒ bundle chunk không nạp được ⇒ React KHÔNG mount ⇒ không có form đăng ký trong DOM
+    //   ⇒ mọi bài e2e timeout ở dòng đầu tiên, với thông báo vô nghĩa:
+    //       "locator.fill: Test timeout of 60000ms exceeded. waiting for getByLabel('Email…')"
+    //   Không có lỗi JS nào để đọc. Chỉ là khoảng trống.
+    //
+    //   ⚠️ VÀ ĐÂY KHÔNG CHỈ LÀ VẤN ĐỀ CỦA CI — ĐÂY LÀ LỖI CỦA NGƯỜI DÙNG THẬT:
+    //     `keyGenerator` lấy IP thật sau Caddy/Traefik. Một GIA ĐÌNH dùng chung wifi, một
+    //     LỚP HỌC dùng chung một IP NAT, hoặc đơn giản là một bé mở app rồi bấm qua vài màn
+    //     ⇒ mỗi lần điều hướng lại kéo thêm tài nguyên tĩnh ⇒ chạm trần 300/phút ⇒ app TRẮNG
+    //     với bé, và không có gì trong log nói vì sao.
+    //
+    //   ⭐ VÌ SAO `allowList` LÀ ĐÚNG CHỖ (không phải "nới trần cho êm"):
+    //     Rate-limit ở tầng này tồn tại để chặn **dò mật khẩu và spam ghi dữ liệu** — tức là
+    //     bảo vệ các route ĐỘNG, nơi mỗi request kéo theo truy vấn DB và có thể tạo tài khoản.
+    //     Một tệp `.js` có hash, phục vụ từ đĩa, kèm header `immutable` 30 ngày, KHÔNG phải
+    //     bề mặt tấn công mà rate-limit bảo vệ: chặn nó không ngăn được ai, chỉ làm hỏng chính
+    //     app của mình. (Chống lạm dụng băng thông là việc của Traefik/Caddy đứng trước.)
+    //     ⇒ `allowList` bỏ hạn mức cho MỌI thứ KHÔNG phải `/api/**`; các route API vẫn nguyên
+    //       hiện trạng bảo vệ, và `authRateLimit` (siết 10/phút) vẫn áp riêng cho route auth.
+    //
+    //   ⚠️ `^/api(/|$)`: dùng regex chứ KHÔNG `startsWith('/api/')` — chuỗi `/api` (không có
+    //     dấu `/` cuối) cũng là API, và `startsWith('/api/')` sẽ lọt nó ra ngoài allow-list
+    //     theo hướng ngược lại (bị chặn nhầm như tài nguyên tĩnh thì vô hại, nhưng khớp đúng
+    //     ý định thì tốt hơn: đọc mã là biết ngay ranh giới API ở đâu).
     await app.register(rateLimit, {
       global: true,
-      max: 300,
-      timeWindow: '1 minute',
-      allowList: [],
+      max: config.RATE_LIMIT_MAX,
+      timeWindow: config.RATE_LIMIT_WINDOW,
+      // ⚠️ Trả về `true` = MIỄN hạn mức. Chỉ `/api/**` mới bị tính.
+      allowList: (req: FastifyRequest) => !/^\/api(\/|$)/.test(req.url),
       errorResponseBuilder: () => ({
         error: {
           code: 'RATE_LIMITED',
