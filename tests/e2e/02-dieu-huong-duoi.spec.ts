@@ -129,4 +129,23 @@ test('thanh điều hướng dưới có đúng 5 mục và điều hướng th�
   //   `pet.name` = "Momo" như trước T04. Đây là khẳng định chống hồi quy cho đúng điểm đó:
   //   bé chọn Mèo thì nhãn phải nói "Mèo Miu".
   await expect(page.getByText('Mèo Miu', { exact: true }).first()).toBeVisible();
+
+  // ---------------------------------------------------------------------------
+  // ⭐ MỘT KHUNG VẼ CON VẬT DUY NHẤT (chủ dự án chốt 2026-10-14) — kiểm bằng TRÌNH DUYỆT THẬT.
+  //
+  // Vì sao phải có ở tầng e2e: đây là thay đổi BỐ CỤC (xoá thẻ `PetAvatar` ở đầu trang, con vật
+  // trong phòng mặc lại `equippedItems` + tự mang nhãn đọc lên). Unit test chỉ chứng minh được
+  // "không còn hai khối `role="img"`"; nó KHÔNG thấy được ảnh con vật nào thật sự render, cũng
+  // không thấy khung phòng có tải được không. Ở đây đếm ẢNH trong một trang đã render thật.
+  // ---------------------------------------------------------------------------
+  const petRoom = page.getByRole('region', { name: 'Góc phòng của bé' });
+  await expect(page.locator('img[src^="/assets/pets/"]')).toHaveCount(1);
+  await expect(petRoom.locator('img[src^="/assets/pets/"]')).toHaveCount(1);
+
+  // Nhãn đọc lên đi theo CHỖ VẼ: nó phải nằm trong khung phòng, vì thẻ đầu trang (chỗ đọc nhãn cũ)
+  // đã bị xoá. Bé chưa mặc gì ⇒ câu đúng là "đang chơi trong nhà".
+  await expect(petRoom.getByRole('img', { name: 'Mèo Miu đang chơi trong nhà' })).toBeVisible();
+
+  // Giai đoạn lớn lên (T066) vẫn NHÌN THẤY ĐƯỢC — nay ở tiêu đề trang, không cần khung hình thứ hai.
+  await expect(page.getByText(/^(Nhóc con|Trưởng thành|Siêu cấp)$/)).toBeVisible();
 });

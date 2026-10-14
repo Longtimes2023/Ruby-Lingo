@@ -1,13 +1,20 @@
 /**
  * RubyLingo — `PetHousePage`: Nhà thú cưng (M6, T064) — nơi bé cho Momo ăn, mặc phụ kiện, mua đồ.
  *
- * ⭐ PHỤ KIỆN KHÔNG CÒN "MẶC LÊN NGƯỜI" TRONG PHÒNG (chủ dự án chốt sau nhiều vòng thử ghép lớp):
- *   *"bạn tách các đồ vật cho thú cưng ra đi, để tự do di chuyển cho rồi."* Vì vậy TRONG PHÒNG,
- *   phụ kiện là những VẬT THỂ TỰ DO bé kéo thả (y hệt đồ trang trí), và con vật đứng TRẦN. Phụ kiện
- *   nằm trong một KHAY RIÊNG dưới khung phòng: bấm một món ⇒ nó rơi xuống sàn, rồi bé tự kéo.
+ * ⭐ MỘT KHUNG VẼ CON VẬT DUY NHẤT — KHUNG TRONG PHÒNG (chủ dự án chốt 2026-10-14).
+ *   Bản trước có HAI chỗ vẽ con vật: thẻ `PetAvatar` ở đầu trang và con vật trong phòng. Chủ dự án:
+ *   *"bỏ khung đầu, chỉ giữ lại khung phòng của thú cưng (cũng có hiện thị item của thú cưng mà)"*.
+ *   Vì vậy:
+ *     • Thẻ đầu trang đã XOÁ. Con vật trong phòng nay MẶC bộ `equippedItems` (nó là chỗ vẽ duy
+ *       nhất ⇒ nếu đứng trần thì vòng lặp "bé mua nón ⇒ thấy ngay Momo đội nón" — lý do tồn tại
+ *       của cả khối cửa hàng bên dưới — sẽ đứt), và tự mang NHÃN ĐỌC LÊN (`announce`) vì không
+ *       còn thẻ nào đọc "đang mặc gì" nữa.
+ *     • Chú thích GIAI ĐOẠN (`Nhóc con`/`Trưởng thành`/`Siêu cấp`) dời lên TIÊU ĐỀ trang — T066
+ *       vẫn phải nhìn thấy được, chỉ là không cần vẽ con vật lần thứ hai để nói một dòng chữ.
+ *     • Phụ kiện KHÔNG mặc vẫn là VẬT THỂ TỰ DO bé kéo thả trong phòng + KHAY ĐỒ riêng (giữ
+ *       nguyên quyết định *"tách các đồ vật cho thú cưng ra, để tự do di chuyển"*), và món ĐANG
+ *       MẶC thì KHÔNG vẽ lại dưới sàn — một món chỉ có một chỗ xuất hiện.
  *   Vị trí lưu lên server theo từng bé, dùng đúng cơ chế của đồ trang trí (`useRoomPlacements`).
- *   ⚠️ Thẻ `PetAvatar` ở ĐẦU TRANG (ngoài khung phòng) VẪN mặc bộ `equipped` như cũ — bé cần thấy
- *      "con vật đang mặc gì" ở thẻ hồ sơ. Chỉ TRONG PHÒNG mới tách rời.
  *
  * ⭐ CỬA HÀNG LÀ MỘT PHẦN CỦA MÀN HÌNH NÀY, KHÔNG PHẢI MỘT MỤC RIÊNG (quyết định C2):
  *   Bé mua một chiếc nón xong phải THẤY NGAY Momo đội nón. Nếu cửa hàng là màn hình riêng, bé
@@ -37,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
 import { accessorySlotOf, decorationSlotOf, getShopItem, isEquippable, isFood, shopItemsByCategory } from '@shared/content/shop.js';
 import type { RoomPlacement } from '@shared/schemas/room.js';
 import { petNameVi } from '@shared/content/pets.js';
+import { stageDefinition } from '@shared/content/levels.js';
 import type {
   CurrencyKind,
   InventoryItem,
@@ -125,13 +133,6 @@ const ROOM_BACKGROUND_SRC = '/assets/rooms/room-default.webp';
  *    hằng ở cấp module giữ nguyên tham chiếu, nên `useMemo` chỉ chạy khi túi đồ THẬT SỰ đổi.
  */
 const EMPTY_INVENTORY: readonly InventoryItem[] = [];
-
-/**
- * Mảng rỗng DÙNG CHUNG cho con vật TRONG PHÒNG — bé đã tách phụ kiện ra khỏi người (xem ghi chú ở
- * `PetAvatar` trong khung phòng). Truyền một mảng mới mỗi lượt render cũng được, nhưng một hằng ở
- * cấp module giữ nguyên tham chiếu để các `useMemo` bên trong `PetAvatar` không dựng lại vô ích.
- */
-const NO_ITEMS: readonly ShopItem[] = [];
 
 /** Bề rộng một phụ kiện đặt tự do trong phòng, tính bằng `cqw` (= % bề rộng khung). */
 const ROOM_ACCESSORY_WIDTH_CQW = 13;
@@ -294,6 +295,18 @@ export function PetHousePage() {
     }
     return list;
   }, [inventory]);
+
+  /**
+   * ID những món ĐANG MẶC — để một món chỉ xuất hiện ở ĐÚNG MỘT chỗ trong phòng.
+   *
+   * ⭐ VÌ SAO CẦN (từ 2026-10-14, khi con vật trong phòng mặc `equippedItems`): cùng một chiếc mũ
+   *   có thể vừa `equipped` vừa có `placement` (dữ liệu cũ, hoặc bé đặt xuống sàn rồi mới bấm
+   *   "Mặc"). Không lọc thì bé thấy HAI chiếc mũ: một trên đầu con vật, một dưới sàn — và kéo chiếc
+   *   dưới sàn chẳng làm gì được chiếc trên đầu.
+   *   Món đang mặc ⇒ ở TRÊN NGƯỜI (bỏ khỏi vật thể rời + bỏ khỏi khay); bé muốn bỏ ra thì bấm
+   *   "Tháo" ở thẻ cửa hàng, và nó quay lại đúng chỗ cũ trong phòng (vị trí vẫn còn trong `roomDraft`).
+   */
+  const wornIds = useMemo(() => new Set(equippedItems.map((item) => item.id)), [equippedItems]);
 
   /**
    * Ghi bản nháp phòng và cho React vẽ lại.
@@ -597,6 +610,8 @@ export function PetHousePage() {
    *   Vẽ sai lượt thì ba lô đè lên bụng con vật, đọc ra là sai ngay.
    */
   const roomAccessories = ownedAccessories
+    // Món ĐANG MẶC nằm trên người con vật ⇒ không vẽ lại thành vật thể rời dưới sàn (xem `wornIds`).
+    .filter((item) => !wornIds.has(item.id))
     .map((item) => ({ item, placement: roomDraft.find((entry) => entry.itemId === item.id) }))
     .filter(
       (entry): entry is { item: ShopItem; placement: RoomPlacement } =>
@@ -614,8 +629,12 @@ export function PetHousePage() {
    *
    * "Chưa đặt" = KHÔNG có trong `roomDraft`, HOẶC có nhưng `hidden === true`. Nhờ vậy một món bị
    * ẩn vẫn quay lại được khay để bé đặt lại, thay vì kẹt vĩnh viễn ở trạng thái vô hình.
+   *
+   * ⚠️ Món ĐANG MẶC KHÔNG vào khay: nó đang ở trên người con vật, không phải "chưa đặt". Để nó
+   *    trong khay thì bé bấm "Đặt Mũ vào phòng" và thấy chiếc mũ thứ hai rơi xuống sàn.
    */
   const trayAccessories = ownedAccessories.filter((item) => {
+    if (wornIds.has(item.id)) return false;
     const placement = roomDraft.find((entry) => entry.itemId === item.id);
     return placement === undefined || placement.hidden;
   });
@@ -676,24 +695,30 @@ export function PetHousePage() {
         }
       >
         {/*
-          ⚠️⚠️ CON VẬT TRONG PHÒNG KHÔNG MẶC PHỤ KIỆN — `items={NO_ITEMS}` là CHỦ Ý (chủ dự án chốt).
+          ⚠️⚠️ ĐÂY LÀ KHUNG VẼ CON VẬT **DUY NHẤT** CỦA CẢ MÀN HÌNH (chủ dự án chốt 2026-10-14:
+          *"bỏ khung đầu, chỉ giữ lại khung phòng của thú cưng (cũng có hiện thị item của thú cưng
+          mà)"*). Hai hệ quả, cả hai đều là ràng buộc cứng chứ không phải tuỳ chọn:
 
-          Phụ kiện đã tách ra thành các VẬT THỂ TỰ DO bé kéo thả trong phòng (xem `renderAccessoryNode`
-          + khay đồ bên dưới khung). Con vật trong phòng vì thế đứng "trần" — bé tự quyết món nào
-          đặt ở đâu, thay vì bị ghép cứng lên người. Thẻ `PetAvatar` ở ĐẦU TRANG (ngoài khung phòng)
-          VẪN mặc bộ `equippedItems` như cũ: bé cần thấy "con vật đang mặc gì" ở thẻ hồ sơ; chỉ
-          TRONG PHÒNG mới tách rời.
+            1. `items={equippedItems}` — con vật TRONG PHÒNG mặc bộ đồ bé đã chọn. Nếu để trần thì
+               không còn chỗ nào trên màn hình cho bé thấy mình vừa mặc gì cho Momo, và lời hứa ở
+               đầu tệp ("bé mua nón xong phải THẤY NGAY Momo đội nón") thành sai.
+            2. `announce` — nhãn đọc lên phải nằm ở ĐÂY, vì thẻ đầu trang (chỗ đọc nhãn cũ) đã bị
+               xoá. Không có nhãn thì bé khiếm thị mất hẳn câu "Momo đang dùng: Mũ, Khăn quàng".
 
           Vẫn dùng chính `PetAvatar` (KHÔNG vẽ `<img>` trần) — nó là nguồn duy nhất của hình con
-          vật theo (con × bậc), và `bare` bỏ thẻ/dải trời/dải cỏ vì khung phòng đã có tường/sàn.
+          vật theo (con × bậc), và `bare` chỉ bỏ THẺ (dải trời/dải cỏ/viền/chú thích giai đoạn) vì
+          khung phòng đã có tường/sàn riêng.
+
+          Món đang mặc KHÔNG được vẽ lại dưới dạng vật thể rời nữa — xem `wornIds`.
         */}
         <PetAvatar
           petType={snapshot.pet.petType}
           evolutionStage={snapshot.pet.evolutionStage}
-          items={NO_ITEMS}
+          items={equippedItems}
           sizeEm="var(--room-pet-w)"
           frameClassName="size-full"
           bare
+          announce
         />
       </div>
     ),
@@ -720,38 +745,35 @@ export function PetHousePage() {
         <div className="min-w-0">
           <h1 className="text-kid-xl text-ink">{t('pet.title')}</h1>
           <p className="text-kid-sm text-ink-soft">{petName}</p>
+          {/*
+            ⭐ GIAI ĐOẠN LỚN LÊN Ở ĐÂY, KHÔNG TRONG MỘT KHUNG HÌNH (T066 giữ nguyên giá trị).
+            Trước 2026-10-14 dòng này nằm dưới thẻ `PetAvatar` ở đầu trang. Thẻ đó đã bị xoá (xem
+            ghi chú đầu tệp), nên chú thích tiến hoá dời lên tiêu đề — thông tin vẫn phải nhìn
+            thấy, chỉ là không cần vẽ thêm một con vật nữa để nói một dòng chữ.
+          */}
+          <p className="text-kid-xs font-bold text-ink-soft">
+            {stageDefinition(snapshot.pet.evolutionStage).name_vi}
+          </p>
         </div>
         {/* ❤️ của con vật. `HeartMeter` tự kẹp sàn 1 — xem ghi chú đầu component đó. */}
         <HeartMeter value={snapshot.pet.happiness} className="ml-auto shrink-0" />
       </header>
 
       {/*
-        Con bé đã chọn + bộ đồ đang mặc + cảnh quanh nhà (T065) + giai đoạn tiến hoá (T066). Nhãn
-        đọc lên nằm TRONG component (nó tự đọc danh mục để gọi tên từng món), nên chỗ gọi không
-        phải biết gì về phụ kiện.
+        Nút ĐỔI BẠN ĐỒNG HÀNH — ≥64px (`BigButton size="md"` ⇒ `min-h-touch`). Đổi con là MIỄN PHÍ
+        và không giới hạn số lần, nên nút này luôn bấm được (không mờ vì thiếu tiền).
 
-        ⚠️ Truyền ID con + ID giai đoạn mà SERVER trả, không truyền emoji hay số từ: client không
-           tự đếm từ và không tự quyết hình. Tên con cũng suy trong `PetAvatar` từ `petType`.
+        ⚠️ Nút này ở lại dù thẻ con vật bị xoá: nó là ĐƯỜNG VÀO màn chọn bạn đồng hành, không phải
+           một phần của thẻ. Xoá theo thẻ là bé hết đường đổi con.
       */}
-      <div className="flex flex-col gap-2">
-        <PetAvatar
-          petType={snapshot.pet.petType}
-          evolutionStage={snapshot.pet.evolutionStage}
-          items={equippedItems}
-        />
-        {/*
-          Nút ĐỔI BẠN ĐỒNG HÀNH — ≥64px (`BigButton size="md"` ⇒ `min-h-touch`). Đổi con là MIỄN
-          PHÍ và không giới hạn số lần, nên nút này luôn bấm được (không mờ vì thiếu tiền).
-        */}
-        <BigButton
-          size="md"
-          variant="secondary"
-          icon="🐾"
-          onClick={() => navigate('/pet/chon')}
-        >
-          {t('pet.changeCompanion')}
-        </BigButton>
-      </div>
+      <BigButton
+        size="md"
+        variant="secondary"
+        icon="🐾"
+        onClick={() => navigate('/pet/chon')}
+      >
+        {t('pet.changeCompanion')}
+      </BigButton>
 
       <section aria-labelledby="pet-room-title" className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">

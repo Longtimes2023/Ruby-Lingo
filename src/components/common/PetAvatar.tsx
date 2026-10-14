@@ -240,6 +240,17 @@ export interface PetAvatarProps {
    *    Bỏ nhãn ở đây KHÔNG mất thông tin: thông tin vẫn còn nguyên ở thẻ đầu trang.
    */
   bare?: boolean;
+  /**
+   * ĐỌC NHÃN LÊN (`role="img"` + `aria-label`) dù đang ở bối cảnh `bare`.
+   *
+   * ⭐ VÌ SAO CẦN (2026-10-14): lý do bỏ nhãn ở `bare` là "thẻ đầu trang đã đọc rồi". Nhưng màn
+   *   "Nhà thú cưng" nay chỉ còn **MỘT** khung vẽ con vật — chính khung TRONG PHÒNG (chủ dự án:
+   *   *"bỏ khung đầu, chỉ giữ lại khung phòng của thú cưng"*). Khi khối phòng là chỗ DUY NHẤT vẽ
+   *   con vật thì bỏ nhãn ở đó = bé khiếm thị mất hẳn câu "Momo đang dùng: Mũ, Khăn quàng".
+   *   Người gọi truyền `announce` để khối đó tự mang nhãn — thông tin đi theo **chỗ vẽ**, không
+   *   đi theo một khung đã bị xoá.
+   */
+  announce?: boolean;
 }
 
 export function PetAvatar({
@@ -250,6 +261,7 @@ export function PetAvatar({
   sizeEm,
   frameClassName,
   bare = false,
+  announce = false,
 }: PetAvatarProps) {
   const { t } = useTranslation();
 
@@ -436,8 +448,18 @@ export function PetAvatar({
     BỐI CẢNH TRẦN — xem ghi chú `bare` ở `PetAvatarProps`. Chỉ con vật + phụ kiện.
   */
   if (bare) {
+    /*
+      ⚠️ `aria-hidden` hay `role="img"` + nhãn là quyết định của NGƯỜI GỌI (`announce`), không
+         phải của khối này: mặc định khối trần là TRANG TRÍ (đã có thẻ khác đọc thông tin), nhưng
+         khi nó là chỗ vẽ DUY NHẤT thì nhãn phải ở lại (xem `announce`).
+    */
     return (
-      <div className={cn('flex flex-col', className)} aria-hidden="true">
+      <div
+        className={cn('flex flex-col', className)}
+        {...(announce
+          ? { role: 'img', 'aria-label': labelParts.join('. ') }
+          : { 'aria-hidden': true })}
+      >
         {petFrame}
       </div>
     );

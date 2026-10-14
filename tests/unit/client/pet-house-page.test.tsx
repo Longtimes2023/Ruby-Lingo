@@ -669,14 +669,17 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
   });
 
   /**
-   * ⚠️⚠️ ĐÂY LÀ CHỖ HÀNH VI ĐÃ ĐỔI THEO QUYẾT ĐỊNH CỦA CHỦ DỰ ÁN.
+   * ⚠️⚠️ HÀNH VI ĐÃ ĐỔI THEO QUYẾT ĐỊNH CỦA CHỦ DỰ ÁN (2026-10-14).
    *
-   * Bản trước: con vật TRONG PHÒNG mặc đúng bộ phụ kiện đang mặc (`equipped`). Chủ dự án kết luận
-   * cách "ghép phụ kiện lên người theo lớp" không đẹp, và chốt: TÁCH phụ kiện ra thành vật thể tự
-   * do, bé tự kéo vào phòng. Vì vậy con vật trong phòng nay ĐỨNG TRẦN — còn thẻ ở ĐẦU TRANG vẫn
-   * mặc bộ `equipped` như cũ (bé cần thấy "con vật đang mặc gì" ở thẻ hồ sơ).
+   * Bản trước: HAI chỗ vẽ con vật — thẻ ở đầu trang (mặc bộ `equipped`) và con vật trong phòng
+   * (đứng trần). Chủ dự án: *"bỏ khung đầu, chỉ giữ lại khung phòng của thú cưng (cũng có hiện thị
+   * item của thú cưng mà)"*.
+   *
+   * Nay: MỘT khung duy nhất, và nó MẶC bộ `equippedItems`. Đây không phải chi tiết mỹ thuật: nếu con
+   * vật duy nhất đứng trần thì bé mặc đồ xong KHÔNG thấy gì thay đổi, và lời hứa ở đầu tệp
+   * `PetHousePage` ("bé mua nón xong phải THẤY NGAY Momo đội nón") thành sai.
    */
-  it('⚠️ con vật TRONG PHÒNG KHÔNG mặc phụ kiện, nhưng thẻ ĐẦU TRANG vẫn mặc', () => {
+  it('⚠️ chỉ MỘT khung vẽ con vật, và nó mặc đúng bộ đang `equipped`', () => {
     seed({
       inventory: [
         inventoryItem('acc-hat', { equipped: true }),
@@ -686,21 +689,48 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
     });
     renderPage();
 
+    // (1) Đúng MỘT con vật trên cả màn hình — hết cảnh hai con giống nhau ở hai khung.
+    expect(screen.getAllByRole('img', { name: /^Khỉ Momo/ })).toHaveLength(1);
+
+    // (2) Con vật đó nằm TRONG phòng…
     const holder = roomRegion().querySelector<HTMLElement>('[data-room-pet]');
     expect(holder, 'phòng phải có con vật').not.toBeNull();
-    // Trong phòng: KHÔNG có lớp phụ kiện nào của `PetAvatar`.
-    expect(holder!.querySelectorAll('[data-accessory-id]').length).toBe(0);
 
-    // Thẻ đầu trang: vẫn mặc đúng bộ đang `equipped`.
-    const card = screen.getByRole('img', { name: 'Khỉ Momo đang dùng: Mũ, Khăn quàng, Kính' });
+    // …và mặc đủ ba món (lọc trùng vì khăn quàng được vẽ hai lượt — xem test "nhiều món cùng lúc").
     const worn = [
       ...new Set(
-        [...card.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
+        [...holder!.querySelectorAll<HTMLElement>('[data-accessory-id]')].map(
           (node) => node.dataset.accessoryId,
         ),
       ),
     ];
     expect(worn.sort()).toEqual(['acc-glasses', 'acc-hat', 'acc-scarf']);
+
+    // (3) Nhãn đọc lên đi theo CHỖ VẼ: nó phải nằm trong khung phòng, vì thẻ đầu trang đã bị xoá.
+    const scene = holder!.querySelector<HTMLElement>('[role="img"]');
+    expect(scene, 'con vật trong phòng phải tự mang nhãn đọc lên').not.toBeNull();
+    expect(scene!.getAttribute('aria-label')).toBe('Khỉ Momo đang dùng: Mũ, Khăn quàng, Kính');
+  });
+
+  it('⚠️ món ĐANG MẶC không bị vẽ LẦN HAI dưới sàn (một món, một chỗ)', async () => {
+    seed({ inventory: [inventoryItem('acc-hat', { equipped: true })] });
+    // Dữ liệu cũ: cùng chiếc mũ vừa `equipped` vừa có vị trí trên sàn. Không lọc thì bé thấy hai
+    // chiếc mũ, và kéo chiếc dưới sàn chẳng làm gì được chiếc trên đầu.
+    getRoomMock.mockResolvedValue([{ itemId: 'acc-hat', x: 80, y: 70, hidden: false }]);
+    renderPage();
+
+    const room = roomRegion();
+    // ⚠️ Phải CHỜ vị trí tải xong, nếu không khẳng định "không có mũ dưới sàn" chỉ đúng vì
+    //    `roomDraft` còn rỗng — một test xanh rỗng ruột.
+    await waitFor(() => expect(within(room).queryByText('Đang tải vị trí…')).toBeNull());
+
+    const holder = room.querySelector<HTMLElement>('[data-room-pet]');
+    // Mũ nằm TRÊN ĐẦU con vật…
+    expect(holder!.querySelectorAll('[data-accessory-id="acc-hat"]').length).toBeGreaterThan(0);
+    // …KHÔNG có chiếc mũ thứ hai đứng dưới sàn…
+    expect(room.querySelector('[data-room-accessory="acc-hat"]')).toBeNull();
+    // …và khay cũng không mời bé "Đặt Mũ vào phòng" khi mũ đang ở trên đầu.
+    expect(within(room).queryByRole('button', { name: 'Đặt Mũ vào phòng' })).toBeNull();
   });
 
   it('⚠️ phụ kiện slot `back` vẽ TRƯỚC con vật; slot khác vẽ SAU con vật', async () => {
@@ -795,10 +825,16 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
     // …nhưng KHÔNG kèm dải trời/dải cỏ của thẻ (phòng đã có tường/baseboard/sàn riêng)…
     expect(holder!.querySelector('.bg-pet-sky')).toBeNull();
     expect(holder!.querySelector('.bg-pet-ground')).toBeNull();
-    // …và KHÔNG kèm chú thích giai đoạn của thẻ.
+    // …và KHÔNG kèm chú thích giai đoạn của thẻ (giai đoạn nay nằm ở TIÊU ĐỀ trang).
     expect(within(holder!).queryByText('Nhóc con')).toBeNull();
-    // Nhãn đọc lên đã có ở thẻ đầu trang ⇒ con vật trong phòng là TRANG TRÍ, không đọc lặp.
-    expect(holder!.querySelector('[role="img"]')).toBeNull();
+    /*
+      Nhãn đọc lên NẰM TRONG khung phòng: từ 2026-10-14 đây là chỗ vẽ con vật DUY NHẤT, nên nhãn
+      phải đi theo nó (`announce`). Bản trước nhãn ở thẻ đầu trang và khối này là `aria-hidden` —
+      giữ nguyên như thế sau khi xoá thẻ = bé khiếm thị mất hẳn câu "Momo đang dùng: …".
+    */
+    const scene = holder!.querySelector<HTMLElement>('[role="img"]');
+    expect(scene, 'con vật trong phòng phải mang nhãn đọc lên').not.toBeNull();
+    expect(scene!.getAttribute('aria-label')).toBe('Khỉ Momo đang chơi trong nhà');
   });
 
   it('⚠️ khung phòng dùng container query để mọi cỡ bên trong bám theo khung', () => {
