@@ -69,6 +69,7 @@
       "vi": "cái chân",
       "type": "n",
       "icon": "🦵",
+      "phonetic": "/leɡ/",
       "picturable": true
     },
     {
@@ -80,6 +81,7 @@
       "vi": "mái tóc",
       "type": "n",
       "icon": "💇",
+      "phonetic": "/heər/",
       "picturable": false
     },
     {
@@ -91,6 +93,7 @@
       "vi": "cơ thể",
       "type": "n",
       "icon": "🧍",
+      "phonetic": "/ˈbɒd.i/",
       "picturable": false
     },
     {
@@ -102,6 +105,7 @@
       "vi": "cái đầu",
       "type": "n",
       "icon": "👤",
+      "phonetic": "/hed/",
       "picturable": false
     },
     {
@@ -113,6 +117,7 @@
       "vi": "cái tai",
       "type": "n",
       "icon": "👂",
+      "phonetic": "/ɪər/",
       "picturable": true
     },
     {
@@ -124,6 +129,7 @@
       "vi": "con mắt",
       "type": "n",
       "icon": "👁️",
+      "phonetic": "/aɪ/",
       "picturable": true
     },
     {
@@ -135,6 +141,7 @@
       "vi": "khuôn mặt",
       "type": "n",
       "icon": "😊",
+      "phonetic": "/feɪs/",
       "picturable": true
     },
     {
@@ -146,6 +153,7 @@
       "vi": "cái mũi",
       "type": "n",
       "icon": "👃",
+      "phonetic": "/nəʊz/",
       "picturable": true
     },
     {
@@ -157,6 +165,7 @@
       "vi": "cái miệng",
       "type": "n",
       "icon": "👄",
+      "phonetic": "/maʊθ/",
       "picturable": true
     },
     {
@@ -168,6 +177,7 @@
       "vi": "nụ cười",
       "type": "n",
       "icon": "😁",
+      "phonetic": "/smaɪl/",
       "picturable": true
     },
     {
@@ -179,6 +189,7 @@
       "vi": "cánh tay",
       "type": "n",
       "icon": "💪",
+      "phonetic": "/ɑːm/",
       "picturable": true
     },
     {
@@ -190,6 +201,7 @@
       "vi": "bàn tay",
       "type": "n",
       "icon": "✋",
+      "phonetic": "/hænd/",
       "picturable": true
     },
     {
@@ -201,6 +213,7 @@
       "vi": "bàn chân",
       "type": "n",
       "icon": "🦶",
+      "phonetic": "/fʊt/",
       "picturable": true,
       "forms": {
         "plural": "feet"

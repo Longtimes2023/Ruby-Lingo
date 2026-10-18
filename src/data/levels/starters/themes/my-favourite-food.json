@@ -163,6 +163,7 @@
       "vi": "quả táo",
       "type": "n",
       "icon": "🍎",
+      "phonetic": "/ˈæp.əl/",
       "picturable": true
     },
     {
@@ -174,6 +175,7 @@
       "vi": "quả chuối",
       "type": "n",
       "icon": "🍌",
+      "phonetic": "/bəˈnɑː.nə/",
       "picturable": true
     },
     {
@@ -185,6 +187,7 @@
       "vi": "chùm nho",
       "type": "n",
       "icon": "🍇",
+      "phonetic": "/ɡreɪps/",
       "picturable": true
     },
     {
@@ -196,6 +199,7 @@
       "vi": "cá",
       "type": "n",
       "icon": "🐟",
+      "phonetic": "/fɪʃ/",
       "picturable": true
     },
     {
@@ -207,6 +211,7 @@
       "vi": "hạt đậu",
       "type": "n",
       "icon": "🌰",
+      "phonetic": "/biːnz/",
       "picturable": true
     },
     {
@@ -218,6 +223,7 @@
       "vi": "quả trứng",
       "type": "n",
       "icon": "🥚",
+      "phonetic": "/eɡ/",
       "picturable": true
     },
     {
@@ -229,6 +235,7 @@
       "vi": "sữa",
       "type": "n",
       "icon": "🥛",
+      "phonetic": "/mɪlk/",
       "picturable": true
     },
     {
@@ -240,6 +247,7 @@
       "vi": "quả cà chua",
       "type": "n",
       "icon": "🍅",
+      "phonetic": "/təˈmɑː.təʊ/",
       "picturable": true
     },
     {
@@ -251,6 +259,7 @@
       "vi": "củ hành",
       "type": "n",
       "icon": "🧅",
+      "phonetic": "/ˈʌn.jən/",
       "picturable": true
     },
     {
@@ -262,6 +271,7 @@
       "vi": "cơm",
       "type": "n",
       "icon": "🍚",
+      "phonetic": "/raɪs/",
       "picturable": true
     },
     {
@@ -273,6 +283,7 @@
       "vi": "đậu Hà Lan",
       "type": "n",
       "icon": "🟢🟢",
+      "phonetic": "/piːz/",
       "picturable": true
     },
     {
@@ -284,6 +295,7 @@
       "vi": "quả dừa",
       "type": "n",
       "icon": "🥥",
+      "phonetic": "/ˈkəʊ.kə.nʌt/",
       "picturable": true
     },
     {
@@ -295,6 +307,7 @@
       "vi": "bữa sáng",
       "type": "n",
       "icon": "🍳",
+      "phonetic": "/ˈbrek.fəst/",
       "picturable": true
     },
     {
@@ -306,6 +319,7 @@
       "vi": "bữa tối",
       "type": "n",
       "icon": "🍽️",
+      "phonetic": "/ˈdɪn.ər/",
       "picturable": true
     },
     {
@@ -317,6 +331,7 @@
       "vi": "thịt",
       "type": "n",
       "icon": "🥩",
+      "phonetic": "/miːt/",
       "picturable": true
     },
     {
@@ -328,6 +343,7 @@
       "vi": "củ khoai tây",
       "type": "n",
       "icon": "🥔",
+      "phonetic": "/pəˈteɪ.təʊ/",
       "picturable": true
     },
     {
@@ -339,6 +355,7 @@
       "vi": "xúc xích",
       "type": "n",
       "icon": "🌭",
+      "phonetic": "/ˈsɒs.ɪdʒ/",
       "picturable": true
     },
     {
@@ -350,6 +367,7 @@
       "vi": "quả cam",
       "type": "n",
       "icon": "🍊",
+      "phonetic": "/ˈɒr.ɪndʒ/",
       "picturable": true
     },
     {
@@ -361,6 +379,7 @@
       "vi": "quả chanh vàng",
       "type": "n",
       "icon": "🍋",
+      "phonetic": "/ˈlem.ən/",
       "picturable": true
     },
     {
@@ -372,6 +391,7 @@
       "vi": "quả chanh xanh",
       "type": "n",
       "icon": "🍋🟢",
+      "phonetic": "/laɪm/",
       "picturable": true
     },
     {
@@ -383,6 +403,7 @@
       "vi": "quả xoài",
       "type": "n",
       "icon": "🥭",
+      "phonetic": "/ˈmæŋ.ɡəʊ/",
       "picturable": true
     },
     {
@@ -394,6 +415,7 @@
       "vi": "quả lê",
       "type": "n",
       "icon": "🍐",
+      "phonetic": "/peər/",
       "picturable": true
     },
     {
@@ -405,6 +427,7 @@
       "vi": "quả dứa",
       "type": "n",
       "icon": "🍍",
+      "phonetic": "/ˈpaɪn.æp.əl/",
       "picturable": true
     },
     {
@@ -416,6 +439,7 @@
       "vi": "nước",
       "type": "n",
       "icon": "💧",
+      "phonetic": "/ˈwɔː.tər/",
       "picturable": true
     },
     {
@@ -427,6 +451,7 @@
       "vi": "trái cây",
       "type": "n",
       "icon": "🍓",
+      "phonetic": "/fruːt/",
       "picturable": true
     },
     {
@@ -438,6 +463,7 @@
       "vi": "bánh mì",
       "type": "n",
       "icon": "🍞",
+      "phonetic": "/bred/",
       "picturable": true
     },
     {
@@ -449,6 +475,7 @@
       "vi": "bánh kẹp",
       "type": "n",
       "icon": "🍔",
+      "phonetic": "/ˈbɜː.ɡər/",
       "picturable": true
     },
     {
@@ -460,6 +487,7 @@
       "vi": "bánh ngọt",
       "type": "n",
       "icon": "🍰",
+      "phonetic": "/keɪk/",
       "picturable": true
     },
     {
@@ -471,6 +499,7 @@
       "vi": "bữa trưa",
       "type": "n",
       "icon": "🥪",
+      "phonetic": "/lʌntʃ/",
       "picturable": true
     },
     {
@@ -482,6 +511,7 @@
       "vi": "kẹo",
       "type": "n",
       "icon": "🍬",
+      "phonetic": "/ˈkæn.di/",
       "picturable": true,
       "alt": [
         "sweets"
@@ -496,6 +526,7 @@
       "vi": "củ cà rốt",
       "type": "n",
       "icon": "🥕",
+      "phonetic": "/ˈkær.ət/",
       "picturable": true
     },
     {
@@ -507,6 +538,7 @@
       "vi": "khoai tây chiên",
       "type": "n",
       "icon": "🍟",
+      "phonetic": "/tʃɪps/",
       "picturable": true,
       "alt": [
         "fries"
@@ -521,6 +553,7 @@
       "vi": "sô-cô-la",
       "type": "n",
       "icon": "🍫",
+      "phonetic": "/ˈtʃɒk.lət/",
       "picturable": true
     },
     {
@@ -532,6 +565,7 @@
       "vi": "nước chanh",
       "type": "n",
       "icon": "🥤",
+      "phonetic": "/ˌlem.əˈneɪd/",
       "picturable": true
     },
     {
@@ -543,6 +577,7 @@
       "vi": "kem",
       "type": "n",
       "icon": "🍦",
+      "phonetic": "/ˌaɪs ˈkriːm/",
       "picturable": true
     },
     {
@@ -554,6 +589,7 @@
       "vi": "thịt gà",
       "type": "n",
       "icon": "🍗",
+      "phonetic": "/ˈtʃɪk.ɪn/",
       "picturable": true
     },
     {
@@ -565,6 +601,7 @@
       "vi": "quả dưa hấu",
       "type": "n",
       "icon": "🍉",
+      "phonetic": "/ˈwɔː.təˌmel.ən/",
       "picturable": true
     },
     {
@@ -576,6 +613,7 @@
       "vi": "đồ uống",
       "type": "n",
       "icon": "🧃",
+      "phonetic": "/drɪŋk/",
       "picturable": true
     },
     {
@@ -587,6 +625,7 @@
       "vi": "nước ép",
       "type": "n",
       "icon": "🍹",
+      "phonetic": "/dʒuːs/",
       "picturable": true
     }
   ],

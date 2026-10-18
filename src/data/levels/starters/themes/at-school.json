@@ -498,6 +498,7 @@
       "vi": "sân chơi",
       "type": "n",
       "icon": "🛝",
+      "phonetic": "/ˈpleɪ.ɡraʊnd/",
       "picturable": true
     },
     {
@@ -509,6 +510,7 @@
       "vi": "quả bóng",
       "type": "n",
       "icon": "🔵⚽",
+      "phonetic": "/bɔːl/",
       "picturable": true
     },
     {
@@ -520,6 +522,7 @@
       "vi": "đôi ủng",
       "type": "n",
       "icon": "🥾",
+      "phonetic": "/buːts/",
       "picturable": true
     },
     {
@@ -531,6 +534,7 @@
       "vi": "bút sáp màu",
       "type": "n",
       "icon": "🖍️🌈",
+      "phonetic": "/ˈkreɪ.ɒn/",
       "picturable": true
     },
     {
@@ -542,6 +546,7 @@
       "vi": "bạn cùng lớp",
       "type": "n",
       "icon": "🧑‍🤝‍🧑",
+      "phonetic": "/ˈklɑːs.meɪt/",
       "picturable": true
     },
     {
@@ -553,6 +558,7 @@
       "vi": "đọc sách",
       "type": "v",
       "icon": "👦📖",
+      "phonetic": "/riːd/",
       "picturable": true
     },
     {
@@ -564,6 +570,7 @@
       "vi": "viết",
       "type": "v",
       "icon": "✍️",
+      "phonetic": "/raɪt/",
       "picturable": true
     },
     {
@@ -575,6 +582,7 @@
       "vi": "trò chơi bàn cờ",
       "type": "n",
       "icon": "🎲",
+      "phonetic": "/ˈbɔːd ɡeɪm/",
       "picturable": true
     }
   ],

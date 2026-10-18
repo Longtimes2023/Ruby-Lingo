@@ -111,6 +111,7 @@
       "vi": "người máy",
       "type": "n",
       "icon": "🤖",
+      "phonetic": "/ˈrəʊ.bɒt/",
       "picturable": true
     },
     {
@@ -122,6 +123,7 @@
       "vi": "con quái vật",
       "type": "n",
       "icon": "👹",
+      "phonetic": "/ˈmɒn.stər/",
       "picturable": true
     },
     {
@@ -133,6 +135,7 @@
       "vi": "người",
       "type": "n",
       "icon": "🧑",
+      "phonetic": "/ˈpɜː.sən/",
       "picturable": true,
       "forms": {
         "plural": "people"
@@ -147,6 +150,7 @@
       "vi": "người đàn ông",
       "type": "n",
       "icon": "🧍‍♂️",
+      "phonetic": "/mæn/",
       "picturable": true,
       "forms": {
         "plural": "men"
@@ -161,6 +165,7 @@
       "vi": "người phụ nữ",
       "type": "n",
       "icon": "🧍‍♀️",
+      "phonetic": "/ˈwʊm.ən/",
       "picturable": true,
       "forms": {
         "plural": "women"
@@ -175,6 +180,7 @@
       "vi": "đứa trẻ",
       "type": "n",
       "icon": "🧒",
+      "phonetic": "/tʃaɪld/",
       "picturable": true,
       "forms": {
         "plural": "children"
@@ -189,6 +195,7 @@
       "vi": "em bé",
       "type": "n",
       "icon": "👶",
+      "phonetic": "/ˈbeɪ.bi/",
       "picturable": true
     },
     {
@@ -200,6 +207,7 @@
       "vi": "bé trai",
       "type": "n",
       "icon": "👦",
+      "phonetic": "/bɔɪ/",
       "picturable": true
     },
     {
@@ -211,6 +219,7 @@
       "vi": "bé gái",
       "type": "n",
       "icon": "👧",
+      "phonetic": "/ɡɜːl/",
       "picturable": true
     },
     {
@@ -222,6 +231,7 @@
       "vi": "bóng bay",
       "type": "n",
       "icon": "🎈",
+      "phonetic": "/bəˈluːn/",
       "picturable": true
     },
     {
@@ -233,6 +243,7 @@
       "vi": "người ngoài hành tinh",
       "type": "n",
       "icon": "👽",
+      "phonetic": "/ˈeɪ.li.ən/",
       "picturable": true
     },
     {
@@ -244,6 +255,7 @@
       "vi": "gia đình",
       "type": "n",
       "icon": "👨‍👩‍👧",
+      "phonetic": "/ˈfæm.əl.i/",
       "picturable": true
     },
     {
@@ -255,6 +267,7 @@
       "vi": "bố",
       "type": "n",
       "icon": "👨",
+      "phonetic": "/dæd/",
       "picturable": true,
       "alt": [
         "father"
@@ -269,6 +282,7 @@
       "vi": "mẹ",
       "type": "n",
       "icon": "👩",
+      "phonetic": "/mʌm/",
       "picturable": true,
       "alt": [
         "mother"
@@ -283,6 +297,7 @@
       "vi": "ông",
       "type": "n",
       "icon": "👴",
+      "phonetic": "/ˈɡræn.fɑː.ðər/",
       "picturable": true,
       "alt": [
         "grandpa"
@@ -297,6 +312,7 @@
       "vi": "bà",
       "type": "n",
       "icon": "👵",
+      "phonetic": "/ˈɡræn.mʌð.ər/",
       "picturable": true,
       "alt": [
         "grandma"
@@ -311,6 +327,7 @@
       "vi": "chị em gái",
       "type": "n",
       "icon": "👧‍🤝",
+      "phonetic": "/ˈsɪs.tər/",
       "picturable": true
     },
     {
@@ -322,6 +339,7 @@
       "vi": "anh em trai",
       "type": "n",
       "icon": "👦‍🤝",
+      "phonetic": "/ˈbrʌð.ər/",
       "picturable": true
     },
     {
@@ -333,6 +351,7 @@
       "vi": "anh chị em họ",
       "type": "n",
       "icon": "🧑‍🦱",
+      "phonetic": "/ˈkʌz.ən/",
       "picturable": true
     },
     {
@@ -344,6 +363,7 @@
       "vi": "cô",
       "type": "title",
       "icon": "👩‍🎓",
+      "phonetic": "/mɪs/",
       "picturable": true
     },
     {
@@ -355,6 +375,7 @@
       "vi": "thầy",
       "type": "title",
       "icon": "🤵",
+      "phonetic": "/ˈmɪs.tər/",
       "picturable": true
     },
     {
@@ -366,6 +387,7 @@
       "vi": "bà",
       "type": "title",
       "icon": "👰",
+      "phonetic": "/ˈmɪs.ɪz/",
       "picturable": true
     }
   ],

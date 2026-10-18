@@ -232,8 +232,8 @@
       "picturable": true,
       "phonetic": "/stɒp/"
     },
-    { "id": "starters.bike",       "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "bike",       "vi": "xe đạp",    "type": "n", "icon": "🚲🛞", "picturable": true },
-    { "id": "starters.skateboard", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "skateboard", "vi": "ván trượt", "type": "n", "icon": "🛹",   "picturable": true },
+    { "id": "starters.bike",       "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "bike",       "vi": "xe đạp",    "type": "n", "icon": "🚲🛞", "picturable": true, "phonetic": "/baɪk/" },
+    { "id": "starters.skateboard", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "skateboard", "vi": "ván trượt", "type": "n", "icon": "🛹",   "picturable": true, "phonetic": "/ˈskeɪt.bɔːd/" },
     {
       "id": "starters.tree",
       "levelId": "starters",

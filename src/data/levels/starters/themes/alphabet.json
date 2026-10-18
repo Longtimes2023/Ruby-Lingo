@@ -105,6 +105,7 @@
       "vi": "chữ A",
       "type": "n",
       "icon": "A",
+      "phonetic": "/eɪ/",
       "picturable": false
     },
     {
@@ -116,6 +117,7 @@
       "vi": "chữ B",
       "type": "n",
       "icon": "B",
+      "phonetic": "/biː/",
       "picturable": false
     },
     {
@@ -127,6 +129,7 @@
       "vi": "chữ C",
       "type": "n",
       "icon": "C",
+      "phonetic": "/siː/",
       "picturable": false
     },
     {
@@ -138,6 +141,7 @@
       "vi": "chữ D",
       "type": "n",
       "icon": "D",
+      "phonetic": "/diː/",
       "picturable": false
     },
     {
@@ -149,6 +153,7 @@
       "vi": "chữ E",
       "type": "n",
       "icon": "E",
+      "phonetic": "/iː/",
       "picturable": false
     },
     {
@@ -160,6 +165,7 @@
       "vi": "chữ F",
       "type": "n",
       "icon": "F",
+      "phonetic": "/ef/",
       "picturable": false
     },
     {
@@ -171,6 +177,7 @@
       "vi": "chữ G",
       "type": "n",
       "icon": "G",
+      "phonetic": "/dʒiː/",
       "picturable": false
     },
     {
@@ -182,6 +189,7 @@
       "vi": "chữ H",
       "type": "n",
       "icon": "H",
+      "phonetic": "/eɪtʃ/",
       "picturable": false
     },
     {
@@ -193,6 +201,7 @@
       "vi": "chữ I",
       "type": "n",
       "icon": "I",
+      "phonetic": "/aɪ/",
       "picturable": false
     },
     {
@@ -204,6 +213,7 @@
       "vi": "chữ J",
       "type": "n",
       "icon": "J",
+      "phonetic": "/dʒeɪ/",
       "picturable": false
     },
     {
@@ -215,6 +225,7 @@
       "vi": "chữ K",
       "type": "n",
       "icon": "K",
+      "phonetic": "/keɪ/",
       "picturable": false
     },
     {
@@ -226,6 +237,7 @@
       "vi": "chữ L",
       "type": "n",
       "icon": "L",
+      "phonetic": "/el/",
       "picturable": false
     },
     {
@@ -237,6 +249,7 @@
       "vi": "chữ M",
       "type": "n",
       "icon": "M",
+      "phonetic": "/em/",
       "picturable": false
     },
     {
@@ -248,6 +261,7 @@
       "vi": "chữ N",
       "type": "n",
       "icon": "N",
+      "phonetic": "/en/",
       "picturable": false
     },
     {
@@ -259,6 +273,7 @@
       "vi": "chữ O",
       "type": "n",
       "icon": "O",
+      "phonetic": "/əʊ/",
       "picturable": false
     },
     {
@@ -270,6 +285,7 @@
       "vi": "chữ P",
       "type": "n",
       "icon": "P",
+      "phonetic": "/piː/",
       "picturable": false
     },
     {
@@ -281,6 +297,7 @@
       "vi": "chữ Q",
       "type": "n",
       "icon": "Q",
+      "phonetic": "/kjuː/",
       "picturable": false
     },
     {
@@ -292,6 +309,7 @@
       "vi": "chữ R",
       "type": "n",
       "icon": "R",
+      "phonetic": "/ɑːr/",
       "picturable": false
     },
     {
@@ -303,6 +321,7 @@
       "vi": "chữ S",
       "type": "n",
       "icon": "S",
+      "phonetic": "/es/",
       "picturable": false
     },
     {
@@ -314,6 +333,7 @@
       "vi": "chữ T",
       "type": "n",
       "icon": "T",
+      "phonetic": "/tiː/",
       "picturable": false
     },
     {
@@ -325,6 +345,7 @@
       "vi": "chữ U",
       "type": "n",
       "icon": "U",
+      "phonetic": "/juː/",
       "picturable": false
     },
     {
@@ -336,6 +357,7 @@
       "vi": "chữ V",
       "type": "n",
       "icon": "V",
+      "phonetic": "/viː/",
       "picturable": false
     },
     {
@@ -347,6 +369,7 @@
       "vi": "chữ W",
       "type": "n",
       "icon": "W",
+      "phonetic": "/ˈdʌb.əl.juː/",
       "picturable": false
     },
     {
@@ -358,6 +381,7 @@
       "vi": "chữ X",
       "type": "n",
       "icon": "X",
+      "phonetic": "/eks/",
       "picturable": false
     },
     {
@@ -369,6 +393,7 @@
       "vi": "chữ Y",
       "type": "n",
       "icon": "Y",
+      "phonetic": "/waɪ/",
       "picturable": false
     },
     {
@@ -380,6 +405,7 @@
       "vi": "chữ Z",
       "type": "n",
       "icon": "Z",
+      "phonetic": "/zed/",
       "picturable": false
     }
   ],
