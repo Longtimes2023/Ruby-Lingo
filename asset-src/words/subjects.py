@@ -197,13 +197,52 @@ SUBJECTS = {
     # `wall` — trước đây `picturable: false` (bé thấy 🧱, tức "viên gạch", SAI nghĩa: wall là
     # mặt tường, không phải gạch). Tả MỘT MẢNG TƯỜNG nhìn thẳng, có gờ chân tường ở dưới —
     # đó là chi tiết duy nhất khiến bé đọc ra "tường" thay vì "một hình chữ nhật màu kem".
-    # ⚠️ 2026-10-15 — ẢNH ĐÃ SINH BỊ LOẠI DÙ ĐÚNG NGHĨA: bản trước chỉ có gờ chân tường nên
-    #    ở cỡ 44px (thẻ hình trong game) bé đọc ra "thẻ trắng" — quá trống, không có điểm
-    #    nhận dạng nào. Thêm CÔNG TẮC ĐÈN trắng nhỏ ở bên phải: một chi tiết nhỏ nhưng đủ
-    #    để mắt bám vào và hiểu "đây là mặt tường trong nhà", không phải tờ giấy.
-    "wall": "a single flat section of indoor wall seen straight on: a smooth pale cream plaster surface "
-            "with a plain white skirting board along its bottom edge and one small white light-switch "
-            "plate near the right side",
+    # ⚠️ 2026-10-15 (lần 1) — ẢNH ĐÃ SINH BỊ LOẠI DÙ ĐÚNG NGHĨA: bản trước chỉ có gờ chân
+    #    tường nên ở cỡ hiển thị thật bé đọc ra "thẻ trắng" — quá trống, không có điểm nhận
+    #    dạng nào. Đã thêm công tắc đèn.
+    # ⚠️ 2026-10-15 (lần 2) — VẪN BỊ LOẠI, và lần này biết đúng SỐ ĐO vì sao: QA đo DOM thật,
+    #    ảnh từ vựng nhỏ nhất là **61px** (Lật thẻ ghi nhớ, máy 320px), lớn nhất 176px
+    #    (flashcard). Ở 61px, "một mảng tường phẳng + gờ + công tắc" vẫn là hình chữ nhật
+    #    nhạt trên nền nhạt ⇒ thẻ trắng. Công tắc đèn là chi tiết QUÁ NHỎ để cứu ở cỡ đó.
+    #    ⇒ Đổi hẳn bố cục: **GÓC PHÒNG** — hai mặt tường gặp nhau ở một ĐƯỜNG GÓC DỌC giữa
+    #    khung. Đường dọc đó là hình dài nhất trong khung và không tồn tại ở bất kỳ vật nào
+    #    khác, nên nó là thứ duy nhất đọc ra "tường" ở 61px. Gờ chân tường chạy dưới CẢ HAI
+    #    mặt ⇒ thêm một đường ngang gãy khúc, củng cố "góc phòng" thay vì "tấm bảng".
+    #    Vẫn KHÁC `house`/`room` (nhìn từ ngoài / nhìn bao quát) và khác `door`/`window`.
+    # ⚠️ MỘT CHỮ PHẢI KHÁC NGUYÊN VĂN CỦA TEAM-LEAD: bản gốc ghi "on the **right-hand** wall",
+    #    và tự kiểm 4 của `plan.py` bắt đúng chữ đó — regex `\b(?:hands?|palms?|wrists?)\b`
+    #    khớp "hand" trong "right-hand" vì DẤU GẠCH NỐI cũng là ranh giới từ, rồi kết luận
+    #    "chủ thể nhắc tới bàn tay" ⇒ `plan.py` exit 1. Đây là DƯƠNG TÍNH GIẢ: "right-hand"
+    #    là tính từ ghép, không phải bàn tay. Đã đổi thành "on the **right** wall" — nghĩa
+    #    không đổi một chút nào (công tắc vẫn ở mặt tường bên phải), và đây đúng là cách sửa
+    #    mà chính thông báo lỗi của `plan.py` chỉ ra ("bỏ chữ 'hand' khỏi chủ thể").
+    #    KHÔNG thêm `wall` vào `NOT_SOLO`: `wall` là ĐỒ VẬT đứng một mình, `SOLO_CLAUSE` đúng
+    #    cho nó; thêm vào đó sẽ đổi khối phong cách sang `STYLE_HEAD` (dành cho sinh vật).
+    # ⚠️⚠️ 2026-10-15 (lần 3) — ĐỔI SANG CÓ TƯƠNG PHẢN. QA bắt được: cả hai chi tiết nhận
+    #    dạng đều là TRẮNG TRÊN KEM (gờ trắng, công tắc trắng, tường kem) ⇒ tương phản ~0.
+    #    Đo cụ thể: công tắc thật rộng ~8cm trên mảng tường ~2m = ~4% bề ngang ⇒ ~20px ở
+    #    512px, và ở cỡ hiển thị thật **61px** chỉ còn **~2px** ⇒ KHÔNG TỒN TẠI, không phải
+    #    "khó thấy". Tức chi tiết thêm vào để cứu `wall` lại biến mất đúng ở cỡ cần cứu.
+    #    ⇒ Ba chèn, mỗi cái nhắm một thứ sẽ mất ở 61px:
+    #      · "a soft shadow running down the corner line" — QUAN TRỌNG NHẤT. Hai tường cùng
+    #        màu kem thì chỗ gặp nhau không có gì để thấy. Bóng ở góc là ambient occlusion
+    #        THẬT, nên mô hình vẽ đúng vật lý chứ không phải bịa thêm chi tiết.
+    #      · "a thin shadow line along its top edge" — biến gờ thành dải trắng CÓ VIỀN.
+    #      · "a clear dark outline" cho công tắc — giữ công tắc TRẮNG (đúng thực tế) + viền.
+    #    ⚠️ ĐÃ CÂN NHẮC VÀ LOẠI hai cách khác — đừng "sửa lại cho gọn":
+    #      · đổi công tắc sang **grey**: tính từ MÀU dễ LAN, mô hình hay tô xám luôn cả mảng
+    #        tường. Viền tối là mệnh lệnh CỤC BỘ, không lan.
+    #      · tô hai tường khác màu: cách chắc nhất để góc đọc ra, nhưng dễ ra "hai tấm bìa dán
+    #        cạnh nhau" hơn là một góc phòng.
+    #    ⚠️ VỀ CHỮ `right`: team-lead đã CHỐT giữ `right` (không `right-hand`) và **không** nới
+    #      regex của tự kiểm 4 — lý do: nới một chốt an toàn vì một tính từ trang trí là đánh
+    #      đổi sai hướng (mai có `left-hand`, `second-hand`… thì chốt mất giá trị). Đừng đổi
+    #      lại thành `right-hand`, và đừng nới regex.
+    "wall": "the inside corner of a room seen straight on: two pale cream plaster walls meeting at a "
+            "vertical corner in the middle of the picture with a soft shadow running down the corner line, "
+            "a plain white skirting board with a thin shadow line along its top edge running along the bottom "
+            "of both walls, and one small white light-switch plate with a clear dark outline on the right "
+            "wall; the vertical corner line and the skirting board make it read clearly as a wall",
     # CẶP DỄ LẪN `picture` / `painting` / `drawing` — ba từ đều là "hình vẽ" trong tiếng
     # Việt nhưng ba thứ khác hẳn nhau trong tiếng Anh. Phân biệt bằng ĐỒ VẬT, không bằng
     # tính từ: KHUNG GỖ treo tường ↔ TOAN TRÊN GIÁ VẼ ↔ TỜ GIẤY có nét bút sáp.
@@ -281,9 +320,19 @@ SUBJECTS = {
     #    mất vai chủ thể — ảnh dạy "tờ giấy" chứ không dạy "đường kẻ".
     #    ⇒ Bỏ hẳn bút chì, đổi **thin** → **thick bold**, và nói rõ nét chạy HẾT bề ngang tờ
     #    giấy (từ mép trái sang mép phải) để nét là hình dài nhất trong khung.
-    "line": "a plain white sheet of paper seen flat from directly above, with one thick bold black line "
-            "drawn straight across the middle of it from the left edge to the right edge; the line is "
-            "wide and clearly visible",
+    # ⚠️ 2026-10-15 (lần 2) — VẪN BỊ LOẠI, lần này có số đo: QA đo DOM thật, cỡ nhỏ nhất bé
+    #    thật sự nhìn là **61px** (Lật thẻ ghi nhớ trên máy 320px). Ở 61px, TỜ GIẤY TRẮNG
+    #    TRÊN NỀN THẺ TRẮNG là vô hình ⇒ bé chỉ còn thấy một sợi chỉ đen giữa khoảng trắng.
+    #    ⇒ Hai thay đổi:
+    #      (a) giấy đổi sang **pale cream** + **bóng đổ mềm dưới mép** ⇒ tờ giấy có ranh giới
+    #          nhìn thấy được, không tan vào nền;
+    #      (b) nét đổi sang **very thick bold** và câu tả nói rõ nó là **thành phần đậm và
+    #          dày nhất trong khung** ⇒ nét thắng vai chủ thể, không bị tờ giấy lấn.
+    #    Vẫn KHÔNG có bút chì (đó là lỗi lần 1) và không có ai cầm ⇒ vẫn nhận `SOLO_CLAUSE`.
+    "line": "a single sheet of pale cream paper seen flat from directly above, with one very thick bold "
+            "black line drawn straight across the middle of it from the left edge to the right edge; "
+            "the paper has a soft drop shadow under its edges so the sheet stands out clearly, and the "
+            "black line is the thickest, boldest element in the picture",
     # ⚠️⚠️ CẶP `close` / `open` — HAI TRẠNG THÁI CỦA **CÙNG MỘT** CÁI CỬA, và đây là điều
     #    kiện sống còn để bé hiểu cặp từ:
     #      · cùng một khung cửa, cùng một tay nắm tròn ⇒ bé thấy "cùng một vật";
@@ -501,14 +550,30 @@ SUBJECTS = {
     #      own"), không có con vật nào để so ⇒ mô hình vẽ ra một khối xù cam cong hình chữ C,
     #      nhìn như CÁI BÁNH SỪNG BÒ. Mất ngữ cảnh "đuôi CỦA CÁI GÌ" thì hình vô nghĩa.
     #      ⇒ Đổi sang NHÌN TỪ PHÍA SAU một con mèo đang đứng bốn chân, đuôi dựng cao và cong
-    #      hình dấu hỏi; câu tả nói rõ ĐUÔI LÀ HÌNH LỚN NHẤT trong khung để mô hình không vẽ
-    #      cả con mèo to hơn đuôi. Vẫn khác `cat` (at-home: mèo nhìn CHÍNH DIỆN, ngồi).
+    #      hình dấu hỏi. Vẫn khác `cat` (at-home: mèo nhìn CHÍNH DIỆN, ngồi).
     #      ⚠️ Vì có con vật nên `tail` PHẢI nằm trong `NOT_SOLO` — xem ghi chú ở đó.
+    # ⚠️⚠️ 2026-10-15 (lần 2) — BẪY "MỆNH LỆNH SO SÁNH". Bản lần 1 kết thúc bằng *"the tail is
+    #    the largest and most obvious shape in the picture"*. Đó là câu SO SÁNH, và mô hình có
+    #    HAI cách thoả mãn nó: (a) vẽ mèo + đuôi to — khó; (b) **XOÁ CON MÈO ĐI** — cái đuôi
+    #    nghiễm nhiên thành hình lớn nhất, dễ hơn nhiều. Mô hình đã chọn (b): QA đo ảnh cũ cho
+    #    `cam/chủ thể = 75,1%`, `cao = 99,6%`, `rộng = 88,8%` ⇒ ảnh "bánh sừng bò" ĐẠT vế đó
+    #    một cách hoàn hảo. Tức câu tả lần 1 đã bị thoả mãn bởi đúng cái ảnh bị loại.
+    #    ⇒ Giữ nguyên vế so sánh (vẫn cần, để thân mèo không lấn mất đuôi) nhưng CHẶN đường
+    #      thoả rẻ nhất bằng hai vế mới:
+    #        · "clearly growing out of the cat's hindquarters" — ràng buộc **CHỖ NỐI**. Đây mới
+    #          là thứ phân biệt "cái đuôi" với "cái bánh sừng bò": ảnh cũ trượt vì đuôi KHÔNG
+    #          DÍNH VÀO ĐÂU. Chỗ nối độc lập với kích thước nên không xung đột vế "largest".
+    #        · "the cat's back and four paws stay visible behind the tail" — bắt buộc con mèo
+    #          PHẢI CÒN, nên không thể thoả bằng cách xoá nó.
+    #    ⚠️ Cho QA: bộ đo hình học/màu KHÔNG tách được ca này — `cat` (ảnh đạt) và `tail` (ảnh
+    #      trượt) lệch nhau chỉ 0,4 / 10,6 / 2,4 / 1,9 điểm trên MỌI thang đã thử. Phép quyết
+    #      định là phép NGƯỜI: có thấy mắt không, và có thấy chỗ nối đuôi↔thân không.
     "animal": "three friendly little animals standing side by side: a puppy, a kitten and a bunny rabbit, "
               "all cute and smiling, facing the viewer",
     "tail": "the back view of a cute fluffy orange cat standing on its four paws, seen from behind, with "
-            "its long bushy tail held high and curling in a clear question-mark curve; the tail is the "
-            "largest and most obvious shape in the picture",
+            "its long bushy tail held high and curling in a clear question-mark curve, clearly growing "
+            "out of the cat's hindquarters; the cat's back and four paws stay visible behind the tail, "
+            "and the tail is the largest and most obvious shape in the picture",
 
     # ===== my-body (13) =====================================================
     # Từng bộ phận là MỘT VẬT THỂ RỜI (như emoji), không phải bé bị cắt cụt.
