@@ -295,7 +295,7 @@
       "vi": "bữa sáng",
       "type": "n",
       "icon": "🍳",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.dinner",
@@ -306,7 +306,7 @@
       "vi": "bữa tối",
       "type": "n",
       "icon": "🍽️",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.meat",
@@ -427,7 +427,7 @@
       "vi": "trái cây",
       "type": "n",
       "icon": "🍓",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.bread",
@@ -471,7 +471,7 @@
       "vi": "bữa trưa",
       "type": "n",
       "icon": "🥪",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.candy",

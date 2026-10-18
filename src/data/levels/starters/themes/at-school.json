@@ -14,7 +14,8 @@
       "at-school/s1",
       "at-school/s2",
       "at-school/s3",
-      "at-school/s4"
+      "at-school/s4",
+      "at-school/l5"
     ]
   },
   "lessons": [
@@ -108,6 +109,28 @@
         "at-school/s4/listen-tap",
         "at-school/s4/word-picture",
         "at-school/s4/prepositions"
+      ]
+    },
+    {
+      "id": "at-school/l5",
+      "themeId": "at-school",
+      "name_en": "Outdoor and play",
+      "name_vi": "Chơi và hoạt động",
+      "wordIds": [
+        "starters.playground",
+        "starters.ball",
+        "starters.boots",
+        "starters.crayon",
+        "starters.classmate",
+        "starters.read",
+        "starters.write",
+        "starters.board-game"
+      ],
+      "exerciseIds": [
+        "at-school/l5/memory-match",
+        "at-school/l5/missing-letter",
+        "at-school/l5/listen-tap",
+        "at-school/l5/word-picture"
       ]
     }
   ],
@@ -247,7 +270,7 @@
       "vi": "âm nhạc",
       "type": "n",
       "icon": "🎵",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˈmjuː.zɪk/"
     },
     {
@@ -319,7 +342,7 @@
       "vi": "lớp học",
       "type": "n",
       "icon": "👥",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/klɑːs/"
     },
     {
@@ -343,7 +366,7 @@
       "vi": "bảng chữ cái",
       "type": "n",
       "icon": "🔠",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˈæl.fə.bet/"
     },
     {
@@ -367,7 +390,7 @@
       "vi": "đường kẻ",
       "type": "n",
       "icon": "➖",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/laɪn/"
     },
     {
@@ -379,7 +402,7 @@
       "vi": "đóng lại",
       "type": "v",
       "icon": "📕",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/kləʊz/"
     },
     {
@@ -391,7 +414,7 @@
       "vi": "mở ra",
       "type": "adj",
       "icon": "📖",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˈəʊ.pən/"
     },
     {
@@ -451,7 +474,7 @@
       "vi": "sàn nhà",
       "type": "n",
       "icon": "🟫",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/flɔːr/"
     },
     {
@@ -463,8 +486,96 @@
       "vi": "một phần của",
       "type": "n",
       "icon": "◔",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ə pɑːt əv/"
+    },
+    {
+      "id": "starters.playground",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "playground",
+      "vi": "sân chơi",
+      "type": "n",
+      "icon": "🛝",
+      "picturable": true
+    },
+    {
+      "id": "starters.ball",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "ball",
+      "vi": "quả bóng",
+      "type": "n",
+      "icon": "🔵⚽",
+      "picturable": true
+    },
+    {
+      "id": "starters.boots",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "boots",
+      "vi": "đôi ủng",
+      "type": "n",
+      "icon": "🥾",
+      "picturable": true
+    },
+    {
+      "id": "starters.crayon",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "crayon",
+      "vi": "bút sáp màu",
+      "type": "n",
+      "icon": "🖍️🌈",
+      "picturable": true
+    },
+    {
+      "id": "starters.classmate",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "classmate",
+      "vi": "bạn cùng lớp",
+      "type": "n",
+      "icon": "🧑‍🤝‍🧑",
+      "picturable": true
+    },
+    {
+      "id": "starters.read",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "read",
+      "vi": "đọc sách",
+      "type": "v",
+      "icon": "👦📖",
+      "picturable": true
+    },
+    {
+      "id": "starters.write",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "write",
+      "vi": "viết",
+      "type": "v",
+      "icon": "✍️",
+      "picturable": true
+    },
+    {
+      "id": "starters.board-game",
+      "levelId": "starters",
+      "primaryThemeId": "at-school",
+      "primaryLessonId": "at-school/l5",
+      "en": "board game",
+      "vi": "trò chơi bàn cờ",
+      "type": "n",
+      "icon": "🎲",
+      "picturable": true
     }
   ],
   "exercises": [
@@ -873,6 +984,85 @@
           { "sentenceEn": "The keyboard is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }
         ]
       }
+    },
+    {
+      "id": "at-school/l5/memory-match",
+      "lessonId": "at-school/l5",
+      "gameType": "memory_match",
+      "wordIds": [
+        "starters.playground",
+        "starters.ball",
+        "starters.boots",
+        "starters.crayon",
+        "starters.classmate",
+        "starters.read",
+        "starters.write",
+        "starters.board-game"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_icon",
+        "_comment": "pairs = 6 chứ không phải 8: 16 thẻ lẻ 1 thẻ ở lưới 3 cột (điện thoại). 12 thẻ chia hết cho cả 3 và 4.",
+        "pairs": 6
+      }
+    },
+    {
+      "id": "at-school/l5/missing-letter",
+      "lessonId": "at-school/l5",
+      "gameType": "missing_letter",
+      "wordIds": [
+        "starters.playground",
+        "starters.ball",
+        "starters.boots",
+        "starters.crayon",
+        "starters.classmate",
+        "starters.read",
+        "starters.write",
+        "starters.board-game"
+      ],
+      "difficulty": 1,
+      "config": {
+        "kind": "missing_letter",
+        "rounds": 6,
+        "hideCount": 1,
+        "hidePosition": "any",
+        "showImageHint": true
+      }
+    },
+    {
+      "id": "at-school/l5/listen-tap",
+      "lessonId": "at-school/l5",
+      "gameType": "listen_tap",
+      "wordIds": [
+        "starters.playground",
+        "starters.ball",
+        "starters.boots",
+        "starters.crayon",
+        "starters.classmate",
+        "starters.read",
+        "starters.write",
+        "starters.board-game"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }
+    },
+    {
+      "id": "at-school/l5/word-picture",
+      "lessonId": "at-school/l5",
+      "gameType": "word_picture",
+      "wordIds": [
+        "starters.playground",
+        "starters.ball",
+        "starters.boots",
+        "starters.crayon",
+        "starters.classmate",
+        "starters.read",
+        "starters.write",
+        "starters.board-game"
+      ],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 8, "rightColumn": "word" }
     }
   ]
 }

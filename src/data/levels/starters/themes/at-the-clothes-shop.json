@@ -13,7 +13,9 @@
       "at-the-clothes-shop/l2",
       "at-the-clothes-shop/l3",
       "at-the-clothes-shop/l4",
-      "at-the-clothes-shop/l5"
+      "at-the-clothes-shop/l5",
+      "at-the-clothes-shop/l6",
+      "at-the-clothes-shop/l7"
     ]
   },
   "lessons": [
@@ -71,6 +73,38 @@
         "starters.watch"
       ],
       "exerciseIds": ["at-the-clothes-shop/l5/memory-match", "at-the-clothes-shop/l5/missing-letter", "at-the-clothes-shop/l5/listen-tap", "at-the-clothes-shop/l5/word-picture", "at-the-clothes-shop/l5/prepositions"]
+    },
+    {
+      "id": "at-the-clothes-shop/l6",
+      "themeId": "at-the-clothes-shop",
+      "name_en": "Colours and clothes 1",
+      "name_vi": "Màu và đồ 1",
+      "wordIds": [
+        "starters.purple-glasses", "starters.black-hat", "starters.brown-bag",
+        "starters.blue-jacket", "starters.pink-handbag", "starters.white-skirt"
+      ],
+      "exerciseIds": [
+        "at-the-clothes-shop/l6/memory-match",
+        "at-the-clothes-shop/l6/missing-letter",
+        "at-the-clothes-shop/l6/listen-tap",
+        "at-the-clothes-shop/l6/word-picture"
+      ]
+    },
+    {
+      "id": "at-the-clothes-shop/l7",
+      "themeId": "at-the-clothes-shop",
+      "name_en": "Colours and clothes 2",
+      "name_vi": "Màu và đồ 2",
+      "wordIds": [
+        "starters.grey-trousers", "starters.orange-dress", "starters.yellow-shirt",
+        "starters.red-t-shirt", "starters.green-jeans"
+      ],
+      "exerciseIds": [
+        "at-the-clothes-shop/l7/memory-match",
+        "at-the-clothes-shop/l7/missing-letter",
+        "at-the-clothes-shop/l7/listen-tap",
+        "at-the-clothes-shop/l7/word-picture"
+      ]
     }
   ],
   "words": [
@@ -85,7 +119,7 @@
     { "id": "starters.orange-adj", "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l2", "en": "orange",   "vi": "màu cam",         "type": "adj", "icon": "🟠", "picturable": true },
     { "id": "starters.red",        "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l2", "en": "red",      "vi": "màu đỏ",          "type": "adj", "icon": "🔴", "picturable": true },
     { "id": "starters.green",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l2", "en": "green",    "vi": "màu xanh lá",     "type": "adj", "icon": "🟢", "picturable": true },
-    { "id": "starters.clothes",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l3", "en": "clothes",  "vi": "quần áo",         "type": "n",   "icon": "🧺", "picturable": false },
+    { "id": "starters.clothes",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l3", "en": "clothes",  "vi": "quần áo",         "type": "n",   "icon": "🧺", "picturable": true },
     { "id": "starters.jacket",     "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l3", "en": "jacket",   "vi": "áo khoác",        "type": "n",   "icon": "🧥", "picturable": true },
     { "id": "starters.skirt",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l3", "en": "skirt",    "vi": "chân váy",        "type": "n",   "icon": "👚", "picturable": true },
     { "id": "starters.shirt",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l3", "en": "shirt",    "vi": "áo sơ mi",        "type": "n",   "icon": "👔", "picturable": true },
@@ -99,7 +133,19 @@
     { "id": "starters.glasses",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "glasses",  "vi": "kính",            "type": "n",   "icon": "👓", "picturable": true },
     { "id": "starters.bag",        "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "bag",      "vi": "cái túi",         "type": "n",   "icon": "🛍️", "picturable": true },
     { "id": "starters.handbag",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "handbag",  "vi": "túi xách",        "type": "n",   "icon": "👜", "picturable": true },
-    { "id": "starters.watch",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "watch",    "vi": "đồng hồ đeo tay", "type": "n",   "icon": "⌚", "picturable": true }
+    { "id": "starters.watch",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l5", "en": "watch",    "vi": "đồng hồ đeo tay", "type": "n",   "icon": "⌚", "picturable": true },
+
+    { "id": "starters.purple-glasses", "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "purple glasses", "vi": "kính màu tím",            "type": "n", "icon": "🟣👓", "picturable": true },
+    { "id": "starters.black-hat",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "black hat",      "vi": "mũ màu đen",              "type": "n", "icon": "⚫👒", "picturable": true },
+    { "id": "starters.brown-bag",      "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "brown bag",      "vi": "ba lô màu nâu",           "type": "n", "icon": "🟤🎒", "picturable": true },
+    { "id": "starters.blue-jacket",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "blue jacket",    "vi": "áo khoác màu xanh dương", "type": "n", "icon": "🔵🧥", "picturable": true },
+    { "id": "starters.pink-handbag",   "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "pink handbag",   "vi": "túi xách màu hồng",       "type": "n", "icon": "🎀👜", "picturable": true },
+    { "id": "starters.white-skirt",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l6", "en": "white skirt",    "vi": "chân váy màu trắng",      "type": "n", "icon": "⚪👚", "picturable": true },
+    { "id": "starters.grey-trousers",  "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l7", "en": "grey trousers",  "vi": "quần màu xám",            "type": "n", "icon": "🌫️👖", "picturable": true },
+    { "id": "starters.orange-dress",   "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l7", "en": "orange dress",   "vi": "váy liền màu cam",        "type": "n", "icon": "🟠👗", "picturable": true },
+    { "id": "starters.yellow-shirt",   "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l7", "en": "yellow shirt",   "vi": "áo sơ mi màu vàng",       "type": "n", "icon": "🟡👔", "picturable": true },
+    { "id": "starters.red-t-shirt",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l7", "en": "red T-shirt",    "vi": "áo phông màu đỏ",         "type": "n", "icon": "🔴👕", "picturable": true },
+    { "id": "starters.green-jeans",    "levelId": "starters", "primaryThemeId": "at-the-clothes-shop", "primaryLessonId": "at-the-clothes-shop/l7", "en": "green jeans",    "vi": "quần jeans màu xanh lá",  "type": "n", "icon": "🟢👖", "picturable": true }
   ],
   "exercises":     [
         {
@@ -210,6 +256,14 @@
       { "id": "at-the-clothes-shop/l5/word-picture", "lessonId": "at-the-clothes-shop/l5", "gameType": "word_picture", "wordIds": ["starters.glasses", "starters.bag", "starters.handbag", "starters.watch"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 4, "rightColumn": "word" } },
       { "id": "at-the-clothes-shop/l3/prepositions", "lessonId": "at-the-clothes-shop/l3", "gameType": "prepositions", "wordIds": ["starters.jacket", "starters.skirt", "starters.shirt", "starters.t-shirt"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 4, "slots": [{ "sentenceEn": "The jacket is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The skirt is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The shirt is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The T-shirt is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }] } },
       { "id": "at-the-clothes-shop/l4/prepositions", "lessonId": "at-the-clothes-shop/l4", "gameType": "prepositions", "wordIds": ["starters.shoe", "starters.sock", "starters.hat"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The shoe is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The sock is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The hat is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
-      { "id": "at-the-clothes-shop/l5/prepositions", "lessonId": "at-the-clothes-shop/l5", "gameType": "prepositions", "wordIds": ["starters.bag", "starters.handbag"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The bag is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The handbag is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The bag is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } }
+      { "id": "at-the-clothes-shop/l5/prepositions", "lessonId": "at-the-clothes-shop/l5", "gameType": "prepositions", "wordIds": ["starters.bag", "starters.handbag"], "difficulty": 1, "config": { "kind": "prepositions", "rounds": 3, "slots": [{ "sentenceEn": "The bag is in the box.", "preposition": "in", "correctSlot": "in", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The handbag is on the box.", "preposition": "on", "correctSlot": "on", "slots": ["in", "on", "under", "behind"] }, { "sentenceEn": "The bag is under the box.", "preposition": "under", "correctSlot": "under", "slots": ["in", "on", "under", "behind"] }] } },
+      { "id": "at-the-clothes-shop/l6/memory-match", "lessonId": "at-the-clothes-shop/l6", "gameType": "memory_match", "wordIds": ["starters.purple-glasses", "starters.black-hat", "starters.brown-bag", "starters.blue-jacket", "starters.pink-handbag", "starters.white-skirt"], "difficulty": 1, "config": { "kind": "memory_match", "pairMode": "en_icon", "pairs": 6 } },
+      { "id": "at-the-clothes-shop/l6/missing-letter", "lessonId": "at-the-clothes-shop/l6", "gameType": "missing_letter", "wordIds": ["starters.purple-glasses", "starters.black-hat", "starters.brown-bag", "starters.blue-jacket", "starters.pink-handbag", "starters.white-skirt"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-clothes-shop/l6/listen-tap", "lessonId": "at-the-clothes-shop/l6", "gameType": "listen_tap", "wordIds": ["starters.purple-glasses", "starters.black-hat", "starters.brown-bag", "starters.blue-jacket", "starters.pink-handbag", "starters.white-skirt"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-clothes-shop/l6/word-picture", "lessonId": "at-the-clothes-shop/l6", "gameType": "word_picture", "wordIds": ["starters.purple-glasses", "starters.black-hat", "starters.brown-bag", "starters.blue-jacket", "starters.pink-handbag", "starters.white-skirt"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 6, "rightColumn": "word" } },
+      { "id": "at-the-clothes-shop/l7/memory-match", "lessonId": "at-the-clothes-shop/l7", "gameType": "memory_match", "wordIds": ["starters.grey-trousers", "starters.orange-dress", "starters.yellow-shirt", "starters.red-t-shirt", "starters.green-jeans"], "difficulty": 1, "config": { "kind": "memory_match", "pairMode": "en_icon", "pairs": 5 } },
+      { "id": "at-the-clothes-shop/l7/missing-letter", "lessonId": "at-the-clothes-shop/l7", "gameType": "missing_letter", "wordIds": ["starters.grey-trousers", "starters.orange-dress", "starters.yellow-shirt", "starters.red-t-shirt", "starters.green-jeans"], "difficulty": 1, "config": { "kind": "missing_letter", "rounds": 6, "hideCount": 1, "hidePosition": "any", "showImageHint": true } },
+      { "id": "at-the-clothes-shop/l7/listen-tap", "lessonId": "at-the-clothes-shop/l7", "gameType": "listen_tap", "wordIds": ["starters.grey-trousers", "starters.orange-dress", "starters.yellow-shirt", "starters.red-t-shirt", "starters.green-jeans"], "difficulty": 1, "config": { "kind": "listen_tap", "rounds": 8, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 } },
+      { "id": "at-the-clothes-shop/l7/word-picture", "lessonId": "at-the-clothes-shop/l7", "gameType": "word_picture", "wordIds": ["starters.grey-trousers", "starters.orange-dress", "starters.yellow-shirt", "starters.red-t-shirt", "starters.green-jeans"], "difficulty": 1, "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" } }
     ]
 }

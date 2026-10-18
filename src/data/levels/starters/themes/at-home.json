@@ -202,7 +202,7 @@
       "vi": "hành lang",
       "type": "n",
       "icon": "🚪🧭",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/hɔːl/"
     },
     {
@@ -214,7 +214,7 @@
       "vi": "căn phòng",
       "type": "n",
       "icon": "🏡",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ruːm/"
     },
     {
@@ -406,7 +406,7 @@
       "vi": "bức tường",
       "type": "n",
       "icon": "🧱",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/wɔːl/"
     },
     {

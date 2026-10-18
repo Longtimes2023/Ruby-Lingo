@@ -1,7 +1,22 @@
 {
+  "afternoon": {
+    "file": "source/afternoon.png",
+    "prompt_sha": "64dae4495348",
+    "status": "done"
+  },
   "alien": {
     "file": "source/alien.png",
     "prompt_sha": "8d20347af49e",
+    "status": "done"
+  },
+  "alphabet": {
+    "file": "source/alphabet.png",
+    "prompt_sha": "44fa7527c459",
+    "status": "done"
+  },
+  "animal": {
+    "file": "source/animal.png",
+    "prompt_sha": "bbbb61e8d2e1",
     "status": "done"
   },
   "apartment": {
@@ -34,6 +49,11 @@
   "bag": {
     "file": "source/bag.png",
     "prompt_sha": "913b8a737566",
+    "status": "done"
+  },
+  "ball": {
+    "file": "source/ball.png",
+    "prompt_sha": "ccf84791a2f1",
     "status": "done"
   },
   "balloon": {
@@ -77,6 +97,11 @@
     "file": "source/bedroom.png",
     "status": "done"
   },
+  "bike": {
+    "file": "source/bike.png",
+    "prompt_sha": "4a1839d0b82f",
+    "status": "done"
+  },
   "bird": {
     "file": "source/bird.png",
     "status": "done"
@@ -86,14 +111,29 @@
     "prompt_sha": "a3edaaa1e6d7",
     "status": "done"
   },
+  "black-hat": {
+    "file": "source/black-hat.png",
+    "prompt_sha": "6dabadc8f45b",
+    "status": "done"
+  },
   "blue": {
     "file": "source/blue.png",
     "prompt_sha": "fa1266cf1147",
     "status": "done"
   },
+  "blue-jacket": {
+    "file": "source/blue-jacket.png",
+    "prompt_sha": "e053d58fa465",
+    "status": "done"
+  },
   "board": {
     "file": "source/board.png",
     "prompt_sha": "8590d53745e8",
+    "status": "done"
+  },
+  "board-game": {
+    "file": "source/board-game.png",
+    "prompt_sha": "8e964f57c727",
     "status": "done"
   },
   "boat": {
@@ -116,7 +156,12 @@
   },
   "bookshop": {
     "file": "source/bookshop.png",
-    "prompt_sha": "08ce91f1b22f",
+    "prompt_sha": "4cb61e3eede2",
+    "status": "done"
+  },
+  "boots": {
+    "file": "source/boots.png",
+    "prompt_sha": "1ccd1fce2e80",
     "status": "done"
   },
   "box": {
@@ -133,6 +178,11 @@
     "prompt_sha": "50e89f8fa84a",
     "status": "done"
   },
+  "breakfast": {
+    "file": "source/breakfast.png",
+    "prompt_sha": "98163dd05123",
+    "status": "done"
+  },
   "brother": {
     "file": "source/brother.png",
     "prompt_sha": "e243270ffb1a",
@@ -141,6 +191,11 @@
   "brown": {
     "file": "source/brown.png",
     "prompt_sha": "4724f7899e8a",
+    "status": "done"
+  },
+  "brown-bag": {
+    "file": "source/brown-bag.png",
+    "prompt_sha": "cccb0c9e7f87",
     "status": "done"
   },
   "burger": {
@@ -211,6 +266,16 @@
     "prompt_sha": "1d6c7803c191",
     "status": "done"
   },
+  "class": {
+    "file": "source/class.png",
+    "prompt_sha": "b776c08c2ece",
+    "status": "done"
+  },
+  "classmate": {
+    "file": "source/classmate.png",
+    "prompt_sha": "b5f260eb0459",
+    "status": "done"
+  },
   "classroom": {
     "file": "source/classroom.png",
     "prompt_sha": "a0ea2110c47a",
@@ -218,6 +283,16 @@
   },
   "clock": {
     "file": "source/clock.png",
+    "status": "done"
+  },
+  "close": {
+    "file": "source/close.png",
+    "prompt_sha": "5622c07ca482",
+    "status": "done"
+  },
+  "clothes": {
+    "file": "source/clothes.png",
+    "prompt_sha": "79410f3f93b2",
     "status": "done"
   },
   "coconut": {
@@ -239,6 +314,11 @@
     "file": "source/cow.png",
     "status": "done"
   },
+  "crayon": {
+    "file": "source/crayon.png",
+    "prompt_sha": "aa10c9141315",
+    "status": "done"
+  },
   "crocodile": {
     "file": "source/crocodile.png",
     "status": "done"
@@ -257,6 +337,11 @@
     "prompt_sha": "58f2ccbb6edc",
     "status": "done"
   },
+  "day": {
+    "file": "source/day.png",
+    "prompt_sha": "06b0185d73f3",
+    "status": "done"
+  },
   "desk": {
     "file": "source/desk.png",
     "prompt_sha": "a7bc65ee05fa",
@@ -264,6 +349,11 @@
   },
   "dining-room": {
     "file": "source/dining-room.png",
+    "status": "done"
+  },
+  "dinner": {
+    "file": "source/dinner.png",
+    "prompt_sha": "7638a38c2ce0",
     "status": "done"
   },
   "dog": {
@@ -325,6 +415,11 @@
     "prompt_sha": "2347e45794e0",
     "status": "done"
   },
+  "evening": {
+    "file": "source/evening.png",
+    "prompt_sha": "73d9338aa1bc",
+    "status": "done"
+  },
   "eye": {
     "file": "source/eye.png",
     "status": "done"
@@ -346,6 +441,11 @@
   "fishing": {
     "file": "source/fishing.png",
     "prompt_sha": "b35ff70c6422",
+    "status": "done"
+  },
+  "floor": {
+    "file": "source/floor.png",
+    "prompt_sha": "c88ee0cf67c5",
     "status": "done"
   },
   "flower": {
@@ -370,6 +470,11 @@
     "file": "source/frog.png",
     "status": "done"
   },
+  "fruit": {
+    "file": "source/fruit.png",
+    "prompt_sha": "2aa5c2b09134",
+    "status": "done"
+  },
   "garden": {
     "file": "source/garden.png",
     "status": "done"
@@ -386,6 +491,11 @@
   "glasses": {
     "file": "source/glasses.png",
     "prompt_sha": "9d111d05cc1f",
+    "status": "done"
+  },
+  "go": {
+    "file": "source/go.png",
+    "prompt_sha": "b01a0f4bfcc2",
     "status": "done"
   },
   "goat": {
@@ -412,9 +522,19 @@
     "prompt_sha": "766b34682b5d",
     "status": "done"
   },
+  "green-jeans": {
+    "file": "source/green-jeans.png",
+    "prompt_sha": "123732255ffe",
+    "status": "done"
+  },
   "grey": {
     "file": "source/grey.png",
     "prompt_sha": "7cd0906933f4",
+    "status": "done"
+  },
+  "grey-trousers": {
+    "file": "source/grey-trousers.png",
+    "prompt_sha": "f475e363e5b9",
     "status": "done"
   },
   "guitar": {
@@ -424,6 +544,11 @@
   },
   "hair": {
     "file": "source/hair.png",
+    "status": "done"
+  },
+  "hall": {
+    "file": "source/hall.png",
+    "prompt_sha": "05ffa35ca975",
     "status": "done"
   },
   "hand": {
@@ -543,6 +668,11 @@
     "prompt_sha": "41922c9b8e59",
     "status": "done"
   },
+  "line": {
+    "file": "source/line.png",
+    "prompt_sha": "710702cefdb7",
+    "status": "done"
+  },
   "living-room": {
     "file": "source/living-room.png",
     "status": "done"
@@ -554,6 +684,11 @@
   "lorry": {
     "file": "source/lorry.png",
     "prompt_sha": "a9f03b02f958",
+    "status": "done"
+  },
+  "lunch": {
+    "file": "source/lunch.png",
+    "prompt_sha": "4fe325abb7cc",
     "status": "done"
   },
   "man": {
@@ -578,6 +713,12 @@
   },
   "mirror": {
     "file": "source/mirror.png",
+    "prompt_sha": "ad0e23e61978",
+    "status": "done"
+  },
+  "miss": {
+    "file": "source/miss.png",
+    "prompt_sha": "20ea12064b26",
     "status": "done"
   },
   "monkey": {
@@ -587,6 +728,11 @@
   "monster": {
     "file": "source/monster.png",
     "prompt_sha": "a7d1be7b0b6f",
+    "status": "done"
+  },
+  "morning": {
+    "file": "source/morning.png",
+    "prompt_sha": "7771c5b90ff1",
     "status": "done"
   },
   "motorbike": {
@@ -607,9 +753,24 @@
     "file": "source/mouth.png",
     "status": "done"
   },
+  "mr": {
+    "file": "source/mr.png",
+    "prompt_sha": "95e57e7d25d2",
+    "status": "done"
+  },
+  "mrs": {
+    "file": "source/mrs.png",
+    "prompt_sha": "e58c45aee386",
+    "status": "done"
+  },
   "mum": {
     "file": "source/mum.png",
     "prompt_sha": "dd98bc6259a6",
+    "status": "done"
+  },
+  "music": {
+    "file": "source/music.png",
+    "prompt_sha": "7aac3ad9f597",
     "status": "done"
   },
   "nose": {
@@ -621,9 +782,19 @@
     "prompt_sha": "aeddcecf6531",
     "status": "done"
   },
+  "open": {
+    "file": "source/open.png",
+    "prompt_sha": "8c06e2657d93",
+    "status": "done"
+  },
   "orange-adj": {
     "file": "source/orange-adj.png",
     "prompt_sha": "d194ce618338",
+    "status": "done"
+  },
+  "orange-dress": {
+    "file": "source/orange-dress.png",
+    "prompt_sha": "4aece1bf9099",
     "status": "done"
   },
   "orange-n": {
@@ -648,7 +819,12 @@
   },
   "park": {
     "file": "source/park.png",
-    "prompt_sha": "c56d47afc855",
+    "prompt_sha": "802a1f11de28",
+    "status": "done"
+  },
+  "part": {
+    "file": "source/part.png",
+    "prompt_sha": "e87f749d0d7a",
     "status": "done"
   },
   "pear": {
@@ -699,6 +875,16 @@
     "prompt_sha": "cd4e127406e0",
     "status": "done"
   },
+  "pink-handbag": {
+    "file": "source/pink-handbag.png",
+    "prompt_sha": "08a924ed39ed",
+    "status": "done"
+  },
+  "playground": {
+    "file": "source/playground.png",
+    "prompt_sha": "53c335398e03",
+    "status": "done"
+  },
   "potato": {
     "file": "source/potato.png",
     "prompt_sha": "74c284d70ca5",
@@ -709,13 +895,28 @@
     "prompt_sha": "254107a2a359",
     "status": "done"
   },
+  "purple-glasses": {
+    "file": "source/purple-glasses.png",
+    "prompt_sha": "f1c45fae6f8d",
+    "status": "done"
+  },
   "radio": {
     "file": "source/radio.png",
     "status": "done"
   },
+  "read": {
+    "file": "source/read.png",
+    "prompt_sha": "e5dd4d408935",
+    "status": "done"
+  },
   "red": {
     "file": "source/red.png",
-    "prompt_sha": "e4a015f4441f",
+    "prompt_sha": "47bb324a7d55",
+    "status": "done"
+  },
+  "red-t-shirt": {
+    "file": "source/red-t-shirt.png",
+    "prompt_sha": "3f9c5caa0d01",
     "status": "done"
   },
   "rice": {
@@ -731,6 +932,11 @@
   "robot": {
     "file": "source/robot.png",
     "prompt_sha": "36d9a0d641d2",
+    "status": "done"
+  },
+  "room": {
+    "file": "source/room.png",
+    "prompt_sha": "ba49558522e3",
     "status": "done"
   },
   "rug": {
@@ -749,7 +955,7 @@
   },
   "sand": {
     "file": "source/sand.png",
-    "prompt_sha": "5d5f4fbeba7b",
+    "prompt_sha": "79cc534df5db",
     "status": "done"
   },
   "sausage": {
@@ -759,7 +965,7 @@
   },
   "sea": {
     "file": "source/sea.png",
-    "prompt_sha": "8cde7656243c",
+    "prompt_sha": "04725e1b352f",
     "status": "done"
   },
   "sheep": {
@@ -783,7 +989,7 @@
   },
   "shop": {
     "file": "source/shop.png",
-    "prompt_sha": "77c0cb90a9e2",
+    "prompt_sha": "9e33c2db77b7",
     "status": "done"
   },
   "sing": {
@@ -794,6 +1000,11 @@
   "sister": {
     "file": "source/sister.png",
     "prompt_sha": "f6972a6db894",
+    "status": "done"
+  },
+  "skateboard": {
+    "file": "source/skateboard.png",
+    "prompt_sha": "aa7126de7118",
     "status": "done"
   },
   "skirt": {
@@ -822,6 +1033,16 @@
     "file": "source/spider.png",
     "status": "done"
   },
+  "sport": {
+    "file": "source/sport.png",
+    "prompt_sha": "9c9b1b3d8c2e",
+    "status": "done"
+  },
+  "stop": {
+    "file": "source/stop.png",
+    "prompt_sha": "fe2616537d8d",
+    "status": "done"
+  },
   "sun": {
     "file": "source/sun.png",
     "prompt_sha": "e80f3a9f190e",
@@ -845,6 +1066,11 @@
     "prompt_sha": "60b148dc5a5e",
     "status": "done"
   },
+  "tail": {
+    "file": "source/tail.png",
+    "prompt_sha": "b08fe283580f",
+    "status": "done"
+  },
   "take": {
     "file": "source/take.png",
     "prompt_sha": "d993ce041628",
@@ -852,7 +1078,7 @@
   },
   "teacher": {
     "file": "source/teacher.png",
-    "prompt_sha": "b31179c8f9dd",
+    "prompt_sha": "77aa1b5d08a7",
     "status": "done"
   },
   "television": {
@@ -903,6 +1129,11 @@
     "prompt_sha": "26f4b55e3418",
     "status": "done"
   },
+  "wall": {
+    "file": "source/wall.png",
+    "prompt_sha": "24f4e2fc2953",
+    "status": "done"
+  },
   "watch": {
     "file": "source/watch.png",
     "prompt_sha": "db159e8e4dcd",
@@ -923,6 +1154,11 @@
     "prompt_sha": "eea2357adb21",
     "status": "done"
   },
+  "white-skirt": {
+    "file": "source/white-skirt.png",
+    "prompt_sha": "7356a9c62c7c",
+    "status": "done"
+  },
   "window": {
     "file": "source/window.png",
     "status": "done"
@@ -932,9 +1168,19 @@
     "prompt_sha": "68cc88845082",
     "status": "done"
   },
+  "write": {
+    "file": "source/write.png",
+    "prompt_sha": "dfaf628a0885",
+    "status": "done"
+  },
   "yellow": {
     "file": "source/yellow.png",
     "prompt_sha": "ff25f91a05f1",
+    "status": "done"
+  },
+  "yellow-shirt": {
+    "file": "source/yellow-shirt.png",
+    "prompt_sha": "d2ec13302241",
     "status": "done"
   }
 }

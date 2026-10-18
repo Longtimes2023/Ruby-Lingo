@@ -50,6 +50,26 @@
     "prompt_sha": "ec19b0b1168a"
   },
   {
+    "key": "hall",
+    "id": "starters.hall",
+    "en": "hall",
+    "vi": "hành lang",
+    "theme": "at-home",
+    "subject": "a cute miniature isometric doll-house room chunk of a narrow hallway inside a house: a closed door at the far end, a row of hooks on the wall holding one hanging coat, a small oval mirror and a wall telephone beside the door, and a small rug on the floor, floating cut-away room slab",
+    "prompt": "hall: a cute miniature isometric doll-house room chunk of a narrow hallway inside a house: a closed door at the far end, a row of hooks on the wall holding one hanging coat, a small oval mirror and a wall telephone beside the door, and a small rug on the floor, floating cut-away room slab. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "05ffa35ca975"
+  },
+  {
+    "key": "room",
+    "id": "starters.room",
+    "en": "room",
+    "vi": "căn phòng",
+    "theme": "at-home",
+    "subject": "a cut-away view of a whole little house: the front wall is open and the roof is lifted, so four rooms inside are all visible at once — a living room with a sofa, a bedroom with a bed, a kitchen with a stove and a bathroom with a bath — arranged in two rows inside one house-shaped block, with the outer walls and the roof still visible around them",
+    "prompt": "room: a cut-away view of a whole little house: the front wall is open and the roof is lifted, so four rooms inside are all visible at once — a living room with a sofa, a bedroom with a bed, a kitchen with a stove and a bathroom with a bath — arranged in two rows inside one house-shaped block, with the outer walls and the roof still visible around them. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "ba49558522e3"
+  },
+  {
     "key": "chair",
     "id": "starters.chair",
     "en": "chair",
@@ -115,9 +135,9 @@
     "en": "mirror",
     "vi": "cái gương",
     "theme": "at-home",
-    "subject": "a single cute oval mirror with a rounded pastel frame and a small loop at the top for hanging",
-    "prompt": "mirror: a single cute oval mirror with a rounded pastel frame and a small loop at the top for hanging. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "0f2b7acb54df"
+    "subject": "a single cute oval wall mirror with a rounded pastel frame and a small metal loop at the top for hanging on a hook, the glass softly reflecting a blurred little room with a window and a chair inside it",
+    "prompt": "mirror: a single cute oval wall mirror with a rounded pastel frame and a small metal loop at the top for hanging on a hook, the glass softly reflecting a blurred little room with a window and a chair inside it. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "ad0e23e61978"
   },
   {
     "key": "bookcase",
@@ -198,6 +218,16 @@
     "subject": "a single cute closed wooden door with a round handle, a small round window and a tiny welcome mat",
     "prompt": "door: a single cute closed wooden door with a round handle, a small round window and a tiny welcome mat. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "5c5d04e1006d"
+  },
+  {
+    "key": "wall",
+    "id": "starters.wall",
+    "en": "wall",
+    "vi": "bức tường",
+    "theme": "at-home",
+    "subject": "a single flat section of indoor wall seen straight on: a smooth pale cream plaster surface with a plain white skirting board along its bottom edge and one small white light-switch plate near the right side",
+    "prompt": "wall: a single flat section of indoor wall seen straight on: a smooth pale cream plaster surface with a plain white skirting board along its bottom edge and one small white light-switch plate near the right side. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "e52529af8092"
   },
   {
     "key": "picture",
@@ -410,6 +440,16 @@
     "prompt_sha": "816cade880ba"
   },
   {
+    "key": "music",
+    "id": "starters.music",
+    "en": "music",
+    "vi": "âm nhạc",
+    "theme": "at-school",
+    "subject": "three bright colourful musical notes floating upward above a small round drum, with a wooden drumstick resting on the drum skin",
+    "prompt": "music: three bright colourful musical notes floating upward above a small round drum, with a wooden drumstick resting on the drum skin. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "7aac3ad9f597"
+  },
+  {
     "key": "computer",
     "id": "starters.computer",
     "en": "computer",
@@ -445,9 +485,9 @@
     "en": "teacher",
     "vi": "cô giáo",
     "theme": "at-school",
-    "subject": "a friendly smiling woman teacher character with glasses and a neat bun, holding a book, FULL BODY, standing",
-    "prompt": "teacher: a friendly smiling woman teacher character with glasses and a neat bun, holding a book, FULL BODY, standing. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "b31179c8f9dd"
+    "subject": "a friendly smiling woman teacher character with glasses and a neat bun, standing beside a small chalkboard with a piece of chalk on its ledge, one arm raised toward the board as she teaches, turned toward the viewer, FULL BODY, standing",
+    "prompt": "teacher: a friendly smiling woman teacher character with glasses and a neat bun, standing beside a small chalkboard with a piece of chalk on its ledge, one arm raised toward the board as she teaches, turned toward the viewer, FULL BODY, standing. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "77aa1b5d08a7"
   },
   {
     "key": "classroom",
@@ -460,6 +500,16 @@
     "prompt_sha": "a0ea2110c47a"
   },
   {
+    "key": "class",
+    "id": "starters.class",
+    "en": "class",
+    "vi": "lớp học",
+    "theme": "at-school",
+    "subject": "a cheerful group of five little children sitting at small desks in a classroom, all facing forward and listening, seen from behind the desks",
+    "prompt": "class: a cheerful group of five little children sitting at small desks in a classroom, all facing forward and listening, seen from behind the desks. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "b776c08c2ece"
+  },
+  {
     "key": "letter",
     "id": "starters.letter",
     "en": "letter",
@@ -470,6 +520,16 @@
     "prompt_sha": "9d5a59c7096d"
   },
   {
+    "key": "alphabet",
+    "id": "starters.alphabet",
+    "en": "alphabet",
+    "vi": "bảng chữ cái",
+    "theme": "at-school",
+    "subject": "three chunky wooden blocks standing side by side, each with one big capital letter on its front face — the letters A, B and C in bright cheerful colours",
+    "prompt": "alphabet: three chunky wooden blocks standing side by side, each with one big capital letter on its front face — the letters A, B and C in bright cheerful colours. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "44fa7527c459"
+  },
+  {
     "key": "page",
     "id": "starters.page",
     "en": "page",
@@ -478,6 +538,36 @@
     "subject": "a single open book with one page lifted and curling over, showing blank pages",
     "prompt": "page: a single open book with one page lifted and curling over, showing blank pages. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "b7637f254a4b"
+  },
+  {
+    "key": "line",
+    "id": "starters.line",
+    "en": "line",
+    "vi": "đường kẻ",
+    "theme": "at-school",
+    "subject": "a plain white sheet of paper seen flat from directly above, with one thick bold black line drawn straight across the middle of it from the left edge to the right edge; the line is wide and clearly visible",
+    "prompt": "line: a plain white sheet of paper seen flat from directly above, with one thick bold black line drawn straight across the middle of it from the left edge to the right edge; the line is wide and clearly visible. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "b324bb60241d"
+  },
+  {
+    "key": "close",
+    "id": "starters.close",
+    "en": "close",
+    "vi": "đóng lại",
+    "theme": "at-school",
+    "subject": "a single door being pushed shut: its leaf flush against the frame with a round knob, no gap and no light around the edges, and a small curved motion arc beside the knob showing the door swinging closed",
+    "prompt": "close: a single door being pushed shut: its leaf flush against the frame with a round knob, no gap and no light around the edges, and a small curved motion arc beside the knob showing the door swinging closed. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "5622c07ca482"
+  },
+  {
+    "key": "open",
+    "id": "starters.open",
+    "en": "open",
+    "vi": "mở ra",
+    "theme": "at-school",
+    "subject": "the very same door standing wide open: its leaf swung far out from the frame with a round knob, warm golden light spilling out through the opening, and a small curved motion arc beside the knob curving the opposite way to show the door swinging open",
+    "prompt": "open: the very same door standing wide open: its leaf swung far out from the frame with a round knob, warm golden light spilling out through the opening, and a small curved motion arc beside the knob curving the opposite way to show the door swinging open. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "8c06e2657d93"
   },
   {
     "key": "tick",
@@ -518,6 +608,106 @@
     "subject": "a single cute pastel computer mouse with a scroll wheel and a short curly cable",
     "prompt": "mouse-computer: a single cute pastel computer mouse with a scroll wheel and a short curly cable. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "f3417a61a2e4"
+  },
+  {
+    "key": "floor",
+    "id": "starters.floor",
+    "en": "floor",
+    "vi": "sàn nhà",
+    "theme": "at-school",
+    "subject": "a single section of wooden indoor floor seen slightly from above, with long clear planks and thin dark seams running between them",
+    "prompt": "floor: a single section of wooden indoor floor seen slightly from above, with long clear planks and thin dark seams running between them. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "c88ee0cf67c5"
+  },
+  {
+    "key": "part",
+    "id": "starters.part",
+    "en": "a part of",
+    "vi": "một phần của",
+    "theme": "at-school",
+    "subject": "a single round pie chart shape divided into four equal wedge slices, one wedge lifted slightly out of the circle and coloured bright cheerful red while the other three wedges are soft pale grey, flat clean friendly illustration",
+    "prompt": "part: a single round pie chart shape divided into four equal wedge slices, one wedge lifted slightly out of the circle and coloured bright cheerful red while the other three wedges are soft pale grey, flat clean friendly illustration. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "e87f749d0d7a"
+  },
+  {
+    "key": "playground",
+    "id": "starters.playground",
+    "en": "playground",
+    "vi": "sân chơi",
+    "theme": "at-school",
+    "subject": "an outdoor playground seen straight on: a slide with a ladder, a swing set with two swings, and a sandbox, arranged together on a patch of green grass",
+    "prompt": "playground: an outdoor playground seen straight on: a slide with a ladder, a swing set with two swings, and a sandbox, arranged together on a patch of green grass. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "53c335398e03"
+  },
+  {
+    "key": "ball",
+    "id": "starters.ball",
+    "en": "ball",
+    "vi": "quả bóng",
+    "theme": "at-school",
+    "subject": "a single round ball in bright rainbow colours, with one simple stitched seam running around it",
+    "prompt": "ball: a single round ball in bright rainbow colours, with one simple stitched seam running around it. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "ccf84791a2f1"
+  },
+  {
+    "key": "boots",
+    "id": "starters.boots",
+    "en": "boots",
+    "vi": "đôi ủng",
+    "theme": "at-school",
+    "subject": "a pair of tall rain boots standing side by side, one slightly behind the other, each with a rolled cuff at the top",
+    "prompt": "boots: a pair of tall rain boots standing side by side, one slightly behind the other, each with a rolled cuff at the top. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "1ccd1fce2e80"
+  },
+  {
+    "key": "crayon",
+    "id": "starters.crayon",
+    "en": "crayon",
+    "vi": "bút sáp màu",
+    "theme": "at-school",
+    "subject": "a single chunky wax crayon with its paper wrapper still on and the tip showing bright red wax",
+    "prompt": "crayon: a single chunky wax crayon with its paper wrapper still on and the tip showing bright red wax. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "aa10c9141315"
+  },
+  {
+    "key": "classmate",
+    "id": "starters.classmate",
+    "en": "classmate",
+    "vi": "bạn cùng lớp",
+    "theme": "at-school",
+    "subject": "two little children standing side by side, each wearing a backpack, smiling at each other like classmates",
+    "prompt": "classmate: two little children standing side by side, each wearing a backpack, smiling at each other like classmates. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "b5f260eb0459"
+  },
+  {
+    "key": "read",
+    "id": "starters.read",
+    "en": "read",
+    "vi": "đọc sách",
+    "theme": "at-school",
+    "subject": "a cute little child sitting cross-legged and reading an open picture book, holding it with both hands and looking down at the pages",
+    "prompt": "read: a cute little child sitting cross-legged and reading an open picture book, holding it with both hands and looking down at the pages. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "e5dd4d408935"
+  },
+  {
+    "key": "write",
+    "id": "starters.write",
+    "en": "write",
+    "vi": "viết",
+    "theme": "at-school",
+    "subject": "a cute little child sitting at a desk and writing in an exercise book, holding a pencil in one hand with the head bent over the page",
+    "prompt": "write: a cute little child sitting at a desk and writing in an exercise book, holding a pencil in one hand with the head bent over the page. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "dfaf628a0885"
+  },
+  {
+    "key": "board-game",
+    "id": "starters.board-game",
+    "en": "board game",
+    "vi": "trò chơi bàn cờ",
+    "theme": "at-school",
+    "subject": "a single colourful board game laid out flat: a square board with a winding path of coloured squares, a few round playing pieces on it and two dice beside it",
+    "prompt": "board-game: a single colourful board game laid out flat: a square board with a winding path of coloured squares, a few round playing pieces on it and two dice beside it. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "8e964f57c727"
   },
   {
     "key": "swim",
@@ -630,6 +820,16 @@
     "prompt_sha": "bd925b856309"
   },
   {
+    "key": "sport",
+    "id": "starters.sport",
+    "en": "sport",
+    "vi": "thể thao",
+    "theme": "at-the-beach",
+    "subject": "a small group of sports equipment gathered together: a soccer ball, a tennis racket, a feathered shuttlecock and a small referee whistle",
+    "prompt": "sport: a small group of sports equipment gathered together: a soccer ball, a tennis racket, a feathered shuttlecock and a small referee whistle. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "9c9b1b3d8c2e"
+  },
+  {
     "key": "sing",
     "id": "starters.sing",
     "en": "sing",
@@ -695,9 +895,9 @@
     "en": "sand",
     "vi": "cát",
     "theme": "at-the-beach",
-    "subject": "a single cute little mound of golden sand with a few scattered grains and one tiny shell resting on top",
-    "prompt": "sand: a single cute little mound of golden sand with a few scattered grains and one tiny shell resting on top. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "5d5f4fbeba7b"
+    "subject": "a wide flat stretch of golden beach sand with gentle ripple lines running across its surface, three scattered seashells and one little orange starfish resting on top of it",
+    "prompt": "sand: a wide flat stretch of golden beach sand with gentle ripple lines running across its surface, three scattered seashells and one little orange starfish resting on top of it. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "79cc534df5db"
   },
   {
     "key": "sea",
@@ -705,9 +905,9 @@
     "en": "sea",
     "vi": "biển",
     "theme": "at-the-beach",
-    "subject": "a single cute stylised ocean wave: a rounded curling blue wave with white foam on the crest, toy-like and friendly",
-    "prompt": "sea: a single cute stylised ocean wave: a rounded curling blue wave with white foam on the crest, toy-like and friendly. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "8cde7656243c"
+    "subject": "a wide calm expanse of bright blue sea water seen straight on, with gentle rolling swells and small white foam crests spreading across the surface; it is only water, with no face, no eyes and no mouth anywhere",
+    "prompt": "sea: a wide calm expanse of bright blue sea water seen straight on, with gentle rolling swells and small white foam crests spreading across the surface; it is only water, with no face, no eyes and no mouth anywhere. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "04725e1b352f"
   },
   {
     "key": "sun",
@@ -845,9 +1045,9 @@
     "en": "red",
     "vi": "màu đỏ",
     "theme": "at-the-clothes-shop",
-    "subject": "a single playful thick 3D paint blob of bright red paint with two small round droplets beside it, the ONLY colour in the image is bright red",
-    "prompt": "red: a single playful thick 3D paint blob of bright red paint with two small round droplets beside it, the ONLY colour in the image is bright red. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "e4a015f4441f"
+    "subject": "a single playful thick 3D paint blob of bright red paint: one smooth compact rounded dollop with a clean neat outline, one soft light reflection on its curve and two small round droplets beside it, no streaks and no splatter, the ONLY colour in the image is bright red",
+    "prompt": "red: a single playful thick 3D paint blob of bright red paint: one smooth compact rounded dollop with a clean neat outline, one soft light reflection on its curve and two small round droplets beside it, no streaks and no splatter, the ONLY colour in the image is bright red. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "47bb324a7d55"
   },
   {
     "key": "green",
@@ -858,6 +1058,16 @@
     "subject": "a single playful thick 3D paint blob of fresh grass-green paint with two small round droplets beside it, the ONLY colour in the image is fresh grass green",
     "prompt": "green: a single playful thick 3D paint blob of fresh grass-green paint with two small round droplets beside it, the ONLY colour in the image is fresh grass green. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "766b34682b5d"
+  },
+  {
+    "key": "clothes",
+    "id": "starters.clothes",
+    "en": "clothes",
+    "vi": "quần áo",
+    "theme": "at-the-clothes-shop",
+    "subject": "a neat stack of folded children's clothes in cheerful colours, with two clothes hangers lying beside the stack",
+    "prompt": "clothes: a neat stack of folded children's clothes in cheerful colours, with two clothes hangers lying beside the stack. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "79410f3f93b2"
   },
   {
     "key": "jacket",
@@ -998,6 +1208,116 @@
     "subject": "a single cute wristwatch with a round face and a colourful strap, with two short pointers showing",
     "prompt": "watch: a single cute wristwatch with a round face and a colourful strap, with two short pointers showing. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "db159e8e4dcd"
+  },
+  {
+    "key": "purple-glasses",
+    "id": "starters.purple-glasses",
+    "en": "purple glasses",
+    "vi": "kính màu tím",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute pair of round children's glasses with a bright purple frame, front view",
+    "prompt": "purple-glasses: a single cute pair of round children's glasses with a bright purple frame, front view. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "f1c45fae6f8d"
+  },
+  {
+    "key": "black-hat",
+    "id": "starters.black-hat",
+    "en": "black hat",
+    "vi": "mũ màu đen",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute sun hat with a wide brim and a ribbon band around the crown, entirely black",
+    "prompt": "black-hat: a single cute sun hat with a wide brim and a ribbon band around the crown, entirely black. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "6dabadc8f45b"
+  },
+  {
+    "key": "brown-bag",
+    "id": "starters.brown-bag",
+    "en": "brown bag",
+    "vi": "ba lô màu nâu",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute rounded kids' backpack with two shoulder straps and a front pocket, in warm chocolate brown",
+    "prompt": "brown-bag: a single cute rounded kids' backpack with two shoulder straps and a front pocket, in warm chocolate brown. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "cccb0c9e7f87"
+  },
+  {
+    "key": "blue-jacket",
+    "id": "starters.blue-jacket",
+    "en": "blue jacket",
+    "vi": "áo khoác màu xanh dương",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute zip-up jacket with a hood and a front zip, in bright sky blue, front view, held out as if on an invisible child",
+    "prompt": "blue-jacket: a single cute zip-up jacket with a hood and a front zip, in bright sky blue, front view, held out as if on an invisible child. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "e053d58fa465"
+  },
+  {
+    "key": "pink-handbag",
+    "id": "starters.pink-handbag",
+    "en": "pink handbag",
+    "vi": "túi xách màu hồng",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute small woman's handbag with one handle and a shiny clasp, in bright pink",
+    "prompt": "pink-handbag: a single cute small woman's handbag with one handle and a shiny clasp, in bright pink. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "08a924ed39ed"
+  },
+  {
+    "key": "white-skirt",
+    "id": "starters.white-skirt",
+    "en": "white skirt",
+    "vi": "chân váy màu trắng",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute pleated skirt with a waistband, pure white, front view",
+    "prompt": "white-skirt: a single cute pleated skirt with a waistband, pure white, front view. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. Important: give the white skirt a soft light-grey outline along every edge and fold, plus a very subtle soft drop shadow directly beneath it, so the white garment stays clearly visible against a pure white background. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "7356a9c62c7c"
+  },
+  {
+    "key": "grey-trousers",
+    "id": "starters.grey-trousers",
+    "en": "grey trousers",
+    "vi": "quần màu xám",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single pair of cute trousers with a waistband, in soft grey, front view, held out as if on invisible legs",
+    "prompt": "grey-trousers: a single pair of cute trousers with a waistband, in soft grey, front view, held out as if on invisible legs. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "f475e363e5b9"
+  },
+  {
+    "key": "orange-dress",
+    "id": "starters.orange-dress",
+    "en": "orange dress",
+    "vi": "váy liền màu cam",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute little girl's dress with a bow at the waist and puffy sleeves, in bright orange, front view",
+    "prompt": "orange-dress: a single cute little girl's dress with a bow at the waist and puffy sleeves, in bright orange, front view. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "4aece1bf9099"
+  },
+  {
+    "key": "yellow-shirt",
+    "id": "starters.yellow-shirt",
+    "en": "yellow shirt",
+    "vi": "áo sơ mi màu vàng",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute buttoned shirt with a collar and two pockets, in sunny yellow, front view, held out as if on an invisible child",
+    "prompt": "yellow-shirt: a single cute buttoned shirt with a collar and two pockets, in sunny yellow, front view, held out as if on an invisible child. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "d2ec13302241"
+  },
+  {
+    "key": "red-t-shirt",
+    "id": "starters.red-t-shirt",
+    "en": "red T-shirt",
+    "vi": "áo phông màu đỏ",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single cute plain short-sleeved t-shirt, bright red, front view, completely blank with no print",
+    "prompt": "red-t-shirt: a single cute plain short-sleeved t-shirt, bright red, front view, completely blank with no print. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "3f9c5caa0d01"
+  },
+  {
+    "key": "green-jeans",
+    "id": "starters.green-jeans",
+    "en": "green jeans",
+    "vi": "quần jeans màu xanh lá",
+    "theme": "at-the-clothes-shop",
+    "subject": "a single pair of cute denim jeans with a pocket and stitching, in fresh grass green, front view",
+    "prompt": "green-jeans: a single pair of cute denim jeans with a pocket and stitching, in fresh grass green, front view. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "123732255ffe"
   },
   {
     "key": "elephant",
@@ -1188,6 +1508,26 @@
     "subject": "a cute friendly little songbird, FULL BODY, perched with its wings folded, a round orange beak and a cheerful face",
     "prompt": "bird: a cute friendly little songbird, FULL BODY, perched with its wings folded, a round orange beak and a cheerful face. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "a469bf836319"
+  },
+  {
+    "key": "animal",
+    "id": "starters.animal",
+    "en": "animal",
+    "vi": "con vật",
+    "theme": "at-the-zoo",
+    "subject": "three friendly little animals standing side by side: a puppy, a kitten and a bunny rabbit, all cute and smiling, facing the viewer",
+    "prompt": "animal: three friendly little animals standing side by side: a puppy, a kitten and a bunny rabbit, all cute and smiling, facing the viewer. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "bbbb61e8d2e1"
+  },
+  {
+    "key": "tail",
+    "id": "starters.tail",
+    "en": "tail",
+    "vi": "cái đuôi",
+    "theme": "at-the-zoo",
+    "subject": "the back view of a cute fluffy orange cat standing on its four paws, seen from behind, with its long bushy tail held high and curling in a clear question-mark curve; the tail is the largest and most obvious shape in the picture",
+    "prompt": "tail: the back view of a cute fluffy orange cat standing on its four paws, seen from behind, with its long bushy tail held high and curling in a clear question-mark curve; the tail is the largest and most obvious shape in the picture. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "439d70b3681b"
   },
   {
     "key": "leg",
@@ -1410,6 +1750,26 @@
     "prompt_sha": "70a9bd538241"
   },
   {
+    "key": "breakfast",
+    "id": "starters.breakfast",
+    "en": "breakfast",
+    "vi": "bữa sáng",
+    "theme": "my-favourite-food",
+    "subject": "a breakfast set laid out together: a bowl of cereal with a spoon, a glass of milk, a slice of toast spread with jam and a boiled egg standing in a small egg cup",
+    "prompt": "breakfast: a breakfast set laid out together: a bowl of cereal with a spoon, a glass of milk, a slice of toast spread with jam and a boiled egg standing in a small egg cup. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "98163dd05123"
+  },
+  {
+    "key": "dinner",
+    "id": "starters.dinner",
+    "en": "dinner",
+    "vi": "bữa tối",
+    "theme": "my-favourite-food",
+    "subject": "a dinner set laid out together: a plate holding a piece of cooked chicken, a scoop of mashed potato and a spoonful of green peas, beside a glass of water",
+    "prompt": "dinner: a dinner set laid out together: a plate holding a piece of cooked chicken, a scoop of mashed potato and a spoonful of green peas, beside a glass of water. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "7638a38c2ce0"
+  },
+  {
     "key": "meat",
     "id": "starters.meat",
     "en": "meat",
@@ -1510,6 +1870,16 @@
     "prompt_sha": "9ac267224035"
   },
   {
+    "key": "fruit",
+    "id": "starters.fruit",
+    "en": "fruit",
+    "vi": "trái cây",
+    "theme": "my-favourite-food",
+    "subject": "a single wooden bowl filled with mixed fruit: a red apple, a yellow banana, a bunch of purple grapes, an orange and a strawberry",
+    "prompt": "fruit: a single wooden bowl filled with mixed fruit: a red apple, a yellow banana, a bunch of purple grapes, an orange and a strawberry. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "2aa5c2b09134"
+  },
+  {
     "key": "bread",
     "id": "starters.bread",
     "en": "bread",
@@ -1538,6 +1908,16 @@
     "subject": "a single slice of layered cake with pink frosting, a swirl of cream on top and one strawberry",
     "prompt": "cake: a single slice of layered cake with pink frosting, a swirl of cream on top and one strawberry. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
     "prompt_sha": "e762b2b1bdba"
+  },
+  {
+    "key": "lunch",
+    "id": "starters.lunch",
+    "en": "lunch",
+    "vi": "bữa trưa",
+    "theme": "my-favourite-food",
+    "subject": "a lunch set laid out together: a plate holding a sandwich, a small bowl of green salad, a red apple and a glass of water",
+    "prompt": "lunch: a lunch set laid out together: a plate holding a sandwich, a small bowl of green salad, a red apple and a glass of water. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "4fe325abb7cc"
   },
   {
     "key": "candy",
@@ -1830,6 +2210,36 @@
     "prompt_sha": "56b31d10354d"
   },
   {
+    "key": "miss",
+    "id": "starters.miss",
+    "en": "Miss",
+    "vi": "cô",
+    "theme": "my-friends-birthday",
+    "subject": "a friendly young woman teacher character with long loose hair and a simple bright dress, standing upright and smiling warmly, FULL BODY",
+    "prompt": "miss: a friendly young woman teacher character with long loose hair and a simple bright dress, standing upright and smiling warmly, FULL BODY. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: draw this character with the SAME exaggerated cartoon proportions as a cute chibi child character: a big round head, big friendly eyes, a short chubby body and short stubby limbs. Clearly stylised and cartoonish, NOT realistic, NOT photorealistic, NOT a real person, NOT a 3D portrait of a human being. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "20ea12064b26"
+  },
+  {
+    "key": "mr",
+    "id": "starters.mr",
+    "en": "Mr",
+    "vi": "thầy",
+    "theme": "my-friends-birthday",
+    "subject": "a friendly man teacher character in a buttoned shirt and trousers, with short neat hair, standing upright and smiling warmly, FULL BODY",
+    "prompt": "mr: a friendly man teacher character in a buttoned shirt and trousers, with short neat hair, standing upright and smiling warmly, FULL BODY. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: draw this character with the SAME exaggerated cartoon proportions as a cute chibi child character: a big round head, big friendly eyes, a short chubby body and short stubby limbs. Clearly stylised and cartoonish, NOT realistic, NOT photorealistic, NOT a real person, NOT a 3D portrait of a human being. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "95e57e7d25d2"
+  },
+  {
+    "key": "mrs",
+    "id": "starters.mrs",
+    "en": "Mrs",
+    "vi": "bà",
+    "theme": "my-friends-birthday",
+    "subject": "a friendly married woman teacher character with her hair in a neat high bun and a gold wedding ring on one finger, wearing a simple dress, standing upright and smiling warmly, FULL BODY",
+    "prompt": "mrs: a friendly married woman teacher character with her hair in a neat high bun and a gold wedding ring on one finger, wearing a simple dress, standing upright and smiling warmly, FULL BODY. Vivid 3D animated character, in the style of a modern animated children's feature film: appealing exaggerated cute proportions, soft cinematic lighting, rich saturated cheerful colours, big expressive friendly eyes, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: draw this character with the SAME exaggerated cartoon proportions as a cute chibi child character: a big round head, big friendly eyes, a short chubby body and short stubby limbs. Clearly stylised and cartoonish, NOT realistic, NOT photorealistic, NOT a real person, NOT a 3D portrait of a human being. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "e58c45aee386"
+  },
+  {
     "key": "train",
     "id": "starters.train",
     "en": "train",
@@ -1930,6 +2340,46 @@
     "prompt_sha": "d0af8d7c1321"
   },
   {
+    "key": "go",
+    "id": "starters.go",
+    "en": "go",
+    "vi": "đi",
+    "theme": "my-street",
+    "subject": "a single traffic light standing on a short grey post, with three round lamps where only the bottom green lamp is lit up and glowing brightly while the other two stay dark",
+    "prompt": "go: a single traffic light standing on a short grey post, with three round lamps where only the bottom green lamp is lit up and glowing brightly while the other two stay dark. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "b01a0f4bfcc2"
+  },
+  {
+    "key": "stop",
+    "id": "starters.stop",
+    "en": "stop",
+    "vi": "dừng lại",
+    "theme": "my-street",
+    "subject": "a single red octagonal road sign on a short grey post, with the word STOP in large white capital letters across its face",
+    "prompt": "stop: a single red octagonal road sign on a short grey post, with the word STOP in large white capital letters across its face. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "fe2616537d8d"
+  },
+  {
+    "key": "bike",
+    "id": "starters.bike",
+    "en": "bike",
+    "vi": "xe đạp",
+    "theme": "my-street",
+    "subject": "a single child's bicycle seen from the side, with two wheels, a bell on the handlebar and two small training wheels at the back",
+    "prompt": "bike: a single child's bicycle seen from the side, with two wheels, a bell on the handlebar and two small training wheels at the back. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "4a1839d0b82f"
+  },
+  {
+    "key": "skateboard",
+    "id": "starters.skateboard",
+    "en": "skateboard",
+    "vi": "ván trượt",
+    "theme": "my-street",
+    "subject": "a single skateboard seen from the side, with a bright flat deck, four coloured wheels underneath and a simple pattern on the top of the deck",
+    "prompt": "skateboard: a single skateboard seen from the side, with a bright flat deck, four coloured wheels underneath and a simple pattern on the top of the deck. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "aa7126de7118"
+  },
+  {
     "key": "tree",
     "id": "starters.tree",
     "en": "tree",
@@ -1945,9 +2395,49 @@
     "en": "park",
     "vi": "công viên",
     "theme": "my-street",
-    "subject": "a cute miniature isometric diorama of a little park on a rounded grass slab: a leafy tree, a small wooden bench, a tiny round pond and two flowers, floating cut-away scene",
-    "prompt": "park: a cute miniature isometric diorama of a little park on a rounded grass slab: a leafy tree, a small wooden bench, a tiny round pond and two flowers, floating cut-away scene. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "c56d47afc855"
+    "subject": "a wide open park seen straight on: a broad green grass lawn, a curving path running through it, two leafy trees, a wooden bench beside the path and a small round pond",
+    "prompt": "park: a wide open park seen straight on: a broad green grass lawn, a curving path running through it, two leafy trees, a wooden bench beside the path and a small round pond. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "802a1f11de28"
+  },
+  {
+    "key": "day",
+    "id": "starters.day",
+    "en": "day",
+    "vi": "ban ngày",
+    "theme": "my-street",
+    "subject": "a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the bright golden sun sits right at the top of the arc, and the sky is a clear bright blue with no clouds at all",
+    "prompt": "day: a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the bright golden sun sits right at the top of the arc, and the sky is a clear bright blue with no clouds at all. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "06b0185d73f3"
+  },
+  {
+    "key": "morning",
+    "id": "starters.morning",
+    "en": "morning",
+    "vi": "buổi sáng",
+    "theme": "my-street",
+    "subject": "a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun sits low near the far LEFT end of the arc just above the hill, and the sky is soft pink and orange with a little light mist",
+    "prompt": "morning: a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun sits low near the far LEFT end of the arc just above the hill, and the sky is soft pink and orange with a little light mist. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "7771c5b90ff1"
+  },
+  {
+    "key": "afternoon",
+    "id": "starters.afternoon",
+    "en": "afternoon",
+    "vi": "buổi chiều",
+    "theme": "my-street",
+    "subject": "a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun is high on the arc just past the highest point, on its way down toward the right, and the sky is clear blue with two or three small white clouds",
+    "prompt": "afternoon: a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun is high on the arc just past the highest point, on its way down toward the right, and the sky is clear blue with two or three small white clouds. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "64dae4495348"
+  },
+  {
+    "key": "evening",
+    "id": "starters.evening",
+    "en": "evening",
+    "vi": "buổi tối",
+    "theme": "my-street",
+    "subject": "a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun sits low near the far RIGHT end of the arc, almost touching the ground, and the sky is deep purple fading to orange with one small star",
+    "prompt": "evening: a small side-view landscape with one grassy green hill and one round leafy tree standing on it, and above the hill a long smooth arc curving up from the ground on the left, over the top and back down to the ground on the right, showing the path the sun travels: the sun sits low near the far RIGHT end of the arc, almost touching the ground, and the sky is deep purple fading to orange with one small star. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "73d9338aa1bc"
   },
   {
     "key": "shop",
@@ -1955,9 +2445,9 @@
     "en": "shop",
     "vi": "cửa hàng",
     "theme": "my-street",
-    "subject": "a cute miniature isometric diorama of a small corner shop on a rounded base: a colourful shop front with a striped awning, a door, a display window with jars and a small hanging sign with no readable text",
-    "prompt": "shop: a cute miniature isometric diorama of a small corner shop on a rounded base: a colourful shop front with a striped awning, a door, a display window with jars and a small hanging sign with no readable text. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "77c0cb90a9e2"
+    "subject": "a small corner shop seen straight on from the front: a colourful shop front with a wide striped awning stretched over the door, a glass display window filled with jars, tins and boxes on two shelves, and a plain rectangular signboard above the awning showing a simple painted shopping-basket symbol",
+    "prompt": "shop: a small corner shop seen straight on from the front: a colourful shop front with a wide striped awning stretched over the door, a glass display window filled with jars, tins and boxes on two shelves, and a plain rectangular signboard above the awning showing a simple painted shopping-basket symbol. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "9e33c2db77b7"
   },
   {
     "key": "bookshop",
@@ -1965,9 +2455,9 @@
     "en": "bookshop",
     "vi": "hiệu sách",
     "theme": "my-street",
-    "subject": "a cute miniature isometric diorama of a small bookshop on a rounded base: a shop front with a blue awning, a stack of colourful books in the window and a hanging sign showing a simple book symbol",
-    "prompt": "bookshop: a cute miniature isometric diorama of a small bookshop on a rounded base: a shop front with a blue awning, a stack of colourful books in the window and a hanging sign showing a simple book symbol. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
-    "prompt_sha": "08ce91f1b22f"
+    "subject": "a small bookshop seen straight on from the front: a shop front whose deep glass window is filled with tall stacks of colourful books, a narrow plain awning, and above it a large sign cut into the shape of an open book",
+    "prompt": "bookshop: a small bookshop seen straight on from the front: a shop front whose deep glass window is filled with tall stacks of colourful books, a narrow plain awning, and above it a large sign cut into the shape of an open book. Vivid 3D animated style, in the style of a modern animated children's feature film: appealing exaggerated cute rounded proportions, soft cinematic lighting, rich saturated cheerful colours, smooth shading with only gentle soft highlights (NOT glossy plastic, NOT a shiny toy, no harsh specular glints). Bright, warm and lively, appealing to children aged 7 and up. IMPORTANT: the object is shown completely on its own, appearing by itself. Nobody is holding it: no hands and no people appear anywhere in the image. No text, no letters, no numbers, no logo, no watermark, no frame, no border. BACKGROUND: fully transparent — clean cut-out edges, absolutely NO background, NO gradient, NO bubbles, NO floor, NO ground plane. A single subject only, centred, occupying about 80% of the frame with clear empty margin around it. Square 1:1 composition.",
+    "prompt_sha": "4cb61e3eede2"
   },
   {
     "key": "hair",

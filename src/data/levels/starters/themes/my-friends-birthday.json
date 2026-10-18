@@ -76,6 +76,7 @@
       "exerciseIds": [
         "my-friends-birthday/l3/memory-match",
         "my-friends-birthday/l3/missing-letter",
+        "my-friends-birthday/l3/word-picture",
         "my-friends-birthday/l3/prepositions"
       ]
     },
@@ -343,7 +344,7 @@
       "vi": "cô",
       "type": "title",
       "icon": "👩‍🎓",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.mr",
@@ -354,7 +355,7 @@
       "vi": "thầy",
       "type": "title",
       "icon": "🤵",
-      "picturable": false
+      "picturable": true
     },
     {
       "id": "starters.mrs",
@@ -365,7 +366,7 @@
       "vi": "bà",
       "type": "title",
       "icon": "👰",
-      "picturable": false
+      "picturable": true
     }
   ],
   "exercises": [
@@ -667,6 +668,14 @@
           { "sentenceEn": "The baby is behind the box.", "preposition": "behind", "correctSlot": "behind", "slots": ["in", "on", "under", "behind"] }
         ]
       }
+    },
+    {
+      "id": "my-friends-birthday/l3/word-picture",
+      "lessonId": "my-friends-birthday/l3",
+      "gameType": "word_picture",
+      "wordIds": ["starters.boy", "starters.girl", "starters.family", "starters.miss", "starters.mr"],
+      "difficulty": 1,
+      "config": { "kind": "word_picture", "pairs": 5, "rightColumn": "word" }
     },
     {
       "id": "my-friends-birthday/l3/prepositions",

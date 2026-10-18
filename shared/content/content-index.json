@@ -55,6 +55,10 @@
         "at-home/h5/missing-letter",
         "at-home/h5/prepositions",
         "at-home/h5/word-picture",
+        "at-school/l5/listen-tap",
+        "at-school/l5/memory-match",
+        "at-school/l5/missing-letter",
+        "at-school/l5/word-picture",
         "at-school/s1/listen-tap",
         "at-school/s1/memory-match",
         "at-school/s1/memory-match-2",
@@ -120,6 +124,14 @@
         "at-the-clothes-shop/l5/missing-letter",
         "at-the-clothes-shop/l5/prepositions",
         "at-the-clothes-shop/l5/word-picture",
+        "at-the-clothes-shop/l6/listen-tap",
+        "at-the-clothes-shop/l6/memory-match",
+        "at-the-clothes-shop/l6/missing-letter",
+        "at-the-clothes-shop/l6/word-picture",
+        "at-the-clothes-shop/l7/listen-tap",
+        "at-the-clothes-shop/l7/memory-match",
+        "at-the-clothes-shop/l7/missing-letter",
+        "at-the-clothes-shop/l7/word-picture",
         "at-the-zoo/z1/listen-tap",
         "at-the-zoo/z1/memory-match",
         "at-the-zoo/z1/missing-letter",
@@ -191,6 +203,7 @@
         "my-friends-birthday/l3/memory-match",
         "my-friends-birthday/l3/missing-letter",
         "my-friends-birthday/l3/prepositions",
+        "my-friends-birthday/l3/word-picture",
         "my-friends-birthday/l4/listen-tap",
         "my-friends-birthday/l4/memory-match",
         "my-friends-birthday/l4/missing-letter",
@@ -284,9 +297,11 @@
         "at-the-clothes-shop/l2",
         "at-the-clothes-shop/l3",
         "at-the-clothes-shop/l4",
-        "at-the-clothes-shop/l5"
+        "at-the-clothes-shop/l5",
+        "at-the-clothes-shop/l6",
+        "at-the-clothes-shop/l7"
       ],
-      "wordCount": 26,
+      "wordCount": 37,
       "hasGames": true,
       "unlock": {
         "type": "coming_soon"
@@ -351,9 +366,10 @@
         "at-school/s1",
         "at-school/s2",
         "at-school/s3",
-        "at-school/s4"
+        "at-school/s4",
+        "at-school/l5"
       ],
-      "wordCount": 29,
+      "wordCount": 37,
       "hasGames": true,
       "unlock": {
         "type": "coming_soon"
@@ -384,7 +400,7 @@
         "my-street/m2",
         "my-street/m3"
       ],
-      "wordCount": 20,
+      "wordCount": 22,
       "hasGames": true,
       "unlock": {
         "type": "coming_soon"
@@ -489,6 +505,11 @@
       "vi": "cái túi"
     },
     {
+      "id": "starters.ball",
+      "en": "ball",
+      "vi": "quả bóng"
+    },
+    {
       "id": "starters.balloon",
       "en": "balloon",
       "vi": "bóng bay"
@@ -534,6 +555,11 @@
       "vi": "phòng ngủ"
     },
     {
+      "id": "starters.bike",
+      "en": "bike",
+      "vi": "xe đạp"
+    },
+    {
       "id": "starters.bird",
       "en": "bird",
       "vi": "con chim"
@@ -544,14 +570,29 @@
       "vi": "màu đen"
     },
     {
+      "id": "starters.black-hat",
+      "en": "black hat",
+      "vi": "mũ màu đen"
+    },
+    {
       "id": "starters.blue",
       "en": "blue",
       "vi": "màu xanh dương"
     },
     {
+      "id": "starters.blue-jacket",
+      "en": "blue jacket",
+      "vi": "áo khoác màu xanh dương"
+    },
+    {
       "id": "starters.board",
       "en": "board",
       "vi": "cái bảng"
+    },
+    {
+      "id": "starters.board-game",
+      "en": "board game",
+      "vi": "trò chơi bàn cờ"
     },
     {
       "id": "starters.boat",
@@ -577,6 +618,11 @@
       "id": "starters.bookshop",
       "en": "bookshop",
       "vi": "hiệu sách"
+    },
+    {
+      "id": "starters.boots",
+      "en": "boots",
+      "vi": "đôi ủng"
     },
     {
       "id": "starters.box",
@@ -607,6 +653,11 @@
       "id": "starters.brown",
       "en": "brown",
       "vi": "màu nâu"
+    },
+    {
+      "id": "starters.brown-bag",
+      "en": "brown bag",
+      "vi": "ba lô màu nâu"
     },
     {
       "id": "starters.burger",
@@ -689,6 +740,11 @@
       "vi": "lớp học"
     },
     {
+      "id": "starters.classmate",
+      "en": "classmate",
+      "vi": "bạn cùng lớp"
+    },
+    {
       "id": "starters.classroom",
       "en": "classroom",
       "vi": "phòng học"
@@ -727,6 +783,11 @@
       "id": "starters.cow",
       "en": "cow",
       "vi": "con bò"
+    },
+    {
+      "id": "starters.crayon",
+      "en": "crayon",
+      "vi": "bút sáp màu"
     },
     {
       "id": "starters.crocodile",
@@ -1004,9 +1065,19 @@
       "vi": "màu xanh lá"
     },
     {
+      "id": "starters.green-jeans",
+      "en": "green jeans",
+      "vi": "quần jeans màu xanh lá"
+    },
+    {
       "id": "starters.grey",
       "en": "grey",
       "vi": "màu xám"
+    },
+    {
+      "id": "starters.grey-trousers",
+      "en": "grey trousers",
+      "vi": "quần màu xám"
     },
     {
       "id": "starters.guitar",
@@ -1334,6 +1405,11 @@
       "vi": "màu cam"
     },
     {
+      "id": "starters.orange-dress",
+      "en": "orange dress",
+      "vi": "váy liền màu cam"
+    },
+    {
       "id": "starters.orange-n",
       "en": "orange",
       "vi": "quả cam"
@@ -1419,6 +1495,16 @@
       "vi": "màu hồng"
     },
     {
+      "id": "starters.pink-handbag",
+      "en": "pink handbag",
+      "vi": "túi xách màu hồng"
+    },
+    {
+      "id": "starters.playground",
+      "en": "playground",
+      "vi": "sân chơi"
+    },
+    {
       "id": "starters.potato",
       "en": "potato",
       "vi": "củ khoai tây"
@@ -1427,6 +1513,11 @@
       "id": "starters.purple",
       "en": "purple",
       "vi": "màu tím"
+    },
+    {
+      "id": "starters.purple-glasses",
+      "en": "purple glasses",
+      "vi": "kính màu tím"
     },
     {
       "id": "starters.q",
@@ -1444,9 +1535,19 @@
       "vi": "đài radio"
     },
     {
+      "id": "starters.read",
+      "en": "read",
+      "vi": "đọc sách"
+    },
+    {
       "id": "starters.red",
       "en": "red",
       "vi": "màu đỏ"
+    },
+    {
+      "id": "starters.red-t-shirt",
+      "en": "red T-shirt",
+      "vi": "áo phông màu đỏ"
     },
     {
       "id": "starters.rice",
@@ -1557,6 +1658,11 @@
       "id": "starters.sixteen",
       "en": "sixteen",
       "vi": "mười sáu"
+    },
+    {
+      "id": "starters.skateboard",
+      "en": "skateboard",
+      "vi": "ván trượt"
     },
     {
       "id": "starters.skirt",
@@ -1764,6 +1870,11 @@
       "vi": "màu trắng"
     },
     {
+      "id": "starters.white-skirt",
+      "en": "white skirt",
+      "vi": "chân váy màu trắng"
+    },
+    {
       "id": "starters.window",
       "en": "window",
       "vi": "cửa sổ"
@@ -1772,6 +1883,11 @@
       "id": "starters.woman",
       "en": "woman",
       "vi": "người phụ nữ"
+    },
+    {
+      "id": "starters.write",
+      "en": "write",
+      "vi": "viết"
     },
     {
       "id": "starters.x",
@@ -1787,6 +1903,11 @@
       "id": "starters.yellow",
       "en": "yellow",
       "vi": "màu vàng"
+    },
+    {
+      "id": "starters.yellow-shirt",
+      "en": "yellow shirt",
+      "vi": "áo sơ mi màu vàng"
     },
     {
       "id": "starters.z",

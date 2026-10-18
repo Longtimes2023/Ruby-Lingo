@@ -28,7 +28,9 @@
         "starters.boat",
         "starters.helicopter",
         "starters.motorbike",
-        "starters.lorry"
+        "starters.lorry",
+        "starters.bike",
+        "starters.skateboard"
       ],
       "exerciseIds": [
         "my-street/m1/memory-match",
@@ -215,7 +217,7 @@
       "vi": "đi",
       "type": "v",
       "icon": "🚦",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ɡəʊ/"
     },
     {
@@ -227,9 +229,11 @@
       "vi": "dừng lại",
       "type": "v",
       "icon": "🛑",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/stɒp/"
     },
+    { "id": "starters.bike",       "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "bike",       "vi": "xe đạp",    "type": "n", "icon": "🚲🛞", "picturable": true },
+    { "id": "starters.skateboard", "levelId": "starters", "primaryThemeId": "my-street", "primaryLessonId": "my-street/m1", "en": "skateboard", "vi": "ván trượt", "type": "n", "icon": "🛹",   "picturable": true },
     {
       "id": "starters.tree",
       "levelId": "starters",
@@ -263,7 +267,7 @@
       "vi": "ban ngày",
       "type": "n",
       "icon": "🌞",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/deɪ/"
     },
     {
@@ -275,7 +279,7 @@
       "vi": "buổi sáng",
       "type": "n",
       "icon": "🌅",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˈmɔː.nɪŋ/"
     },
     {
@@ -287,7 +291,7 @@
       "vi": "buổi chiều",
       "type": "n",
       "icon": "🌤️",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˌɑːf.təˈnuːn/"
     },
     {
@@ -299,7 +303,7 @@
       "vi": "buổi tối",
       "type": "n",
       "icon": "🌙",
-      "picturable": false,
+      "picturable": true,
       "phonetic": "/ˈiːv.nɪŋ/"
     },
     {
@@ -341,12 +345,15 @@
         "starters.boat",
         "starters.helicopter",
         "starters.motorbike",
-        "starters.lorry"
+        "starters.lorry",
+        "starters.bike",
+        "starters.skateboard"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
+        "_comment": "pairs = 6 chứ không phải 8: 16 thẻ lẻ 1 thẻ ở lưới 3 cột (điện thoại). 12 thẻ chia hết cho cả 3 và 4.",
         "pairs": 6
       }
     },
@@ -413,7 +420,9 @@
         "starters.boat",
         "starters.helicopter",
         "starters.motorbike",
-        "starters.lorry"
+        "starters.lorry",
+        "starters.bike",
+        "starters.skateboard"
       ],
       "difficulty": 1,
       "config": {
@@ -478,7 +487,9 @@
         "starters.boat",
         "starters.helicopter",
         "starters.motorbike",
-        "starters.lorry"
+        "starters.lorry",
+        "starters.bike",
+        "starters.skateboard"
       ],
       "difficulty": 1,
       "config": { "kind": "listen_tap", "rounds": 10, "optionCount": 4, "distractorMode": "same_lesson", "speechRate": 0.8 }

@@ -100,8 +100,8 @@
     { "id": "starters.spider", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "spider", "vi": "con nhện", "type": "n", "icon": "🕷️", "phonetic": "/ˈspaɪ.dər/", "picturable": true },
     { "id": "starters.mouse", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "mouse", "vi": "con chuột", "type": "n", "icon": "🐭", "phonetic": "/maʊs/", "forms": { "plural": "mice" }, "picturable": true },
     { "id": "starters.bird", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "bird", "vi": "con chim", "type": "n", "icon": "🐦", "phonetic": "/bɜːd/", "picturable": true },
-    { "id": "starters.animal", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "animal", "vi": "con vật", "type": "n", "icon": "🐾", "phonetic": "/ˈæn.ɪ.məl/", "picturable": false },
-    { "id": "starters.tail", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "tail", "vi": "cái đuôi", "type": "n", "icon": "🐈", "phonetic": "/teɪl/", "picturable": false }
+    { "id": "starters.animal", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "animal", "vi": "con vật", "type": "n", "icon": "🐾", "phonetic": "/ˈæn.ɪ.məl/", "picturable": true },
+    { "id": "starters.tail", "levelId": "starters", "primaryThemeId": "at-the-zoo", "primaryLessonId": "at-the-zoo/z3", "en": "tail", "vi": "cái đuôi", "type": "n", "icon": "🐈", "phonetic": "/teɪl/", "picturable": true }
   ],
   "exercises": [
     {

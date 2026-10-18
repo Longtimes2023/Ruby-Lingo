@@ -85,7 +85,7 @@
     { "id": "starters.table-tennis", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "table tennis", "vi": "bóng bàn", "type": "n", "icon": "🏓", "picturable": true, "phonetic": "/ˈteɪ.bəl ˌten.ɪs/" },
     { "id": "starters.badminton", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "badminton", "vi": "cầu lông", "type": "n", "icon": "🏸", "picturable": true, "phonetic": "/ˈbæd.mɪn.tən/" },
     { "id": "starters.tennis", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "tennis", "vi": "quần vợt", "type": "n", "icon": "🎾", "picturable": true, "phonetic": "/ˈten.ɪs/" },
-    { "id": "starters.sport", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "sport", "vi": "thể thao", "type": "n", "icon": "🏅", "picturable": false, "phonetic": "/spɔːt/" },
+    { "id": "starters.sport", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b2", "en": "sport", "vi": "thể thao", "type": "n", "icon": "🏅", "picturable": true, "phonetic": "/spɔːt/" },
 
     { "id": "starters.sing", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "sing", "vi": "hát", "type": "v", "icon": "🎤", "picturable": true, "phonetic": "/sɪŋ/" },
     { "id": "starters.paint", "levelId": "starters", "primaryThemeId": "at-the-beach", "primaryLessonId": "at-the-beach/b3", "en": "paint", "vi": "vẽ tranh", "type": "v", "icon": "🎨", "picturable": true, "phonetic": "/peɪnt/" },

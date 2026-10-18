@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-RubyLingo — lập kế hoạch sinh 201 hình từ vựng.
+RubyLingo — lập kế hoạch sinh 239 hình từ vựng.
 
 ĐỌC
   src/data/levels/starters/themes/*.json   (nguồn chân lý: danh sách từ)
@@ -58,10 +58,13 @@ def load_words():
 
 def select(words):
     """
-    198 từ `picturable` + 3 từ `my-body` không vẽ được nhưng VẪN hiện trên thẻ
+    236 từ `picturable` + 3 từ `my-body` không vẽ được nhưng VẪN hiện trên thẻ
     từ vựng (hair/body/head) — đúng ba từ đã gây ra phàn nàn ban đầu.
 
-    Vì sao không lấy hết 275: bảng chữ cái (A–Z) và số (one–twenty) KHÔNG được
+    (Số thật in ra ở dòng "plan.json: N tu". Đừng sửa tay con số này — nó đã lệch
+    một lần rồi: bản ghi cũ nói 201 trong khi dữ liệu chỉ có 200.)
+
+    Vì sao không lấy hết 285: bảng chữ cái (A–Z) và số (one–twenty) KHÔNG được
     vẽ thành hình — thẻ của chúng phải hiện đúng CHỮ/số, đó mới là bài học.
     """
     chosen = [w for w in words if w.get("picturable")]
