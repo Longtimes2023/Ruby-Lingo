@@ -670,7 +670,7 @@
   },
   "line": {
     "file": "source/line.png",
-    "prompt_sha": "710702cefdb7",
+    "prompt_sha": "af882e76ca86",
     "status": "done"
   },
   "living-room": {
@@ -1068,7 +1068,7 @@
   },
   "tail": {
     "file": "source/tail.png",
-    "prompt_sha": "b08fe283580f",
+    "prompt_sha": "525f521ff089",
     "status": "done"
   },
   "take": {
@@ -1131,7 +1131,7 @@
   },
   "wall": {
     "file": "source/wall.png",
-    "prompt_sha": "24f4e2fc2953",
+    "prompt_sha": "de009c025128",
     "status": "done"
   },
   "watch": {
