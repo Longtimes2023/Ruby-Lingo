@@ -716,7 +716,32 @@ export function PetHousePage() {
         key={item.id}
         type="button"
         aria-label={`${item.name_vi}, vị trí ${Math.round(placement.x)}%, ${Math.round(placement.y)}%. Dùng phím mũi tên để di chuyển.`}
-        className="absolute z-10 flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand"
+        className={cn(
+          'absolute flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand',
+          /*
+            ⚠️⚠️ `z-10` CHỈ CHO LÀN `near` — KHÔNG đặt cho cả 10 món (lỗi QA bắt được 2026-10-20).
+
+            Món dưới sàn được xếp tầng bằng `sortByBottom` (đáy nhỏ = xa = vẽ trước). Nhưng con vật
+            nằm trong `<span>` mang `z-[2]` (`PET_Z` của `PetAvatar`), nên nó THẮNG `z: auto` của
+            mọi món bất kể thứ tự DOM. Hệ quả: chỉ món có `z-index` lớn hơn 2 mới thật sự nổi lên
+            trên con vật — mà món DUY NHẤT phải nổi lên trên là món làn `near` (đáy 86 %H > đáy con
+            vật 84 %H, tức là đứng TRƯỚC mặt con vật).
+
+            ⚠️ Bản trước gắn `z-10` VÔ ĐIỀU KIỆN cho cả 10 món, làm `sortByBottom` thành vô nghĩa:
+            lâu đài (làn `mid`, đáy 75 %H — phải ở SAU con vật) đè lên mực con mèo. Ở cỡ 1× chuyện
+            này vô hình vì món còn nhỏ; ở 1,5× nó thành "lâu đài dán lên lông mèo".
+
+            Đây đúng là lập luận đã dùng cho PHỤ KIỆN ngay trên tệp này (`renderAccessoryNode`):
+            *"Đặt `z-10` cho CẢ hai là bẫy: ba lô sẽ đè lên bụng con vật"* ⇒ chỉ món `front` có
+            `z-10`. Đồ trang trí trước đây mâu thuẫn với chính lập luận đó.
+
+            ⚠️ Dùng `box.lane` (dữ liệu của bảng bố cục), KHÔNG suy từ `bottomPct`: bé kéo một món
+            làn `far` xuống sát sàn thì `bottomPct` đổi mà làn của món thì không — tầng lớp phải ổn
+            định theo món, đúng như `placedDecorationBox` giữ nguyên `lane` khi bé kéo.
+            Đồ TREO TƯỜNG có `lane === null` ⇒ không bao giờ có `z-10` ⇒ luôn nằm sau con vật.
+          */
+          box.lane === 'near' && 'z-10',
+        )}
         style={{ left: `${box.leftPct}%`, top: `${box.topPct}%` }}
         onPointerDown={(event) => {
           if (!roomReady) return;

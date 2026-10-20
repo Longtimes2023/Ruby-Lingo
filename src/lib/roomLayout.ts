@@ -142,17 +142,39 @@ export const LANE_SCALE: Readonly<Record<FloorLane, number>> = {
 export const WALL_MARGIN_PCT = 6;
 
 /**
- * Khoảng hở tối thiểu giữa hai món treo tường nằm CÙNG HÀNG. (%W)
+ * Khoảng hở tối thiểu giữa hai món treo tường nằm CÙNG HÀNG. (%W) — **KHÔNG ĐỔI** trong đợt
+ * phóng to 2026-10-20, và đây là lý do.
  *
- * ⚠️ Hạ từ 4 xuống 1 khi bố cục tường đổi từ MỘT hàng sang HAI hàng (xem `WALL_SLOTS`): hai bên
- *   vùng giữa mỗi bên chỉ còn 26%W, mà hai món nhỏ nhất đã chiếm 13 + 12 = 25%W. 4%W không còn
- *   chỗ để tồn tại. 1%W là mức tối thiểu để mắt còn tách được hai vật rời nhau — và quan trọng
+ * ⚠️ Hạ từ 4 xuống 1 khi bố cục tường đổi từ MỘT hàng sang HAI CỘT (xem `WALL_SLOTS`): hai bên
+ *   vùng giữa mỗi bên chỉ còn 26 %W, mà hai món nhỏ nhất đã chiếm 13 + 12 = 25 %W. 4 %W không còn
+ *   chỗ để tồn tại. 1 %W là mức tối thiểu để mắt còn tách được hai vật rời nhau — và quan trọng
  *   hơn: hai vật KHÔNG chồng lên nhau, thứ mà test khoá lại.
+ *
+ * ⚠️⚠️ ĐỌC KỸ TRƯỚC KHI "SỬA CHO KHỚP BỐ CỤC 3 HÀNG": đây là khe **NGANG** (cùng hàng = cùng
+ *   `topPct`). Bố cục 2026-10-20 xếp 5 món thành 3 hàng, mỗi hàng đúng MỘT món mỗi cột ⇒ không
+ *   còn cặp nào "cùng hàng", nên luật này hiện không có cặp nào để áp. Khe **DỌC** (giữa hai hàng
+ *   trong cùng một cột) là chuyện khác và được canh bằng "hai hộp không chồng nhau", không bằng
+ *   hằng này — hạ nó xuống 0 sẽ làm hỏng luật ngang mà không canh được gì thêm.
+ *
+ *   Số thật của bố cục mới, để sau này khỏi phải đo lại: khe dọc giữa hai HỘP là 0,7 và 1,05 %H
+ *   (cột phải), 4,6 %H (cột trái); khe dọc giữa hai PHẦN HÌNH là 5,4 và 2,2 %H (cột phải),
+ *   15,1 %H (cột trái). Tức là mắt luôn thấy khoảng trống, dù hộp ảnh gần chạm nhau.
  */
 export const WALL_GAP_PCT = 1;
 
-/** Bề rộng cho phép của đồ treo tường. (%W) */
-export const WALL_WIDTH_RANGE: readonly [number, number] = [12, 18];
+/**
+ * Bề rộng cho phép của đồ treo tường. (%W)
+ *
+ * ⭐ SUY TỪ BẢNG, KHÔNG PHẢI SỐ ƯA MẮT (2026-10-20, đợt "phóng to đồ trang trí"):
+ *   5 món treo tường mới rộng **14,6 … 19,6 %W** (`NOMINAL` 13,4). Hai biên lấy đúng hai đầu
+ *   cực trị của bảng rồi chừa ~15% mỗi phía: `14,6 × 0,85 ≈ 12,4` và `19,6 × 1,15 ≈ 22,5`.
+ *
+ *   ⚠️ Khoảng NÀY RỘNG HƠN bảng (12,4 … 22,5 so với 14,6 … 19,6) là CÓ CHỦ Ý: nó là lưới an toàn
+ *      cho một món mới thêm vào danh mục, không phải bản chép lại của bảng. Siết về đúng
+ *      `[14,6, 19,6]` thì mọi món thêm sau này đều đỏ vì "không khớp NOMINAL", trong khi thứ cần
+ *      bắt là "món to/nhỏ bất thường" — chênh 15% là mức mắt còn bỏ qua được.
+ */
+export const WALL_WIDTH_RANGE: readonly [number, number] = [12.5, 22.5];
 
 /**
  * VÙNG GIỮA CỦA BỨC TƯỜNG, CHỪA RIÊNG CHO THÚ CƯNG (VÀ MŨ CỦA NÓ). (%W)
@@ -173,11 +195,28 @@ export const WALL_RESERVED_X_PCT: readonly [number, number] = [
   Math.ceil(50 + pctHToCqw(PET_HEIGHT_PCT) / 2),
 ];
 
-/** Bề rộng cho phép của đồ dưới sàn, theo làn. (%W) */
+/**
+ * Bề rộng cho phép của đồ dưới sàn, theo làn. (%W)
+ *
+ * ⭐ SUY TỪ `NOMINAL × LANE_SCALE ÷ khoảng bề rộng ink` (2026-10-20, đợt "phóng to đồ trang trí"),
+ *   không còn là số gõ tay. Với `NOMINAL` sàn = 25,5, ba làn ra **15,5–16,5 / 22,0–26,1 / 30,5**
+ *   %W (`_verify/build-deco-layout.mjs` in lại được từng con số). Mỗi biên chừa ~15%:
+ *
+ *     • `far`  : 15,5 × 0,85 = 13,2 → **13** ; 16,5 × 1,15 = 19,0 → **19**
+ *     • `mid`  : 22,0 × 0,85 = 18,7 → **18,5** ; 26,1 × 1,15 = 30,0 → **30**
+ *     • `near` : 30,5 × 0,85 = 25,9 → **26** ; 30,5 × 1,15 = 35,1 → **35**
+ *
+ *   ⚠️ Ba khoảng GỐI NHAU MỘT CHÚT (`far` cao nhất 19 so với `mid` thấp nhất 18,5 — lệch 0,5).
+ *      Đó là dấu hiệu đúng của phối cảnh, không phải lỗi: một món ở làn `far` mà to gần bằng món
+ *      nhỏ nhất của làn `mid` thì mắt vẫn đọc ra "hơi xa hơn", trong khi nếu ba khoảng rời hẳn
+ *      nhau thì một món đặt lệch làn sẽ lộ ngay thành "món to đứng xa". Test
+ *      `'làn càng gần thì món càng to'` vẫn canh được phối cảnh thật vì nó so cỡ LỚN NHẤT của
+ *      từng làn trên bảng, chứ không so hai khoảng khai báo.
+ */
 export const LANE_WIDTH_RANGE: Readonly<Record<FloorLane, readonly [number, number]>> = {
-  far: [10, 16],
-  mid: [12, 20],
-  near: [14, 24],
+  far: [13, 19],
+  mid: [18.5, 30],
+  near: [26, 35],
 };
 
 /** Khoảng cách tối thiểu giữ món kéo tay khỏi mép khung. (% toạ độ) */
@@ -216,10 +255,41 @@ export const CLAMP_INSET_PCT = 1;
  *     boxH = boxW × 4/3                 ← hộp VUÔNG theo cqw, ảnh không méo
  *     top  = LANE_BOTTOM_PCT[lane] + boxH × (0,5 − inkBottom)
  *
- *   `NOMINAL` = **17,0** cho đồ dưới sàn, **11,2** cho đồ treo tường (tường không có phối cảnh
+ *   `NOMINAL` = **25,5** cho đồ dưới sàn, **13,4** cho đồ treo tường (tường không có phối cảnh
  *   ⇒ hệ số làn = 1). `boxW` chia cho √(fracW·fracH·4/3) là để bù phần trong suốt: món có ít
  *   mực trong ảnh (hướng dương: 54 % × 89 %) phải được vẽ HỘP TO HƠN để phần HÌNH to đúng cỡ
  *   danh nghĩa. Nhờ vậy "cùng 17 %W danh nghĩa" = "cùng cỡ mắt nhìn thấy", không phụ thuộc ảnh.
+ *
+ * -----------------------------------------------------------------------------
+ * ⭐ 2026-10-20 — PHÓNG TO 1,5× (sàn) / 1,2× (tường): `NOMINAL` 17,0 → 25,5 và 11,2 → 13,4
+ * -----------------------------------------------------------------------------
+ *   Chủ dự án: *"tỷ lệ đồ trang trí cho nó bự ra gấp đôi đi, nhìn nó nhỏ quá"*.
+ *
+ *   ⚠️ GẤP ĐÔI LÀ **BẤT KHẢ THI**, và đây là số chứng minh (không phải cảm tính):
+ *     • Đồ DƯỚI SÀN: 5 món, bề rộng MỰC cộng lại ở 1× = **55,6 %W**. Nhân 2 ⇒ **111,2 %W**, trong
+ *       khi cả khung chỉ có 100 %W và vùng dành cho đồ còn hẹp hơn nhiều (phải chừa cột của con
+ *       vật ở giữa, xem `FLOOR_CENTER_X_PCT`). Ở 1,5× tổng là **83,2 %W** — vừa đủ để 5 món còn
+ *       nhìn thấy nhau mà không món nào nuốt món nào.
+ *     • Đồ TREO TƯỜNG: 5 món, tổng chiều cao HỘP ở 1× = **89,0 %H**, mà dải tường chỉ cao
+ *       **61,8 %H** và chỉ có 2 cột (6…32 và 68…94 %W). Chia 2 cột thì cột nặng nhất (3 món thấp
+ *       nhất) = **49,8 %H** ở 1× ⇒ hệ số tối đa = 61,8 ÷ 49,8 = **1,24**; chọn **1,20** để còn
+ *       khe thở. Ở 1,2× cột đó cao 59,7 %H — vẫn còn 2,1 %H cho hai khe dọc.
+ *
+ *   ⚠️ VÌ SAO KHÔNG "CỨ PHÓNG TO RỒI CHO CHỒNG NHAU": chồng nhau ở đây không phải chi tiết nhỏ.
+ *     Ở 2×, bể cá (mực 31,7 %W, cao 36,4 %H — bằng 2/3 con mèo) sẽ phủ kín hướng dương đứng
+ *     cạnh nó, tức là bé mua hai món mà chỉ thấy một. Cỡ và khoảng cách là **một** ràng buộc,
+ *     không phải hai.
+ *
+ *   Số dưới đây in lại được bằng `_verify/build-deco-layout.mjs` (đọc bbox alpha thật từ
+ *   `_verify/ink.json`), nên lần sau muốn đổi hệ số chỉ cần chạy lại script rồi dán bảng.
+ *
+ *   ⚠️⚠️ `heightPct` KHÔNG phải "boxH làm tròn cho gần" — nó được CHỌN trong khoảng ±0,05 quanh
+ *     `widthPct × 4/3` sao cho `pctHToCqw(heightPct) === widthPct` ĐÚNG BẰNG ở mức 1 chữ số thập
+ *     phân. Ví dụ cờ: `19,6 × 4/3 = 26,133` ⇒ chọn **26,1** (26,1 × 0,75 = 19,575 → 19,6 ✓) chứ
+ *     không phải 26,2 (26,2 × 0,75 = 19,65 → 19,7 ✗). Đây là điều kiện "HỘP VUÔNG, ảnh 1:1 không
+ *     bị bóp méo", và có test canh (`--room-h` phải bằng `--room-w`); làm tròn theo kiểu thông
+ *     thường sẽ làm nó lệch 0,1 cqw và test đỏ. Bóng bay là ca thứ hai: 14,8 × 4/3 = 19,733 ⇒
+ *     19,7 (không phải 19,8).
  *
  * -----------------------------------------------------------------------------
  * ⚠️ VÌ SAO GHI SỐ CỤ THỂ CHỨ KHÔNG TÍNH LÚC CHẠY
@@ -232,19 +302,19 @@ export const CLAMP_INSET_PCT = 1;
  *   trong khoảng của làn, làn gần to hơn làn xa), nên ghi số vẫn được canh đầy đủ.
  */
 export const DECORATION_LAYOUT: Readonly<Record<string, DecorationLayoutSpec>> = {
-  // --- Đồ TREO TƯỜNG (`slot: 'sky'`) — NOMINAL 11,2, hệ số làn = 1 ---
-  'dec-picture': { band: 'wall', lane: null, widthPct: 13.0, heightPct: 17.3, inkBottom: 0.87 },
-  'dec-flag': { band: 'wall', lane: null, widthPct: 16.4, heightPct: 21.9, inkBottom: 0.69 },
-  'dec-rainbow': { band: 'wall', lane: null, widthPct: 12.8, heightPct: 17.1, inkBottom: 0.80 },
-  'dec-balloon': { band: 'wall', lane: null, widthPct: 12.4, heightPct: 16.5, inkBottom: 0.97 },
-  'dec-lantern': { band: 'wall', lane: null, widthPct: 12.2, heightPct: 16.2, inkBottom: 0.98 },
+  // --- Đồ TREO TƯỜNG (`slot: 'sky'`) — NOMINAL 13,4 (= 11,2 × 1,2), hệ số làn = 1 ---
+  'dec-picture': { band: 'wall', lane: null, widthPct: 15.5, heightPct: 20.7, inkBottom: 0.87 },
+  'dec-flag': { band: 'wall', lane: null, widthPct: 19.6, heightPct: 26.1, inkBottom: 0.69 },
+  'dec-rainbow': { band: 'wall', lane: null, widthPct: 15.4, heightPct: 20.5, inkBottom: 0.80 },
+  'dec-balloon': { band: 'wall', lane: null, widthPct: 14.8, heightPct: 19.7, inkBottom: 0.97 },
+  'dec-lantern': { band: 'wall', lane: null, widthPct: 14.6, heightPct: 19.4, inkBottom: 0.98 },
 
-  // --- Đồ DƯỚI SÀN (`slot: 'ground'`) — NOMINAL 17,0 × hệ số làn ---
-  'dec-treehouse': { band: 'floor', lane: 'far', widthPct: 10.4, heightPct: 13.8, inkBottom: 0.94 },
-  'dec-plant': { band: 'floor', lane: 'far', widthPct: 11.0, heightPct: 14.6, inkBottom: 0.95 },
-  'dec-castle': { band: 'floor', lane: 'mid', widthPct: 14.6, heightPct: 19.5, inkBottom: 0.89 },
-  'dec-sunflower': { band: 'floor', lane: 'mid', widthPct: 17.4, heightPct: 23.2, inkBottom: 0.95 },
-  'dec-aquarium': { band: 'floor', lane: 'near', widthPct: 20.3, heightPct: 27.1, inkBottom: 0.84 },
+  // --- Đồ DƯỚI SÀN (`slot: 'ground'`) — NOMINAL 25,5 (= 17,0 × 1,5) × hệ số làn ---
+  'dec-treehouse': { band: 'floor', lane: 'far', widthPct: 15.5, heightPct: 20.7, inkBottom: 0.94 },
+  'dec-plant': { band: 'floor', lane: 'far', widthPct: 16.5, heightPct: 22.0, inkBottom: 0.95 },
+  'dec-castle': { band: 'floor', lane: 'mid', widthPct: 22.0, heightPct: 29.3, inkBottom: 0.89 },
+  'dec-sunflower': { band: 'floor', lane: 'mid', widthPct: 26.1, heightPct: 34.8, inkBottom: 0.95 },
+  'dec-aquarium': { band: 'floor', lane: 'near', widthPct: 30.5, heightPct: 40.7, inkBottom: 0.84 },
 };
 
 /**
@@ -272,42 +342,138 @@ const WALL_ORDER: readonly string[] = [
  *   lại là 3 hàng, mà 3 hàng thì hàng cuối rơi xuống dưới đường chân tường. Viết tay 5 ô là cách
  *   duy nhất vừa né được vùng giữa, vừa giữ mọi đáy trên chân tường, vừa ĐỌC ĐƯỢC ngay trên giấy.
  *
- * ⭐ HAI HÀNG, KHÔNG PHẢI MỘT: 5 món rộng 12,2–16,4%W cần 84%W cho một hàng, mà hai bên vùng
- *   giữa chỉ còn 6–32 và 68–94 (26%W mỗi bên). Chia hai hàng thì mỗi bên chứa được 2 món nhỏ.
+ * ⭐ VÌ SAO PHẢI LÀ HAI CỘT (chứ không phải một hàng): 5 món rộng 14,6–19,6 %W cần ~86 %W cho
+ *   một hàng, mà hai bên vùng giữa chỉ còn 6–32 và 68–94 (26 %W mỗi bên). Vùng giữa là BẮT BUỘC
+ *   né (xem `WALL_RESERVED_X_PCT`), nên mọi cách xếp đều phải dùng hai cột.
  *
- * ⭐ BỐ CỤC: hàng trên = tranh + cầu vồng (mỗi bên một món); hàng dưới = cờ (trái) và bóng bay +
- *   đèn lồng (phải). Cân đối hai bên, và không món nào lấn vào cột của thú cưng.
+ * ⭐ BỐ CỤC: cột trái = tranh (trên) + cờ (dưới); cột phải = cầu vồng + bóng bay + đèn lồng, ba
+ *   món thấp nhất xếp chồng. Cân đối hai bên, và không món nào lấn vào cột của thú cưng.
  *
  * ⚠️ MỌI CON SỐ Ở ĐÂY CÓ TEST CANH (`room-layout.test.ts`): lề ≥6%W, không chồng nhau (xét CẢ
- *   hai chiều), không lấn vùng giữa, đáy < đường chân tường. Sửa số mà quên chạy test là đỏ ngay.
+ *   hai chiều), không lấn vùng giữa, hộp nằm trọn trong dải tường. Sửa số mà quên chạy test là
+ *   đỏ ngay.
  *
- * ⚠️ SỐ ĐÃ KIỂM LẠI THEO BẢNG CỠ MỚI (2026-10-15, khi bảng đổi sang neo theo mép dưới phần hình):
- *   hộp mỗi món tính theo `widthPct` của nó, tâm là số dưới đây. Kết quả: mọi hộp có lề ≥ 6%W,
- *   không lấn vùng cấm 32–68%W (bóng bay mép trái 68,3 — sát nhưng hợp lệ), hai món cạnh nhau
- *   cách ≥ 1%W (bóng bay mép phải 80,7 → đèn lồng mép trái 81,7), và đáy dưới cùng của phần hình
- *   = 51,8%H < chân tường 61,8%H.
+ * -----------------------------------------------------------------------------
+ * ⭐ BỐ CỤC MỚI — 2026-10-20 (đồ treo tường phóng 1,2×): 2 cột × (2 + 3) hàng
+ * -----------------------------------------------------------------------------
+ *   Với `NOMINAL` 11,2 → 13,4, chiều cao HỘP của 5 món là 20,7 / 26,1 / 20,5 / 19,7 / 19,4 %H,
+ *   tổng **106,4 %H** — mà dải tường chỉ cao 61,8 %H. Không có cách nào xếp thành 2 hàng như
+ *   trước (2 hàng thì mỗi cột phải chứa ≥ 3 món, tức là 3 hàng; nói cách khác **5 món to hơn
+ *   buộc phải thành 3 hàng**). Cách chia tốt nhất — cột 3 món dùng BA MÓN THẤP NHẤT:
+ *
+ *     • Cột TRÁI  (6…32 %W): tranh 20,7 + cờ 26,1           = 46,8 %H
+ *     • Cột PHẢI (68…94 %W): cầu vồng 20,5 + bóng bay 19,7 + đèn lồng 19,4 = **59,6 %H** ✓ < 61,8
+ *
+ *   Cột phải chỉ còn **2,2 %H** cho hai khe dọc ⇒ khe hộp 0,7 và 1,05 %H. Nghe rất sát, nhưng
+ *   đó là khe giữa HỘP ẢNH (512² có viền trong suốt), không phải khe giữa hai vật: mép dưới MỰC
+ *   của cầu vồng ở 16,7 %H còn mép trên MỰC của bóng bay ở 22,1 %H ⇒ mắt thấy **5,4 %H** trống;
+ *   bóng bay → đèn lồng là **2,2 %H** trống. Xem `WALL_GAP_PCT` (đó là khe NGANG, không đổi).
+ *
+ *   Số dưới đây chứng minh từng ràng buộc (toạ độ là TÂM, hộp = tâm ± nửa cỡ):
+ *
+ *     tranh     x 17,5 → hộp [ 9,8, 25,3]   y 12,0 → hộp [ 1,7, 22,4]   mực [11,5, 23,5] × [ 4,5, 19,6]
+ *     cờ        x 20,5 → hộp [10,7, 30,3]   y 40,0 → hộp [27,0, 53,1]   mực [11,8, 29,2] × [34,6, 45,9]
+ *     cầu vồng  x 81,0 → hộp [73,3, 88,7]   y 10,6 → hộp [ 0,4, 20,9]   mực [73,6, 88,4] × [ 4,5, 16,7]
+ *     bóng bay  x 78,5 → hộp [71,1, 85,9]   y 31,4 → hộp [21,6, 41,3]   mực [73,7, 83,3] × [22,1, 40,7]
+ *     đèn lồng  x 83,5 → hộp [76,2, 90,8]   y 52,0 → hộp [42,3, 61,7]   mực [78,6, 88,4] × [42,8, 61,2]
+ *
+ *     ✔ mọi hộp nằm trong dải tường: mép trên ≥ 0,4 và mép dưới ≤ 61,7 (< 61,8)
+ *     ✔ lề ≥ 6 %W: trái nhất 9,8; phải nhất 90,8 (còn 9,2 tới mép khung)
+ *     ✔ không lấn cột thú cưng: cột trái có mép phải ≤ 30,3 (< 32); cột phải có mép trái ≥ 71,1 (> 68)
+ *     ✔ không hai hộp nào chồng nhau (cột khác nhau ⇒ tách hẳn; trong cùng cột ⇒ khe dọc ≥ 0,7 %H)
+ *     ✔ đáy PHẦN HÌNH thấp nhất = đèn lồng 61,2 %H < chân tường 61,8 %H
+ *
+ * ⚠️ VÌ SAO CỜ Ở y = 40 MÀ KHÔNG PHẢI 45 (dùng hết dải): đồ DƯỚI SÀN to lên 1,5× nên mép TRÊN
+ *   phần mực của chúng vươn lên tới 46,2 %H (chậu cây) và 48,1 %H (nhà cây) — chúng đứng TRƯỚC
+ *   bức tường, nên món treo tường nào thấp hơn mốc đó sẽ bị che. Ở y = 45, cờ có mực xuống 49,9 %H
+ *   ⇒ chậu cây che mất dải dưới của cờ (74 % bề rộng × 3,7 %H). Kéo cờ lên 5 %H thì mực dưới của
+ *   nó là 45,9 %H < 46,2 %H ⇒ hết chồng. Đây là lý do DUY NHẤT khiến cột trái không dùng hết dải
+ *   tường, và nó là ràng buộc thật giữa hai dải — không phải "cho cân".
+ *
+ * ⚠️ CHỖ CHỒNG CÒN LẠI — ĐÈN LỒNG × BỂ CÁ (2,7 %H × 9,8 %W): đo được, KHÔNG sửa được bằng số.
+ *   Đèn lồng là món thấp nhất của cột phải (mực xuống 61,2 %H), bể cá là món làn `gần` duy nhất
+ *   (mực lên 58,5 %H). Hai thứ cùng muốn góc dưới-phải; cột phải đã kín 59,6/61,8 %H nên không
+ *   nhấc đèn lồng lên thêm được (nhấc 2,7 %H là chồng lên bóng bay), và bể cá không dịch sang
+ *   phải được (hộp đã tới 99,3 %W). Chồng 2,7 %H ở ĐÁY đèn lồng — phần tua rua — trong khi cả
+ *   thân đèn còn nguyên. Đây là chồng ĐÚNG CHIỀU SÂU (đồ treo tường nằm sau đồ đứng dưới sàn),
+ *   không phải hai món cùng làn đè nhau. Muốn tuyệt đối không chồng thì phải hạ `NOMINAL` tường
+ *   xuống ~12,4 (≈1,11× thay vì 1,20×) — đánh đổi không đáng, xem báo cáo.
+ *
+ * ⚠️ VÌ SAO KHÔNG CÒN "TÂM Y TRONG 20–45 %H": luật cũ chỉ đúng cho bố cục 2 hàng của cỡ cũ. Với
+ *   3 hàng trong dải 61,8 %H thì tâm hàng đầu buộc phải ở ~10 %H và tâm hàng cuối ở ~52 %H —
+ *   đúng như số ở trên. Luật ĐÚNG theo ý định ("đồ treo tường phải nằm trên tường, không xuyên
+ *   xuống sàn, không trôi lên quá mép khung") là **hộp nằm trọn trong [0, 61,8)**, và đó là thứ
+ *   `room-layout.test.ts` canh từ 2026-10-20.
  */
 const WALL_SLOTS: readonly RoomPoint[] = [
-  { x: 12.5, y: 24 }, // tranh     — trái, hàng trên, hộp [6.0, 19.0]
-  { x: 14.2, y: 44 }, // cờ        — trái, hàng dưới, hộp [6.0, 22.4]
-  { x: 81.5, y: 24 }, // cầu vồng  — phải, hàng trên, hộp [75.1, 87.9]
-  { x: 74.5, y: 44 }, // bóng bay  — phải, hàng dưới, hộp [68.3, 80.7]
-  { x: 87.8, y: 44 }, // đèn lồng  — phải, hàng dưới, hộp [81.7, 93.9]
+  { x: 17.5, y: 12 }, // tranh     — trái, hàng 1/2, hộp [ 9.8, 25.3] × [ 1.7, 22.4]
+  { x: 20.5, y: 40 }, // cờ        — trái, hàng 2/2, hộp [10.7, 30.3] × [27.0, 53.1]
+  { x: 81, y: 10.6 }, // cầu vồng  — phải, hàng 1/3, hộp [73.3, 88.7] × [ 0.4, 20.9]
+  { x: 78.5, y: 31.4 }, // bóng bay — phải, hàng 2/3, hộp [71.1, 85.9] × [21.5, 41.3]
+  { x: 83.5, y: 52 }, // đèn lồng  — phải, hàng 3/3, hộp [76.2, 90.8] × [42.3, 61.7]
 ];
 
 /**
- * Tâm x mặc định của từng món dưới sàn (%W).
+ * Tâm x mặc định của từng món dưới sàn (%W) — bố cục 1,5× (2026-10-20).
  *
  * ⭐ VÌ SAO KHÔNG CHIA ĐỀU MỘT HÀNG NGANG Ở GIỮA: thú cưng đứng ở 50%W. Một cái bể cá đặt ngay
  *   giữa sẽ che mất con vật — mà che mất con vật là mất luôn phần thưởng của cả màn hình này.
- *   Đồ gần được đẩy về hai bên để hành lang giữa (khoảng 40–62%W) luôn trống cho bé ngắm con.
+ *   Đồ gần được đẩy về hai bên để hành lang giữa luôn trống cho bé ngắm con.
+ *
+ * -----------------------------------------------------------------------------
+ * ⚠️⚠️ HÀNH LANG GIỮA RỘNG BAO NHIÊU — ĐO TỪ ẢNH, KHÔNG PHẢI TỪ HỘP THÚ CƯNG
+ * -----------------------------------------------------------------------------
+ *   Hộp thú cưng rộng `pctHToCqw(46)` = 34,5 %W, canh giữa ⇒ 32,75–67,25 %W. Nhưng đó là hộp
+ *   512² có VIỀN TRONG SUỐT: bé nhìn thấy phần MỰC, hẹp hơn nhiều. Đo alpha thật của ba ảnh mèo
+ *   (`public/assets/pets/cat-*.webp`, cùng cách đo với `_verify/ink.json`):
+ *
+ *     cat-baby  fracW 44,3% ⇒ mực 42,4–57,7 %W      cat-adult fracW 54,3% ⇒ 41,1–59,8 %W
+ *     cat-super fracW 55,7% ⇒ 38,2–57,4 %W  (đuôi/tia sáng thò sang trái)
+ *
+ *   ⇒ Cột của con vật mà đồ dưới sàn phải né là **38–60 %W** (hợp của cả ba bậc, làm tròn ra
+ *   ngoài). Hành lang đó KHÔNG phải "số ưa mắt": nó là số đo, và hẹp hơn hộp 32,75–67,25 đúng
+ *   5,7 %W ở mỗi bên — 5,7 %W đó là chỗ đồ trang trí được phép chạm vào mà không che con vật.
+ *   (Cột 32–68 vẫn dùng cho đồ TREO TƯỜNG — xem `WALL_RESERVED_X_PCT`: đồ trên tường phải né cả
+ *   hộp, vì mũ/phụ kiện đội trên đầu con vật vươn rộng hơn phần mực của con.)
+ *
+ * -----------------------------------------------------------------------------
+ * ⭐ BỐ CỤC: 3 món bên trái (2,5 … 42,2) · hành lang 38–60 · 2 món bên phải (64,0 … 96,0)
+ * -----------------------------------------------------------------------------
+ *   Bề rộng MỰC ở 1,5× là 14,0 (nhà cây) · 12,7 (chậu cây) · 18,6 (lâu đài) · 14,1 (hướng
+ *   dương) · 23,8 (bể cá) = **83,2 %W**; hai bên hành lang chỉ còn 38 + 40 = 78 %W. Nói thẳng:
+ *   **không thể** xếp 5 món mà không chồng nhau — thiếu ~5 %W. Vì vậy chỗ chồng được CHỌN có ý
+ *   thức: dồn hết vào bên trái (tổng 4,6 %W), nơi ba món khác làn nhau nên mắt đọc ra "món trước
+ *   che mép món sau", chứ không phải "một đống đồ".
+ *
+ *   • Bên TRÁI — nhà cây 8,5 · chậu cây 19,9 · lâu đài 32,9:
+ *        nhà cây  mực [ 1,5, 15,5]  hộp [ 0,8, 16,3]
+ *        chậu cây mực [13,5, 26,2]  hộp [11,7, 28,2]   ← chồng nhà cây 2,0 %W (14% bề rộng nó)
+ *        lâu đài mực [23,6, 42,2]  hộp [21,9, 43,9]   ← chồng chậu cây 2,6 %W (20%)
+ *      Nhà cây và chậu cây cùng làn `far` (đáy 66 %H) nên chồng nhau đúng 2,0 %W là chấp nhận
+ *      được; lâu đài làn `mid` (đáy 75 %H) đứng TRƯỚC nên mép phải của chậu cây bị nó che — đúng
+ *      phối cảnh. Đáy lâu đài 75 %H < đáy thú cưng 84 %H ⇒ lâu đài vẫn ở SAU con vật.
+ *      Hai mép ngoài: mực trái 1,5 %W (nhà cây đứng sát góc trái — nó là "nhà", đứng góc là đúng),
+ *      hộp phải 43,9 %W < 50 ⇒ nửa trái không lấn tâm khung.
+ *
+ *   • Bên PHẢI — hướng dương 71,0 · bể cá 84,0:
+ *        hướng dương mực [64,0, 78,1]  hộp [58,0, 84,1]
+ *        bể cá       mực [72,1, 96,0]  hộp [68,8, 99,3]
+ *      ⚠️ Bể cá là món DUY NHẤT vẽ TRƯỚC mặt con vật (đáy 86 %H > 84 %H) ⇒ nó là món duy nhất
+ *        có thể che con vật, nên nó phải nằm ngoài hành lang 38–60 tuyệt đối: mực trái 72,1 %W.
+ *      ⚠️ HƯỚNG DƯƠNG VẪN THẤY ĐẦU HOA: |71,0 − 84,0| = **13,0 %W** ≥ (14,1 + 23,8)/2 − 6 = 12,95
+ *        ⇒ hai món chỉ chồng nhau 5,95 %W ở phần THÂN, không phải phần đầu. Và bằng số tuyệt đối:
+ *        đầu hoa nằm ở 43,9–55 %H, còn mép TRÊN phần mực của bể cá là **58,6 %H** ⇒ đầu hoa ở
+ *        TRÊN HẲN bể cá 3,6 %H, che được mới là lạ.
+ *
+ *   ⇒ Cả 5 món đều còn nhận ra được: món bị che nhiều nhất là chậu cây (20 % bề rộng) và nhà cây
+ *     (14 %); ba món còn lại không bị che quá 15 %. Không món nào che con vật.
  */
 const FLOOR_CENTER_X_PCT: Readonly<Record<string, number>> = {
-  'dec-treehouse': 18,
-  'dec-plant': 82,
-  'dec-castle': 26,
-  'dec-sunflower': 74,
-  'dec-aquarium': 70,
+  'dec-treehouse': 8.5, // trái ngoài cùng — "nhà" đứng sát góc trái là đúng
+  'dec-plant': 19.9, // trái giữa — chồng nhà cây 2,0 %W (cùng làn far)
+  'dec-castle': 32.9, // trái trong — làn mid đứng trước, che mép phải chậu cây 2,6 %W
+  'dec-sunflower': 71.0, // phải, sát hành lang; cách bể cá 13,0 %W để đầu hoa không bị che
+  'dec-aquarium': 84.0, // phải ngoài — món làn GẦN duy nhất, phải né hẳn cột con vật (mực ≥ 72,1)
 };
 
 // =============================================================================

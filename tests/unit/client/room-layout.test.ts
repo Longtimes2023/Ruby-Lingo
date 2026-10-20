@@ -97,14 +97,34 @@ describe('roomLayout — đồ treo tường', () => {
     );
   });
 
-  it('⚠️ tâm y nằm TRONG dải tường (20–45%H) và KHÔNG chạm đường chân tường', () => {
+  it('⚠️ hộp nằm TRỌN trong dải tường (trên ≥ 0, dưới < 61,8%H) và không chạm đường chân tường', () => {
+    /*
+      ⚠️⚠️ ĐỔI LUẬT 2026-10-20 — KHÔNG PHẢI "NỚI NGƯỠNG CHO TEST XANH". Đọc phần này trước khi
+      hoàn nguyên về điều kiện cũ (`box.topPct` trong 20–45 %H):
+
+        • Luật cũ ra đời khi đồ treo tường nhỏ (12,2–16,4 %W) và bố cục là **2 hàng**: tâm hàng
+          trên ~24 %H, tâm hàng dưới ~44 %H, nên "tâm trong 20–45" vừa đúng vừa dễ đọc.
+        • Đợt phóng to 1,2× (chủ dự án: *"nhìn nó nhỏ quá"*) làm 5 hộp cao tổng 106,6 %H — không
+          xếp vừa 2 hàng trong dải 61,8 %H. Bố cục buộc phải thành **3 hàng một cột** (cột phải),
+          tức là tâm hàng đầu ~10 %H và tâm hàng cuối ~52 %H. Giữ luật cũ thì nó ĐỎ dù bố cục
+          đúng — một test khẳng định sai sự thật.
+        • Ý ĐỊNH của luật cũ là "đồ treo tường phải nằm trên tường": không trôi lên quá mép khung,
+          không xuyên xuống sàn. Ý định đó được phát biểu ĐÚNG bằng **mép của hộp** (top ≥ 0 và
+          bottom < WALL_LINE_PCT), không bằng tâm — tâm chỉ là hệ quả của bố cục 2 hàng.
+
+      Vẫn giữ nguyên `bottomPct < WALL_LINE_PCT` (đáy PHẦN HÌNH phải ở trên chân tường), nên
+      không có ngưỡng nào bị bỏ: chỉ là ngưỡng "tâm y" được thay bằng ngưỡng chặt hơn về đúng thứ
+      nó muốn nói.
+    */
     for (const id of wallIds) {
       const box = defaultDecorationBox(id);
       expect(box, id).toBeDefined();
       if (!box) continue;
-      expect(box.topPct, `${id} tâm y`).toBeGreaterThanOrEqual(20 - EPS);
-      expect(box.topPct, `${id} tâm y`).toBeLessThanOrEqual(45 + EPS);
-      // Đáy món phải còn nằm trên đường chân tường, nếu không nó "xuyên" xuống sàn.
+      const boxTop = box.topPct - box.heightPct / 2;
+      const boxBottom = box.topPct + box.heightPct / 2;
+      expect(boxTop, `${id} mép trên hộp`).toBeGreaterThanOrEqual(0 - EPS);
+      expect(boxBottom, `${id} mép dưới hộp phải ở trên chân tường`).toBeLessThan(WALL_LINE_PCT);
+      // Đáy PHẦN HÌNH cũng phải ở trên chân tường, nếu không món "xuyên" xuống sàn.
       expect(box.bottomPct, `${id} đáy`).toBeLessThan(WALL_LINE_PCT);
     }
   });
@@ -140,7 +160,7 @@ describe('roomLayout — đồ treo tường', () => {
     expect(reservedRight - reservedLeft).toBeLessThanOrEqual(petWidthPct + 2);
   });
 
-  it('⚠️ bề rộng trong khoảng 12–18%W', () => {
+  it('⚠️ bề rộng trong khoảng 12,5–22,5%W (khoảng suy từ bảng: 14,6…19,6 ±15%)', () => {
     for (const id of wallIds) {
       const box = defaultDecorationBox(id);
       expect(box).toBeDefined();
@@ -186,6 +206,12 @@ describe('roomLayout — đồ treo tường', () => {
     }
 
     // (b) Trong cùng một hàng, hai món cạnh nhau phải còn khoảng hở.
+    //
+    // ⚠️ Từ bố cục 3 hàng (2026-10-20) mỗi hàng chỉ còn MỘT món mỗi cột ⇒ vòng lặp dưới không
+    //   gặp cặp nào, và khe DỌC (0,65 / 1,0 %H ở cột phải) do phép (a) canh — nó đòi hai hộp
+    //   không chồng nhau theo CẢ hai chiều. Giữ nguyên vòng lặp: nó là luật NGANG thật, và sẽ có
+    //   tác dụng trở lại nếu ai đó xếp lại thành 2 hàng (khi có màn hình cao hơn hoặc món nhỏ lại).
+    //   KHÔNG hạ `WALL_GAP_PCT` xuống 0 để "cho khớp bố cục dọc" — hai đại lượng khác nhau.
     const rows = new Map<number, typeof boxes>();
     for (const box of boxes) {
       const key = box.topPct;

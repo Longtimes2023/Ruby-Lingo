@@ -780,6 +780,46 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
     expect(front.className).toContain('z-10');
   });
 
+  it('⚠️ `z-10` CHỈ cho món làn `near` — lâu đài (mid) và đồ treo tường phải nằm SAU con vật', async () => {
+    /*
+      ⚠️⚠️ LỖI THẬT (QA độc lập bắt được, 2026-10-20): nút đồ trang trí từng mang `z-10` VÔ
+      ĐIỀU KIỆN cho cả 10 món. Con vật trong phòng nằm trong `<span>` `z-[2]` (`PET_Z` của
+      `PetAvatar`), nên CHỈ món có z-index > 2 mới thật sự nổi lên trên con vật — và món duy nhất
+      phải nổi lên trên là món làn `near` (đáy 86 %H > đáy con vật 84 %H). Gắn `z-10` cho tất cả
+      thì `sortByBottom` thành vô nghĩa và lâu đài (làn `mid`, đáy 75 %H) ĐÈ LÊN lông con mèo —
+      đo được 0,64 %W với mèo `baby` và 3,79 %W với `cat-super`.
+
+      ⚠️ jsdom KHÔNG tính `z-index`, nên một test chỉ so thứ tự DOM sẽ XANH kể cả khi lỗi còn đó.
+         Khoá thẳng vào LỚP là cách duy nhất bắt được nó bằng unit test. Đây đúng là cách test
+         "phụ kiện slot `back`" ngay trên đã làm, và cùng một lập luận: `z-10` cho cả hai phía là
+         bẫy (ba lô sẽ đè lên bụng con vật).
+    */
+    seed({
+      inventory: [
+        inventoryItem('dec-aquarium'),
+        inventoryItem('dec-castle'),
+        inventoryItem('dec-picture'),
+      ],
+    });
+    getRoomMock.mockResolvedValue([
+      { itemId: 'dec-aquarium', x: 84, y: 72, hidden: false },
+      { itemId: 'dec-castle', x: 33, y: 63, hidden: false },
+      { itemId: 'dec-picture', x: 17, y: 12, hidden: false },
+    ]);
+    renderPage();
+
+    const room = roomRegion();
+    const near = await within(room).findByRole('button', { name: /^Bể cá, vị trí 84%, 72%/ });
+    const mid = await within(room).findByRole('button', { name: /^Lâu đài nhỏ, vị trí 33%, 63%/ });
+    const wall = await within(room).findByRole('button', { name: /^Tranh treo tường, vị trí 17%, 12%/ });
+
+    // Làn `near` đứng TRƯỚC mặt con vật ⇒ phải nổi lên trên.
+    expect(near.className).toContain('z-10');
+    // Làn `mid`/`far` và đồ TREO TƯỜNG đứng SAU con vật ⇒ để `z: auto`, thứ tự do `sortByBottom`.
+    expect(mid.className).not.toContain('z-10');
+    expect(wall.className).not.toContain('z-10');
+  });
+
   it('⚠️ khay đồ: hiện món CHƯA đặt; bấm ⇒ món vào phòng và RỜI khay', async () => {
     seed({ inventory: [inventoryItem('acc-hat')] });
     renderPage();

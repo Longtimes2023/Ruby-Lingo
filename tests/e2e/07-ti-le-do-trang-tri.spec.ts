@@ -61,13 +61,13 @@ const LANE_BOTTOM: Readonly<Record<string, number>> = {
   'dec-aquarium': 86,
 };
 
-/** Bề rộng cho phép theo làn (%W) — khớp `LANE_WIDTH_RANGE`. */
+/** Bề rộng cho phép theo làn (%W) — khớp `LANE_WIDTH_RANGE` trong `src/lib/roomLayout.ts`. */
 const LANE_WIDTH_RANGE: Readonly<Record<string, readonly [number, number]>> = {
-  'dec-treehouse': [10, 16],
-  'dec-plant': [10, 16],
-  'dec-castle': [12, 20],
-  'dec-sunflower': [12, 20],
-  'dec-aquarium': [14, 24],
+  'dec-treehouse': [13, 19],
+  'dec-plant': [13, 19],
+  'dec-castle': [18.5, 30],
+  'dec-sunflower': [18.5, 30],
+  'dec-aquarium': [26, 35],
 };
 
 /**
@@ -154,8 +154,22 @@ test('tỉ lệ 10 món trang trí: đáy trùng đường làn, cỡ suy đư�
   //    cho ra ảnh lẫn cả thanh tiêu đề phía trên (Playwright cắt theo gốc trang), nên ảnh bằng
   //    chứng trông như "mất hàng đồ trên cùng" trong khi phép đo vẫn đúng. Cắt theo `clip` là
   //    xác định.
+  //
+  // ⚠️⚠️ PHẢI CUỘN SAO CHO MÉP TRÊN KHUNG NẰM DƯỚI `TopBar` (`sticky top-0`) — nếu không, ảnh
+  //    bằng chứng sẽ TRÔNG NHƯ đồ trang trí bị cắt, dù bố cục đúng. Đây là lỗi đã nhìn thấy thật
+  //    ở lượt 2026-10-20: ở 1280×720 khung cao 636px, `TopBar` cao ~60px, và
+  //    `scrollIntoViewIfNeeded()` để mép khung lọt vào DƯỚI thanh ghim ⇒ ảnh chụp mất 60px trên
+  //    cùng: bức tranh và cầu vồng (mực bắt đầu ở 4,4 %H) trông như bị xén ngang, trong khi phép
+  //    đo trong trình duyệt vẫn ra đúng 4,4–19,5 %H. Phép đo không sai — ẢNH sai.
+  //    Đo lại cho khớp: `window.scrollTo` để `frame.top = topBarHeight + 4`.
   const viewportWidth = page.viewportSize()!.width;
-  await frame.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const frame = document.querySelector('[data-room-wall]')!.parentElement as HTMLElement;
+    const topBar = document.querySelector('header') as HTMLElement | null;
+    const overlap = topBar === null ? 0 : topBar.getBoundingClientRect().height;
+    const rect = frame.getBoundingClientRect();
+    window.scrollTo(0, window.scrollY + rect.top - overlap - 4);
+  });
   const frameBox = await frame.boundingBox();
   expect(frameBox, 'phải đo được hộp khung phòng').not.toBeNull();
   // ⚠️ `clip` của Playwright tính theo TOẠ ĐỘ KHUNG NHÌN của trang chính ⇒ dùng thẳng `boundingBox()`

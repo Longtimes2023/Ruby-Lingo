@@ -107,7 +107,7 @@ describe('readLevelBundle("starters")', () => {
   });
 
   /**
-   * ⭐ QUY ƯỚC MỚI (2026-10-19) — "mỗi bài CHỈ MỘT Lật thẻ ghi nhớ, và trò đó phủ ĐỦ cả bài".
+   * ⭐ QUY ƯỚC (2026-10-19) — "mỗi bài CHỈ MỘT Lật thẻ ghi nhớ, và trò đó phủ ĐỦ cả bài".
    *
    *   Chủ dự án báo: bài "Các bộ phận cơ thể" (`my-body/l1`) hiện ra HAI phần "Lật thẻ ghi nhớ"
    *   giống hệt nhau. Nguyên nhân: các bài 7–8 từ bị chẻ thành `memory-match` (4 từ) +
@@ -115,27 +115,20 @@ describe('readLevelBundle("starters")', () => {
    *   HAI trò giống nhau trong cùng một bài. Nay gộp lại: MỘT exercise, `wordIds` = TOÀN BỘ từ của
    *   bài, `pairs` = số từ của bài.
    *
-   * ⚠️ CHỈ CÒN **MỘT** DANH SÁCH MIỄN TRỪ `MEMORY_MATCH_COVERAGE_DEBT`, VÀ ĐÂY LÀ LÝ DO — ĐỪNG
-   *   tưởng là quên, cũng ĐỪNG "sửa test cho xanh" bằng cách xoá tên khỏi danh sách; hãy sửa DỮ
-   *   LIỆU rồi gỡ tên:
+   * ✅ KHÔNG CÒN DANH SÁCH MIỄN TRỪ NÀO. Cả ba khẳng định dưới đây áp cho CẢ 46 bài:
+   *     • mỗi bài ĐÚNG MỘT exercise `memory_match`;
+   *     • hợp `wordIds` của trò đó = TOÀN BỘ `lesson.wordIds`;
+   *     • `config.pairs === exercise.wordIds.length`.
    *
-   *   • `at-the-zoo/z1,z2,z3` — đây là **LỚP LỖI KHÁC**, KHÔNG phải lỗi chủ dự án báo: `memory_match`
-   *     của `z1,z2` chỉ phủ 6/7 từ (thiếu `snake` / `chicken`), `z3` phủ 5/7 (thiếu `animal`+`tail`).
-   *     Chủ dự án phàn nàn về "HAI trò TRÙNG NHAU", không phải "trò này THIẾU từ". Có sẵn từ trước,
-   *     chưa được yêu cầu sửa ⇒ MIỄN cho khẳng định "phủ đủ từ".
+   *   Lịch sử để khỏi dựng lại: `MEMORY_MATCH_PAIRS_DEBT` (`at-school/l5`, `my-street/m1` — 8 từ
+   *   nhưng `pairs: 6` để né `16 % 3 == 1`) đã bị xoá khi lưới thẻ đổi sang **canh giữa hàng cuối**
+   *   (`MemoryMatchGame.tsx`) ⇒ lý do cắt còn 6 không còn. `MEMORY_MATCH_COVERAGE_DEBT`
+   *   (`at-the-zoo/z1..z3` — `memory_match` chỉ phủ 6/7, 6/7, 5/7 từ) đã bị xoá khi dữ liệu được
+   *   sửa cho phủ đủ 7 từ/bài.
    *
-   *   • DANH SÁCH MIỄN THỨ HAI `MEMORY_MATCH_PAIRS_DEBT` ĐÃ BỊ XOÁ (cùng ngày) — đừng dựng lại.
-   *     Trước đây nó chứa `at-school/l5` + `my-street/m1` (8 từ nhưng `pairs: 6`, để né `16 % 3 == 1`).
-   *     Khi lưới thẻ đổi sang **canh giữa hàng cuối** (`MemoryMatchGame.tsx`), lý do duy nhất để cắt
-   *     còn 6 KHÔNG còn tồn tại ⇒ hai bài đó nay cũng `pairs: 8`, và khẳng định `pairs === wordIds.length`
-   *     áp **KHÔNG miễn trừ** cho CẢ 46 bài. Muốn thêm miễn trừ mới thì phải có một LỚP LỖI khác,
-   *     có tên bài cụ thể, và ghi rõ lý do ngay tại đây.
-   *
-   *   Khẳng định "ĐÚNG MỘT exercise/bài" (chống hồi quy chính của lỗi chủ dự án) áp cho MỌI bài,
-   *   KHÔNG miễn bài nào.
+   * ⚠️ Danh sách miễn cuối cùng đã bị xoá ngày 2026-10-20 — mọi `memory_match` nay phủ đủ từ, đừng
+   *   dựng lại danh sách miễn. Test đỏ ở đây nghĩa là DỮ LIỆU sai: sửa `src/data/`, không sửa test.
    */
-  const MEMORY_MATCH_COVERAGE_DEBT = new Set(['at-the-zoo/z1', 'at-the-zoo/z2', 'at-the-zoo/z3']);
-
   it('memory_match: mỗi bài ĐÚNG MỘT exercise, phủ đủ từ, pairs = số từ', () => {
     const memoryMatches = bundle.exercises.filter((exercise) => exercise.gameType === 'memory_match');
     expect(memoryMatches.length).toBeGreaterThan(0);
@@ -155,11 +148,9 @@ describe('readLevelBundle("starters")', () => {
       const lessonExercises = memoryMatches.filter((exercise) => exercise.lessonId === lesson.id);
       if (lessonExercises.length === 0) continue;
 
-      // Hợp `wordIds` của (các) `memory_match` phải phủ HẾT từ của bài (trừ lớp nợ `at-the-zoo`).
-      if (!MEMORY_MATCH_COVERAGE_DEBT.has(lesson.id)) {
-        const covered = new Set(lessonExercises.flatMap((exercise) => exercise.wordIds));
-        expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
-      }
+      // Hợp `wordIds` của (các) `memory_match` phải phủ HẾT từ của bài — KHÔNG miễn bài nào.
+      const covered = new Set(lessonExercises.flatMap((exercise) => exercise.wordIds));
+      expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
 
       for (const exercise of lessonExercises) {
         expect(exercise.config.kind).toBe('memory_match');

@@ -311,8 +311,18 @@ describe('MemoryMatchGame — chơi thật', () => {
     expect(screen.getByText(/Chơi thoải mái/)).toBeInTheDocument();
 
     fireEvent.click(cards[i0]!);
-    // Thẻ vừa lật phải NÓI RA nội dung, không còn là "Thẻ úp" với screen reader.
-    expect(screen.getByRole('button', { name: `Thẻ đang mở: ${first.face}` })).toBeInTheDocument();
+    /**
+     * Thẻ vừa lật phải NÓI RA nội dung, không còn là "Thẻ úp" với screen reader.
+     *
+     * ⚠️ KỲ VỌNG PHẢI SUY THEO `kind`, KHÔNG hardcode `first.face`. Thẻ HÌNH đọc `spokenEn` (từ
+     *   tiếng Anh) chứ KHÔNG đọc `face` (emoji) — đúng như `MemoryMatchGame.tsx` làm, vì trình đọc
+     *   màn hình sẽ đọc TÊN EMOJI (ví dụ "🐊" → "cá sấu") thay vì đọc từ bé đang học. Mà thẻ đầu
+     *   bộ bài là thẻ CHỮ hay thẻ HÌNH thì phụ thuộc ĐỘ DÀI bộ bài (`shuffleSeeded` xáo theo
+     *   `length`), tức phụ thuộc `pairs` của bài ⇒ hardcode `first.face` sẽ đỏ ngay khi dữ liệu đổi
+     *   số từ (đã xảy ra: `at-the-zoo/z1` từ 6 → 7 cặp).
+     */
+    const firstLabel = first.kind === 'icon' ? first.spokenEn : first.face;
+    expect(screen.getByRole('button', { name: `Thẻ đang mở: ${firstLabel}` })).toBeInTheDocument();
 
     fireEvent.click(cards[i1]!);
 
@@ -325,7 +335,9 @@ describe('MemoryMatchGame — chơi thật', () => {
      */
     await waitFor(() => expect(roundNumber()).toBe('2'), { timeout: 5000 });
     expect(advancedFrom(start)).toBe(true);
-    expect(screen.getByText('1/6 cặp')).toBeInTheDocument();
+    // Tổng số cặp suy từ CHÍNH bộ bài vừa dựng, không hardcode: nhờ vậy test này không đỏ oan mỗi
+    // khi nội dung đổi số từ (khẳng định `pairs === wordIds.length` nằm ở `registry.test.ts`).
+    expect(screen.getByText(`1/${deck.length / 2} cặp`)).toBeInTheDocument();
     // Trò này KHÔNG có mạng: lật thẻ không bao giờ "sai".
     expect(screen.getByTestId('hearts').textContent).toBe('0');
   });
