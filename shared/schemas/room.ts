@@ -25,6 +25,26 @@ const placementSchema = z.object({
  */
 export const ROOM_PLACEMENT_LIMIT = 20;
 
+/**
+ * Phiên bản của BỐ CỤC MẶC ĐỊNH trong `roomLayout.ts`.
+ *
+ * Tăng số này MỖI KHI bố cục mặc định trong `roomLayout.ts` đổi chỗ hoặc đổi cỡ đáng kể. Vị trí
+ * lưu với version cũ bị BỎ QUA (không xoá) ⇒ bé thấy bố cục mặc định mới, và lần kéo tiếp theo sẽ
+ * ghi version mới.
+ *
+ * Vì sao cần: mỗi vị trí trong `room_decoration_placement` là một cặp (x, y) theo PHẦN TRĂM khung
+ * phòng, được ghi lại đúng lúc bé kéo đồ theo bố cục mặc định của thời điểm đó. Khi bố cục mặc
+ * định thay đổi (món to lên, đổi chỗ), cặp (x, y) cũ vẫn "đúng toạ độ" nhưng SAI NGỮ CẢNH —
+ * chồng lên món khác. Không có cột version thì không phân biệt được "bé cố ý đặt ở đây" với
+ * "bé đặt ở đây khi bố cục còn khác".
+ *
+ * ⚠️ GIÁ TRỊ NÀY PHẢI KHỚP với `DEFAULT` của migration gần nhất thêm cột `layout_version`
+ *   (`server/db/migrations/015_room_layout_version.sql`, DEFAULT 0 ⇒ version 1 là bố cục đầu
+ *   tiên có version; đổi bố cục lần này ⇒ 2).
+ */
+export const ROOM_LAYOUT_VERSION = 2;
+
+
 export const roomPlacementsSchema = z
   .array(placementSchema)
   .max(ROOM_PLACEMENT_LIMIT)

@@ -246,7 +246,12 @@
       "gameType": "memory_match",
       "wordIds": ["starters.frog", "starters.lizard", "starters.spider", "starters.mouse", "starters.bird", "starters.animal", "starters.tail"],
       "difficulty": 1,
-      "config": { "kind": "memory_match", "pairMode": "en_icon", "pairs": 7 }
+      "config": {
+        "kind": "memory_match",
+        "pairMode": "en_vi",
+        "pairs": 7,
+        "_comment": "en_vi vì `tail`/`animal` không có emoji đúng nghĩa; emoji 🐈 đọc ra 'con mèo' (icon của `tail` là 🐈, của `animal` là 🐾) nên thẻ hình bị hiểu sai nghĩa. z1/z2 giữ en_icon vì toàn con vật cụ thể."
+      }
     },
     {
       "id": "at-the-zoo/z3/word-picture",

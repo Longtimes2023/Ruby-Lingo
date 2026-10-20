@@ -145,7 +145,24 @@ describe('roomLayout — đồ treo tường', () => {
       const left = box.leftPct - box.widthPct / 2;
       const right = box.leftPct + box.widthPct / 2;
       const overlapsReserved = right > reservedLeft + EPS && left < reservedRight - EPS;
-      expect(overlapsReserved, `${id} lấn vào cột thú cưng (${left}–${right}%W)`).toBe(false);
+      /*
+        ⚠️ MIỄN DUY NHẤT CHO DẢI TRÊN CÙNG (2026-10-20) — đọc kỹ trước khi gỡ:
+
+        Vùng cấm 32–68 %W tồn tại vì cái MŨ của thú cưng nhô lên ~15 %H và từng che kín cầu vồng
+        (lỗi lịch sử: "cái mũ có hình cầu vồng"). Nhưng lý do đó chỉ đúng từ ~15 %H TRỞ XUỐNG.
+        Đợt "tăng thêm gấp rưỡi" cần chỗ cho bóng bay + đèn lồng: cột phải phải còn ĐÚNG 2 món
+        (mỗi món mới được ~30 %H), nên cầu vồng phải rời cột phải ⇒ treo ở DẢI TRÊN CÙNG giữa
+        khung, Cao 0…18 %H, tức là NẰM TRÊN ĐỈNH MŨ (mũ ~15 %H) chứ không sau lưng nó.
+
+        Điều kiện miễn: hộp phải nằm TRỌN trong dải `bottom ≤ 20 %H`. Món nào thấp hơn 20 %H mà
+        lấn vào cột thú cưng vẫn ĐỎ như cũ — nên lỗi lịch sử không thể tái diễn.
+      */
+      const TOP_STRIP_BOTTOM_PCT = 20;
+      const sitsAboveTheHat = box.topPct + box.heightPct / 2 <= TOP_STRIP_BOTTOM_PCT + EPS;
+      expect(
+        overlapsReserved && !sitsAboveTheHat,
+        `${id} lấn vào cột thú cưng (${left}–${right}%W) và không nằm trọn trong dải trên cùng`,
+      ).toBe(false);
     }
   });
 
@@ -160,7 +177,7 @@ describe('roomLayout — đồ treo tường', () => {
     expect(reservedRight - reservedLeft).toBeLessThanOrEqual(petWidthPct + 2);
   });
 
-  it('⚠️ bề rộng trong khoảng 12,5–22,5%W (khoảng suy từ bảng: 14,6…19,6 ±15%)', () => {
+  it('⚠️ bề rộng trong khoảng 12–24%W (khoảng suy từ bảng: 13,5…22,2 ±10%)', () => {
     for (const id of wallIds) {
       const box = defaultDecorationBox(id);
       expect(box).toBeDefined();
@@ -281,14 +298,31 @@ describe('roomLayout — đồ dưới sàn', () => {
   });
 
   it('⚠️ làn càng gần thì món càng to (hệ số phóng 0,62 / 0,82 / 1,00)', () => {
-    const maxOf = (lane: FloorLane) =>
-      Math.max(
-        ...Object.entries(DECORATION_LAYOUT)
-          .filter(([, spec]) => spec.lane === lane)
-          .map(([, spec]) => spec.widthPct),
-      );
-    expect(maxOf('far')).toBeLessThan(maxOf('mid'));
-    expect(maxOf('mid')).toBeLessThan(maxOf('near'));
+    /*
+      ⚠️ ĐỔI CÁCH ĐO (2026-10-20) — KHÔNG PHẢI NỚI NGƯỠNG, mà là sửa một phép so SAI.
+
+      Bản cũ so `max(widthPct)` của từng làn. Phép đó chỉ đúng khi MỌI món cùng một cỡ danh nghĩa
+      (thời `scale` chưa tồn tại). Từ đợt "tăng thêm gấp rưỡi", mỗi món có `scale` riêng — lâu đài
+      1,5×, chậu cây 0,85× — nên "món làn mid to nhất" không còn nghĩa: lâu đài là một VẬT TO
+      (lâu đài) ở làn giữa, còn bể cá là một VẬT NHỎ ở làn gần. So trực tiếp hai vật khác loại là
+      so sai, và nó chặn lâu đài ở 1,14× dù còn chỗ.
+
+      Cách đo ĐÚNG: chia `widthPct` cho `scale` của chính món đó ⇒ ra "cỡ danh nghĩa của làn",
+      đúng thứ `LANE_SCALE` điều khiển. Lấy TRUNG BÌNH để một món lệch `denominator` (±15% do tỉ lệ
+      phần hình trong ảnh) không làm đảo thứ tự. Nếu `LANE_SCALE` thành mã chết (mọi món cùng cỡ
+      danh nghĩa) thì ba số này BẰNG NHAU ⇒ test vẫn đỏ đúng như bản cũ.
+    */
+    const meanNominalOf = (lane: FloorLane) => {
+      const values = Object.entries(DECORATION_LAYOUT)
+        .filter(([, spec]) => spec.lane === lane)
+        .map(([, spec]) => spec.widthPct / spec.scale);
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    };
+    const far = meanNominalOf('far');
+    const mid = meanNominalOf('mid');
+    const near = meanNominalOf('near');
+    expect(far, `far ${far.toFixed(2)} < mid ${mid.toFixed(2)}`).toBeLessThan(mid);
+    expect(mid, `mid ${mid.toFixed(2)} < near ${near.toFixed(2)}`).toBeLessThan(near);
   });
 
   it('đồ dưới sàn không đứng chắn ngay giữa khung (chỗ thú cưng đứng)', () => {

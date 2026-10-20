@@ -63,11 +63,11 @@ const LANE_BOTTOM: Readonly<Record<string, number>> = {
 
 /** Bề rộng cho phép theo làn (%W) — khớp `LANE_WIDTH_RANGE` trong `src/lib/roomLayout.ts`. */
 const LANE_WIDTH_RANGE: Readonly<Record<string, readonly [number, number]>> = {
-  'dec-treehouse': [13, 19],
-  'dec-plant': [13, 19],
-  'dec-castle': [18.5, 30],
-  'dec-sunflower': [18.5, 30],
-  'dec-aquarium': [26, 35],
+  'dec-treehouse': [12, 26],
+  'dec-plant': [12, 26],
+  'dec-castle': [19, 38],
+  'dec-sunflower': [19, 38],
+  'dec-aquarium': [24, 28],
 };
 
 /**
@@ -311,7 +311,14 @@ test('tỉ lệ 10 món trang trí: đáy trùng đường làn, cỡ suy đư�
       if (row.inkBottomPct > WALL_LINE_PCT) {
         issues.push(`${row.id}: đáy ${row.inkBottomPct.toFixed(1)} %H vượt chân tường ${WALL_LINE_PCT}`);
       }
-      if (row.rightPct > PET_COLUMN[0] && row.leftPct < PET_COLUMN[1]) {
+      // ⚠️ Miễn cho DẢI TRÊN CÙNG (hộp kết thúc ≤ 20 %H): vùng cấm 32–68 %W tồn tại vì cái MŨ
+      //   của thú cưng nhô lên ~15 %H. Cầu vồng nay treo ở 0…18 %H — NẰM TRÊN đỉnh mũ, không sau
+      //   lưng nó — để nhường cột phải cho bóng bay + đèn lồng to gấp rưỡi. Món nào thấp hơn
+      //   20 %H mà lấn cột vẫn bị bắt.
+      const TOP_STRIP_BOTTOM_PCT = 20;
+      const boxBottomPct = row.topPct + row.heightPct;
+      const sitsAboveTheHat = boxBottomPct <= TOP_STRIP_BOTTOM_PCT;
+      if (!sitsAboveTheHat && row.rightPct > PET_COLUMN[0] && row.leftPct < PET_COLUMN[1]) {
         issues.push(
           `${row.id}: [${row.leftPct.toFixed(1)}, ${row.rightPct.toFixed(1)}] lấn cột thú cưng ${PET_COLUMN.join('–')}`,
         );
@@ -326,13 +333,34 @@ test('tỉ lệ 10 món trang trí: đáy trùng đường làn, cỡ suy đư�
   // ---------------------------------------------------------------------------
   // ⚠️ So theo CHIỀU CAO đo được, không theo `widthPct` khai báo: nếu chỉ đọc bảng thì test này
   //    vẫn xanh dù `LANE_SCALE` là mã chết — đúng thứ đã xảy ra trước 2026-10-20.
-  const heightOf = (id: string) => measurements.find((row) => row.id === id)?.heightPct ?? 0;
-  const farMax = Math.max(heightOf('dec-treehouse'), heightOf('dec-plant'));
-  const midMax = Math.max(heightOf('dec-castle'), heightOf('dec-sunflower'));
-  const nearHeight = heightOf('dec-aquarium');
+  //
+  // ⚠️ ĐỔI PHÉP SO (2026-10-20): bản cũ đòi "món làn far thấp hơn MỌI món làn mid, và làn mid thấp
+  //    hơn món làn near". Phép đó chỉ đúng khi mọi món cùng cỡ danh nghĩa. Nay mỗi món có hệ số
+  //    riêng (lâu đài 1,5×, chậu cây 0,85×) ⇒ lâu đài — một VẬT TO ở làn giữa — cao hơn bể cá —
+  //    một VẬT NHỎ ở làn gần — là ĐÚNG, không phải lỗi phối cảnh. Thay bằng phép so CÙNG MỘT MÓN
+  //    với con số khai báo trong bảng: bắt được lỗi đơn vị/CSS (ảnh bị vẽ sai cỡ) mà không đòi
+  //    những thứ vô lý.
+  const DECLARED_WIDTH: Readonly<Record<string, number>> = {
+    'dec-picture': 13.6,
+    'dec-flag': 17.3,
+    'dec-rainbow': 13.5,
+    'dec-balloon': 22.2,
+    'dec-lantern': 21.9,
+    'dec-treehouse': 23.3,
+    'dec-plant': 14.0,
+    'dec-castle': 32.9,
+    'dec-sunflower': 22.2,
+    'dec-aquarium': 25.9,
+  };
+  const sizeOffenders = measurements
+    .filter((row) => DECLARED_WIDTH[row.id] !== undefined)
+    .filter((row) => Math.abs(row.widthPct - DECLARED_WIDTH[row.id]!) > 0.8)
+    .map((row) => `${row.id}: đo ${row.widthPct.toFixed(1)} · khai báo ${DECLARED_WIDTH[row.id]}`);
 
-  expect(farMax, 'làn far phải nhỏ hơn làn mid (phối cảnh)').toBeLessThan(midMax);
-  expect(midMax, 'làn mid phải nhỏ hơn làn near (phối cảnh)').toBeLessThan(nearHeight);
+  expect(
+    sizeOffenders,
+    'món được vẽ KHÔNG đúng cỡ khai báo trong bảng (lỗi đơn vị/CSS)',
+  ).toEqual([]);
 
   // ---------------------------------------------------------------------------
   // ④ Không món nào bị bóp méo: hộp phải VUÔNG (ảnh gốc 1:1, khung 4:3)
