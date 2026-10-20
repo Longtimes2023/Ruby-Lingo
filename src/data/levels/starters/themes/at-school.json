@@ -35,7 +35,6 @@
       ],
       "exerciseIds": [
         "at-school/s1/memory-match",
-        "at-school/s1/memory-match-2",
         "at-school/s1/missing-letter",
         "at-school/s1/listen-tap",
         "at-school/s1/word-picture",
@@ -58,7 +57,6 @@
       ],
       "exerciseIds": [
         "at-school/s2/memory-match",
-        "at-school/s2/memory-match-2",
         "at-school/s2/missing-letter",
         "at-school/s2/listen-tap",
         "at-school/s2/word-picture",
@@ -81,7 +79,6 @@
       ],
       "exerciseIds": [
         "at-school/s3/memory-match",
-        "at-school/s3/memory-match-2",
         "at-school/s3/missing-letter",
         "at-school/s3/listen-tap",
         "at-school/s3/word-picture"
@@ -104,7 +101,6 @@
       ],
       "exerciseIds": [
         "at-school/s4/memory-match",
-        "at-school/s4/memory-match-2",
         "at-school/s4/missing-letter",
         "at-school/s4/listen-tap",
         "at-school/s4/word-picture",
@@ -595,13 +591,16 @@
         "starters.pencil",
         "starters.pen",
         "starters.ruler",
-        "starters.eraser"
+        "starters.eraser",
+        "starters.book",
+        "starters.desk",
+        "starters.board"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -612,13 +611,16 @@
         "starters.football",
         "starters.basketball",
         "starters.hockey",
-        "starters.music"
+        "starters.music",
+        "starters.computer",
+        "starters.draw",
+        "starters.drawing"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -629,13 +631,16 @@
         "starters.teacher",
         "starters.classroom",
         "starters.class",
-        "starters.letter"
+        "starters.letter",
+        "starters.alphabet",
+        "starters.page",
+        "starters.line"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -646,68 +651,7 @@
         "starters.close",
         "starters.open",
         "starters.tick",
-        "starters.cross"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 4
-      }
-    },
-    {
-      "id": "at-school/s1/memory-match-2",
-      "lessonId": "at-school/s1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.book",
-        "starters.desk",
-        "starters.board"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-school/s2/memory-match-2",
-      "lessonId": "at-school/s2",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.computer",
-        "starters.draw",
-        "starters.drawing"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-school/s3/memory-match-2",
-      "lessonId": "at-school/s3",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.alphabet",
-        "starters.page",
-        "starters.line"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-school/s4/memory-match-2",
-      "lessonId": "at-school/s4",
-      "gameType": "memory_match",
-      "wordIds": [
+        "starters.cross",
         "starters.keyboard",
         "starters.mouse-computer",
         "starters.floor",
@@ -717,7 +661,7 @@
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 8
       }
     },
     {
@@ -1011,8 +955,7 @@
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "_comment": "pairs = 6 chứ không phải 8: 16 thẻ lẻ 1 thẻ ở lưới 3 cột (điện thoại). 12 thẻ chia hết cho cả 3 và 4.",
-        "pairs": 6
+        "pairs": 8
       }
     },
     {

@@ -125,7 +125,21 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
         </span>
       </div>
 
-      <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+      {/*
+        ⚠️⚠️ HÀNG CUỐI PHẢI CANH GIỮA — `flex flex-wrap justify-center`, KHÔNG phải `grid grid-cols-3`.
+
+        Bộ bài luôn CHẴN thẻ (mỗi từ 2 thẻ) nhưng KHÔNG chia hết cho 3: 10 / 14 / 16 thẻ để lại
+        đúng MỘT thẻ lẻ ở hàng cuối trên màn điện thoại (3 cột). Lưới cứng `grid` dồn thẻ lẻ đó
+        về bên TRÁI ⇒ trông như lỗi bố cục. `flex-wrap` + `justify-center` canh giữa mọi hàng
+        thiếu thẻ, mà hàng đầy vẫn đúng số cột.
+
+        ⚠️ Bề rộng mỗi thẻ PHẢI trừ phần `gap` ra, nếu không 3 thẻ (33,3% × 3 + 2 khe) VƯỢT 100%
+        ⇒ chỉ còn 2 thẻ/hàng. `gap-2.5` = 0,625rem ⇒ 2 khe = 1,25rem (3 cột), 3 khe = 1,875rem (4 cột).
+
+        ⚠️ KHÔNG đổi sang 4 cột ở ĐIỆN THOẠI: ở 360px, 4 cột ép thẻ xuống ~74px (sát ngưỡng chạm
+        64px) và chữ trên thẻ chữ bị chật; 3 cột cho ~103px. Đây là lý do `sm:` mới lên 4 cột.
+      */}
+      <ul className="flex flex-wrap justify-center gap-2.5">
         {deck.map((card) => {
           const isMatched = matched.has(card.wordId);
           const isOpen = isMatched || open.includes(card.id);
@@ -133,7 +147,10 @@ export function MemoryMatchGame({ exercise, words, engine }: GameComponentProps)
           const isPendingPair = !isMatched && open.includes(card.id) && open.length === 2;
 
           return (
-            <li key={card.id}>
+            <li
+              key={card.id}
+              className="w-[calc((100%_-_1.25rem)/3)] sm:w-[calc((100%_-_1.875rem)/4)]"
+            >
               <button
                 type="button"
                 onClick={() => flip(card)}

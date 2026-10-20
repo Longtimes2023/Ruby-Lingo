@@ -56,6 +56,11 @@ export interface DecorationLayoutSpec {
   readonly widthPct: number;
   /** Chiều cao vật thể, tính bằng % chiều cao khung. */
   readonly heightPct: number;
+  /**
+   * Mép dưới PHẦN HÌNH trong ảnh (0..1, đo từ đỉnh). Ảnh 512² có viền trong suốt nên đáy hộp ≠
+   * đáy hình; dùng số này để neo đúng đường làn.
+   */
+  readonly inkBottom: number;
 }
 
 /** Hộp đã tính xong cho MỘT món, đủ để `PetHousePage` vẽ thẳng ra CSS. */
@@ -69,7 +74,7 @@ export interface DecorationBox {
   readonly widthPct: number;
   /** Chiều cao, % chiều cao khung. */
   readonly heightPct: number;
-  /** Đáy vật thể, % chiều cao khung — dùng để sắp lớp (đáy nhỏ = xa = vẽ trước). */
+  /** Đáy PHẦN HÌNH (mép dưới mực), % chiều cao khung — sắp lớp: đáy nhỏ = xa = vẽ trước. */
   readonly bottomPct: number;
   readonly band: DecorationBand;
   readonly lane: FloorLane | null;
@@ -113,7 +118,20 @@ export const LANE_BOTTOM_PCT: Readonly<Record<FloorLane, number>> = {
   near: 86,
 };
 
-/** Hệ số phóng theo làn — làn càng gần thì món càng to. */
+/**
+ * Hệ số phóng theo làn — làn càng gần thì món càng to.
+ *
+ * ⚠️ HỆ SỐ NÀY ĐÃ NẰM SẴN TRONG CỠ CỦA `DECORATION_LAYOUT`, KHÔNG NHÂN LẠI Ở ĐÂY HAY Ở CHỖ KHÁC.
+ *   Bảng `DECORATION_LAYOUT` dưới đây là số đã tính sẵn
+ *   (`boxW = NOMINAL × LANE_SCALE[lane] ÷ √(fracW · fracH · 4/3)`), ghi ra thành số cụ thể để đọc
+ *   được ngay trên giấy và để test canh bằng số. Ai nhân thêm `LANE_SCALE` một lần nữa sẽ làm món
+ *   ở làn `far` nhỏ đi 38% và món ở làn `near` phóng to gấp rưỡi — lỗi không có thông báo nào.
+ *
+ * ⭐ SỬA LỊCH SỬ: trước 2026-10-15 khối này là MÃ CHẾT (`grep -rn "LANE_SCALE" src/` chỉ ra đúng
+ *   dòng khai báo). Phối cảnh xa–gần được mô tả trong tài liệu nhưng chưa bao giờ được áp dụng:
+ *   cỡ món do một con số gõ tay khác quyết định, nên "làn gần" và "làn xa" không phân biệt được
+ *   bằng cỡ. Nay hệ số này là nguồn của cột `widthPct` trong bảng đó.
+ */
 export const LANE_SCALE: Readonly<Record<FloorLane, number>> = {
   far: 0.62,
   mid: 0.82,
@@ -170,36 +188,63 @@ export const CLAMP_INSET_PCT = 1;
 // =============================================================================
 
 /**
- * Bảng duy nhất: id món → dải + làn + cỡ.
+ * Bảng duy nhất: id món → dải + làn + cỡ + mép dưới phần hình.
  *
  * ⚠️ BẢNG NÀY PHẢI KHỚP DANH MỤC, VÀ CÓ TEST CANH. Một món trang trí mới thêm vào
  *    `shared/content/shop-items.json` mà quên điền ở đây thì bé mua xong sẽ **không thấy nó
  *    ở đâu cả** trên màn hình nhà — im lặng tuyệt đối. `pet-room-layout.test.ts` đối chiếu
  *    hai chiều với `decorationSlotOf()` của danh mục thật, nên quên là đỏ ngay.
  *
- * ⭐ CỠ ĐỒ DƯỚI SÀN ĐƯỢC SUY TỪ MỘT CỠ GỐC × HỆ SỐ LÀN, không phải gõ tay từng số — nếu không,
- *   chỉnh hệ số phóng sẽ phải sửa 5 dòng và dễ sửa lệch. Ghi chú dưới mỗi dòng là phép tính.
- *   Cỡ gốc = cỡ vật thể NẾU nó đứng ở làn gần nhất (hệ số 1,0).
+ * -----------------------------------------------------------------------------
+ * ⭐ QUY TẮC SUY RA MỌI CON SỐ DƯỚI ĐÂY (chủ dự án: *"Canh lại tỷ lệ của các đồ trang trí"*)
+ * -----------------------------------------------------------------------------
+ *   Ba nguyên nhân đã ĐO ĐƯỢC trên trình duyệt thật, không phải suy đoán:
+ *
+ *   1. **Đáy món không nằm trên đường làn.** Bản trước neo `bottomPct = topPct + heightPct / 2`,
+ *      tức là đáy HỘP ảnh. Nhưng ảnh shop là 512×512 có VIỀN TRONG SUỐT, nên mép dưới phần hình
+ *      (ink) nằm cao hơn đáy hộp: đo được món chìm **+7,4 … +10,4 %H** so với đường làn. Dải sàn
+ *      chỉ cao 35,7 %H ⇒ lệch 10 %H là hơn 1/4 dải sàn, mắt đọc ra "món đồ lơ lửng".
+ *   2. **Cỡ tuỳ tiện.** Phần hình trong ảnh chiếm 54–96 % bề ngang, nên hai món cùng `widthPct`
+ *      trông rất khác cỡ: bề rộng THẤY ĐƯỢC trải 5,9 → 17,1 %W (2,89 lần).
+ *   3. **`LANE_SCALE` là mã chết** — phối cảnh xa–gần chưa bao giờ được áp dụng (xem ghi chú ở
+ *      khối `LANE_SCALE`).
+ *
+ *   Công thức dùng để tính bảng này, từ bbox alpha thật của từng ảnh (`fracW`, `fracH`,
+ *   `inkBottom` — xem bảng `_verify/ink.json`), với ảnh VUÔNG đặt trong khung 4:3:
+ *
+ *     boxW = NOMINAL × LANE_SCALE[lane] ÷ √(fracW · fracH · 4/3)
+ *     boxH = boxW × 4/3                 ← hộp VUÔNG theo cqw, ảnh không méo
+ *     top  = LANE_BOTTOM_PCT[lane] + boxH × (0,5 − inkBottom)
+ *
+ *   `NOMINAL` = **17,0** cho đồ dưới sàn, **11,2** cho đồ treo tường (tường không có phối cảnh
+ *   ⇒ hệ số làn = 1). `boxW` chia cho √(fracW·fracH·4/3) là để bù phần trong suốt: món có ít
+ *   mực trong ảnh (hướng dương: 54 % × 89 %) phải được vẽ HỘP TO HƠN để phần HÌNH to đúng cỡ
+ *   danh nghĩa. Nhờ vậy "cùng 17 %W danh nghĩa" = "cùng cỡ mắt nhìn thấy", không phụ thuộc ảnh.
+ *
+ * -----------------------------------------------------------------------------
+ * ⚠️ VÌ SAO GHI SỐ CỤ THỂ CHỨ KHÔNG TÍNH LÚC CHẠY
+ * -----------------------------------------------------------------------------
+ *   Bảng này là DỮ LIỆU BỐ CỤC, không phải dữ liệu người dùng: 5 con số cho mỗi món, đổi rất ít,
+ *   và phải ĐỌC ĐƯỢC để còn canh tỉ lệ bằng mắt. Tính lúc chạy từ `fracW/fracH` buộc phải nạp
+ *   thuộc tính ảnh (hoặc chép lại 30 con số bbox) ở đây, rồi mỗi lần chỉnh một món lại phải chạy
+ *   một script đo ảnh mới biết kết quả — trong khi thứ cần chỉnh là "món này trông hơi to".
+ *   Test `room-layout.test.ts` khoá đúng những hệ quả mà mắt quan tâm (đáy trùng làn, bề rộng
+ *   trong khoảng của làn, làn gần to hơn làn xa), nên ghi số vẫn được canh đầy đủ.
  */
 export const DECORATION_LAYOUT: Readonly<Record<string, DecorationLayoutSpec>> = {
-  // --- Đồ TREO TƯỜNG (`slot: 'sky'`) — bề rộng 12–18%W, tâm y 22–32%H ---
-  'dec-picture': { band: 'wall', lane: null, widthPct: 13, heightPct: 17.3 },
-  'dec-flag': { band: 'wall', lane: null, widthPct: 12, heightPct: 16 },
-  'dec-rainbow': { band: 'wall', lane: null, widthPct: 16, heightPct: 21.3 },
-  'dec-balloon': { band: 'wall', lane: null, widthPct: 13, heightPct: 17.3 },
-  'dec-lantern': { band: 'wall', lane: null, widthPct: 12, heightPct: 16 },
+  // --- Đồ TREO TƯỜNG (`slot: 'sky'`) — NOMINAL 11,2, hệ số làn = 1 ---
+  'dec-picture': { band: 'wall', lane: null, widthPct: 13.0, heightPct: 17.3, inkBottom: 0.87 },
+  'dec-flag': { band: 'wall', lane: null, widthPct: 16.4, heightPct: 21.9, inkBottom: 0.69 },
+  'dec-rainbow': { band: 'wall', lane: null, widthPct: 12.8, heightPct: 17.1, inkBottom: 0.80 },
+  'dec-balloon': { band: 'wall', lane: null, widthPct: 12.4, heightPct: 16.5, inkBottom: 0.97 },
+  'dec-lantern': { band: 'wall', lane: null, widthPct: 12.2, heightPct: 16.2, inkBottom: 0.98 },
 
-  // --- Đồ DƯỚI SÀN (`slot: 'ground'`) — cỡ = cỡ gốc × hệ số làn ---
-  //     cỡ gốc 24 × 0,62 = 14,9
-  'dec-treehouse': { band: 'floor', lane: 'far', widthPct: 14.9, heightPct: 19.9 },
-  //     cỡ gốc 20 × 0,62 = 12,4
-  'dec-plant': { band: 'floor', lane: 'far', widthPct: 12.4, heightPct: 16.5 },
-  //     cỡ gốc 24 × 0,82 = 19,7
-  'dec-castle': { band: 'floor', lane: 'mid', widthPct: 19.7, heightPct: 26.3 },
-  //     cỡ gốc 20 × 0,82 = 16,4
-  'dec-sunflower': { band: 'floor', lane: 'mid', widthPct: 16.4, heightPct: 21.9 },
-  //     cỡ gốc 22 × 1,00 = 22,0
-  'dec-aquarium': { band: 'floor', lane: 'near', widthPct: 22, heightPct: 29.3 },
+  // --- Đồ DƯỚI SÀN (`slot: 'ground'`) — NOMINAL 17,0 × hệ số làn ---
+  'dec-treehouse': { band: 'floor', lane: 'far', widthPct: 10.4, heightPct: 13.8, inkBottom: 0.94 },
+  'dec-plant': { band: 'floor', lane: 'far', widthPct: 11.0, heightPct: 14.6, inkBottom: 0.95 },
+  'dec-castle': { band: 'floor', lane: 'mid', widthPct: 14.6, heightPct: 19.5, inkBottom: 0.89 },
+  'dec-sunflower': { band: 'floor', lane: 'mid', widthPct: 17.4, heightPct: 23.2, inkBottom: 0.95 },
+  'dec-aquarium': { band: 'floor', lane: 'near', widthPct: 20.3, heightPct: 27.1, inkBottom: 0.84 },
 };
 
 /**
@@ -227,21 +272,27 @@ const WALL_ORDER: readonly string[] = [
  *   lại là 3 hàng, mà 3 hàng thì hàng cuối rơi xuống dưới đường chân tường. Viết tay 5 ô là cách
  *   duy nhất vừa né được vùng giữa, vừa giữ mọi đáy trên chân tường, vừa ĐỌC ĐƯỢC ngay trên giấy.
  *
- * ⭐ HAI HÀNG, KHÔNG PHẢI MỘT: 5 món rộng 12–16%W cần 82%W cho một hàng, mà hai bên vùng giữa chỉ
- *   còn 6–32 và 68–94 (26%W mỗi bên). Chia hai hàng thì mỗi bên chứa được 2 món nhỏ (13 + 1 + 12).
+ * ⭐ HAI HÀNG, KHÔNG PHẢI MỘT: 5 món rộng 12,2–16,4%W cần 84%W cho một hàng, mà hai bên vùng
+ *   giữa chỉ còn 6–32 và 68–94 (26%W mỗi bên). Chia hai hàng thì mỗi bên chứa được 2 món nhỏ.
  *
- * ⭐ BỐ CỤC: hàng trên = tranh + cờ (trái) và cầu vồng (phải); hàng dưới = bóng bay (trái) và
+ * ⭐ BỐ CỤC: hàng trên = tranh + cầu vồng (mỗi bên một món); hàng dưới = cờ (trái) và bóng bay +
  *   đèn lồng (phải). Cân đối hai bên, và không món nào lấn vào cột của thú cưng.
  *
- * ⚠️ MỌI CON SỐ Ở ĐÂY CÓ TEST CANH (`room-layout.test.ts`): lề ≥6%W, không chồng nhau, không lấn
- *   vùng giữa, đáy < đường chân tường. Sửa số mà quên chạy test là đỏ ngay.
+ * ⚠️ MỌI CON SỐ Ở ĐÂY CÓ TEST CANH (`room-layout.test.ts`): lề ≥6%W, không chồng nhau (xét CẢ
+ *   hai chiều), không lấn vùng giữa, đáy < đường chân tường. Sửa số mà quên chạy test là đỏ ngay.
+ *
+ * ⚠️ SỐ ĐÃ KIỂM LẠI THEO BẢNG CỠ MỚI (2026-10-15, khi bảng đổi sang neo theo mép dưới phần hình):
+ *   hộp mỗi món tính theo `widthPct` của nó, tâm là số dưới đây. Kết quả: mọi hộp có lề ≥ 6%W,
+ *   không lấn vùng cấm 32–68%W (bóng bay mép trái 68,3 — sát nhưng hợp lệ), hai món cạnh nhau
+ *   cách ≥ 1%W (bóng bay mép phải 80,7 → đèn lồng mép trái 81,7), và đáy dưới cùng của phần hình
+ *   = 51,8%H < chân tường 61,8%H.
  */
 const WALL_SLOTS: readonly RoomPoint[] = [
-  { x: 12.5, y: 22 }, // tranh — trái, hàng trên (6–19%W, 13,35–30,65%H)
-  { x: 26, y: 22 }, // cờ — trái, hàng trên (20–32%W, 14–30%H)
-  { x: 76, y: 20 }, // cầu vồng — phải, hàng trên (68–84%W, 9,35–30,65%H)
-  { x: 12.5, y: 42 }, // bóng bay — trái, hàng dưới (6–19%W, 33,35–50,65%H)
-  { x: 76, y: 42 }, // đèn lồng — phải, hàng dưới (70–82%W, 34–50%H)
+  { x: 12.5, y: 24 }, // tranh     — trái, hàng trên, hộp [6.0, 19.0]
+  { x: 14.2, y: 44 }, // cờ        — trái, hàng dưới, hộp [6.0, 22.4]
+  { x: 81.5, y: 24 }, // cầu vồng  — phải, hàng trên, hộp [75.1, 87.9]
+  { x: 74.5, y: 44 }, // bóng bay  — phải, hàng dưới, hộp [68.3, 80.7]
+  { x: 87.8, y: 44 }, // đèn lồng  — phải, hàng dưới, hộp [81.7, 93.9]
 ];
 
 /**
@@ -287,6 +338,19 @@ export interface DecorationRenderSize {
 }
 
 /**
+ * Phần thông số mà phép quy đổi cỡ CẦN — chỉ hai con số kích thước.
+ *
+ * ⚠️ VÌ SAO KHÔNG NHẬN CẢ `DecorationLayoutSpec`: hàm này còn được gọi với `DecorationBox` (kết quả
+ *    đã tính, có `widthPct`/`heightPct` nhưng KHÔNG có `inkBottom` — ink chỉ dùng lúc neo đáy).
+ *    Đòi hỏi cả spec ở đây buộc chỗ gọi phải bịa một `inkBottom` không có ý nghĩa gì, chỉ để qua
+ *    kiểu. Khai báo đúng thứ mình dùng là cách nói rằng `inkBottom` KHÔNG tham gia tính cỡ.
+ */
+export interface DecorationSizeSpec {
+  readonly widthPct: number;
+  readonly heightPct: number;
+}
+
+/**
  * Cỡ ảnh của một món, quy ra `cqw`.
  *
  * ⭐ VÌ SAO ẢNH VÀ Ô CHẠM LÀ HAI THỨ KHÁC NHAU: ô chạm phải ≥64px cho tay trẻ con, nhưng ở khung
@@ -295,7 +359,7 @@ export interface DecorationRenderSize {
  *   tức là tỉ lệ lại phụ thuộc màn hình (đúng cái bệnh cũ). Nên: ô chạm giữ nguyên 64px, ảnh bên
  *   trong đo bằng `cqw` — hai thứ độc lập, ai lo việc nấy.
  */
-export function decorationRenderSize(spec: DecorationLayoutSpec): DecorationRenderSize {
+export function decorationRenderSize(spec: DecorationSizeSpec): DecorationRenderSize {
   return {
     widthCqw: round1(spec.widthPct),
     heightCqw: pctHToCqw(spec.heightPct),
@@ -319,7 +383,15 @@ function makeBox(
     topPct: round1(topPct),
     widthPct: spec.widthPct,
     heightPct: spec.heightPct,
-    bottomPct: round1(topPct + spec.heightPct / 2),
+    /*
+      ⚠️ `bottomPct` là đáy PHẦN HÌNH, KHÔNG phải đáy hộp ảnh.
+         Ảnh shop 512×512 có viền trong suốt: mép dưới mực nằm ở `inkBottom` (0..1 từ đỉnh), nên
+         đáy hình = tâm + cao × (inkBottom − 0,5) — không phải tâm + cao/2. Đây không phải chi tiết
+         làm đẹp: `sortByBottom` dùng đúng số này để quyết định món nào vẽ trước (vật có đáy thấp
+         hơn đứng trước), và test `'đáy món nằm đúng trên đường làn'` canh nó trùng `LANE_BOTTOM_PCT`
+         của làn. Dùng đáy hộp thì món chìm xuống 7–10%H so với đường làn đã định.
+    */
+    bottomPct: round1(topPct + spec.heightPct * (spec.inkBottom - 0.5)),
     band: spec.band,
     lane: spec.lane,
   };
@@ -349,8 +421,20 @@ export function defaultDecorationBox(itemId: string): DecorationBox | undefined 
   const lane = spec.lane ?? 'near';
   const leftPct = FLOOR_CENTER_X_PCT[itemId];
   if (leftPct === undefined) return undefined;
-  // Neo theo ĐÁY: đáy món nằm đúng đường làn, nên tâm nằm cao hơn nửa chiều cao.
-  const topPct = LANE_BOTTOM_PCT[lane] - spec.heightPct / 2;
+  /*
+    Neo theo MÉP DƯỚI PHẦN HÌNH (không phải đáy hộp): đáy hình nằm đúng đường làn, mà đáy hình
+    lệch so với tâm một khoảng `heightPct × (inkBottom − 0,5)`. Suy ngược ra tâm:
+
+      đáy hình = tâm + cao × (inkBottom − 0,5) = LANE_BOTTOM
+      ⇒ tâm   = LANE_BOTTOM − cao × (inkBottom − 0,5)
+              = LANE_BOTTOM + cao × (0,5 − inkBottom)
+
+    Bản trước dùng `LANE_BOTTOM − cao/2` (đáy HỘP trên đường làn) ⇒ món có viền trong suốt dày
+    ở đáy bị "chìm" 7–10%H, tức là lơ lửng giữa không trung thay vì đứng trên sàn. Đây là
+    CÙNG một phép tính với `bottomPct` trong `makeBox`, viết theo hai chiều — đổi một chỗ mà
+    quên chỗ kia là hai nguồn sự thật lệch nhau.
+  */
+  const topPct = LANE_BOTTOM_PCT[lane] + spec.heightPct * (0.5 - spec.inkBottom);
   return makeBox(itemId, spec, leftPct, topPct);
 }
 

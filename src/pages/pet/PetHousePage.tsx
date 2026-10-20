@@ -47,7 +47,9 @@ import { petNameVi } from '@shared/content/pets.js';
 import { stageDefinition } from '@shared/content/levels.js';
 import type {
   CurrencyKind,
+  EvolutionStage,
   InventoryItem,
+  PetType,
   RewardSnapshot,
   ShopItem,
   ShopItemCategory,
@@ -62,11 +64,20 @@ import { ShopItemCard } from '../../components/common/ShopItemCard.js';
 import { useRewards } from '../../hooks/useRewards.js';
 import { useRoomPlacements } from '../../hooks/useRoomPlacements.js';
 import { useShop } from '../../hooks/useShop.js';
+import {
+  accessoryBoxes,
+  accessoryFitOf,
+  DEFAULT_ACCESSORY_INK,
+  defaultKindForSlot,
+} from '../../lib/accessoryFit.js';
 import { cn } from '../../lib/cn.js';
+import { feetSplitFor, petAnchorFor } from '../../lib/petAnchors.js';
 import { ShopArtwork } from '../../lib/shopArtwork.js';
 import {
   BASEBOARD_PCT,
+  CLAMP_INSET_PCT,
   FLOOR_HEIGHT_PCT,
+  FLOOR_TOP_PCT,
   PET_BOTTOM_PCT,
   PET_HEIGHT_PCT,
   WALL_LINE_PCT,
@@ -77,7 +88,7 @@ import {
   placedDecorationBox,
   sortByBottom,
 } from '../../lib/roomLayout.js';
-import type { DecorationBox } from '../../lib/roomLayout.js';
+import type { DecorationBox, RoomPoint } from '../../lib/roomLayout.js';
 import { wasPetChooseSkipped } from '../../lib/petChooseSkip.js';
 import { useRewardStore } from '../../store/rewardStore.js';
 
@@ -138,20 +149,232 @@ const EMPTY_INVENTORY: readonly InventoryItem[] = [];
 const ROOM_ACCESSORY_WIDTH_CQW = 13;
 
 /**
- * Vị trí NGANG MẶC ĐỊNH khi bé bấm một món trong khay — rải đều từ 25% đến 75%W.
+ * Cạnh ô chạm dùng khi KHÔNG đọc được token `--sp-touch` (jsdom, CSS chưa nạp).
  *
- * ⭐ VÌ SAO RẢI ĐỀU CHỨ KHÔNG DỒN VỀ MỘT ĐIỂM: bấm ba món liên tiếp mà món nào cũng nhảy vào đúng
- *   một chỗ thì chúng chồng khít lên nhau và bé không thấy mình vừa đặt được gì. Nhưng vị trí phải
- *   ỔN ĐỊNH THEO TỪNG MÓN (suy từ chỉ số trong danh sách bé sở hữu), không theo thứ tự bấm — nếu
- *   không, đặt xong món thứ nhất thì món thứ hai nhảy vào chỗ trống vừa bị bỏ lại.
+ * ⚠️ Đây là số DỰ PHÒNG cho môi trường không có layout, KHÔNG phải nguồn sự thật: trình duyệt
+ *    thật luôn đọc `--sp-touch` (64px, 56px dưới 480px — `src/styles/tokens.css`) nên lưới luôn
+ *    khớp đúng ô chạm đang vẽ. Hardcode 56/64 ở đây là tự tạo nguồn thứ hai, lệch ngay ngày ai
+ *    đó chỉnh token.
  */
-function accessoryDropX(index: number, count: number): number {
-  if (count <= 1) return 50;
-  return 25 + (50 * index) / (count - 1);
+const FALLBACK_TOUCH_PX = 64;
+
+/**
+ * Vị trí DỰ PHÒNG khi khung phòng CHƯA ĐO ĐƯỢC (`getBoundingClientRect` trả 0×0 — jsdom, hoặc
+ * khung đang `display:none`). Không thể chia lưới khi không biết khung rộng bao nhiêu.
+ *
+ * ⚠️ Chỉ dùng ở nhánh "không đo được". Trình duyệt thật KHÔNG đi qua đây — nếu nó đi qua thì
+ *    lưới hai chiều đã không chạy, tức là lỗi "10 món chồng lên nhau" quay lại.
+ */
+const FALLBACK_DROP_POINT: RoomPoint = { x: 50, y: 70 };
+
+/** Kích thước khung phòng đo được, đơn vị px. */
+interface FrameSize {
+  readonly width: number;
+  readonly height: number;
 }
 
-/** Vị trí DỌC mặc định của một phụ kiện: trên sàn, phía sau/dưới con vật. (%H) */
-const ROOM_ACCESSORY_DROP_Y_PCT = 70;
+/**
+ * Một ô trong lưới thả phụ kiện: toạ độ TÂM ô, đơn vị % khung (x theo %W, y theo %H).
+ *
+ * ⭐ VÌ SAO LƯỚI HAI CHIỀU CHỨ KHÔNG MỘT HÀNG (chủ dự án: *"Phụ kiện không di chuyển tự do
+ *   được"* — đo trên bản production 360×640, đặt cả 10 phụ kiện rồi hỏi `elementFromPoint` tại
+ *   TÂM từng món: **7/10 món bấm trúng món KHÁC**, tức là không kéo được):
+ *
+ *     Bản cũ rải 10 món trên MỘT hàng 25→75%W, cùng `y = 70`. Khung 328px ⇒ 50%W = 164px ÷ 10 =
+ *     **bước 18px**, mà ô chạm `size-touch` = **56px** ⇒ chồng **38px** mỗi cặp. Cần 560px, có
+ *     164px. Không có cách nào nhét 10 ô 56px vào một hàng 164px — phải dùng chiều DỌC.
+ *
+ *   Lưới tính từ kích thước khung THẬT nên tự đúng ở mọi viewport: 360px ra 5 cột × 2 hàng,
+ *   còn iPad/laptop (khung 788/848px) ra 10 cột × 1 hàng — tức là vẫn giữ được bố cục một hàng
+ *   ở nơi có đủ chỗ.
+ *
+ * ⭐ VỊ TRÍ PHẢI ỔN ĐỊNH THEO TỪNG MÓN (suy từ chỉ số trong danh sách bé sở hữu), KHÔNG theo thứ
+ *   tự bấm — nếu không, đặt xong món thứ nhất thì món thứ hai nhảy vào chỗ trống vừa bị bỏ lại,
+ *   và bé thấy cả khay đồ xáo trộn sau mỗi cú bấm. Chỉ số đó có sẵn ở chỗ gọi
+ *   (`ownedAccessories.findIndex`), và bản thân danh sách là TẤT ĐỊNH: server trả inventory theo
+ *   `ORDER BY acquired_at ASC, item_id ASC` (xem `RewardService`), nên hai lần tải cho cùng thứ tự.
+ *
+ * ⚠️ KHÔNG HẠ `size-touch` ĐỂ CHO VỪA MỘT HÀNG. 56px là NGƯỠNG CHẠM tối thiểu cho tay trẻ con
+ *    (`tokens.css`); bóp nó xuống 18px là đổi một lỗi bố cục lấy một lỗi trải nghiệm nặng hơn.
+ *
+ * ⚠️ KHÔNG `export` HÀM NÀY. ESLint của dự án bật `react-refresh/only-export-components` với
+ *    `--max-warnings 0`: một tệp chỉ được export component (nếu không, Fast Refresh mất trạng thái
+ *    của cả trang mỗi lần sửa). Hàm thuần này chỉ dùng trong tệp — cần test nó thì tách sang
+ *    `src/lib/` chứ đừng export từ đây.
+ *
+ * @param index Chỉ số ỔN ĐỊNH của món trong danh sách bé sở hữu.
+ * @param count Tổng số phụ kiện bé sở hữu (kích thước lưới).
+ * @param frame Khung phòng đo được (px) — quyết định `tw`/`th`.
+ * @param touchPx Cạnh ô chạm (px), đọc từ token `--sp-touch`.
+ */
+function accessoryDropPoint(
+  index: number,
+  count: number,
+  frame: FrameSize,
+  touchPx: number,
+): RoomPoint {
+  const total = Math.max(1, Math.trunc(Number.isFinite(count) ? count : 1));
+  const slot = Math.min(Math.max(0, Math.trunc(Number.isFinite(index) ? index : 0)), total - 1);
+
+  // Không đo được khung (hoặc token hỏng) ⇒ không có gì để chia. Về chỗ dự phòng, KHÔNG ném:
+  // hàm này chạy trong `onClick`, ném ở đó là bé bấm vào khay và không thấy gì xảy ra.
+  if (!(frame.width > 0) || !(frame.height > 0) || !(touchPx > 0)) {
+    return FALLBACK_DROP_POINT;
+  }
+
+  // Bước lưới quy ra % khung: ô chạm 56px trong khung 328px = 17,1%W (chứ không phải 56 "đơn vị").
+  const tw = (touchPx / frame.width) * 100;
+  const th = (touchPx / frame.height) * 100;
+
+  // Vùng TÂM hợp lệ: mỗi mép chừa nửa ô chạm (để cả ô nằm trong khung) cộng lề kẹp biên.
+  const xMin = CLAMP_INSET_PCT + tw / 2;
+  const xMax = 100 - CLAMP_INSET_PCT - tw / 2;
+  /*
+    ⚠️⚠️ CHIỀU DỌC KHÔNG TRỪ `CLAMP_INSET_PCT` Ở MÉP DƯỚI — ĐÂY LÀ CHỖ ĐÃ ĐO ĐƯỢC, ĐỪNG "SỬA
+    CHO ĐỐI XỨNG":
+
+    Dải sàn chỉ cao 35,7%H. Với hai hàng ô chạm 56px (360×640: `th` = 22,8%H), khoảng cách dọc
+    giữa hai tâm là `yMax − yMin`:
+
+      • trừ 1%H ở mép dưới  ⇒ 11,9%H = **28,8px** — chỉ hơn NỬA ô chạm (28px) đúng **0,8px**
+      • không trừ           ⇒ 12,9%H = **31,3px** — hơn 3,3px
+
+    Đo trên trình duyệt thật: phương án 28,8px làm **3/10 món vẫn bị đè** (bấm vào tâm `acc-bow`
+    lại trúng `acc-shoes`, `acc-hat` → `acc-crown`, `acc-backpack` → `acc-star-glasses`) — tâm món
+    hàng trên rơi đúng vào hộp món hàng dưới (món `front` có `z-10` nên nó thắng). 0,8px mỏng hơn
+    cả sai số làm tròn của phép cuộn trang, nên nó KHÔNG phải một ràng buộc thật.
+
+    Còn `CLAMP_INSET_PCT` sinh ra để giữ một món BÉ KÉO bên trong khung; ở đây toạ độ do ta tự
+    tính, và ô chạm đứng sát mép dưới vẫn nằm trọn trong khung. 1%H ấy là toàn bộ biên an toàn
+    theo chiều dọc — đổi nó là quay lại lỗi "bấm vào món này ra món kia".
+  */
+  const yMin = FLOOR_TOP_PCT + th / 2;
+  const yMax = 100 - th / 2; // ⚠️ xem ghi chú ngay trên: KHÔNG trừ CLAMP_INSET_PCT.
+  if (xMax <= xMin || yMax <= yMin) return FALLBACK_DROP_POINT;
+
+  const bandW = xMax - xMin;
+  const bandH = yMax - yMin;
+
+  /*
+    SỐ CỘT / SỐ HÀNG — suy từ một ràng buộc ĐO ĐƯỢC, không phải suy từ "chia đều cho đẹp":
+
+    • Hai tâm món chỉ "bấm trúng chính nó" khi chúng cách nhau ≥ NỬA ô chạm theo CẢ hai trục.
+      Cách nhau ít hơn nửa ô thì tâm món này nằm TRONG hộp món kia ⇒ `elementFromPoint` trả về
+      món vẽ sau. Đó đúng là lỗi 7/10 món của bản cũ.
+    • Nên số cột tối đa = `bandW / (tw / 2)`, số hàng tối đa = `1 + bandH / (th / 2)`.
+    • Chọn SỐ HÀNG NHỎ NHẤT còn hợp lệ (rows chạy từ `ceil(count / maxCols)` lên). Ít hàng hơn
+      ⇒ cột rộng hơn ⇒ ô chạm ít chồng nhau hơn ⇒ dễ bấm hơn. Hàng chỉ tăng khi số món không
+      còn nhét vừa một hàng.
+
+    Kết quả ở ba viewport của dự án (khung 328×246 / 788×591 / 848×636):
+      • 360×640  : tw 17,1%W, th 22,8%H ⇒ 5 cột × 2 hàng
+      • 820×1180 : tw  8,1%W, th 10,8%H ⇒ 10 cột × 1 hàng
+      • 1280×720 : tw  7,5%W, th 10,1%H ⇒ 10 cột × 1 hàng
+  */
+  const maxCols = Math.max(1, Math.floor(bandW / (tw / 2)));
+  const maxRows = Math.max(1, 1 + Math.floor(bandH / (th / 2)));
+
+  let rows = Math.max(1, Math.ceil(total / maxCols));
+  if (rows > maxRows) rows = maxRows;
+  const cols = Math.ceil(total / rows);
+
+  const row = Math.floor(slot / cols);
+  const col = slot % cols;
+
+  // Tâm ô = tâm của dải chia đều, nên món đầu và món cuối không dính mép.
+  const cellW = bandW / cols;
+  const x = xMin + (col + 0.5) * cellW;
+  // Một hàng ⇒ đứng ở hàng TRÊN CÙNG của dải sàn (gần chân tường, không che con vật);
+  // nhiều hàng ⇒ chia đều từ `yMin` tới `yMax`.
+  const y = rows <= 1 ? yMin : yMin + (row * bandH) / (rows - 1);
+
+  // Kẹp lần cuối: sai số dấu phẩy động không được đẩy một món ra ngoài vùng hợp lệ.
+  return clampToRoom(x, y);
+}
+
+/**
+ * Đọc cạnh ô chạm từ CÙNG NGUỒN với class `size-touch` — token `--sp-touch` trong `tokens.css`.
+ *
+ * ⚠️ Không hardcode 56/64: token đổi theo breakpoint (480px) và có thể đổi lần nữa. Đọc token
+ *    nghĩa là lưới thả luôn khớp đúng ô chạm đang được VẼ, không phải ô chạm ta TƯỞNG.
+ */
+function readTouchPx(): number {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return FALLBACK_TOUCH_PX;
+  const raw = window.getComputedStyle(document.documentElement).getPropertyValue('--sp-touch');
+  const parsed = Number.parseFloat(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : FALLBACK_TOUCH_PX;
+}
+
+/**
+ * Điểm thả cho một phụ kiện, đo trên khung phòng THẬT của trình duyệt.
+ *
+ * ⚠️ `frame` là phần tử khung 4:3 (`ref` gắn ở dưới). `null` = khung chưa gắn ⇒ về chỗ dự phòng,
+ *    không ném — hàm được gọi từ `onClick` của nút trong khay.
+ */
+function accessoryDropPointInRoom(
+  index: number,
+  count: number,
+  frame: HTMLElement | null,
+): RoomPoint {
+  if (frame === null) return FALLBACK_DROP_POINT;
+  const rect = frame.getBoundingClientRect();
+  return accessoryDropPoint(index, count, { width: rect.width, height: rect.height }, readTouchPx());
+}
+
+/**
+ * TÂM và CỠ của một món ĐANG MẶC, quy về hệ toạ độ của khung phòng — để đặt một vùng chạm trong
+ * suốt đúng lên chỗ con vật đang vẽ món đó.
+ *
+ * ⭐ VÌ SAO TÍNH LẠI MÀ KHÔNG "ƯỚC LƯỢNG MỘT CHỖ NÀO ĐÓ TRÊN CON VẬT":
+ *   Vùng chạm phải TRÙNG chỗ mắt bé nhìn thấy món đồ — nếu lệch thì bé bấm vào cái mũ mà không ăn.
+ *   Toạ độ của món do `PetAvatar` quyết bằng đúng công thức `accessoryBoxes(...)`, nên ở đây DÙNG
+ *   LẠI chính công thức đó (cùng neo `petAnchorFor` + `feetSplitFor`, cùng tỷ lệ mực
+ *   `accessoryFitOf`) — KHÔNG tự nghĩ ra một con số mới, vì hai nguồn toạ độ sẽ lệch nhau đúng vào
+ *   ngày ai đó chỉnh một hằng số neo.
+ *
+ * ⚠️ HAI HỆ ĐƠN VỊ, PHẢI QUY ĐỔI — ĐÂY LÀ CHỖ DỄ SAI NHẤT:
+ *   `accessoryBoxes` trả toạ độ theo **hộp `1em` CỦA CON VẬT** (`cx`/`cy` 0..1 của hộp đó), còn
+ *   vùng chạm phải nằm trong **khung phòng** (`left`/`top` tính bằng %). Hộp `1em` của con vật
+ *   trong phòng cao `PET_HEIGHT_PCT` %H và RỘNG BẰNG NÓ (`pctHToCqw(PET_HEIGHT_PCT)` %W — ảnh gốc
+ *   vuông), và nó được canh giữa ngang ở 50%W, neo ĐÁY ở `PET_BOTTOM_PCT` %H. Nên:
+ *     • `left%` = `50 + (cx − 0,5) × petHộp%W`
+ *     • `top%`  = `PET_BOTTOM_PCT − PET_HEIGHT_PCT + cy × PET_HEIGHT_PCT`
+ *   Bỏ bước quy đổi này là vùng chạm nhảy sang một chỗ hoàn toàn khác (hộp `1em` ≈ 34,5%W rộng,
+ *   còn `cx` là 0..1 — lẫn hai hệ thì lệch tới hàng chục % khung).
+ *
+ * ⚠️ Trả `null` khi món không có `slot` hợp lệ hoặc neo hỏng — người gọi bỏ qua, KHÔNG ném lỗi
+ *    (hàm này chạy trong lúc render; ném ở đó là trắng cả màn hình của bé vì một món dữ liệu xấu).
+ */
+function wornAccessoryHitCenter(
+  item: ShopItem,
+  petType: PetType,
+  evolutionStage: EvolutionStage,
+): { leftPct: number; topPct: number; sideCqw: number } | null {
+  const slot = accessorySlotOf(item);
+  if (slot === null) return null;
+  const anchor = petAnchorFor(petType, evolutionStage);
+  const feet = feetSplitFor(petType, evolutionStage);
+  const fit = accessoryFitOf(item.id);
+  const kind = fit?.kind ?? defaultKindForSlot(slot);
+  const placements = accessoryBoxes(
+    item.id,
+    kind,
+    anchor,
+    fit?.ink ?? DEFAULT_ACCESSORY_INK,
+    feet,
+  );
+  const first = placements[0];
+  if (first === undefined) return null;
+
+  // Bề rộng hộp `1em` của con vật, tính % bề rộng khung (= `cqw`, xem `pctHToCqw`).
+  const petBoxPct = pctHToCqw(PET_HEIGHT_PCT);
+  const leftPct = 50 + (first.box.cx - 0.5) * petBoxPct;
+  const topPct = PET_BOTTOM_PCT - PET_HEIGHT_PCT + first.box.cy * PET_HEIGHT_PCT;
+  // Vùng chạm theo bề rộng MỰC của món (đã nhân hệ số "cỡ mực nhìn thấy"), cộng đệm để không nhỏ
+  // hơn một ngón tay — sàn thật vẫn do `min-w/min-h touch` lo, đây chỉ là gợi ý cỡ.
+  const sideCqw = first.box.side * petBoxPct;
+  return { leftPct, topPct, sideCqw };
+}
 
 /**
  * Số dư của bé theo một loại tiền tệ.
@@ -191,6 +414,14 @@ export function PetHousePage() {
   const queuedSavesRef = useRef(0);
   const [roomDraftVersion, setRoomDraftVersion] = useState(0);
   const dragStartRef = useRef<{ itemId: string; x: number; y: number } | null>(null);
+  /**
+   * Khung 4:3 của phòng — nguồn DUY NHẤT để biết "một phần trăm của khung là bao nhiêu px".
+   *
+   * ⚠️ Cần cho lưới thả phụ kiện (`accessoryDropPointInRoom`): bước lưới phải bằng đúng ô chạm
+   *    56/64px QUY RA % của khung thật. Đoán một khung danh nghĩa là lỗi "10 món chồng lên nhau"
+   *    quay lại ngay trên màn nào có khung khác kích thước dự đoán.
+   */
+  const roomFrameRef = useRef<HTMLDivElement | null>(null);
 
   /**
    * Tự mở màn chọn con khi bé CHƯA từng chọn con (`!petChosen`) và chưa bấm "Để sau" trong phiên.
@@ -725,6 +956,72 @@ export function PetHousePage() {
   });
 
   /**
+   * VÙNG CHẠM THÁO MÓN ĐANG MẶC — chủ dự án: *"phụ kiện không di chuyển tự do được"*.
+   *
+   * ⭐ VẤN ĐỀ: món đang mặc chỉ còn là HÌNH VẼ trên người con vật, mà toàn bộ cây `PetAvatar` là
+   *   `pointer-events-none` ⇒ **không có gì để chạm**. Bé muốn bỏ mũ ra phải cuộn xuống thẻ cửa
+   *   hàng mới bấm được "Bỏ ra" — với trẻ 7 tuổi thì "bấm vào chính cái mũ trên đầu con mèo" tự
+   *   nhiên hơn hẳn. Nay bé bấm vào chính món đó ⇒ nó rơi về `placement` cũ trong `roomDraft` và
+   *   trở thành vật thể kéo được như mọi món khác trên sàn.
+   *
+   * ⚠️ LUẬT "MỘT MÓN MỘT CHỖ" GIỮ NGUYÊN: đây chỉ là một lớp PHỦ TRONG SUỐT (không vẽ món lần
+   *    hai). `wornIds` vẫn lọc món đang mặc khỏi `roomAccessories` và `trayAccessories` — sau khi
+   *    bấm "Tháo", nó rời khỏi `equippedItems` nên hiện ra dưới sàn ĐÚNG MỘT lần, không bao giờ 2.
+   *
+   * ⚠️ `pointer-events-none` Ở LỚP NGOÀI + `pointer-events-auto` Ở CHÍNH NÚT: lớp phủ kín cả
+   *    phòng, nên nếu nó nhận con trỏ thì bé không còn chạm được vào con vật hay đồ trang trí.
+   *    Cùng khuôn với `ScrollToTop`.
+   *
+   * ⚠️ Toạ độ lấy từ `wornAccessoryHitCenter` — DÙNG LẠI đúng công thức neo của `PetAvatar`, không
+   *    tự nghĩ ra con số. Xem ghi chú hàm đó (hai hệ đơn vị, phải quy đổi).
+   */
+  const wornHitTargets = equippedItems
+    .map((item) => ({
+      item,
+      hit: wornAccessoryHitCenter(item, snapshot.pet.petType, snapshot.pet.evolutionStage),
+    }))
+    .filter((entry): entry is { item: ShopItem; hit: NonNullable<ReturnType<typeof wornAccessoryHitCenter>> } => entry.hit !== null);
+
+  if (wornHitTargets.length > 0) {
+    floorNodes.push({
+      /*
+        Cùng đáy với con vật (`PET_BOTTOM_PCT`): `sortByBottom` giữ ổn định các khoá bằng nhau, nên
+        các nút này được chèn NGAY SAU con vật ⇒ nằm TRÊN hình vẽ món. Cộng `z-10` cho chắc (con vật
+        nằm ở tầng `z: auto`).
+      */
+      bottomPct: PET_BOTTOM_PCT,
+      node: (
+        <div
+          key="__worn-hits__"
+          className="pointer-events-none absolute inset-0"
+          data-room-worn-hits=""
+        >
+          {wornHitTargets.map(({ item, hit }) => (
+            <button
+              key={item.id}
+              type="button"
+              className="pointer-events-auto absolute z-10 flex size-touch -translate-x-1/2 -translate-y-1/2 touch-none items-center justify-center rounded-kid focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand"
+              style={{ left: `${hit.leftPct}%`, top: `${hit.topPct}%` }}
+              aria-label={t('pet.roomAccessoryRemove', { item: item.name_vi, pet: petName })}
+              /*
+                ⚠️ `equipped: false` là TRẠNG THÁI ĐÍCH (không phải lệnh đảo) — cùng hợp đồng với nút
+                "Bỏ ra" ở thẻ cửa hàng. `void`: `equip` không bao giờ ném (lỗi ghi vào `shopStore`),
+                nhưng nó trả Promise và đây là một `onClick`.
+              */
+              onClick={() => void equip(item.id, false)}
+            >
+              {/*
+                KHÔNG vẽ gì bên trong: đây là vùng chạm TRONG SUỐT. Món đã được `PetAvatar` vẽ trên
+                người con vật — vẽ lại ở đây là chiếc mũ thứ hai, đúng thứ luật một-món-một-chỗ cấm.
+              */}
+            </button>
+          ))}
+        </div>
+      ),
+    });
+  }
+
+  /**
    * Phụ kiện slot khác `back` (mũ / kính / khăn / giày) vẽ SAU con vật ⇒ `bottomPct` lớn hơn đáy
    * con vật. Một đơn vị là đủ để `sortByBottom` xếp chúng ra sau, mà vẫn giữ nguyên thứ tự tương
    * đối giữa các món với nhau (ổn định theo thứ tự danh sách).
@@ -791,6 +1088,7 @@ export function PetHousePage() {
              hay `vw` là quay lại đúng lỗi cũ (đồ trang trí nhỏ xíu trên màn lớn).
         */}
         <div
+          ref={roomFrameRef}
           aria-label="Phòng của thú cưng; kéo đồ trang trí và phụ kiện để sắp xếp"
           className="relative aspect-[4/3] w-full overflow-hidden rounded-card border-2 border-line bg-amber-50 [container-type:inline-size]"
           onPointerMove={(event) => {
@@ -897,13 +1195,17 @@ export function PetHousePage() {
                   disabled={!roomReady || room.isLoading || room.placements === null}
                   aria-label={t('pet.roomAccessoryPlace', { item: item.name_vi })}
                   onClick={() => {
-                    // Vị trí ỔN ĐỊNH theo chỉ số trong danh sách bé sở hữu — xem `accessoryDropX`.
+                    /*
+                      Vị trí ỔN ĐỊNH theo chỉ số trong danh sách bé sở hữu (không theo thứ tự
+                      bấm) + lưới hai chiều đo theo khung THẬT — xem `accessoryDropPoint`.
+                    */
                     const index = ownedAccessories.findIndex((owned) => owned.id === item.id);
-                    moveDecoration(
-                      item.id,
-                      accessoryDropX(index, ownedAccessories.length),
-                      ROOM_ACCESSORY_DROP_Y_PCT,
+                    const point = accessoryDropPointInRoom(
+                      index,
+                      ownedAccessories.length,
+                      roomFrameRef.current,
                     );
+                    moveDecoration(item.id, point.x, point.y);
                   }}
                   className="flex size-touch shrink-0 items-center justify-center rounded-kid border-2 border-line bg-surface disabled:opacity-60"
                 >

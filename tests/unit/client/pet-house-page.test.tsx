@@ -30,6 +30,7 @@ import '@/i18n/index.js';
 import { ApiClientError } from '@/api/client.js';
 import { rewardsApi, roomApi } from '@/api/endpoints.js';
 import { PetHousePage } from '@/pages/pet/PetHousePage.js';
+import { decorationSpec } from '@/lib/roomLayout.js';
 import { __resetRewardStoreForTests, useRewardStore } from '@/store/rewardStore.js';
 import { useSessionStore } from '@/store/sessionStore.js';
 import { __resetShopStoreForTests } from '@/store/shopStore.js';
@@ -647,10 +648,26 @@ describe('PetHousePage — phòng đúng tỉ lệ khung, không phụ thuộc v
 
     const art = button.querySelector<HTMLElement>(':scope > span');
     expect(art, 'ảnh phải nằm trong một khung đo theo khung phòng').not.toBeNull();
-    // 13%W của khung ⇒ 13cqw (1cqw = 1% bề rộng khung; khung có `container-type: inline-size`).
-    // ⚠️ jsdom không hiểu đơn vị `cqw` nên khai báo đi qua biến CSS — xem `roomSizeStyle`.
-    expect(art!.style.getPropertyValue('--room-w')).toBe('13cqw');
-    expect(art!.style.getPropertyValue('--room-h')).toBe('13cqw');
+    /*
+      ⭐ KHÔNG chép tay con số của bảng bố cục vào đây. Test này canh BA việc, không canh một hằng:
+        (a) cỡ ảnh suy TỪ BẢNG `DECORATION_LAYOUT` — đọc thẳng `decorationSpec`;
+        (b) đơn vị là `cqw` (1cqw = 1% bề rộng khung; khung có `container-type: inline-size`);
+        (c) hộp VUÔNG (`--room-w` === `--room-h`) ⇒ ảnh 1:1 không bị méo.
+
+      ⚠️ Bản cũ ghi cứng `'13cqw'`. 13 CHÍNH LÀ `widthPct` cũ của bóng bay chép tay vào test, nên
+         ngày bảng bố cục đổi theo một quy tắc mới (2026-10-20: bóng bay 13 → 12,4 vì cỡ nay suy
+         từ bbox MỰC thay vì gõ tay), test đỏ dù hành vi KHÔNG đổi. Chép literal ở đây nghĩa là mỗi
+         lần chỉnh bảng lại phải sửa test — và người sau sẽ "sửa cho khớp" mà không hiểu ý định.
+         Đọc qua `decorationSpec` thì test canh ĐÚNG điều nó muốn canh.
+
+      ⚠️ jsdom không hiểu đơn vị `cqw` nên khai báo đi qua biến CSS — xem `roomSizeStyle`.
+    */
+    const spec = decorationSpec('dec-balloon');
+    expect(spec, 'bóng bay phải có trong DECORATION_LAYOUT').toBeDefined();
+    const expectedSize = `${spec!.widthPct}cqw`;
+    expect(art!.style.getPropertyValue('--room-w')).toBe(expectedSize);
+    // Vế này là thứ canh "hộp VUÔNG" — bỏ nó là mất khả năng phát hiện ảnh bị bóp méo.
+    expect(art!.style.getPropertyValue('--room-h')).toBe(expectedSize);
     expect(art!.className).not.toContain('size-6');
   });
 

@@ -34,7 +34,6 @@
       ],
       "exerciseIds": [
         "my-friends-birthday/l1/memory-match",
-        "my-friends-birthday/l1/memory-match-2",
         "my-friends-birthday/l1/missing-letter",
         "my-friends-birthday/l1/listen-tap",
         "my-friends-birthday/l1/word-picture",
@@ -400,13 +399,16 @@
         "starters.dad",
         "starters.mum",
         "starters.brother",
-        "starters.sister"
+        "starters.sister",
+        "starters.grandfather",
+        "starters.grandmother",
+        "starters.cousin"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -461,22 +463,6 @@
         "kind": "memory_match",
         "pairMode": "en_vi",
         "pairs": 5
-      }
-    },
-    {
-      "id": "my-friends-birthday/l1/memory-match-2",
-      "lessonId": "my-friends-birthday/l1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.grandfather",
-        "starters.grandmother",
-        "starters.cousin"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
       }
     },
     {

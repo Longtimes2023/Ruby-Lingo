@@ -136,8 +136,10 @@ bài từ 1 → 2 loại, áp dụng được cho **cả** alphabet/numbers, **k
    **chứa** chuỗi `preposition`; chủ ngữ trong `sentenceEn` phải khớp `word.en` của một từ trong
    `wordIds`.
 7. Id exercise: `{lessonId}/{game-slug}`; `game-slug` = kebab-case của `gameType`.
-8. `memory_match` giữ quy ước **≤ 6 cặp/exercise** (bài 7–8 từ đã tách thành `memory-match` +
-   `memory-match-2`) — để vừa lưới thẻ trên điện thoại.
+8. `memory_match` — **Cập nhật 2026-10-19**: mỗi bài ĐÚNG **một** exercise, `wordIds` = toàn bộ từ
+   của bài, `pairs` = số từ. Quy ước cũ "≤ 6 cặp + tách đôi `memory-match`/`memory-match-2`" đã
+   **bãi bỏ** (chủ dự án báo bé thấy hai trò "Lật thẻ ghi nhớ" giống nhau). Lưới thẻ canh giữa hàng
+   cuối nên số thẻ 10/12/14/16 đều đẹp.
 9. `shared/content/content-index.json` là **file dẫn xuất** ⇒ sinh lại bằng
    `npm run gen:content-index -- --apply`, **không sửa tay**.
 10. Luật dự án: không câu chữ trách móc; **tiếng Anh chỉ để ĐỌC, tiếng Việt chỉ để HIỂN THỊ**.

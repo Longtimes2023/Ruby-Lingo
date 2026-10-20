@@ -94,9 +94,12 @@ picturable.
 6. **V7 — kích thước bài:** 4–8 từ/bài (không sửa `lesson.wordIds`, không thêm/bớt từ để "ép" đủ).
 7. **V6 — emoji duy nhất trong chủ đề** (không liên quan khi thêm exercise, nhưng đừng thêm từ mới).
 8. **V12 — tranh cảnh:** không đụng `sceneImage`/`sceneAlt`.
-9. **`memory_match` hiện khai ≤ 6 cặp/exercise** (bài 7–8 từ đã tách sẵn 2 exercise
-   `memory-match` + `memory-match-2`). Đây là **quy ước nội dung** cho vừa lưới thẻ, KHÔNG phải
-   giới hạn cứng (schema cho phép tới 10). ⇒ **Giữ nguyên** cách tách này, không gộp lại.
+9. **`memory_match` — MỖI BÀI ĐÚNG MỘT exercise, `wordIds` = TOÀN BỘ từ của bài, `pairs` = số từ**
+   (2026-10-19). Trước đây các bài 7–8 từ bị chẻ thành 2 exercise `memory-match` + `memory-match-2`
+   (`pairs` mỗi cái ≤ 6) cho vừa lưới thẻ. Chủ dự án báo bé thấy **HAI trò "Lật thẻ ghi nhớ" giống
+   hệt nhau** trong cùng một bài ⇒ **gộp lại một trò**. Quy ước cũ (chia đôi) đã bị **bãi bỏ**,
+   đừng tái lập. Đổi lại, lưới thẻ nay **canh giữa hàng cuối** (`flex flex-wrap justify-center`,
+   `MemoryMatchGame.tsx`) nên số thẻ 10/12/14/16 đều đẹp — không phải cắt từ, không phải hạ cỡ thẻ.
 10. **`prepositions` — 2 luật schema (`superRefine`):**
     - `slots[i].correctSlot` **phải nằm trong** `slots[i].slots`;
     - `slots[i].sentenceEn` **phải chứa** chuỗi `slots[i].preposition`.
@@ -131,8 +134,11 @@ picturable.
 
 Ví dụ: `my-body/l1/missing-letter`, `at-the-clothes-shop/l3/prepositions`.
 
-Nếu **cùng một bài** có **hai** exercise cùng loại (chỉ xảy ra với `memory_match` do giới hạn 6 cặp),
-thêm hậu tố `-2`: `my-body/l1/memory-match` + `my-body/l1/memory-match-2` (đã có sẵn — giữ nguyên).
+⚠️ **Hậu tố `-2` đã bị BÃI BỎ — không dùng nữa** (2026-10-19). Trước đây một bài có hai
+`memory_match` thì thêm `-2` (`my-body/l1/memory-match` + `my-body/l1/memory-match-2`). Nay mỗi bài
+chỉ có **đúng một** `memory_match` (xem luật 9 ở mục 3), nên **không id nào còn `-2`**. Thêm hậu tố
+`-2` cho cùng một `gameType` trong một bài là **lỗi** — nó tái sinh chính cái lỗi "bé thấy hai trò
+giống nhau" mà chủ dự án đã báo.
 
 ### 4.2 Khai `lesson.exerciseIds`
 
@@ -146,7 +152,6 @@ Ví dụ (bài `my-body/l1` sau khi bổ sung):
 ```jsonc
 "exerciseIds": [
   "my-body/l1/memory-match",
-  "my-body/l1/memory-match-2",
   "my-body/l1/missing-letter",
   "my-body/l1/listen-tap",
   "my-body/l1/word-picture"
@@ -233,8 +238,9 @@ Ví dụ (bài `my-body/l1` sau khi bổ sung):
   đúng chuỗi `preposition` (ví dụ `preposition: "next to"` ⇒ câu phải viết "... is next to the box.").
 - Giới từ dùng đúng bộ đã có layout: `in`, `on`, `under`, `next to`, `behind`, `between`, `in front of`.
 
-**`memory_match`**: **giữ nguyên** toàn bộ exercise hiện có (id, `pairMode`, `pairs`, `wordIds`).
-Không đổi `en_vi` → `en_icon` ở 10 chủ đề kia (sẽ vỡ V11).
+**`memory_match`**: giữ `pairMode` hiện có của từng bài. ⚠️ **Cập nhật 2026-10-19**: mỗi bài chỉ
+còn **ĐÚNG MỘT** `memory_match` — `wordIds` = **toàn bộ** từ của bài, `pairs` = số từ (bỏ hẳn
+`memory-match-2`). Không đổi `en_vi` → `en_icon` ở 10 chủ đề kia (sẽ vỡ V11).
 
 ---
 
@@ -477,7 +483,7 @@ npm run ci   # typecheck + lint + validate + gen index + gen theme-colors + test
 | `config.kind` ≠ `gameType` | **V9** đỏ | Dùng đúng config mẫu §5 |
 | Id exercise không nằm trong `exerciseIds` (hoặc ngược lại) | **V9** đỏ | Ghi id vào `lesson.exerciseIds` |
 | Thêm exercise mà làm mất phủ từ | **V20** đỏ | `missing_letter` luôn lấy **toàn bộ** từ bài |
-| Gộp 2 `memory_match` của bài 7–8 từ | Mất phủ từ / vượt 6 cặp | **Giữ nguyên** tách 2 exercise |
+| Gộp 2 `memory_match` của bài 7–8 từ thành 1 | ~~Mất phủ từ / vượt 6 cặp~~ | **ĐÃ LÀM (2026-10-19)** — nay mỗi bài đúng 1 exercise, `pairs` = số từ; lưới canh giữa hàng cuối |
 | Đổi `memory_match` sang `en_icon` ở chủ đề ít hình | **V11** đỏ | **Không đổi** `pairMode` hiện có |
 | Chạy `npm run ci` quá nhiều | Mất thời gian | Chỉ chạy `validate:content` giữa các giai đoạn |
 

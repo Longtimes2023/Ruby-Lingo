@@ -223,6 +223,20 @@ export const vi = {
     /** Nhãn đọc của một nút trong khay — nói rõ HÀNH ĐỘNG (đặt vào phòng), không chỉ tên món. */
     roomAccessoryPlace: 'Đặt {{item}} vào phòng',
 
+    /**
+     * Nút phủ TRONG SUỐT trên một món ĐANG MẶC trong phòng: bé bấm vào chính món đó để tháo nó
+     * xuống sàn.
+     *
+     * ⭐ VÌ SAO CẦN (chủ dự án: *"phụ kiện không di chuyển tự do được"*): món đang mặc chỉ còn là
+     *   HÌNH VẼ trên người con vật, mà toàn bộ cây vẽ đó là `pointer-events-none` ⇒ không có gì để
+     *   chạm. Trước đây bé phải CUỘN XUỐNG thẻ cửa hàng mới bấm được "Bỏ ra"; với trẻ 7 tuổi thì
+     *   "bấm vào chính cái mũ trên đầu con mèo" là thao tác tự nhiên hơn hẳn.
+     *
+     * ⚠️ Phải nói đủ HÀNH ĐỘNG + TÊN MÓN + TÊN CON ("Tháo Mũ ra khỏi Khỉ Momo"). Chỉ đọc tên món
+     *   ("Mũ") thì bé khiếm thị không biết bấm vào đó sẽ xảy ra chuyện gì.
+     */
+    roomAccessoryRemove: 'Tháo {{item}} ra khỏi {{pet}}',
+
     // --- Màn "Chọn bạn đồng hành" (T04) ----------------------------------
     /** Tiêu đề màn chọn con. Nói thẳng bé đang làm gì. */
     chooseTitle: 'Chọn bạn đồng hành',
@@ -741,6 +755,13 @@ export const vi = {
      *   gấp đôi, trông như lỗi.
      */
     backToLearn: 'Về trang học',
+    /**
+     * Nhãn ĐỌC của nút nổi "lên đầu trang" (`ScrollToTop`).
+     * ⭐ Chỉ dùng cho `aria-label` — KHÔNG hiện trên mặt nút (mặt nút chỉ có mũi tên ↑, mọi bé
+     *    đều hiểu, và chữ sẽ làm nút to gấp đôi). Nhưng bé khiếm thị thì chỉ có kênh này để biết
+     *    nút làm gì, nên vẫn phải có.
+     */
+    scrollToTop: 'Lên đầu trang',
   },
 
   // --- Cài đặt ----------------------------------------------------------

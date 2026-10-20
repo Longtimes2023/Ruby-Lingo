@@ -106,24 +106,67 @@ describe('readLevelBundle("starters")', () => {
     }
   });
 
-  it('memory_match en_vi cover đầy đủ từ của lesson, cho phép chia thành nhiều exercise', () => {
-    const exercises = bundle.exercises.filter(
-      (exercise) =>
-        exercise.gameType === 'memory_match' &&
-        exercise.config.kind === 'memory_match' &&
-        exercise.config.pairMode === 'en_vi',
-    );
-    expect(exercises.length).toBeGreaterThan(0);
+  /**
+   * ⭐ QUY ƯỚC MỚI (2026-10-19) — "mỗi bài CHỈ MỘT Lật thẻ ghi nhớ, và trò đó phủ ĐỦ cả bài".
+   *
+   *   Chủ dự án báo: bài "Các bộ phận cơ thể" (`my-body/l1`) hiện ra HAI phần "Lật thẻ ghi nhớ"
+   *   giống hệt nhau. Nguyên nhân: các bài 7–8 từ bị chẻ thành `memory-match` (4 từ) +
+   *   `memory-match-2` (3 từ) theo quy ước cũ "≤ 6 cặp/exercise cho vừa lưới thẻ". Với bé, đó là
+   *   HAI trò giống nhau trong cùng một bài. Nay gộp lại: MỘT exercise, `wordIds` = TOÀN BỘ từ của
+   *   bài, `pairs` = số từ của bài.
+   *
+   * ⚠️ CHỈ CÒN **MỘT** DANH SÁCH MIỄN TRỪ `MEMORY_MATCH_COVERAGE_DEBT`, VÀ ĐÂY LÀ LÝ DO — ĐỪNG
+   *   tưởng là quên, cũng ĐỪNG "sửa test cho xanh" bằng cách xoá tên khỏi danh sách; hãy sửa DỮ
+   *   LIỆU rồi gỡ tên:
+   *
+   *   • `at-the-zoo/z1,z2,z3` — đây là **LỚP LỖI KHÁC**, KHÔNG phải lỗi chủ dự án báo: `memory_match`
+   *     của `z1,z2` chỉ phủ 6/7 từ (thiếu `snake` / `chicken`), `z3` phủ 5/7 (thiếu `animal`+`tail`).
+   *     Chủ dự án phàn nàn về "HAI trò TRÙNG NHAU", không phải "trò này THIẾU từ". Có sẵn từ trước,
+   *     chưa được yêu cầu sửa ⇒ MIỄN cho khẳng định "phủ đủ từ".
+   *
+   *   • DANH SÁCH MIỄN THỨ HAI `MEMORY_MATCH_PAIRS_DEBT` ĐÃ BỊ XOÁ (cùng ngày) — đừng dựng lại.
+   *     Trước đây nó chứa `at-school/l5` + `my-street/m1` (8 từ nhưng `pairs: 6`, để né `16 % 3 == 1`).
+   *     Khi lưới thẻ đổi sang **canh giữa hàng cuối** (`MemoryMatchGame.tsx`), lý do duy nhất để cắt
+   *     còn 6 KHÔNG còn tồn tại ⇒ hai bài đó nay cũng `pairs: 8`, và khẳng định `pairs === wordIds.length`
+   *     áp **KHÔNG miễn trừ** cho CẢ 46 bài. Muốn thêm miễn trừ mới thì phải có một LỚP LỖI khác,
+   *     có tên bài cụ thể, và ghi rõ lý do ngay tại đây.
+   *
+   *   Khẳng định "ĐÚNG MỘT exercise/bài" (chống hồi quy chính của lỗi chủ dự án) áp cho MỌI bài,
+   *   KHÔNG miễn bài nào.
+   */
+  const MEMORY_MATCH_COVERAGE_DEBT = new Set(['at-the-zoo/z1', 'at-the-zoo/z2', 'at-the-zoo/z3']);
+
+  it('memory_match: mỗi bài ĐÚNG MỘT exercise, phủ đủ từ, pairs = số từ', () => {
+    const memoryMatches = bundle.exercises.filter((exercise) => exercise.gameType === 'memory_match');
+    expect(memoryMatches.length).toBeGreaterThan(0);
+
+    // ⭐ Chống hồi quy TRỰC TIẾP cho lỗi chủ dự án báo: KHÔNG bài nào được có ≥ 2 "Lật thẻ ghi nhớ".
+    const perLesson = new Map<string, number>();
+    for (const exercise of memoryMatches) {
+      perLesson.set(exercise.lessonId, (perLesson.get(exercise.lessonId) ?? 0) + 1);
+    }
+    const notExactlyOne = [...perLesson].filter(([, count]) => count !== 1);
+    expect(
+      notExactlyOne,
+      `bài có số exercise memory_match KHÁC 1:\n${notExactlyOne.map(([id, c]) => `${id}: ${c}`).join('\n')}`,
+    ).toEqual([]);
+
     for (const lesson of bundle.lessons) {
-      const lessonExercises = exercises.filter((exercise) => exercise.lessonId === lesson.id);
+      const lessonExercises = memoryMatches.filter((exercise) => exercise.lessonId === lesson.id);
       if (lessonExercises.length === 0) continue;
-      const covered = new Set(lessonExercises.flatMap((exercise) => exercise.wordIds));
-      expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
+
+      // Hợp `wordIds` của (các) `memory_match` phải phủ HẾT từ của bài (trừ lớp nợ `at-the-zoo`).
+      if (!MEMORY_MATCH_COVERAGE_DEBT.has(lesson.id)) {
+        const covered = new Set(lessonExercises.flatMap((exercise) => exercise.wordIds));
+        expect([...covered].sort(), lesson.id).toEqual([...lesson.wordIds].sort());
+      }
+
       for (const exercise of lessonExercises) {
         expect(exercise.config.kind).toBe('memory_match');
         if (exercise.config.kind !== 'memory_match') continue;
-        expect(exercise.wordIds.length).toBeLessThanOrEqual(exercise.config.pairs);
-        expect(exercise.config.pairs).toBeLessThanOrEqual(6);
+
+        // `pairs` = số từ ⇒ bàn lật phủ đủ từ, KHÔNG bỏ sót từ nào ở cuối bài. Áp KHÔNG miễn trừ.
+        expect(exercise.config.pairs, exercise.id).toBe(exercise.wordIds.length);
       }
     }
   });

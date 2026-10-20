@@ -35,7 +35,6 @@
       ],
       "exerciseIds": [
         "at-home/h1/memory-match",
-        "at-home/h1/memory-match-2",
         "at-home/h1/missing-letter",
         "at-home/h1/listen-tap",
         "at-home/h1/word-picture"
@@ -57,7 +56,6 @@
       ],
       "exerciseIds": [
         "at-home/h2/memory-match",
-        "at-home/h2/memory-match-2",
         "at-home/h2/missing-letter",
         "at-home/h2/listen-tap",
         "at-home/h2/word-picture",
@@ -80,7 +78,6 @@
       ],
       "exerciseIds": [
         "at-home/h3/memory-match",
-        "at-home/h3/memory-match-2",
         "at-home/h3/missing-letter",
         "at-home/h3/listen-tap",
         "at-home/h3/word-picture",
@@ -103,7 +100,6 @@
       ],
       "exerciseIds": [
         "at-home/h4/memory-match",
-        "at-home/h4/memory-match-2",
         "at-home/h4/missing-letter",
         "at-home/h4/listen-tap",
         "at-home/h4/word-picture",
@@ -560,13 +556,16 @@
         "starters.bedroom",
         "starters.bathroom",
         "starters.kitchen",
-        "starters.living-room"
+        "starters.living-room",
+        "starters.dining-room",
+        "starters.hall",
+        "starters.room"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -577,13 +576,16 @@
         "starters.chair",
         "starters.table",
         "starters.lamp",
-        "starters.sofa"
+        "starters.sofa",
+        "starters.bed",
+        "starters.box",
+        "starters.mirror"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -594,13 +596,16 @@
         "starters.bookcase",
         "starters.cupboard",
         "starters.armchair",
-        "starters.rug"
+        "starters.rug",
+        "starters.clock",
+        "starters.radio",
+        "starters.window"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -611,13 +616,16 @@
         "starters.door",
         "starters.wall",
         "starters.picture",
-        "starters.painting"
+        "starters.painting",
+        "starters.television",
+        "starters.phone",
+        "starters.flower"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -637,70 +645,6 @@
         "kind": "memory_match",
         "pairMode": "en_icon",
         "pairs": 6
-      }
-    },
-    {
-      "id": "at-home/h1/memory-match-2",
-      "lessonId": "at-home/h1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.dining-room",
-        "starters.hall",
-        "starters.room"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-home/h2/memory-match-2",
-      "lessonId": "at-home/h2",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.bed",
-        "starters.box",
-        "starters.mirror"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-home/h3/memory-match-2",
-      "lessonId": "at-home/h3",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.clock",
-        "starters.radio",
-        "starters.window"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "at-home/h4/memory-match-2",
-      "lessonId": "at-home/h4",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.television",
-        "starters.phone",
-        "starters.flower"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
       }
     },
     {

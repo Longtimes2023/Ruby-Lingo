@@ -19,6 +19,26 @@
  *   React Router v6 cho phép một route chỉ đóng vai trò khung, còn nội dung do các route con
  *   quyết định. Nhờ vậy khung chỉ được dựng MỘT LẦN và KHÔNG bị tháo ra lắp lại khi bé chuyển
  *   màn hình — thanh trên cùng không nhấp nháy, và trạng thái cuộn của khung được giữ nguyên.
+ *
+ * -----------------------------------------------------------------------------
+ * ⭐ NÚT "LÊN ĐẦU TRANG" (`ScrollToTop`) — VÀ VÌ SAO NÓ BỌC QUANH `BottomNav`
+ * -----------------------------------------------------------------------------
+ *   Chủ dự án báo: *"Thiếu nút scroll up"*. Nút nổi `ScrollToTop` được gắn Ở ĐÂY (một lần cho mọi
+ *   màn hình của bé), không phải sửa từng trang.
+ *
+ *   ⚠️ Nút phải nằm NGAY TRÊN `BottomNav` mà KHÔNG đoán chiều cao thanh đó bằng px — vì chiều cao
+ *     ấy đổi theo bề rộng màn hình và `env(safe-area-inset-bottom)`. Nên `BottomNav` được bọc
+ *     trong một khối `sticky bottom-0`, và nút `absolute bottom-[calc(100%+0.75rem)]` neo vào
+ *     chính khối đó: `100%` = ĐÚNG chiều cao thật của thanh, ở mọi thiết bị.
+ *
+ *   ⚠️⚠️ VÌ SAO `sticky` CHUYỂN TỪ `BottomNav` LÊN KHỐI BỌC (không phải thừa):
+ *     Một phần tử `position: sticky` chỉ "dính" được TRONG PHẠM VI khối chứa nó. Nếu để nguyên
+ *     `sticky` trên `BottomNav` rồi bọc nó trong một khối cao ĐÚNG bằng nó, thì khối chứa và
+ *     thanh cao bằng nhau ⇒ thanh KHÔNG còn chỗ để dính ⇒ mất luôn hành vi ghim ở đáy khi cuộn.
+ *     Đưa `sticky bottom-0` lên KHỐI BỌC giữ nguyên hành vi cũ (khối cao đúng bằng thanh, ghim
+ *     ở `bottom-0` của khung nhìn) và chỉ thêm đúng một chỗ neo cho nút.
+ *     ⚠️ Đã kiểm bằng `getBoundingClientRect()` trên bản build production ở 360×640, 820×1180,
+ *     1280×720: nút không giao với thanh, thanh vẫn nằm sát đáy khung nhìn.
  */
 
 import { useState } from 'react';
@@ -31,6 +51,7 @@ import { useShopLifecycle } from '../../hooks/useShop.js';
 import { useActiveChild, useSessionStore } from '../../store/sessionStore.js';
 import { BottomNav } from './BottomNav.js';
 import { ChildSwitcherDialog } from './ChildSwitcherDialog.js';
+import { ScrollToTop } from './ScrollToTop.js';
 import { SoundButton } from './SoundButton.js';
 import { SyncStrip } from './SyncStrip.js';
 import { TopBar } from './TopBar.js';
@@ -104,7 +125,21 @@ export function AppShell() {
         <Outlet />
       </main>
 
-      <BottomNav />
+      {/*
+        ⭐ KHỐI ĐÁY: `sticky bottom-0` — vừa giữ hành vi cũ, vừa là chỗ neo cho nút lên đầu trang.
+
+          • `sticky bottom-0` giữ nguyên hành vi cũ của `BottomNav` (thanh ghim ở đáy khung nhìn
+            khi cuộn). Vai này CHUYỂN TỪ `BottomNav` LÊN ĐÂY — xem ghi chú đầu tệp; để cả hai
+            `sticky` lồng nhau thì thanh mất chỗ để dính và hành vi ghim hỏng.
+          • ⚠️ KHÔNG thêm class `relative` ở đây: `position: sticky` ĐÃ là một giá trị định vị, nên
+            nó tự là "containing block" cho con `absolute` — và `relative` sẽ ĐÈ mất `sticky`
+            (cùng nhóm thuộc tính `position`), làm thanh mất hành vi ghim.
+      */}
+      <div className="sticky bottom-0 z-nav mt-auto">
+        <BottomNav />
+        {/* Nút nổi "lên đầu trang" — chỉ hiện khi bé đã cuộn đủ xa. Xem `ScrollToTop.tsx`. */}
+        <ScrollToTop />
+      </div>
 
       <ChildSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
     </div>

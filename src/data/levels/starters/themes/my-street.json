@@ -77,7 +77,6 @@
       ],
       "exerciseIds": [
         "my-street/m3/memory-match",
-        "my-street/m3/memory-match-2",
         "my-street/m3/missing-letter",
         "my-street/m3/listen-tap",
         "my-street/m3/word-picture"
@@ -353,8 +352,7 @@
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "_comment": "pairs = 6 chứ không phải 8: 16 thẻ lẻ 1 thẻ ở lưới 3 cột (điện thoại). 12 thẻ chia hết cho cả 3 và 4.",
-        "pairs": 6
+        "pairs": 8
       }
     },
     {
@@ -384,20 +382,7 @@
         "starters.tree",
         "starters.park",
         "starters.day",
-        "starters.morning"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 4
-      }
-    },
-    {
-      "id": "my-street/m3/memory-match-2",
-      "lessonId": "my-street/m3",
-      "gameType": "memory_match",
-      "wordIds": [
+        "starters.morning",
         "starters.afternoon",
         "starters.evening",
         "starters.shop",
@@ -407,7 +392,7 @@
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 8
       }
     },
     {

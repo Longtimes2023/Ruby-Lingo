@@ -32,7 +32,6 @@
       ],
       "exerciseIds": [
         "my-body/l1/memory-match",
-        "my-body/l1/memory-match-2",
         "my-body/l1/missing-letter",
         "my-body/l1/listen-tap",
         "my-body/l1/word-picture"
@@ -229,13 +228,16 @@
         "starters.leg",
         "starters.hair",
         "starters.body",
-        "starters.head"
+        "starters.head",
+        "starters.ear",
+        "starters.eye",
+        "starters.face"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -255,22 +257,6 @@
         "kind": "memory_match",
         "pairMode": "en_icon",
         "pairs": 6
-      }
-    },
-    {
-      "id": "my-body/l1/memory-match-2",
-      "lessonId": "my-body/l1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.ear",
-        "starters.eye",
-        "starters.face"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
       }
     },
     {

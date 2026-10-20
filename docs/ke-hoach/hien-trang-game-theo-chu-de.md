@@ -180,8 +180,9 @@ bài này chỉ có thể nhận `missing_letter` (không cần hình) và `memo
   (V9 khớp `config.kind` ↔ `gameType`, V11 ngưỡng picturable, V20 phủ hết `lesson.wordIds`).
 - `shared/content/content-index.json` là **file dẫn xuất** (sinh bằng
   `npm run gen:content-index -- --apply`) — KHÔNG sửa tay, nên báo cáo này chỉ đọc JSON nguồn.
-- Các bài 7–8 từ **không** khai `memory_match` một exercise 7–8 cặp, mà tách thành 2 exercise
-  `memory-match` + `memory-match-2` (ví dụ `at-home/h2`, `at-school/s4`), với `pairs` mỗi
-  exercise ≤ 6. Đây là **quy ước nội dung** cho vừa lưới thẻ (`grid-cols-3 sm:grid-cols-4`),
-  KHÔNG phải giới hạn cứng — schema `memory_match` cho phép tới 10 cặp
-  (`shared/schemas/content.ts`).
+- ⚠️ **Cập nhật 2026-10-19 — quy ước cũ "tách đôi" đã bị bãi bỏ.** Trước đây các bài 7–8 từ bị
+  chẻ thành 2 exercise `memory-match` + `memory-match-2` (mỗi cái `pairs` ≤ 6) cho vừa lưới thẻ.
+  Chủ dự án báo bé thấy **HAI trò "Lật thẻ ghi nhớ" giống hệt nhau** trong cùng một bài ⇒ nay mỗi
+  bài chỉ có **ĐÚNG MỘT** `memory_match`: `wordIds` = toàn bộ từ của bài, `pairs` = số từ. Lưới thẻ
+  đổi sang **canh giữa hàng cuối** (`flex flex-wrap justify-center`, `MemoryMatchGame.tsx`) nên số
+  thẻ 10/12/14/16 đều đẹp. Schema `memory_match` vẫn cho phép tới 10 cặp (`shared/schemas/content.ts`).

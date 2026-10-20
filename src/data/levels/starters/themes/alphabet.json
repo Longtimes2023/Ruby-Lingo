@@ -34,7 +34,6 @@
       ],
       "exerciseIds": [
         "alphabet/a1/memory-match",
-        "alphabet/a1/memory-match-2",
         "alphabet/a1/listen-tap"
       ]
     },
@@ -54,7 +53,6 @@
       ],
       "exerciseIds": [
         "alphabet/a2/memory-match",
-        "alphabet/a2/memory-match-2",
         "alphabet/a2/listen-tap"
       ]
     },
@@ -418,13 +416,16 @@
         "starters.a",
         "starters.b",
         "starters.c",
-        "starters.d"
+        "starters.d",
+        "starters.e",
+        "starters.f",
+        "starters.g"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -435,13 +436,16 @@
         "starters.h",
         "starters.i",
         "starters.j",
-        "starters.k"
+        "starters.k",
+        "starters.l",
+        "starters.m",
+        "starters.n"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -480,38 +484,6 @@
         "kind": "memory_match",
         "pairMode": "en_vi",
         "pairs": 6
-      }
-    },
-    {
-      "id": "alphabet/a1/memory-match-2",
-      "lessonId": "alphabet/a1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.e",
-        "starters.f",
-        "starters.g"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "alphabet/a2/memory-match-2",
-      "lessonId": "alphabet/a2",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.l",
-        "starters.m",
-        "starters.n"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
       }
     },
     {

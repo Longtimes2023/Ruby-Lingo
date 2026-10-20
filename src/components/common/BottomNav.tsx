@@ -73,9 +73,11 @@ export function BottomNav({ className }: BottomNavProps) {
       // trình đọc màn hình chỉ nói "điều hướng" và bé không biết là điều hướng nào.
       aria-label={t('nav.goToLearn')}
       className={cn(
-        // ⭐ `sticky` chứ KHÔNG `fixed` — cùng lý do như `TopBar`: thanh này nằm TRONG luồng bố
-        //   cục nên không cần `padding-bottom` tính tay ở vùng nội dung. Xem ghi chú đầu TopBar.
-        'sticky bottom-0 z-nav mt-auto border-t-2 border-line bg-surface pb-safe',
+        // ⚠️ ĐỊNH VỊ (`sticky bottom-0 z-nav mt-auto`) NAY NẰM Ở KHỐI BỌC trong `AppShell.tsx`,
+        //   KHÔNG ở đây nữa. Lý do: khối bọc đó cần `relative` làm chỗ neo cho nút "lên đầu
+        //   trang", và hai phần tử `sticky` lồng nhau thì thanh MẤT chỗ để dính (khối bọc cao
+        //   đúng bằng thanh). Hành vi ghim ở đáy không đổi — chỉ chuyển lên một tầng.
+        'border-t-2 border-line bg-surface pb-safe',
         className,
       )}
     >

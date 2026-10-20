@@ -33,7 +33,6 @@
       ],
       "exerciseIds": [
         "numbers-1-20/n1/memory-match",
-        "numbers-1-20/n1/memory-match-2",
         "numbers-1-20/n1/missing-letter"
       ]
     },
@@ -53,7 +52,6 @@
       ],
       "exerciseIds": [
         "numbers-1-20/n2/memory-match",
-        "numbers-1-20/n2/memory-match-2",
         "numbers-1-20/n2/missing-letter"
       ]
     },
@@ -327,13 +325,16 @@
         "starters.one",
         "starters.two",
         "starters.three",
-        "starters.four"
+        "starters.four",
+        "starters.five",
+        "starters.six",
+        "starters.seven"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -344,13 +345,16 @@
         "starters.eight",
         "starters.nine",
         "starters.ten",
-        "starters.eleven"
+        "starters.eleven",
+        "starters.twelve",
+        "starters.thirteen",
+        "starters.fourteen"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -370,38 +374,6 @@
         "kind": "memory_match",
         "pairMode": "en_vi",
         "pairs": 6
-      }
-    },
-    {
-      "id": "numbers-1-20/n1/memory-match-2",
-      "lessonId": "numbers-1-20/n1",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.five",
-        "starters.six",
-        "starters.seven"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "numbers-1-20/n2/memory-match-2",
-      "lessonId": "numbers-1-20/n2",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.twelve",
-        "starters.thirteen",
-        "starters.fourteen"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 3
       }
     },
     {

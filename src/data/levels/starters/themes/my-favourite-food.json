@@ -77,7 +77,6 @@
       ],
       "exerciseIds": [
         "my-favourite-food/l3/memory-match",
-        "my-favourite-food/l3/memory-match-2",
         "my-favourite-food/l3/missing-letter",
         "my-favourite-food/l3/listen-tap",
         "my-favourite-food/l3/word-picture",
@@ -101,7 +100,6 @@
       ],
       "exerciseIds": [
         "my-favourite-food/l4/memory-match",
-        "my-favourite-food/l4/memory-match-2",
         "my-favourite-food/l4/missing-letter",
         "my-favourite-food/l4/listen-tap",
         "my-favourite-food/l4/word-picture",
@@ -124,7 +122,6 @@
       ],
       "exerciseIds": [
         "my-favourite-food/l5/memory-match",
-        "my-favourite-food/l5/memory-match-2",
         "my-favourite-food/l5/missing-letter",
         "my-favourite-food/l5/listen-tap",
         "my-favourite-food/l5/word-picture",
@@ -676,13 +673,15 @@
         "starters.tomato",
         "starters.onion",
         "starters.potato",
-        "starters.carrot"
+        "starters.carrot",
+        "starters.peas",
+        "starters.beans"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 6
       }
     },
     {
@@ -693,13 +692,17 @@
         "starters.breakfast",
         "starters.lunch",
         "starters.dinner",
-        "starters.bread"
+        "starters.bread",
+        "starters.egg",
+        "starters.milk",
+        "starters.water",
+        "starters.rice"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_vi",
-        "pairs": 4
+        "pairs": 8
       }
     },
     {
@@ -710,13 +713,16 @@
         "starters.fish",
         "starters.meat",
         "starters.sausage",
-        "starters.burger"
+        "starters.burger",
+        "starters.chicken-meat",
+        "starters.chips",
+        "starters.cake"
       ],
       "difficulty": 1,
       "config": {
         "kind": "memory_match",
         "pairMode": "en_icon",
-        "pairs": 4
+        "pairs": 7
       }
     },
     {
@@ -736,55 +742,6 @@
         "kind": "memory_match",
         "pairMode": "en_icon",
         "pairs": 6
-      }
-    },
-    {
-      "id": "my-favourite-food/l3/memory-match-2",
-      "lessonId": "my-favourite-food/l3",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.carrot",
-        "starters.peas",
-        "starters.beans"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
-      }
-    },
-    {
-      "id": "my-favourite-food/l4/memory-match-2",
-      "lessonId": "my-favourite-food/l4",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.egg",
-        "starters.milk",
-        "starters.water",
-        "starters.rice"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_vi",
-        "pairs": 4
-      }
-    },
-    {
-      "id": "my-favourite-food/l5/memory-match-2",
-      "lessonId": "my-favourite-food/l5",
-      "gameType": "memory_match",
-      "wordIds": [
-        "starters.chicken-meat",
-        "starters.chips",
-        "starters.cake"
-      ],
-      "difficulty": 1,
-      "config": {
-        "kind": "memory_match",
-        "pairMode": "en_icon",
-        "pairs": 3
       }
     },
     {
